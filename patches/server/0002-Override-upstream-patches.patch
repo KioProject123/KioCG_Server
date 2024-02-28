@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 28 Feb 2024 22:31:18 +0800
+Subject: [PATCH] Override upstream patches
+
+
+diff --git a/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java b/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java
+index e3a5f1ec376319bdfda87fa27ae217bff3914292..26c6a95966a7751cc22e25092bd6cced5f641ea7 100644
+--- a/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java
++++ b/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java
+@@ -49,7 +49,7 @@ public final class FeedbackForwardingSender extends ServerCommandSender {
+ 
+     @Override
+     public String getName() {
+-        return "FeedbackForwardingSender";
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.feedbackForwardingSenderName; // KioCG
+     }
+ 
+     @Override
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index a6f58b3457b7477015c5c6d969e7d83017dd3fa1..8de3c3aac56415dca3815d5b103c7501f6d33f7e 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -341,4 +341,12 @@ public class GlobalConfiguration extends ConfigurationPart {
+         public boolean disableChorusPlantUpdates = false;
+         public boolean disableMushroomBlockUpdates = false;
+     }
++
++    // KioCG start
++    public KiocgConfig kiocgConfig;
++
++    public class KiocgConfig extends ConfigurationPart {
++        public String feedbackForwardingSenderName = "MOSS";
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 385ca2c1022e0985550a5cc2bbff953f1aa33f5c..cf2fec7817c4077e56b4db7932e9df3404b72bd1 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -545,4 +545,12 @@ public class WorldConfiguration extends ConfigurationPart {
+             VANILLA, EIGENCRAFT, ALTERNATE_CURRENT
+         }
+     }
++
++    // KioCG start
++    public KiocgConfig kiocgConfig;
++
++    public class KiocgConfig extends ConfigurationPart {
++
++    }
++    // KioCG end
+ }
