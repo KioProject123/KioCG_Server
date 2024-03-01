@@ -1,0 +1,160 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Fri, 1 Mar 2024 23:10:19 +0800
+Subject: [PATCH] Optimize block entity
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
+index fc35cfc9d045f3e5b6a50af1d0ba83b6e322091f..9c681f39695f7a2b6321b848472be9019fd8bac6 100644
+--- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
++++ b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
+@@ -89,6 +89,7 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+     }
+ 
+     public boolean suckInItems() {
++        if (HopperBlockEntity.isFullContainer(this, null)) return false; // KioCG
+         if (HopperBlockEntity.suckInItems(this.level(), this)) {
+             this.immunize();  // Paper
+             return true;
+diff --git a/src/main/java/net/minecraft/world/level/block/CampfireBlock.java b/src/main/java/net/minecraft/world/level/block/CampfireBlock.java
+index 7302d07c6ff69608e75ac52fdb19f2ec1d105129..d4b918e32fc60d9720f3b1d02d5cb6411bca8fa2 100644
+--- a/src/main/java/net/minecraft/world/level/block/CampfireBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CampfireBlock.java
+@@ -296,7 +296,7 @@ public class CampfireBlock extends BaseEntityBlock implements SimpleWaterloggedB
+     @Nullable
+     @Override
+     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+-        return world.isClientSide ? ((Boolean) state.getValue(CampfireBlock.LIT) ? createTickerHelper(type, BlockEntityType.CAMPFIRE, CampfireBlockEntity::particleTick) : null) : ((Boolean) state.getValue(CampfireBlock.LIT) ? createTickerHelper(type, BlockEntityType.CAMPFIRE, CampfireBlockEntity::cookTick) : createTickerHelper(type, BlockEntityType.CAMPFIRE, CampfireBlockEntity::cooldownTick));
++        return world.isClientSide ? ((Boolean) state.getValue(CampfireBlock.LIT) ? createTickerHelper(type, BlockEntityType.CAMPFIRE, CampfireBlockEntity::particleTick) : null) : ((Boolean) state.getValue(CampfireBlock.LIT) ? createTickerHelper(type, BlockEntityType.CAMPFIRE, CampfireBlockEntity::cookTick) : null); // KioCG - 优化未燃烧的运算
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+index 79755ea08c3dc52cc29b5be4175f53faedc090b4..490824934c5d2950b9638753d6fefb770a0053aa 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -315,12 +315,15 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+         nbt.put("RecipesUsed", nbttagcompound1);
+     }
+ 
++    private boolean shouldTick = true; // KioCG
+     public static void serverTick(Level world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
++        if (!blockEntity.isLit() && !blockEntity.shouldTick) return; else blockEntity.shouldTick = false; // KioCG - 优化未燃烧的tick
+         boolean flag = blockEntity.isLit();
+         boolean flag1 = false;
+ 
+         if (blockEntity.isLit()) {
+             --blockEntity.litTime;
++            blockEntity.shouldTick = true; // KioCG
+         }
+ 
+         ItemStack itemstack = (ItemStack) blockEntity.items.get(1);
+@@ -330,6 +333,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+         if (!blockEntity.isLit() && (!flag3 || !flag2)) {
+             if (!blockEntity.isLit() && blockEntity.cookingProgress > 0) {
+                 blockEntity.cookingProgress = Mth.clamp(blockEntity.cookingProgress - 2, 0, blockEntity.cookingTotalTime);
++                blockEntity.shouldTick = true; // KioCG - 燃烧冷却过程中
+             }
+         } else {
+             RecipeHolder recipeholder;
+@@ -575,6 +579,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+             this.setChanged();
+         }
+ 
++        this.shouldTick = true; // KioCG
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+index 8e0ee9b01fdbee93f3d44d924a079ca14885b367..9117e6013b6832ac368996fc1802fed7468b5541 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -148,7 +148,9 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+         return false;
+     }
+ 
++    private boolean shouldTick = true; // KioCG
+     public static void serverTick(Level world, BlockPos pos, BlockState state, BrewingStandBlockEntity blockEntity) {
++        if (blockEntity.brewTime <= 0 && !blockEntity.shouldTick) return; else blockEntity.shouldTick = false; // KioCG - 优化未燃烧的tick
+         ItemStack itemstack = (ItemStack) blockEntity.items.get(4);
+ 
+         if (blockEntity.fuel <= 0 && itemstack.is(Items.BLAZE_POWDER)) {
+@@ -179,6 +181,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+ 
+         if (flag1) {
+             blockEntity.brewTime -= elapsedTicks;
++            blockEntity.shouldTick = true; // KioCG
+             boolean flag2 = blockEntity.brewTime <= 0; // == -> <=
+             // CraftBukkit end
+ 
+@@ -339,6 +342,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+             this.items.set(slot, stack);
+         }
+ 
++        this.shouldTick = true; // KioCG
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+index 4a53b056ec7c12128434a1a279e7ef77e87c0172..ff17edc4b3bce555c9f4446dcf5e27f7b4366804 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -134,6 +134,24 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+ 
+     }
+ 
++    // KioCG start
++    public static void cooldownImmediately(Level world, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
++        boolean flag = false;
++
++        for (int i = 0; i < campfire.items.size(); ++i) {
++            if (campfire.cookingProgress[i] > 0) {
++                flag = true;
++                campfire.cookingProgress[i] = (int) 0;
++            }
++        }
++
++        if (flag) {
++            setChanged(world, pos, state);
++        }
++
++    }
++    // KioCG end
++
+     public static void particleTick(Level world, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
+         RandomSource randomsource = world.random;
+         int i;
+@@ -262,6 +280,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+     public void dowse() {
+         if (this.level != null) {
+             this.markUpdated();
++            this.cooldownImmediately(this.getLevel(), this.getBlockPos(), this.getBlockState(), (CampfireBlockEntity) this); // KioCG - 优化未燃烧的运算
+         }
+ 
+     }
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+index d4dcf7fe26474ae07374e7761d823bc5c8b54f97..6c5ebfe9643e247d4b4dc4d24b7cef555e619581 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -490,7 +490,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+         return inventory instanceof WorldlyContainer ? IntStream.of(((WorldlyContainer) inventory).getSlotsForFace(side)) : IntStream.range(0, inventory.getContainerSize());
+     }
+ 
+-    private static boolean isFullContainer(Container inventory, Direction direction) {
++    public static boolean isFullContainer(Container inventory, Direction direction) { // KioCG - private -> public
+         // Paper start - optimize hoppers
+         if (inventory instanceof WorldlyContainer worldlyContainer) {
+             for (final int slot : worldlyContainer.getSlotsForFace(direction)) {
+diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
+index fa170cc1ce7011d201295b89718292d696c7fc24..0e89a6a8a5fb14adbc160c97f08016337edca28c 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
++++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -573,7 +573,7 @@ public class LevelChunk extends ChunkAccess {
+             } else {
+                 ServerLevel worldserver = (ServerLevel) world;
+ 
+-                return this.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING) && worldserver.areEntitiesLoaded(ChunkPos.asLong(pos));
++                return this.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING) && worldserver.areEntitiesLoaded(ChunkPos.asLong(pos)); // KioCG - use ENTITY_TICKING
+             }
+         }
+     }
