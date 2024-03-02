@@ -4,6 +4,18 @@ Date: Wed, 28 Feb 2024 23:17:21 +0800
 Subject: [PATCH] Change container behavior
 
 
+diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
+index 3ef7292d60c142161e4b0ad64658a68d94b361b4..e3a932eda6399fe0cf3b5d34a2b8d9ee8f8860dc 100644
+--- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -205,6 +205,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+ 
+         public static boolean mayPlaceItem(ItemStack stack) {
+             if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
++            if (true) return PotionBrewing.isIngredient(stack); // KioCG - 燃料槽允许放置材料
+             return stack.is(Items.BLAZE_POWDER);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d684b407aed 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java

@@ -139,6 +139,34 @@ index 25af92ec0d086160020cade97b0ddf7f6546e159..5b39cce05839390d1b18f8c56ccf6047
              return stack.is(ItemTags.BEACON_PAYMENT_ITEMS);
          }
  
+diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
+index 82311188348d673d83b70bf4d5357ecee562b6d6..3ef7292d60c142161e4b0ad64658a68d94b361b4 100644
+--- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -169,6 +169,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+         }
+ 
+         public static boolean mayPlaceItem(ItemStack stack) {
++            if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
+             return stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE) || PotionBrewing.isCustomInput(stack); // Paper
+         }
+     }
+@@ -181,6 +182,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+ 
+         @Override
+         public boolean mayPlace(ItemStack stack) {
++            if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
+             return PotionBrewing.isIngredient(stack);
+         }
+ 
+@@ -202,6 +204,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+         }
+ 
+         public static boolean mayPlaceItem(ItemStack stack) {
++            if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
+             return stack.is(Items.BLAZE_POWDER);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java b/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java
 index 09be5db3c09262e8bc56c4e20a48fe648f09237c..002236f0b1f451e8d1c4836e6e601b08cddef469 100644
 --- a/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java
@@ -219,6 +247,18 @@ index c5c509fbb915c60dfa95aac8510684d0b9f8b0ff..09bd878824390ebb8bc86325a52bb823
                      world.getCraftServer().getPluginManager().callEvent(event);
  
                      if (event.isCancelled()) {
+diff --git a/src/main/java/net/minecraft/world/inventory/FurnaceFuelSlot.java b/src/main/java/net/minecraft/world/inventory/FurnaceFuelSlot.java
+index 4e656268de1058e179cd18f15228276ff5accba5..3022680375cd8aeff7329cadbad455c3a22d0f16 100644
+--- a/src/main/java/net/minecraft/world/inventory/FurnaceFuelSlot.java
++++ b/src/main/java/net/minecraft/world/inventory/FurnaceFuelSlot.java
+@@ -14,6 +14,7 @@ public class FurnaceFuelSlot extends Slot {
+ 
+     @Override
+     public boolean mayPlace(ItemStack stack) {
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.FURNACE, stack)) return false; // KioCG
+         return this.menu.isFuel(stack) || isBucket(stack);
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java b/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java
 index 076c2b2938c9b88b7e71dbc2aa9d8c7e90d4fe75..e7a0e7516a28a4c04a0127879ba980b907d9fffd 100644
 --- a/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java
