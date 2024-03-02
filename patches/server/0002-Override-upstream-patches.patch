@@ -4,6 +4,19 @@ Date: Wed, 28 Feb 2024 22:31:18 +0800
 Subject: [PATCH] Override upstream patches
 
 
+diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
+index e4fd372a1d585887287253a02531cd192929377b..f839aee9a42cbbe280daf54def7827876eeb3009 100644
+--- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
++++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
+@@ -355,7 +355,7 @@ public final class ChatProcessor {
+ 
+         private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
+             final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
+-            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) ? null : "Not Secure");
++            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) ? null : null); // KioCG
+         }
+     }
+ 
 diff --git a/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java b/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java
 index e3a5f1ec376319bdfda87fa27ae217bff3914292..26c6a95966a7751cc22e25092bd6cced5f641ea7 100644
 --- a/src/main/java/io/papermc/paper/commands/FeedbackForwardingSender.java
@@ -51,3 +64,38 @@ index 385ca2c1022e0985550a5cc2bbff953f1aa33f5c..cf2fec7817c4077e56b4db7932e9df34
 +    }
 +    // KioCG end
  }
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 58536aabf607015939a1326f80207c0a06eed8ff..63494f90f4dc7804b804dc25bba9102af35a16f0 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -180,7 +180,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         }
+ 
+         // Paper start - detect running as root
+-        if (io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) {
++        if (false && io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) { // KioCG
+             DedicatedServer.LOGGER.warn("****************************");
+             DedicatedServer.LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
+             DedicatedServer.LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
+@@ -279,7 +279,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
+         String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
+         // Paper end
+-        if (!this.usesAuthentication()) {
++        if (false && !this.usesAuthentication()) { // KioCG
+             DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+             DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+             // Spigot start
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index e98a455b6bca9d094d0da323bddd7b3f2c07bb23..349820ecd7f5e82255791bea5f9b58fe64bf7746 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -1431,7 +1431,7 @@ public abstract class PlayerList {
+         // Paper end
+         boolean flag = this.verifyChatTrusted(message);
+ 
+-        this.server.logChatMessage((unsignedFunction == null ? message.decoratedContent() : unsignedFunction.apply(this.server.console)), params, flag ? null : "Not Secure"); // Paper
++        this.server.logChatMessage((unsignedFunction == null ? message.decoratedContent() : unsignedFunction.apply(this.server.console)), params, flag ? null : null); // Paper // KioCG
+         OutgoingChatMessage outgoingchatmessage = OutgoingChatMessage.create(message);
+         boolean flag1 = false;
+ 
