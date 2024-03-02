@@ -188,3 +188,47 @@ index 9117e6013b6832ac368996fc1802fed7468b5541..fc08a4ba7ffcf25e5a6366baa648bfee
          return side == Direction.UP ? BrewingStandBlockEntity.SLOTS_FOR_UP : (side == Direction.DOWN ? BrewingStandBlockEntity.SLOTS_FOR_DOWN : BrewingStandBlockEntity.SLOTS_FOR_SIDES);
      }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+index ff17edc4b3bce555c9f4446dcf5e27f7b4366804..f5c6065ee9888c0913cb5ba0f5c716129e2df5c5 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -73,6 +73,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+                         return recipeholder.value().assemble(inventorysubcontainer, world.registryAccess());
+                     }).orElse(itemstack);
+ 
++                    // KioCG start
++                    if (itemstack1 == itemstack) {
++                        campfire.cookingTime[i] = Integer.MAX_VALUE;
++                        return;
++                    }
++                    // KioCG end
+                     if (itemstack1.isItemEnabled(world.enabledFeatures())) {
+                         // CraftBukkit start - fire BlockCookEvent
+                         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
+@@ -96,6 +102,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+                         result = blockCookEvent.getResult();
+                         itemstack1 = CraftItemStack.asNMSCopy(result);
+                         // CraftBukkit end
++                        // KioCG start
++                        /*
+                         // Paper start
+                         double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
+                         while (!itemstack1.isEmpty()) {
+@@ -104,7 +112,16 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+                             world.addFreshEntity(droppedItem);
+                         }
+                         // Paper end
+-                        campfire.items.set(i, ItemStack.EMPTY);
++                        */
++
++                        Optional<RecipeHolder<CampfireCookingRecipe>> optional = campfire.quickCheck.getRecipeFor(new SimpleContainer(new ItemStack[]{itemstack1}), world);
++                        if (optional.isPresent()) {
++                            campfire.placeFood(null, itemstack1, ((CampfireCookingRecipe) ((RecipeHolder) optional.get()).value()).getCookingTime());
++                        } else {
++                            campfire.items.set(i, itemstack1);
++                            campfire.cookingTime[i] = Integer.MAX_VALUE;
++                        }
++                        // KioCG end
+                         world.sendBlockUpdated(pos, state, state, 3);
+                         world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+                     }
