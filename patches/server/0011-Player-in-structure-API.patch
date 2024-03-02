@@ -1,0 +1,72 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 3 Mar 2024 05:37:52 +0800
+Subject: [PATCH] Player in structure API
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 41d785d900fe4ca141f05bc02717210862f7226a..e187d1c65446eb53869921110740c8e559308d5e 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -832,6 +832,15 @@ public class ServerPlayer extends Player {
+ 
+             if (this.tickCount % 20 == 0) {
+                 CriteriaTriggers.LOCATION.trigger(this);
++                // KioCG start
++                if (this.tickCount % 20 == 0 && this.serverLevel().isLoaded(this.blockPosition())) {
++                    if (this.serverLevel().structureManager().hasAnyStructureAtExact(this.blockPosition())) {
++                        this.addTag("KioCG_inStructure");
++                    } else {
++                        this.removeTag("KioCG_inStructure");
++                    }
++                }
++                // KioCG end
+             }
+ 
+             // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
+diff --git a/src/main/java/net/minecraft/world/level/StructureManager.java b/src/main/java/net/minecraft/world/level/StructureManager.java
+index 09c85ed428b8eaf51f8b3c6e45cce925f05ab354..48f1ce94aa8119a335d2262202bb5d1bb1f10d42 100644
+--- a/src/main/java/net/minecraft/world/level/StructureManager.java
++++ b/src/main/java/net/minecraft/world/level/StructureManager.java
+@@ -158,6 +158,41 @@ public class StructureManager {
+         return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).hasAnyStructureReferences();
+     }
+ 
++    // KioCG start
++    private static final java.util.Set<net.minecraft.world.level.levelgen.structure.StructureType<?>> simpleStructure = new java.util.HashSet<>() {{
++        add(net.minecraft.world.level.levelgen.structure.StructureType.BURIED_TREASURE);
++        add(net.minecraft.world.level.levelgen.structure.StructureType.NETHER_FOSSIL);
++        add(net.minecraft.world.level.levelgen.structure.StructureType.RUINED_PORTAL);
++    }};
++
++    public boolean hasAnyStructureAtExact(BlockPos pos) {
++        net.minecraft.world.level.levelgen.structure.BoundingBox boundingBox = new net.minecraft.world.level.levelgen.structure.BoundingBox
++            (pos.getX() - 4, pos.getY() - 4, pos.getZ() - 4, pos.getX() + 4, pos.getY() + 4, pos.getZ() + 4);
++        for (Map.Entry<Structure, LongSet> entry : this.getAllStructuresAt(pos).entrySet()) {
++            if (simpleStructure.contains(entry.getKey().type())) continue;
++
++            java.util.concurrent.atomic.AtomicBoolean hasPieceAt = new java.util.concurrent.atomic.AtomicBoolean(false);
++            this.fillStartsForStructure(entry.getKey(), entry.getValue(), structureStart -> {
++                if (this.structureHasPieceIntersects(boundingBox, structureStart)) {
++                    hasPieceAt.set(true);
++                }
++            });
++            if (hasPieceAt.get()) return true;
++        }
++        return false;
++    }
++
++    public boolean structureHasPieceIntersects(net.minecraft.world.level.levelgen.structure.BoundingBox boundingBox, StructureStart structureStart) {
++        for (StructurePiece structurePiece : structureStart.getPieces()) {
++            if (structurePiece.getBoundingBox().intersects(boundingBox)) {
++                return true;
++            }
++        }
++
++        return false;
++    }
++    // KioCG end
++
+     public Map<Structure, LongSet> getAllStructuresAt(BlockPos pos) {
+         SectionPos sectionPos = SectionPos.of(pos);
+         return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
