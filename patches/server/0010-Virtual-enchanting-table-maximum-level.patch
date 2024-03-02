@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 3 Mar 2024 05:35:12 +0800
+Subject: [PATCH] Virtual enchanting table maximum level
+
+
+diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
+index 09bd878824390ebb8bc86325a52bb8234305978e..70570d140e6c30a1a7eecf591cc1f4e79821ae26 100644
+--- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
+@@ -137,6 +137,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+                     int i = 0;
+                     Iterator iterator = EnchantmentTableBlock.BOOKSHELF_OFFSETS.iterator();
+ 
++                    if (!world.getBlockState(blockposition).is(Blocks.ENCHANTING_TABLE)) { i = 15; } else // KioCG - Virtual enchanting table maximum level
+                     while (iterator.hasNext()) {
+                         BlockPos blockposition1 = (BlockPos) iterator.next();
+ 
