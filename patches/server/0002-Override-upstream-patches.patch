@@ -4,6 +4,20 @@ Date: Wed, 28 Feb 2024 22:31:18 +0800
 Subject: [PATCH] Override upstream patches
 
 
+diff --git a/src/main/java/com/kiocg/java/namespacedKeys.java b/src/main/java/com/kiocg/java/namespacedKeys.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa264f259cc1cc016a55f1494b49373d0967758f
+--- /dev/null
++++ b/src/main/java/com/kiocg/java/namespacedKeys.java
+@@ -0,0 +1,8 @@
++package com.kiocg.java;
++
++import org.bukkit.NamespacedKey;
++
++public class namespacedKeys {
++    public static final String KIOCG = "kiocg";
++
++}
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 index e4fd372a1d585887287253a02531cd192929377b..f839aee9a42cbbe280daf54def7827876eeb3009 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
