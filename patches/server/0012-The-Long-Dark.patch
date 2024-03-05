@@ -1,0 +1,234 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 5 Mar 2024 10:34:43 +0800
+Subject: [PATCH] The Long Dark
+
+
+diff --git a/src/main/java/com/kiocg/java/NamespacedKeys.java b/src/main/java/com/kiocg/java/NamespacedKeys.java
+index e3a9806f9972007b732032fd137741a5d14a7e63..98dc3e8d5bddc008c25a72a47aaa6916d1a72053 100644
+--- a/src/main/java/com/kiocg/java/NamespacedKeys.java
++++ b/src/main/java/com/kiocg/java/NamespacedKeys.java
+@@ -5,4 +5,5 @@ import org.bukkit.NamespacedKey;
+ public class NamespacedKeys {
+     public static final String KIOCG = "kiocg";
+ 
++    public static NamespacedKey kiocgColdValue = new NamespacedKey(KIOCG, "cold_value");
+ }
+diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..5a6b231eaaedda7b899b21309543c5d01d8c2af4
+--- /dev/null
++++ b/src/main/java/com/kiocg/java/player/ColdData.java
+@@ -0,0 +1,78 @@
++package com.kiocg.java.player;
++
++import com.kiocg.java.NamespacedKeys;
++import io.papermc.paper.configuration.WorldConfiguration;
++import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.util.Mth;
++import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.level.LightLayer;
++import org.bukkit.persistence.PersistentDataType;
++
++public class ColdData {
++    public static final int MAX_VALUE = 60 * 20 * 10;
++
++    private Player entityhuman;
++    private int tempColdValue;
++    public boolean isFrozen;
++
++    public ColdData(Player entityhuman) {
++        org.apache.commons.lang.Validate.notNull(entityhuman);
++        this.entityhuman = entityhuman;
++    }
++
++    public int getColdValue() {
++        return entityhuman.getBukkitEntity().getPersistentDataContainer().getOrDefault(NamespacedKeys.kiocgColdValue, PersistentDataType.INTEGER, MAX_VALUE);
++    }
++
++    public void setColdValue(int value) {
++        entityhuman.getBukkitEntity().getPersistentDataContainer().set(NamespacedKeys.kiocgColdValue, PersistentDataType.INTEGER, value);
++        tempColdValue = 0;
++        isFrozen = value <= 0;
++    }
++
++    public void addColdValue(int add) {
++        tempColdValue += add;
++    }
++
++    public float getColdProgress() {
++        return (float) getColdValue() / MAX_VALUE;
++    }
++
++    public void tick() {
++        if (!entityhuman.getAbilities().invulnerable) {
++            final WorldConfiguration.KiocgConfig.TheLongDark theLongDark = entityhuman.level().paperConfig().kiocgConfig.theLongDark;
++            tempColdValue += theLongDark.ambientBase;
++
++            if (theLongDark.blockLightMultiplier != 0) {
++                int blockLight = entityhuman.level().getBrightness(LightLayer.BLOCK, entityhuman.blockPosition());
++                tempColdValue += blockLight * theLongDark.blockLightMultiplier;
++            }
++            if (theLongDark.skyLightMultiplier != 0) {
++                int skyLight = entityhuman.level().getBrightness(LightLayer.SKY, entityhuman.blockPosition());
++                tempColdValue += skyLight * theLongDark.skyLightMultiplier;
++            }
++
++            if (theLongDark.isInWaterOrBubble != 0 && (entityhuman.isInPowderSnow || entityhuman.isInWaterOrBubble())) {
++                tempColdValue += theLongDark.isInWaterOrBubble;
++            } else if (theLongDark.isInRain != 0 && entityhuman.isInRain()) {
++                tempColdValue += theLongDark.isInRain;
++            }
++
++            if (theLongDark.isInLava != 0 && entityhuman.isInLava()) {
++                tempColdValue += theLongDark.isInLava;
++            } else if (theLongDark.fireTickDivision != 0) {
++                int remainingFireTicks = entityhuman.getRemainingFireTicks();
++                if (remainingFireTicks > 0) {
++                    tempColdValue += remainingFireTicks / theLongDark.fireTickDivision;
++                }
++            }
++
++            setColdValue(Mth.clamp(getColdValue() + tempColdValue, 0, MAX_VALUE));
++            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetExperiencePacket(getColdProgress(), entityhuman.totalExperience, entityhuman.experienceLevel));
++        } else {
++            tempColdValue = 0;
++            isFrozen = false;
++        }
++    }
++}
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 63992c84ec75bd77499cfc921ddc7c4491c7447e..a54e62597c912f622a2be517eff3fa32ce04f24f 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -551,6 +551,17 @@ public class WorldConfiguration extends ConfigurationPart {
+ 
+     public class KiocgConfig extends ConfigurationPart {
+         public boolean deathItemsOnlyPickedUpByOneself = false;
++
++        public TheLongDark theLongDark;
++        public class TheLongDark extends ConfigurationPart {
++            public int ambientBase = -10;
++            public int blockLightMultiplier = 4;
++            public int skyLightMultiplier = 0;
++            public int isInWaterOrBubble = -50;
++            public int isInRain = -20;
++            public int isInLava = 50;
++            public int fireTickDivision = 5;
++        }
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index e187d1c65446eb53869921110740c8e559308d5e..247c2343e8f7fbad94f6edc5b9e52a78d0c8147b 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -825,7 +825,7 @@ public class ServerPlayer extends Player {
+                 this.updateScoreForCriteria(ObjectiveCriteria.LEVEL, Mth.ceil((float) this.lastRecordedLevel));
+             }
+ 
+-            if (this.totalExperience != this.lastSentExp) {
++            if (false && this.totalExperience != this.lastSentExp) { // KioCG - cold system
+                 this.lastSentExp = this.totalExperience;
+                 this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
+             }
+@@ -2747,6 +2747,7 @@ public class ServerPlayer extends Player {
+         this.setRemainingFireTicks(0);
+         this.fallDistance = 0;
+         this.foodData = new FoodData(this);
++        this.coldData = new com.kiocg.java.player.ColdData(this); // KioCG
+         this.experienceLevel = this.newLevel;
+         this.totalExperience = this.newTotalExp;
+         this.experienceProgress = 0;
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c..e2cf7bd2788b9028c7d786a2bbd3ed64e383cf79 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -951,7 +951,7 @@ public abstract class PlayerList {
+         entityplayer1.connection.teleport(CraftLocation.toBukkit(entityplayer1.position(), worldserver2.getWorld(), entityplayer1.getYRot(), entityplayer1.getXRot())); // CraftBukkit
+         entityplayer1.connection.send(new ClientboundSetDefaultSpawnPositionPacket(worldserver1.getSharedSpawnPos(), worldserver1.getSharedSpawnAngle()));
+         entityplayer1.connection.send(new ClientboundChangeDifficultyPacket(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
+-        entityplayer1.connection.send(new ClientboundSetExperiencePacket(entityplayer1.experienceProgress, entityplayer1.totalExperience, entityplayer1.experienceLevel));
++        entityplayer1.connection.send(new ClientboundSetExperiencePacket(entityplayer1.coldData.getColdProgress(), entityplayer1.totalExperience, entityplayer1.experienceLevel)); // KioCG - cold system
+         this.sendLevelInfo(entityplayer1, worldserver1);
+         this.sendPlayerPermissionLevel(entityplayer1);
+         if (!entityplayer.connection.isDisconnected()) {
+@@ -995,6 +995,7 @@ public abstract class PlayerList {
+         // Paper start
+         if (isRespawn) {
+             cserver.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(entityplayer.getBukkitEntity(), location, isBedSpawn));
++            entityplayer.coldData.setColdValue(com.kiocg.java.player.ColdData.MAX_VALUE); // KioCG
+         }
+         // Paper end
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index bc908b75cb99536df658281ae7f8b4eeedbbedc9..f556f2394c0a144448fd17fb43b2a4bfedb974a9 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -3456,7 +3456,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
+             int i = this.getTicksFrozen();
+ 
+-            if (this.isInPowderSnow && this.canFreeze()) {
++            if (this.isInPowderSnow && this.canFreeze() || this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen) { // KioCG
+                 this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), i + 1));
+             } else {
+                 this.setTicksFrozen(Math.max(0, i - 2));
+diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
+index ccc1caafb0ada52c7b99b7358253826f5390843e..119331022a9741e447ffa51e34b448edf6f258e3 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Player.java
++++ b/src/main/java/net/minecraft/world/entity/player/Player.java
+@@ -152,6 +152,7 @@ public abstract class Player extends LivingEntity {
+     public final InventoryMenu inventoryMenu;
+     public AbstractContainerMenu containerMenu;
+     protected FoodData foodData = new FoodData(this); // CraftBukkit - add "this" to constructor
++    public com.kiocg.java.player.ColdData coldData = new com.kiocg.java.player.ColdData(this); // KioCG
+     protected int jumpTriggerTime;
+     public float oBob;
+     public float bob;
+@@ -278,6 +279,7 @@ public abstract class Player extends LivingEntity {
+         this.moveCloak();
+         if (!this.level().isClientSide) {
+             this.foodData.tick(this);
++            this.coldData.tick(); // KioCG
+             this.awardStat(Stats.PLAY_TIME);
+             this.awardStat(Stats.TOTAL_WORLD_TIME);
+             if (this.isAlive()) {
+diff --git a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
+index bc099abfda6555cade0a83eddfe1be9c243fa83b..17217877472b0160b7b6d10614efb639e7c4f00c 100644
+--- a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
+@@ -35,6 +35,7 @@ public class LavaCauldronBlock extends AbstractCauldronBlock {
+         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(world, pos)).callEvent()) { return; } // Paper
+         if (this.isEntityInsideContent(state, pos, entity)) {
+             entity.lavaHurt();
++            if (entity instanceof net.minecraft.world.entity.player.Player player) player.coldData.addColdValue(world.paperConfig().kiocgConfig.theLongDark.isInLava); // KioCG
+         }
+ 
+     }
+diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
+index 843926beb1edd897724b512ad915894fa4a2da6c..d9738c9a8108850cf8ce38bbfc198a720514d919 100644
+--- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
+@@ -77,6 +77,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+             // CraftBukkit end
+         }
+ 
++        if (entity instanceof net.minecraft.world.entity.player.Player player && this.isEntityInsideContent(state, pos, entity)) player.coldData.addColdValue(world.paperConfig().kiocgConfig.theLongDark.isInWaterOrBubble); // KioCG
+     }
+ 
+     @Deprecated // Paper - use #handleEntityOnFireInsideWithEvent
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index da63b4050be25dcb91d04df8c2fcc643cbb0751d..b714186810b3a8a5f9cd3ef0c5e2ad7de2c98a47 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2120,7 +2120,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         playerList.sendAllPlayerInfo(handle);
+ 
+         // Resend their XP and effects because the respawn packet resets it
+-        connection.send(new net.minecraft.network.protocol.game.ClientboundSetExperiencePacket(handle.experienceProgress, handle.totalExperience, handle.experienceLevel));
++        connection.send(new net.minecraft.network.protocol.game.ClientboundSetExperiencePacket(handle.coldData.getColdProgress(), handle.totalExperience, handle.experienceLevel)); // KioCG - cold system
+         for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
+             connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect));
+         }
