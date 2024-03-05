@@ -4,17 +4,17 @@ Date: Wed, 28 Feb 2024 22:31:18 +0800
 Subject: [PATCH] Override upstream patches
 
 
-diff --git a/src/main/java/com/kiocg/java/namespacedKeys.java b/src/main/java/com/kiocg/java/namespacedKeys.java
+diff --git a/src/main/java/com/kiocg/java/NamespacedKeys.java b/src/main/java/com/kiocg/java/NamespacedKeys.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..aa264f259cc1cc016a55f1494b49373d0967758f
+index 0000000000000000000000000000000000000000..e3a9806f9972007b732032fd137741a5d14a7e63
 --- /dev/null
-+++ b/src/main/java/com/kiocg/java/namespacedKeys.java
++++ b/src/main/java/com/kiocg/java/NamespacedKeys.java
 @@ -0,0 +1,8 @@
 +package com.kiocg.java;
 +
 +import org.bukkit.NamespacedKey;
 +
-+public class namespacedKeys {
++public class NamespacedKeys {
 +    public static final String KIOCG = "kiocg";
 +
 +}
