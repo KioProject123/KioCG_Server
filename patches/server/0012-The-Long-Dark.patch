@@ -16,10 +16,10 @@ index e3a9806f9972007b732032fd137741a5d14a7e63..98dc3e8d5bddc008c25a72a47aaa6916
  }
 diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5a6b231eaaedda7b899b21309543c5d01d8c2af4
+index 0000000000000000000000000000000000000000..753e4af8585bd9c9dffa8f9c1d234efec8981dd1
 --- /dev/null
 +++ b/src/main/java/com/kiocg/java/player/ColdData.java
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,84 @@
 +package com.kiocg.java.player;
 +
 +import com.kiocg.java.NamespacedKeys;
@@ -36,7 +36,7 @@ index 0000000000000000000000000000000000000000..5a6b231eaaedda7b899b21309543c5d0
 +
 +    private Player entityhuman;
 +    private int tempColdValue;
-+    public boolean isFrozen;
++    private int coldValueCache;
 +
 +    public ColdData(Player entityhuman) {
 +        org.apache.commons.lang.Validate.notNull(entityhuman);
@@ -44,13 +44,16 @@ index 0000000000000000000000000000000000000000..5a6b231eaaedda7b899b21309543c5d0
 +    }
 +
 +    public int getColdValue() {
++        return coldValueCache;
++    }
++
++    private int getColdValue0() {
 +        return entityhuman.getBukkitEntity().getPersistentDataContainer().getOrDefault(NamespacedKeys.kiocgColdValue, PersistentDataType.INTEGER, MAX_VALUE);
 +    }
 +
 +    public void setColdValue(int value) {
 +        entityhuman.getBukkitEntity().getPersistentDataContainer().set(NamespacedKeys.kiocgColdValue, PersistentDataType.INTEGER, value);
 +        tempColdValue = 0;
-+        isFrozen = value <= 0;
 +    }
 +
 +    public void addColdValue(int add) {
@@ -58,7 +61,11 @@ index 0000000000000000000000000000000000000000..5a6b231eaaedda7b899b21309543c5d0
 +    }
 +
 +    public float getColdProgress() {
-+        return (float) getColdValue() / MAX_VALUE;
++        return (float) coldValueCache / MAX_VALUE;
++    }
++
++    public boolean isFrozen() {
++        return coldValueCache <= 0;
 +    }
 +
 +    public void tick() {
@@ -90,11 +97,10 @@ index 0000000000000000000000000000000000000000..5a6b231eaaedda7b899b21309543c5d0
 +                }
 +            }
 +
-+            setColdValue(Mth.clamp(getColdValue() + tempColdValue, 0, MAX_VALUE));
++            setColdValue(coldValueCache = Mth.clamp(getColdValue0() + tempColdValue, 0, MAX_VALUE));
 +            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetExperiencePacket(getColdProgress(), entityhuman.totalExperience, entityhuman.experienceLevel));
 +        } else {
 +            tempColdValue = 0;
-+            isFrozen = false;
 +        }
 +    }
 +}
@@ -163,7 +169,7 @@ index c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c..e2cf7bd2788b9028c7d786a2bbd3ed64
          // Paper end
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index bc908b75cb99536df658281ae7f8b4eeedbbedc9..f556f2394c0a144448fd17fb43b2a4bfedb974a9 100644
+index bc908b75cb99536df658281ae7f8b4eeedbbedc9..e4c294b84bc44fbc576a52a6a05ecc82679cdbe9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3456,7 +3456,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -171,7 +177,7 @@ index bc908b75cb99536df658281ae7f8b4eeedbbedc9..f556f2394c0a144448fd17fb43b2a4bf
              int i = this.getTicksFrozen();
  
 -            if (this.isInPowderSnow && this.canFreeze()) {
-+            if (this.isInPowderSnow && this.canFreeze() || this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen) { // KioCG
++            if (this.isInPowderSnow && this.canFreeze() || this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen()) { // KioCG
                  this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), i + 1));
              } else {
                  this.setTicksFrozen(Math.max(0, i - 2));
@@ -195,6 +201,26 @@ index ccc1caafb0ada52c7b99b7358253826f5390843e..119331022a9741e447ffa51e34b448ed
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
+diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
+index c3448707fd8a632b457cc97b35d08a9c6933d5ee..fa3cd24c36af0ff2d355023af78caa3245f94212 100644
+--- a/src/main/java/net/minecraft/world/food/FoodData.java
++++ b/src/main/java/net/minecraft/world/food/FoodData.java
+@@ -80,6 +80,7 @@ public class FoodData {
+ 
+         if (flag && this.saturationLevel > 0.0F && player.isHurt() && this.foodLevel >= 20) {
+             ++this.tickTimer;
++            if (player.coldData.getColdValue() > com.kiocg.java.player.ColdData.MAX_VALUE / 2) // KioCG
+             if (this.tickTimer >= this.saturatedRegenRate) { // CraftBukkit
+                 float f = Math.min(this.saturationLevel, 6.0F);
+ 
+@@ -90,6 +91,7 @@ public class FoodData {
+             }
+         } else if (flag && this.foodLevel >= 18 && player.isHurt()) {
+             ++this.tickTimer;
++            if (player.coldData.getColdValue() > com.kiocg.java.player.ColdData.MAX_VALUE / 2) // KioCG
+             if (this.tickTimer >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
+                 player.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
+                 // this.a(6.0F); CraftBukkit - EntityExhaustionEvent
 diff --git a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 index bc099abfda6555cade0a83eddfe1be9c243fa83b..17217877472b0160b7b6d10614efb639e7c4f00c 100644
 --- a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
