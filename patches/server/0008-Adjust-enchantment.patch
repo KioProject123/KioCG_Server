@@ -4,6 +4,18 @@ Date: Sun, 3 Mar 2024 05:21:14 +0800
 Subject: [PATCH] Adjust enchantment
 
 
+diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
+index 09bd878824390ebb8bc86325a52bb8234305978e..6a17f21182e3d91da8318771902a834a850b47b8 100644
+--- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
+@@ -137,6 +137,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+                     int i = 0;
+                     Iterator iterator = EnchantmentTableBlock.BOOKSHELF_OFFSETS.iterator();
+ 
++                    if (!world.getBlockState(blockposition).is(Blocks.ENCHANTING_TABLE)) { i = 15; } else // KioCG - 虚拟附魔台最大等级
+                     while (iterator.hasNext()) {
+                         BlockPos blockposition1 = (BlockPos) iterator.next();
+ 
 diff --git a/src/main/java/net/minecraft/world/item/CrossbowItem.java b/src/main/java/net/minecraft/world/item/CrossbowItem.java
 index eede02c3f125d230af537bb67bebed9b88f7d1b4..95b623cbc8150f759a2f19cc0b8614b5b5f33be7 100644
 --- a/src/main/java/net/minecraft/world/item/CrossbowItem.java
