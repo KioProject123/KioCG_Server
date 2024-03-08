@@ -116,7 +116,7 @@ index 0000000000000000000000000000000000000000..7f837e983256952fa779bd9a3fe06d11
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 63992c84ec75bd77499cfc921ddc7c4491c7447e..d2c460a0630a84978c48b8e50fefebc2cd36b7fa 100644
+index 63992c84ec75bd77499cfc921ddc7c4491c7447e..55eb66b3b6dced1d1fcb3812c4e14395a573d444 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -551,6 +551,29 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -137,8 +137,8 @@ index 63992c84ec75bd77499cfc921ddc7c4491c7447e..d2c460a0630a84978c48b8e50fefebc2
 +                public int lightBlockMultiplier = 2;
 +                public int lightSkyMultiplier = 0;
 +
-+                public int isInWaterOrBubble = -50;
-+                public int isInRain = -20;
++                public int isInWaterOrBubble = -30;
++                public int isInRain = -15;
 +                public int isInLava = 50;
 +                public int onFireTickDivision = 5;
 +            }
@@ -191,6 +191,19 @@ index c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c..e2cf7bd2788b9028c7d786a2bbd3ed64
          }
          // Paper end
  
+diff --git a/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java b/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java
+index b994ae09621934df2cdd6a83a7d8ecb44649fb16..e082df98a69246dd015928e2404fa0faab3ae845 100644
+--- a/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java
++++ b/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java
+@@ -19,6 +19,8 @@ class SaturationMobEffect extends InstantenousMobEffect {
+         if (!entity.level().isClientSide && entity instanceof Player) {
+             Player entityhuman = (Player) entity;
+ 
++            if (true) { entityhuman.coldData.addColdValue(amplifier + 1); return; } // KioCG
++
+             // CraftBukkit start
+             int oldFoodLevel = entityhuman.getFoodData().foodLevel;
+             org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 index bc908b75cb99536df658281ae7f8b4eeedbbedc9..e4c294b84bc44fbc576a52a6a05ecc82679cdbe9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
