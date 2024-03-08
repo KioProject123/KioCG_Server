@@ -16,18 +16,20 @@ index e3a9806f9972007b732032fd137741a5d14a7e63..98dc3e8d5bddc008c25a72a47aaa6916
  }
 diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c53545a31907496e3cb7d2074f01a1f50c7539e0
+index 0000000000000000000000000000000000000000..7f837e983256952fa779bd9a3fe06d1147327dc7
 --- /dev/null
 +++ b/src/main/java/com/kiocg/java/player/ColdData.java
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,95 @@
 +package com.kiocg.java.player;
 +
 +import com.kiocg.java.NamespacedKeys;
 +import io.papermc.paper.configuration.WorldConfiguration;
++import net.minecraft.core.BlockPos;
 +import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
 +import net.minecraft.server.level.ServerPlayer;
 +import net.minecraft.util.Mth;
 +import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.level.Level;
 +import net.minecraft.world.level.LightLayer;
 +import org.bukkit.persistence.PersistentDataType;
 +
@@ -70,16 +72,24 @@ index 0000000000000000000000000000000000000000..c53545a31907496e3cb7d2074f01a1f5
 +
 +    public void tick() {
 +        if (!entityhuman.getAbilities().invulnerable) {
-+            final WorldConfiguration.KiocgConfig.TheLongDark theLongDark = entityhuman.level().paperConfig().kiocgConfig.theLongDark;
-+            tempColdValue += theLongDark.coldValue.ambientBase;
++            final Level world = entityhuman.level();
++            final BlockPos pos = entityhuman.blockPosition();
++            final WorldConfiguration.KiocgConfig.TheLongDark theLongDark = world.paperConfig().kiocgConfig.theLongDark;
 +
-+            if (theLongDark.coldValue.blockLightMultiplier != 0) {
-+                int blockLight = entityhuman.level().getBrightness(LightLayer.BLOCK, entityhuman.blockPosition());
-+                tempColdValue += blockLight * theLongDark.coldValue.blockLightMultiplier;
++            final float temperature = (world.getBiome(pos).value().getTemperature(pos) + theLongDark.coldValue.ambientTemperatureOffset) * theLongDark.coldValue.ambientTemperatureOffsetMultiplier;
++            tempColdValue += theLongDark.coldValue.ambientBase + temperature;
++
++            if (theLongDark.coldValue.lightSimulationMultiplier != 0) {
++                int light = world.getRawBrightness(pos, world.getSkyDarken());
++                tempColdValue += light * theLongDark.coldValue.lightSimulationMultiplier;
 +            }
-+            if (theLongDark.coldValue.skyLightMultiplier != 0) {
-+                int skyLight = entityhuman.level().getBrightness(LightLayer.SKY, entityhuman.blockPosition());
-+                tempColdValue += skyLight * theLongDark.coldValue.skyLightMultiplier;
++            if (theLongDark.coldValue.lightBlockMultiplier != 0) {
++                int blockLight = world.getBrightness(LightLayer.BLOCK, pos);
++                tempColdValue += blockLight * theLongDark.coldValue.lightBlockMultiplier;
++            }
++            if (theLongDark.coldValue.lightSkyMultiplier != 0) {
++                int skyLight = world.getBrightness(LightLayer.SKY, pos);
++                tempColdValue += skyLight * theLongDark.coldValue.lightSkyMultiplier;
 +            }
 +
 +            if (theLongDark.coldValue.isInWaterOrBubble != 0 && (entityhuman.isInPowderSnow || entityhuman.isInWaterOrBubble())) {
@@ -90,10 +100,10 @@ index 0000000000000000000000000000000000000000..c53545a31907496e3cb7d2074f01a1f5
 +
 +            if (theLongDark.coldValue.isInLava != 0 && entityhuman.isInLava()) {
 +                tempColdValue += theLongDark.coldValue.isInLava;
-+            } else if (theLongDark.coldValue.fireTickDivision != 0) {
++            } else if (theLongDark.coldValue.onFireTickDivision != 0) {
 +                int remainingFireTicks = entityhuman.getRemainingFireTicks();
 +                if (remainingFireTicks > 0) {
-+                    tempColdValue += remainingFireTicks / theLongDark.coldValue.fireTickDivision;
++                    tempColdValue += remainingFireTicks / theLongDark.coldValue.onFireTickDivision;
 +                }
 +            }
 +
@@ -106,10 +116,10 @@ index 0000000000000000000000000000000000000000..c53545a31907496e3cb7d2074f01a1f5
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 63992c84ec75bd77499cfc921ddc7c4491c7447e..9608b767849ef8b235eae0f874c65f50888ecd14 100644
+index 63992c84ec75bd77499cfc921ddc7c4491c7447e..d2c460a0630a84978c48b8e50fefebc2cd36b7fa 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -551,6 +551,24 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -551,6 +551,29 @@ public class WorldConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
@@ -120,12 +130,17 @@ index 63992c84ec75bd77499cfc921ddc7c4491c7447e..9608b767849ef8b235eae0f874c65f50
 +            public ColdValue coldValue;
 +            public class ColdValue extends ConfigurationPart {
 +                public int ambientBase = -10;
-+                public int blockLightMultiplier = 4;
-+                public int skyLightMultiplier = 0;
++                public float ambientTemperatureOffset = -1.0F;
++                public int ambientTemperatureOffsetMultiplier = 10;
++
++                public int lightSimulationMultiplier = 1;
++                public int lightBlockMultiplier = 2;
++                public int lightSkyMultiplier = 0;
++
 +                public int isInWaterOrBubble = -50;
 +                public int isInRain = -20;
 +                public int isInLava = 50;
-+                public int fireTickDivision = 5;
++                public int onFireTickDivision = 5;
 +            }
 +
 +            public int campfireExtinguishingOne = -1;
