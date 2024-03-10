@@ -116,16 +116,17 @@ index 0000000000000000000000000000000000000000..7f837e983256952fa779bd9a3fe06d11
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 63992c84ec75bd77499cfc921ddc7c4491c7447e..55eb66b3b6dced1d1fcb3812c4e14395a573d444 100644
+index 63992c84ec75bd77499cfc921ddc7c4491c7447e..0c4ce9a7a53b353e9415403dd06cd8cbf5eaf98d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -551,6 +551,29 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -551,6 +551,30 @@ public class WorldConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
 +
 +        public TheLongDark theLongDark;
 +        public class TheLongDark extends ConfigurationPart {
++            public double frozenTickDamageMultiplier = 0.01;
 +
 +            public ColdValue coldValue;
 +            public class ColdValue extends ConfigurationPart {
@@ -205,18 +206,37 @@ index b994ae09621934df2cdd6a83a7d8ecb44649fb16..e082df98a69246dd015928e2404fa0fa
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
              org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index bc908b75cb99536df658281ae7f8b4eeedbbedc9..e4c294b84bc44fbc576a52a6a05ecc82679cdbe9 100644
+index bc908b75cb99536df658281ae7f8b4eeedbbedc9..bb65884f2450393d4d7313d82b87560f4ea15489 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3456,7 +3456,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3456,17 +3456,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int i = this.getTicksFrozen();
  
 -            if (this.isInPowderSnow && this.canFreeze()) {
+-                this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), i + 1));
 +            if (this.isInPowderSnow && this.canFreeze() || this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen()) { // KioCG
-                 this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), i + 1));
++                this.setTicksFrozen(i + 1); // KioCG - 不要限制最大值
              } else {
-                 this.setTicksFrozen(Math.max(0, i - 2));
+-                this.setTicksFrozen(Math.max(0, i - 2));
++                this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), Math.max(0, i - 2))); // KioCG - 还原最大值设定, 防止长时间冻结
+             }
+         }
+ 
+         this.removeFrost();
+         this.tryAddFrost();
+         if (!this.level().isClientSide && this.tickCount % 40 == 0 && this.isFullyFrozen() && this.canFreeze()) {
+-            this.hurt(this.damageSources().freeze(), 1.0F);
++            // KioCG start
++            float increase = 0.0F;
++            if (this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen()) {
++                increase = (this.getTicksFrozen() - this.getTicksRequiredToFreeze()) * (float) this.level().paperConfig().kiocgConfig.theLongDark.frozenTickDamageMultiplier;
++            }
++            this.hurt(this.damageSources().freeze(), 1.0F + increase);
++            // KioCG end
+         }
+ 
+         this.level().getProfiler().pop();
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
 index ccc1caafb0ada52c7b99b7358253826f5390843e..119331022a9741e447ffa51e34b448edf6f258e3 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
