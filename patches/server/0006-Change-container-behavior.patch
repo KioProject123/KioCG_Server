@@ -189,7 +189,7 @@ index 9117e6013b6832ac368996fc1802fed7468b5541..fc08a4ba7ffcf25e5a6366baa648bfee
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index ff17edc4b3bce555c9f4446dcf5e27f7b4366804..f5c6065ee9888c0913cb5ba0f5c716129e2df5c5 100644
+index fd822ac3b3cff8b697569dd28a96e0ff26d5d9b5..f929c90c470bd7fd0b40d915a3101e7e73e7f4f0 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 @@ -73,6 +73,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
@@ -199,7 +199,7 @@ index ff17edc4b3bce555c9f4446dcf5e27f7b4366804..f5c6065ee9888c0913cb5ba0f5c71612
 +                    // KioCG start
 +                    if (itemstack1 == itemstack) {
 +                        campfire.cookingTime[i] = Integer.MAX_VALUE;
-+                        return;
++                        continue;
 +                    }
 +                    // KioCG end
                      if (itemstack1.isItemEnabled(world.enabledFeatures())) {

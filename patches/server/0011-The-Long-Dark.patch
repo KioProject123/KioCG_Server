@@ -282,7 +282,7 @@ index 843926beb1edd897724b512ad915894fa4a2da6c..e6505b79bd3a3d4b50a97dd689ae37a3
  
      @Deprecated // Paper - use #handleEntityOnFireInsideWithEvent
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index f5c6065ee9888c0913cb5ba0f5c716129e2df5c5..1d50fe86880a48abd6f33777f105cde8ee7e6664 100644
+index f929c90c470bd7fd0b40d915a3101e7e73e7f4f0..237755db6908faf8cdc76a600e6e814c6ab43cd5 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 @@ -43,6 +43,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {

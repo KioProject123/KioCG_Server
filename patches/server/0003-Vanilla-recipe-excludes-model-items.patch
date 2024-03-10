@@ -493,10 +493,10 @@ index c57efcb9a79337ec791e4e8f6671612f0a82b441..8e0ee9b01fdbee93f3d44d924a079ca1
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index 18d3cb828f85e17ec27dbb5b33c6f17fff178a1d..4a53b056ec7c12128434a1a279e7ef77e87c0172 100644
+index 18d3cb828f85e17ec27dbb5b33c6f17fff178a1d..a0a1f1d820b6a92194f6568e1c597f9abf5acac8 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -79,9 +79,17 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -79,10 +79,18 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                          org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
  
                          BlockCookEvent blockCookEvent = new BlockCookEvent(CraftBlock.at(world, pos), source, result, (org.bukkit.inventory.CookingRecipe<?>) recipeHolderOptional.map(RecipeHolder::toBukkitRecipe).orElse(null)); // Paper
@@ -510,10 +510,12 @@ index 18d3cb828f85e17ec27dbb5b33c6f17fff178a1d..4a53b056ec7c12128434a1a279e7ef77
                          world.getCraftServer().getPluginManager().callEvent(blockCookEvent);
  
                          if (blockCookEvent.isCancelled()) {
+-                            return;
 +                            campfire.cookingProgress[i] = 0; // KioCG - 重置烹饪进度
-                             return;
++                            continue; // KioCG - 应该正常循环下一个物品
                          }
  
+                         result = blockCookEvent.getResult();
 @@ -224,6 +232,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
              ItemStack itemstack1 = (ItemStack) this.items.get(j);
  
