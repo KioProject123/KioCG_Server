@@ -282,30 +282,25 @@ index 843926beb1edd897724b512ad915894fa4a2da6c..e6505b79bd3a3d4b50a97dd689ae37a3
  
      @Deprecated // Paper - use #handleEntityOnFireInsideWithEvent
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index f929c90c470bd7fd0b40d915a3101e7e73e7f4f0..237755db6908faf8cdc76a600e6e814c6ab43cd5 100644
+index f929c90c470bd7fd0b40d915a3101e7e73e7f4f0..03d25edf000fab0671ef96d8ed885eb5a8c0ccdd 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 @@ -43,6 +43,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
      public final int[] cookingTime;
      private final RecipeManager.CachedCheck<Container, CampfireCookingRecipe> quickCheck;
      public final boolean[] stopCooking; // Paper
-+    @Nullable private Integer extinguishing = null; // KioCG
++    private int litTicks = 0; // KioCG
  
      public CampfireBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.CAMPFIRE, pos, state);
-@@ -129,6 +130,32 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
-             }
-         }
+@@ -56,6 +57,28 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+     public static void cookTick(Level world, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
+         boolean flag = false;
  
 +        // KioCG start
-+        if (campfire.extinguishing == null) {
-+            int extinguishingTick = state.is(net.minecraft.world.level.block.Blocks.CAMPFIRE) ? world.paperConfig().kiocgConfig.theLongDark.campfireExtinguishingOne : world.paperConfig().kiocgConfig.theLongDark.campfireExtinguishingTwo;
-+            if (extinguishingTick > 0) {
-+                campfire.extinguishing = extinguishingTick;
-+            }
-+        }
-+
-+        if (campfire.extinguishing != null && --campfire.extinguishing <= 0) {
++        ++campfire.litTicks;
++        int extinguishingTick = state.is(net.minecraft.world.level.block.Blocks.CAMPFIRE) ? world.paperConfig().kiocgConfig.theLongDark.campfireExtinguishingOne : world.paperConfig().kiocgConfig.theLongDark.campfireExtinguishingTwo;
++        if (extinguishingTick >= 0 && campfire.litTicks > extinguishingTick) {
 +            if (state.is(net.minecraft.world.level.block.Blocks.CAMPFIRE)) {
 +                world.removeBlockEntity(pos); // 移除BlockEntity来保留物品
 +                world.setBlock(pos, net.minecraft.world.level.block.Blocks.SOUL_CAMPFIRE.withPropertiesOf(state), 3);
@@ -320,34 +315,35 @@ index f929c90c470bd7fd0b40d915a3101e7e73e7f4f0..237755db6908faf8cdc76a600e6e814c
 +            } else {
 +                world.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
 +            }
++            return;
 +        }
 +        // KioCG end
 +
-         if (flag) {
-             setChanged(world, pos, state);
-         }
-@@ -228,6 +255,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+         for (int i = 0; i < campfire.items.size(); ++i) {
+             ItemStack itemstack = (ItemStack) campfire.items.get(i);
+ 
+@@ -228,6 +251,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
              System.arraycopy(cookingState, 0, this.stopCooking, 0, Math.min(this.stopCooking.length, abyte.length));
          }
          // Paper end
 +
-+        if (nbt.contains("KioCG.Extinguishing", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) extinguishing = nbt.getInt("KioCG.Extinguishing"); // KioCG
++        if (nbt.contains("KioCG.LitTicks", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) litTicks = nbt.getInt("KioCG.LitTicks"); // KioCG
      }
  
      @Override
-@@ -243,6 +272,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -243,6 +268,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
          }
          nbt.putByteArray("Paper.StopCooking", cookingState);
          // Paper end
-+        if (extinguishing != null) nbt.putInt("KioCG.Extinguishing", extinguishing); // KioCG
++        nbt.putInt("KioCG.LitTicks", litTicks); // KioCG
      }
  
      @Override
-@@ -298,6 +328,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -298,6 +324,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
          if (this.level != null) {
              this.markUpdated();
              this.cooldownImmediately(this.getLevel(), this.getBlockPos(), this.getBlockState(), (CampfireBlockEntity) this); // KioCG - 优化未燃烧的运算
-+            this.extinguishing = null; // KioCG
++            this.litTicks = 0; // KioCG
          }
  
      }
