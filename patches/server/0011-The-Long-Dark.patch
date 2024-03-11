@@ -18,10 +18,10 @@ index e3a9806f9972007b732032fd137741a5d14a7e63..c09d96b28876b6c684813f699908b9be
  }
 diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7f837e983256952fa779bd9a3fe06d1147327dc7
+index 0000000000000000000000000000000000000000..55ce9bc1c93bdaf2bc88d5c9cc7544ddd3f99d0f
 --- /dev/null
 +++ b/src/main/java/com/kiocg/java/player/ColdData.java
-@@ -0,0 +1,95 @@
+@@ -0,0 +1,106 @@
 +package com.kiocg.java.player;
 +
 +import com.kiocg.java.NamespacedKeys;
@@ -57,7 +57,6 @@ index 0000000000000000000000000000000000000000..7f837e983256952fa779bd9a3fe06d11
 +
 +    public void setColdValue(int value) {
 +        entityhuman.getBukkitEntity().getPersistentDataContainer().set(NamespacedKeys.kiocgColdValue, PersistentDataType.INTEGER, value);
-+        tempColdValue = 0;
 +    }
 +
 +    public void addColdValue(int add) {
@@ -109,24 +108,35 @@ index 0000000000000000000000000000000000000000..7f837e983256952fa779bd9a3fe06d11
 +                }
 +            }
 +
-+            setColdValue(coldValueCache = Mth.clamp(getColdValue0() + tempColdValue, 0, MAX_VALUE));
++            int prevValue = coldValueCache;
++            coldValueCache = Mth.clamp(getColdValue0() + tempColdValue, 0, MAX_VALUE);
++            if (prevValue != coldValueCache) {
++                setColdValue(coldValueCache);
++            }
++            tempColdValue = 0;
++
 +            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetExperiencePacket(getColdProgress(), entityhuman.totalExperience, entityhuman.experienceLevel));
 +        } else {
-+            tempColdValue = 0;
 +            coldValueCache = MAX_VALUE;
++            tempColdValue = 0;
 +        }
++    }
++
++    public void reset() {
++        setColdValue(MAX_VALUE);
++        coldValueCache = MAX_VALUE;
++        tempColdValue = 0;
 +    }
 +}
 diff --git a/src/main/java/com/kiocg/java/player/ThirstData.java b/src/main/java/com/kiocg/java/player/ThirstData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f61acdb002b66350925ef0f4d022bde55c3038d0
+index 0000000000000000000000000000000000000000..0251d37b9e48784245cd7e8cb9364b89da165e01
 --- /dev/null
 +++ b/src/main/java/com/kiocg/java/player/ThirstData.java
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,89 @@
 +package com.kiocg.java.player;
 +
 +import com.kiocg.java.NamespacedKeys;
-+import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 +import net.minecraft.network.syncher.SynchedEntityData;
 +import net.minecraft.server.level.ServerPlayer;
@@ -142,6 +152,7 @@ index 0000000000000000000000000000000000000000..f61acdb002b66350925ef0f4d022bde5
 +    public static final int MAX_VALUE = 10;
 +
 +    private Player entityhuman;
++    private int thirstValueCache;
 +
 +    public ThirstData(Player entityhuman) {
 +        org.apache.commons.lang.Validate.notNull(entityhuman);
@@ -149,7 +160,7 @@ index 0000000000000000000000000000000000000000..f61acdb002b66350925ef0f4d022bde5
 +    }
 +
 +    public int getThirstValue() {
-+        return (Integer) entityhuman.getEntityData().get(Entity.DATA_AIR_SUPPLY_ID);
++        return thirstValueCache;
 +    }
 +
 +    private int getThirstValue0() {
@@ -161,11 +172,11 @@ index 0000000000000000000000000000000000000000..f61acdb002b66350925ef0f4d022bde5
 +    }
 +
 +    public int getThirstProgress() {
-+        return 300 / 10 * (getThirstValue() - 1) + 15;
++        return 300 / 10 * (thirstValueCache - 1) + 8;
 +    }
 +
 +    public boolean isThirsty() {
-+        return getThirstValue() <= 0;
++        return thirstValueCache <= 0;
 +    }
 +
 +    public void tick() {
@@ -176,13 +187,17 @@ index 0000000000000000000000000000000000000000..f61acdb002b66350925ef0f4d022bde5
 +                setThirstRegain(regain - 20 * quotient);
 +            }
 +
-+            int value = Mth.clamp(getThirstValue0() - quotient, 0, MAX_VALUE);
-+            setThirstValue(value);
-+            entityhuman.getEntityData().set(Entity.DATA_AIR_SUPPLY_ID, value);
++            int prevValue = thirstValueCache;
++            thirstValueCache = Mth.clamp(getThirstValue0() - quotient, 0, MAX_VALUE);
++            if (prevValue != thirstValueCache) {
++                setThirstValue(thirstValueCache);
++            }
 +
 +            List<SynchedEntityData.DataValue<?>> list = new ArrayList<>();
 +            list.add(SynchedEntityData.DataValue.create(Entity.DATA_AIR_SUPPLY_ID, getThirstProgress()));
 +            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetEntityDataPacket(entityhuman.getId(), list));
++        } else {
++            thirstValueCache = MAX_VALUE;
 +        }
 +    }
 +
@@ -202,12 +217,10 @@ index 0000000000000000000000000000000000000000..f61acdb002b66350925ef0f4d022bde5
 +        setThirstRegain(getThirstRegain0() + add);
 +    }
 +
-+    public void readAdditionalSaveData(CompoundTag nbt) {
-+        setThirstValue(getThirstValue0());
-+    }
-+
-+    public void addAdditionalSaveData(CompoundTag nbt) {
-+
++    public void reset() {
++        setThirstValue(MAX_VALUE);
++        thirstValueCache = MAX_VALUE;
++        setThirstRegain(0.0);
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
@@ -268,7 +281,7 @@ index e187d1c65446eb53869921110740c8e559308d5e..882feeb2e39882f269473be2d659f3fb
          this.totalExperience = this.newTotalExp;
          this.experienceProgress = 0;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c..a80b29f8d9585e41a1084eecf09f9ffe17a1d095 100644
+index c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c..a18ab25330e7d5fbb5d3c2061ae0dfb8af217df2 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -951,7 +951,7 @@ public abstract class PlayerList {
@@ -284,8 +297,8 @@ index c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c..a80b29f8d9585e41a1084eecf09f9ffe
          // Paper start
          if (isRespawn) {
              cserver.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(entityplayer.getBukkitEntity(), location, isBedSpawn));
-+            entityplayer.coldData.setColdValue(com.kiocg.java.player.ColdData.MAX_VALUE); // KioCG
-+            entityplayer.thirstData.setThirstValue(com.kiocg.java.player.ThirstData.MAX_VALUE); // KioCG
++            entityplayer.coldData.reset(); // KioCG
++            entityplayer.thirstData.reset(); // KioCG
          }
          // Paper end
  
@@ -303,7 +316,7 @@ index b994ae09621934df2cdd6a83a7d8ecb44649fb16..e082df98a69246dd015928e2404fa0fa
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
              org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1be10c57e374ad4018c08d96cfb69397a2f541d3..ca0a71a8f2cfdc7a067058246110a7b8e7f4ccb6 100644
+index 1be10c57e374ad4018c08d96cfb69397a2f541d3..c3ecf20fcff0fa197b67cad597263d4e0cfc6bd4 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -355,7 +355,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -315,20 +328,11 @@ index 1be10c57e374ad4018c08d96cfb69397a2f541d3..ca0a71a8f2cfdc7a067058246110a7b8
      private static final EntityDataAccessor<Optional<Component>> DATA_CUSTOM_NAME = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.OPTIONAL_COMPONENT);
      private static final EntityDataAccessor<Boolean> DATA_CUSTOM_NAME_VISIBLE = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Boolean> DATA_SILENT = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
-@@ -602,7 +602,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
-         // Spigot end
-         this.entityData = new SynchedEntityData(this);
-         this.entityData.define(Entity.DATA_SHARED_FLAGS_ID, (byte) 0);
--        this.entityData.define(Entity.DATA_AIR_SUPPLY_ID, this.getMaxAirSupply());
-+        this.entityData.define(Entity.DATA_AIR_SUPPLY_ID, this instanceof Player ? com.kiocg.java.player.ThirstData.MAX_VALUE : this.getMaxAirSupply()); // KioCG
-         this.entityData.define(Entity.DATA_CUSTOM_NAME_VISIBLE, false);
-         this.entityData.define(Entity.DATA_CUSTOM_NAME, Optional.empty());
-         this.entityData.define(Entity.DATA_SILENT, false);
 @@ -3369,6 +3369,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
  
      public int getAirSupply() {
-+        if (this instanceof Player player) return player.realAir; // KioCG
++        if (this instanceof ServerPlayer player) return player.getBukkitEntity().realAir; // KioCG
          return (Integer) this.entityData.get(Entity.DATA_AIR_SUPPLY_ID);
      }
  
@@ -337,16 +341,16 @@ index 1be10c57e374ad4018c08d96cfb69397a2f541d3..ca0a71a8f2cfdc7a067058246110a7b8
              event.getEntity().getServer().getPluginManager().callEvent(event);
          }
 -        if (event.isCancelled() && this.getAirSupply() != air) {
-+        if (event.isCancelled() && this.getAirSupply() != air && !(this instanceof Player)) { // KioCG
++        if (event.isCancelled() && this.getAirSupply() != air && !(this instanceof ServerPlayer)) { // KioCG
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
-+        if (this instanceof Player player) { player.realAir = event.getAmount(); } else // KioCG
++        if (this instanceof ServerPlayer player) { player.getBukkitEntity().realAir = event.getAmount(); } else // KioCG
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index bc908b75cb99536df658281ae7f8b4eeedbbedc9..c4c92a404000ca8ef71d45fbc0c801a335cda8cb 100644
+index bc908b75cb99536df658281ae7f8b4eeedbbedc9..3d74182f3b233ff44bc97dbd24a506d1cd666dbb 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1356,6 +1356,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -361,7 +365,7 @@ index bc908b75cb99536df658281ae7f8b4eeedbbedc9..c4c92a404000ca8ef71d45fbc0c801a3
  
              if (!event.isCancelled()) {
                  this.setHealth((float) (this.getHealth() + event.getAmount()));
-+                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain(event.getAmount()); // KioCG
++                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain(this.getHealth() - f1); // KioCG
              }
              // CraftBukkit end
          }
@@ -394,20 +398,19 @@ index bc908b75cb99536df658281ae7f8b4eeedbbedc9..c4c92a404000ca8ef71d45fbc0c801a3
  
          this.level().getProfiler().pop();
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index ccc1caafb0ada52c7b99b7358253826f5390843e..ea644ac618d8bcef41d3c4b690d247397d2b1e1b 100644
+index ccc1caafb0ada52c7b99b7358253826f5390843e..ea18d8cb9f68d5b832d49d00252ac43ce9d06c43 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -152,6 +152,9 @@ public abstract class Player extends LivingEntity {
+@@ -152,6 +152,8 @@ public abstract class Player extends LivingEntity {
      public final InventoryMenu inventoryMenu;
      public AbstractContainerMenu containerMenu;
      protected FoodData foodData = new FoodData(this); // CraftBukkit - add "this" to constructor
 +    public com.kiocg.java.player.ColdData coldData = new com.kiocg.java.player.ColdData(this); // KioCG
 +    public com.kiocg.java.player.ThirstData thirstData = new com.kiocg.java.player.ThirstData(this); // KioCG
-+    public int realAir; // KioCG
      protected int jumpTriggerTime;
      public float oBob;
      public float bob;
-@@ -278,6 +281,8 @@ public abstract class Player extends LivingEntity {
+@@ -278,6 +280,8 @@ public abstract class Player extends LivingEntity {
          this.moveCloak();
          if (!this.level().isClientSide) {
              this.foodData.tick(this);
@@ -416,22 +419,6 @@ index ccc1caafb0ada52c7b99b7358253826f5390843e..ea644ac618d8bcef41d3c4b690d24739
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
-@@ -872,6 +877,7 @@ public abstract class Player extends LivingEntity {
- 
-         this.setScore(nbt.getInt("Score"));
-         this.foodData.readAdditionalSaveData(nbt);
-+        this.thirstData.readAdditionalSaveData(nbt); // KioCG
-         this.abilities.loadSaveData(nbt);
-         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue((double) this.abilities.getWalkingSpeed());
-         if (nbt.contains("EnderItems", 9)) {
-@@ -909,6 +915,7 @@ public abstract class Player extends LivingEntity {
-         nbt.putInt("XpSeed", this.enchantmentSeed);
-         nbt.putInt("Score", this.getScore());
-         this.foodData.addAdditionalSaveData(nbt);
-+        this.thirstData.addAdditionalSaveData(nbt); // KioCG
-         this.abilities.addSaveData(nbt);
-         nbt.put("EnderItems", this.enderChestInventory.createTag());
-         if (!this.getShoulderEntityLeft().isEmpty()) {
 diff --git a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 index bc099abfda6555cade0a83eddfe1be9c243fa83b..4dcfbf9b7267017229640d0f7f7370118a942e39 100644
 --- a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
@@ -523,10 +510,18 @@ index f929c90c470bd7fd0b40d915a3101e7e73e7f4f0..03d25edf000fab0671ef96d8ed885eb5
  
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index da63b4050be25dcb91d04df8c2fcc643cbb0751d..b714186810b3a8a5f9cd3ef0c5e2ad7de2c98a47 100644
+index da63b4050be25dcb91d04df8c2fcc643cbb0751d..a634df87b05d3ebc1e9aded5b308f7c6fb8bf735 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2120,7 +2120,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -188,6 +188,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private double health = 20;
+     private boolean scaledHealth = false;
+     private double healthScale = 20;
++    public int realAir; // KioCG
+     private CraftWorldBorder clientWorldBorder = null;
+     private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
+     public org.bukkit.event.player.PlayerResourcePackStatusEvent.Status resourcePackStatus; // Paper - more resource pack API
+@@ -2120,7 +2121,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it
