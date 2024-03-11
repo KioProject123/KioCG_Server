@@ -130,10 +130,10 @@ index 0000000000000000000000000000000000000000..55ce9bc1c93bdaf2bc88d5c9cc7544dd
 +}
 diff --git a/src/main/java/com/kiocg/java/player/ThirstData.java b/src/main/java/com/kiocg/java/player/ThirstData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0251d37b9e48784245cd7e8cb9364b89da165e01
+index 0000000000000000000000000000000000000000..0b03e97dd5254f11764b3776f86753c490f20506
 --- /dev/null
 +++ b/src/main/java/com/kiocg/java/player/ThirstData.java
-@@ -0,0 +1,89 @@
+@@ -0,0 +1,97 @@
 +package com.kiocg.java.player;
 +
 +import com.kiocg.java.NamespacedKeys;
@@ -141,6 +141,8 @@ index 0000000000000000000000000000000000000000..0251d37b9e48784245cd7e8cb9364b89
 +import net.minecraft.network.syncher.SynchedEntityData;
 +import net.minecraft.server.level.ServerPlayer;
 +import net.minecraft.util.Mth;
++import net.minecraft.world.effect.MobEffectInstance;
++import net.minecraft.world.effect.MobEffects;
 +import net.minecraft.world.entity.Entity;
 +import net.minecraft.world.entity.player.Player;
 +import org.bukkit.persistence.PersistentDataType;
@@ -193,6 +195,12 @@ index 0000000000000000000000000000000000000000..0251d37b9e48784245cd7e8cb9364b89
 +                setThirstValue(thirstValueCache);
 +            }
 +
++            if (thirstValueCache <= 3 && entityhuman.tickCount % 10 == 0) {
++                if (!entityhuman.hasEffect(MobEffects.WEAKNESS) || entityhuman.getEffect(MobEffects.WEAKNESS).getAmplifier() == 0 && entityhuman.getEffect(MobEffects.WEAKNESS).endsWithin(20 - 1)) {
++                    entityhuman.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20, 0));
++                }
++            }
++
 +            List<SynchedEntityData.DataValue<?>> list = new ArrayList<>();
 +            list.add(SynchedEntityData.DataValue.create(Entity.DATA_AIR_SUPPLY_ID, getThirstProgress()));
 +            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetEntityDataPacket(entityhuman.getId(), list));
@@ -224,10 +232,10 @@ index 0000000000000000000000000000000000000000..0251d37b9e48784245cd7e8cb9364b89
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 63992c84ec75bd77499cfc921ddc7c4491c7447e..0c4ce9a7a53b353e9415403dd06cd8cbf5eaf98d 100644
+index 63992c84ec75bd77499cfc921ddc7c4491c7447e..2acc8feeb8851cb3cd7671e09c2e957347c106ee 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -551,6 +551,30 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -551,6 +551,32 @@ public class WorldConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
@@ -251,6 +259,8 @@ index 63992c84ec75bd77499cfc921ddc7c4491c7447e..0c4ce9a7a53b353e9415403dd06cd8cb
 +                public int isInLava = 50;
 +                public int onFireTickDivision = 5;
 +            }
++
++            public int monstersDarkEnoughToSprint = 7;
 +
 +            public int campfireExtinguishingOne = -1;
 +            public int campfireExtinguishingTwo = -1;
@@ -397,6 +407,30 @@ index bc908b75cb99536df658281ae7f8b4eeedbbedc9..3d74182f3b233ff44bc97dbd24a506d1
          }
  
          this.level().getProfiler().pop();
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
+index 127a344f35e194fc7b1a0783c75291fab929fe19..7efb69359b930679c326d12be6700286ae5198cb 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
+@@ -43,6 +43,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+         this.updateSwingTime();
+         this.updateNoActionTime();
+         super.aiStep();
++
++        // KioCG start
++        final int darkEnoughToSprint = this.level().paperConfig().kiocgConfig.theLongDark.monstersDarkEnoughToSprint;
++        if (darkEnoughToSprint >= 0 && this.level().getMaxLocalRawBrightness(this.blockPosition()) <= darkEnoughToSprint) {
++            if (!this.isSprinting()) {
++                this.setSprinting(true);
++            }
++        } else {
++            if (this.isSprinting()) {
++                this.setSprinting(false);
++            }
++        }
++        // KioCG end
+     }
+ 
+     protected void updateNoActionTime() {
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
 index ccc1caafb0ada52c7b99b7358253826f5390843e..ea18d8cb9f68d5b832d49d00252ac43ce9d06c43 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
