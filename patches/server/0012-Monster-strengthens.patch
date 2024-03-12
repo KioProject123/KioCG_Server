@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 13 Mar 2024 01:10:57 +0800
+Subject: [PATCH] Monster strengthens
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 0c4ce9a7a53b353e9415403dd06cd8cbf5eaf98d..171e2634a82747a9c87e7184cdea826dea614546 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -575,6 +575,12 @@ public class WorldConfiguration extends ConfigurationPart {
+             public int campfireExtinguishingOne = -1;
+             public int campfireExtinguishingTwo = -1;
+         }
++
++        public Monster monster;
++        public class Monster extends ConfigurationPart {
++            public boolean spawnInLightAtNight = true;
++            public int darkEnoughToSprint = 7;
++        }
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
+index 127a344f35e194fc7b1a0783c75291fab929fe19..3d67814d58aa137f5910ef592ec3484f0d1eac52 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
+@@ -43,6 +43,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+         this.updateSwingTime();
+         this.updateNoActionTime();
+         super.aiStep();
++
++        // KioCG start
++        final int darkEnoughToSprint = this.level().paperConfig().kiocgConfig.monster.darkEnoughToSprint;
++        if (darkEnoughToSprint >= 0 && this.level().getMaxLocalRawBrightness(this.blockPosition()) <= darkEnoughToSprint) {
++            if (!this.isSprinting()) {
++                this.setSprinting(true);
++            }
++        } else {
++            if (this.isSprinting()) {
++                this.setSprinting(false);
++            }
++        }
++        // KioCG end
+     }
+ 
+     protected void updateNoActionTime() {
+@@ -89,6 +102,7 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+     }
+ 
+     public static boolean isDarkEnoughToSpawn(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
++        if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.monster.spawnInLightAtNight && world.getSkyDarken() >= 5) return true; // KioCG
+         if (world.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
+             return false;
+         } else {
