@@ -358,7 +358,7 @@ index 1be10c57e374ad4018c08d96cfb69397a2f541d3..c3ecf20fcff0fa197b67cad597263d4e
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index bc908b75cb99536df658281ae7f8b4eeedbbedc9..3d74182f3b233ff44bc97dbd24a506d1cd666dbb 100644
+index bc908b75cb99536df658281ae7f8b4eeedbbedc9..b7828808d619b36615238e39ed7710333dfd91fa 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1356,6 +1356,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -373,7 +373,7 @@ index bc908b75cb99536df658281ae7f8b4eeedbbedc9..3d74182f3b233ff44bc97dbd24a506d1
  
              if (!event.isCancelled()) {
                  this.setHealth((float) (this.getHealth() + event.getAmount()));
-+                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain(this.getHealth() - f1); // KioCG
++                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain(Math.max(this.getHealth() - f1, 0)); // KioCG
              }
              // CraftBukkit end
          }
@@ -427,6 +427,18 @@ index ccc1caafb0ada52c7b99b7358253826f5390843e..ea18d8cb9f68d5b832d49d00252ac43c
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
+diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
+index c3448707fd8a632b457cc97b35d08a9c6933d5ee..3990fad7ee4d218e182fa322613ec991468de69b 100644
+--- a/src/main/java/net/minecraft/world/food/FoodData.java
++++ b/src/main/java/net/minecraft/world/food/FoodData.java
+@@ -69,6 +69,7 @@ public class FoodData {
+ 
+                 if (!event.isCancelled()) {
+                     this.foodLevel = event.getFoodLevel();
++                    player.thirstData.addThirstRegain(Math.max(this.lastFoodLevel - this.foodLevel, 0)); // KioCG
+                 }
+ 
+                 ((ServerPlayer) player).connection.send(new ClientboundSetHealthPacket(((ServerPlayer) player).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
 diff --git a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 index bc099abfda6555cade0a83eddfe1be9c243fa83b..4dcfbf9b7267017229640d0f7f7370118a942e39 100644
 --- a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
