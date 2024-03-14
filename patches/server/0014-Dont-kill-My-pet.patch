@@ -1,0 +1,123 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Thu, 14 Mar 2024 20:52:54 +0800
+Subject: [PATCH] Dont kill My pet
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 7197ca54ad295d12e44bd6158f8bcdf195a1c3cd..8e2fad99b73d401d843091ec660829642dd069a7 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -583,6 +583,7 @@ public class WorldConfiguration extends ConfigurationPart {
+         }
+ 
+         public boolean betterMobGriefingSetting = true;
++        public boolean dontKillMyPet = true;
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index b7828808d619b36615238e39ed7710333dfd91fa..aaae27aa910347eebc11c6b2bad5be847bf2daad 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -1403,7 +1403,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             return;
+         }
+         // CraftBukkit end
+-        this.entityData.set(LivingEntity.DATA_HEALTH_ID, Mth.clamp(health, 0.0F, this.getMaxHealth()));
++        // KioCG start
++        float minHealth = this.level().paperConfig().kiocgConfig.dontKillMyPet && this instanceof TamableAnimal pet && pet.isTame() ? Float.MIN_VALUE : 0.0F;
++        this.entityData.set(LivingEntity.DATA_HEALTH_ID, Mth.clamp(health, minHealth, this.getMaxHealth()));
++        // KioCG end
+     }
+ 
+     public boolean isDeadOrDying() {
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index a7fbd329ea6d36a46c00b4476c74e426dbbfe238..e06299d9c3da81efa6b1e7d5e8382e976a8a1887 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -288,6 +288,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+     @Nullable
+     @Override
+     public LivingEntity getTarget() {
++        if (this.target instanceof TamableAnimal pet && pet.onTheVergeOfDeath()) this.target = null; // KioCG
+         return this.target;
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
+index 1611a54bb68af34bfcbfd17028f564b7332aa489..0dbc88827356ed8c2c9a9d535824709f29afd212 100644
+--- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
++++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
+@@ -214,11 +214,23 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+         super.die(damageSource);
+     }
+ 
++    // KioCG start
++    public boolean onTheVergeOfDeath() {
++        return this.level().paperConfig().kiocgConfig.dontKillMyPet && this.isTame() && this.getHealth() == Float.MIN_VALUE;
++    }
++
++    @Override
++    public boolean canBeSeenAsEnemy() {
++        return !this.onTheVergeOfDeath() && super.canBeSeenAsEnemy();
++    }
++    // KioCG end
++
+     public boolean isOrderedToSit() {
+         return this.orderedToSit;
+     }
+ 
+     public void setOrderedToSit(boolean sitting) {
++        if (!sitting && onTheVergeOfDeath()) return; // KioCG
+         this.orderedToSit = sitting;
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
+index dc757e9a2cd6aa327d571646f64e715a846d11cd..a1aed20bb3c5bd3ee95e2d9ba01b7eb42a0004d6 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Cat.java
+@@ -270,6 +270,7 @@ public class Cat extends TamableAnimal implements VariantHolder<CatVariant> {
+         }
+ 
+         this.handleLieDown();
++        if (!this.isOrderedToSit() && this.onTheVergeOfDeath()) this.setOrderedToSit(true); // KioCG
+     }
+ 
+     private void handleLieDown() {
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
+index bd2401e1feb655076eab50c4c7041bed55d57bbc..3a5f1944bf58ce8344c87992885b461a0e0ddb27 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
+@@ -213,6 +213,14 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+         this.calculateFlapping();
+     }
+ 
++    // KioCG start
++    @Override
++    public void tick() {
++        super.tick();
++        if (!this.isOrderedToSit() && this.onTheVergeOfDeath()) this.setOrderedToSit(true);
++    }
++    // KioCG end
++
+     @Override
+     public void setRecordPlayingNearby(BlockPos songPosition, boolean playing) {
+         this.jukebox = songPosition;
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
+index c8dc07dc89658a6ce849a2703a1a65181944af8f..a6c21c1fa5299d7d19d35ee7429075e87df1c2fd 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
+@@ -266,6 +266,13 @@ public class Wolf extends TamableAnimal implements NeutralMob {
+                 }
+             }
+ 
++            // KioCG start
++            if (!this.isOrderedToSit() && this.onTheVergeOfDeath()) {
++                this.navigation.stop();
++                this.setTarget((LivingEntity) null);
++                this.setOrderedToSit(true);
++            }
++            // KioCG end
+         }
+     }
+ 
