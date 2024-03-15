@@ -5,12 +5,12 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 5864532b75b433488136ac6c46ca4c1bed477bba..39b062a27a822a54493a74dc0e9f9b5e6da9c216 100644
+index e555c50dd07c722e45dc08a634994807db897a03..2d682052b23b335f0ac4a92eee7e0a3feef10fa2 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -408,6 +408,9 @@ public class GlobalConfiguration extends ConfigurationPart {
-         public class Enchant extends ConfigurationPart {
+@@ -409,6 +409,9 @@ public class GlobalConfiguration extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
+             public int fixedCumulativeCost = 4;
          }
 +
 +        public boolean dontKillMyPet = true;

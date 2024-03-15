@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 5fc4335649f50d4225916e1e715fa19faae29c3d..5864532b75b433488136ac6c46ca4c1bed477bba 100644
+index 5fc4335649f50d4225916e1e715fa19faae29c3d..e555c50dd07c722e45dc08a634994807db897a03 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -403,6 +403,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -403,6 +403,12 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }
@@ -16,12 +16,13 @@ index 5fc4335649f50d4225916e1e715fa19faae29c3d..5864532b75b433488136ac6c46ca4c1b
 +        public Enchant enchant;
 +        public class Enchant extends ConfigurationPart {
 +            public boolean allowUnsafeCommand = true;
++            public int fixedCumulativeCost = 4;
 +        }
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/commands/EnchantCommand.java b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
-index 37d9c354af887c474094b1a364782007a5f2035d..69677fa866b18490c8ebf2b7befb2267f68d30fa 100644
+index 37d9c354af887c474094b1a364782007a5f2035d..f5922dd507aae9158c3c9ce3481834519fd98f52 100644
 --- a/src/main/java/net/minecraft/server/commands/EnchantCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
 @@ -48,7 +48,7 @@ public class EnchantCommand {
@@ -33,15 +34,39 @@ index 37d9c354af887c474094b1a364782007a5f2035d..69677fa866b18490c8ebf2b7befb2267
              throw ERROR_LEVEL_TOO_HIGH.create(level, enchantment2.getMaxLevel());
          } else {
              int i = 0;
-@@ -58,7 +58,7 @@ public class EnchantCommand {
+@@ -58,7 +58,13 @@ public class EnchantCommand {
                      LivingEntity livingEntity = (LivingEntity)entity;
                      ItemStack itemStack = livingEntity.getMainHandItem();
                      if (!itemStack.isEmpty()) {
 -                        if (enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment2)) {
-+                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand || enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment2)) { // KioCG
++                        // KioCG start
++                        final java.util.Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
++                        if (enchantments.remove(enchantment2) != null) {
++                            EnchantmentHelper.setEnchantments(enchantments, itemStack);
++                        }
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand || enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(enchantments.keySet(), enchantment2)) {
++                        // KioCG end
                              itemStack.enchant(enchantment2, level);
                              ++i;
                          } else if (targets.size() == 1) {
+diff --git a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
+index 2a689581565bebc01ba354a3564d30327486953d..9cbec0684395ad430fdc0a55cf993cf0eeedda9f 100644
+--- a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
++++ b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
+@@ -360,11 +360,11 @@ public class ExperienceOrb extends Entity {
+     }
+ 
+     public int durabilityToXp(int repairAmount) {
+-        return repairAmount / 2;
++        return repairAmount; // KioCG
+     }
+ 
+     public int xpToDurability(int experienceAmount) {
+-        return experienceAmount * 2;
++        return experienceAmount; // KioCG
+     }
+ 
+     public int getValue() {
 diff --git a/src/main/java/net/minecraft/world/entity/LightningBolt.java b/src/main/java/net/minecraft/world/entity/LightningBolt.java
 index 1e76230c078ef07418345b0bc50c574cf63c9094..ad255e51a8da2fba6e3b398a99bb573e66dce557 100644
 --- a/src/main/java/net/minecraft/world/entity/LightningBolt.java
@@ -108,6 +133,60 @@ index 1e76230c078ef07418345b0bc50c574cf63c9094..ad255e51a8da2fba6e3b398a99bb573e
  
      public int getBlocksSetOnFire() {
          return this.blocksSetOnFire;
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
+index b61a367048c3d6dfef187fef35a5dc7471f891d0..f28cd061e5fb9303e020445f7fde7c443e127e8e 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -74,6 +74,7 @@ public abstract class AbstractArrow extends Projectile {
+     @Nullable
+     private List<Entity> piercedAndKilledEntities;
+     public ItemStack pickupItemStack;
++    public int flamingArrowLevel; // KioCG
+ 
+     // Spigot Start
+     @Override
+@@ -96,7 +97,7 @@ public abstract class AbstractArrow extends Projectile {
+         if (stack.hasCustomHoverName()) {
+             this.setCustomName(stack.getHoverName());
+         }
+-
++        this.flamingArrowLevel = 0; // KioCG
+     }
+ 
+     protected AbstractArrow(EntityType<? extends AbstractArrow> type, double x, double y, double z, Level world, ItemStack stack) {
+@@ -399,7 +400,7 @@ public abstract class AbstractArrow extends Projectile {
+ 
+         if (this.isOnFire() && !flag && !flag1) {
+             // CraftBukkit start
+-            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), this.flamingArrowLevel <= 1 ? 5 : 1 + this.flamingArrowLevel * 4); // KioCG
+             org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
+             if (!combustEvent.isCancelled()) {
+                 entity.setSecondsOnFire(combustEvent.getDuration(), false);
+@@ -540,6 +541,7 @@ public abstract class AbstractArrow extends Projectile {
+         nbt.putString("SoundEvent", BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent).toString());
+         nbt.putBoolean("ShotFromCrossbow", this.shotFromCrossbow());
+         nbt.put("item", this.pickupItemStack.save(new CompoundTag()));
++        if (this.flamingArrowLevel > 0) nbt.putInt("KioCG.FlamingArrowLevel", this.flamingArrowLevel); // KioCG
+     }
+ 
+     @Override
+@@ -568,6 +570,7 @@ public abstract class AbstractArrow extends Projectile {
+             this.pickupItemStack = ItemStack.of(nbt.getCompound("item"));
+         }
+ 
++        if (nbt.contains("KioCG.FlamingArrowLevel", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) this.flamingArrowLevel = nbt.getInt("KioCG.FlamingArrowLevel"); // KioCG
+     }
+ 
+     @Override
+@@ -705,6 +708,7 @@ public abstract class AbstractArrow extends Projectile {
+ 
+         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAMING_ARROWS, entity) > 0) {
+             this.setSecondsOnFire(100);
++            this.flamingArrowLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAMING_ARROWS, entity); // KioCG
+         }
+ 
+     }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
 index 01e8f6f36a17c484b825879c377f7d6cc08e1fda..a8852a13e2c901a4bff92726f7d15c4687c6b472 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
@@ -133,6 +212,18 @@ index 01e8f6f36a17c484b825879c377f7d6cc08e1fda..a8852a13e2c901a4bff92726f7d15c46
      @Override
      protected boolean tryPickup(Player player) {
          return super.tryPickup(player) || this.isNoPhysics() && this.ownedBy(player) && player.getInventory().add(this.getPickupItem());
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index daa0701dc538b0c97332217bccafc40b0c8824cb..9b5791a1692519e6148e852461a7b6d9a0164b14 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -321,6 +321,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+     }
+ 
+     public static int calculateIncreasedRepairCost(int cost) {
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost; // KioCG
+         return cost * 2 + 1;
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 index 09bd878824390ebb8bc86325a52bb8234305978e..6a17f21182e3d91da8318771902a834a850b47b8 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
@@ -145,11 +236,31 @@ index 09bd878824390ebb8bc86325a52bb8234305978e..6a17f21182e3d91da8318771902a834a
                      while (iterator.hasNext()) {
                          BlockPos blockposition1 = (BlockPos) iterator.next();
  
+diff --git a/src/main/java/net/minecraft/world/item/BowItem.java b/src/main/java/net/minecraft/world/item/BowItem.java
+index 08d597db1a5345a343777a01427655e6bf2c926b..8b6bf17d3019895f1806b419882f1376616ed457 100644
+--- a/src/main/java/net/minecraft/world/item/BowItem.java
++++ b/src/main/java/net/minecraft/world/item/BowItem.java
+@@ -63,6 +63,7 @@ public class BowItem extends ProjectileWeaponItem implements Vanishable {
+ 
+                         if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0) {
+                             entityarrow.setSecondsOnFire(100);
++                            entityarrow.flamingArrowLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack); // KioCG
+                         }
+                         // CraftBukkit start
+                         org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(entityhuman, stack, itemstack1, entityarrow, entityhuman.getUsedItemHand(), f, !flag1);
 diff --git a/src/main/java/net/minecraft/world/item/CrossbowItem.java b/src/main/java/net/minecraft/world/item/CrossbowItem.java
-index eede02c3f125d230af537bb67bebed9b88f7d1b4..95b623cbc8150f759a2f19cc0b8614b5b5f33be7 100644
+index eede02c3f125d230af537bb67bebed9b88f7d1b4..ed67909fcca7e29a11d14732c29dd2d47aa5f49f 100644
 --- a/src/main/java/net/minecraft/world/item/CrossbowItem.java
 +++ b/src/main/java/net/minecraft/world/item/CrossbowItem.java
-@@ -309,6 +309,13 @@ public class CrossbowItem extends ProjectileWeaponItem implements Vanishable {
+@@ -114,6 +114,7 @@ public class CrossbowItem extends ProjectileWeaponItem implements Vanishable {
+         // Paper end
+         int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, crossbow);
+         int j = i == 0 ? 1 : 3;
++        if (i > 1) j += i - 1; // KioCG
+         boolean flag = !consume || shooter instanceof Player && ((Player) shooter).getAbilities().instabuild; // Paper - add consume
+         ItemStack itemstack1 = shooter.getProjectile(crossbow);
+         ItemStack itemstack2 = itemstack1.copy();
+@@ -309,6 +310,13 @@ public class CrossbowItem extends ProjectileWeaponItem implements Vanishable {
                      CrossbowItem.shootProjectile(world, entity, hand, stack, itemstack1, afloat[i], flag, speed, divergence, -10.0F);
                  } else if (i == 2) {
                      CrossbowItem.shootProjectile(world, entity, hand, stack, itemstack1, afloat[i], flag, speed, divergence, 10.0F);
@@ -163,7 +274,7 @@ index eede02c3f125d230af537bb67bebed9b88f7d1b4..95b623cbc8150f759a2f19cc0b8614b5
                  }
              }
          }
-@@ -376,6 +383,7 @@ public class CrossbowItem extends ProjectileWeaponItem implements Vanishable {
+@@ -376,6 +384,7 @@ public class CrossbowItem extends ProjectileWeaponItem implements Vanishable {
      public static int getChargeDuration(ItemStack stack) {
          int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
  
@@ -171,6 +282,23 @@ index eede02c3f125d230af537bb67bebed9b88f7d1b4..95b623cbc8150f759a2f19cc0b8614b5
          return i == 0 ? 25 : 25 - 5 * i;
      }
  
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index 9ea50a580d6d2162141c37a4416af9b6dc0a93a1..1d50dd46ca8e538c8f4f2ecb3631524f78f04f3a 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -1257,10 +1257,12 @@ public final class ItemStack {
+     }
+ 
+     public int getBaseRepairCost() {
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost; // KioCG
+         return this.hasTag() && this.tag.contains("RepairCost", 3) ? this.tag.getInt("RepairCost") : 0;
+     }
+ 
+     public void setRepairCost(int repairCost) {
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) repairCost = 0; // KioCG
+         if (repairCost > 0) {
+             this.getOrCreateTag().putInt("RepairCost", repairCost);
+         } else {
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 index ecf640b00007a386290f8dfe9935a8aa610079fd..29c3349bb6daf236ee570b01450097787edc8c56 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
