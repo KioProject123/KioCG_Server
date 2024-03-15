@@ -4,6 +4,135 @@ Date: Sun, 3 Mar 2024 05:21:14 +0800
 Subject: [PATCH] Adjust enchantment
 
 
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index 5fc4335649f50d4225916e1e715fa19faae29c3d..5864532b75b433488136ac6c46ca4c1bed477bba 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -403,6 +403,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+                 }
+             }
+         }
++
++        public Enchant enchant;
++        public class Enchant extends ConfigurationPart {
++            public boolean allowUnsafeCommand = true;
++        }
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/server/commands/EnchantCommand.java b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
+index 37d9c354af887c474094b1a364782007a5f2035d..69677fa866b18490c8ebf2b7befb2267f68d30fa 100644
+--- a/src/main/java/net/minecraft/server/commands/EnchantCommand.java
++++ b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
+@@ -48,7 +48,7 @@ public class EnchantCommand {
+ 
+     private static int enchant(CommandSourceStack source, Collection<? extends Entity> targets, Holder<Enchantment> enchantment, int level) throws CommandSyntaxException {
+         Enchantment enchantment2 = enchantment.value();
+-        if (level > enchantment2.getMaxLevel()) {
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand && level > enchantment2.getMaxLevel()) { // KioCG
+             throw ERROR_LEVEL_TOO_HIGH.create(level, enchantment2.getMaxLevel());
+         } else {
+             int i = 0;
+@@ -58,7 +58,7 @@ public class EnchantCommand {
+                     LivingEntity livingEntity = (LivingEntity)entity;
+                     ItemStack itemStack = livingEntity.getMainHandItem();
+                     if (!itemStack.isEmpty()) {
+-                        if (enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment2)) {
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand || enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment2)) { // KioCG
+                             itemStack.enchant(enchantment2, level);
+                             ++i;
+                         } else if (targets.size() == 1) {
+diff --git a/src/main/java/net/minecraft/world/entity/LightningBolt.java b/src/main/java/net/minecraft/world/entity/LightningBolt.java
+index 1e76230c078ef07418345b0bc50c574cf63c9094..ad255e51a8da2fba6e3b398a99bb573e66dce557 100644
+--- a/src/main/java/net/minecraft/world/entity/LightningBolt.java
++++ b/src/main/java/net/minecraft/world/entity/LightningBolt.java
+@@ -46,6 +46,7 @@ public class LightningBolt extends Entity {
+     private final Set<Entity> hitEntities = Sets.newHashSet();
+     private int blocksSetOnFire;
+     public boolean isEffect; // Paper
++    public int times; public void setTimes(int times) { this.times = times; } public int getTimes() { return this.times; } // KioCG
+ 
+     public LightningBolt(EntityType<? extends LightningBolt> type, Level world) {
+         super(type, world);
+@@ -53,6 +54,7 @@ public class LightningBolt extends Entity {
+         this.life = 2;
+         this.seed = this.random.nextLong();
+         this.flashes = this.random.nextInt(3) + 1;
++        this.times = 1; // KioCG
+     }
+ 
+     public void setVisualOnly(boolean cosmetic) {
+@@ -125,6 +127,21 @@ public class LightningBolt extends Entity {
+                 }
+ 
+                 this.discard();
++
++                // KioCG start
++                if (times > 1) {
++                    LightningBolt entitylightning = (LightningBolt) EntityType.LIGHTNING_BOLT.create(this.level());
++
++                    if (entitylightning != null) {
++                        entitylightning.moveTo(this.position());
++                        entitylightning.cause = this.cause;
++                        entitylightning.visualOnly = this.visualOnly;
++                        entitylightning.isEffect = this.isEffect;
++                        entitylightning.times = --this.times;
++                        ((ServerLevel) this.level()).strikeLightning(entitylightning);
++                    }
++                }
++                // KioCG end
+             } else if (this.life < -this.random.nextInt(10)) {
+                 --this.flashes;
+                 this.life = 1;
+@@ -273,11 +290,21 @@ public class LightningBolt extends Entity {
+     @Override
+     protected void defineSynchedData() {}
+ 
++    // KioCG start
+     @Override
+-    protected void readAdditionalSaveData(CompoundTag nbt) {}
++    protected void readAdditionalSaveData(CompoundTag nbt) {
++        if (nbt.contains("KioCG.Times", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) {
++            this.times = nbt.getInt("KioCG.Times");
++        }
++    }
+ 
+     @Override
+-    protected void addAdditionalSaveData(CompoundTag nbt) {}
++    protected void addAdditionalSaveData(CompoundTag nbt) {
++        if (this.times > 1) {
++            nbt.putInt("KioCG.Times", this.times);
++        }
++    }
++    // KioCG end
+ 
+     public int getBlocksSetOnFire() {
+         return this.blocksSetOnFire;
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
+index 01e8f6f36a17c484b825879c377f7d6cc08e1fda..a8852a13e2c901a4bff92726f7d15c4687c6b472 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
+@@ -169,6 +169,7 @@ public class ThrownTrident extends AbstractArrow {
+                 if (entitylightning != null) {
+                     entitylightning.moveTo(Vec3.atBottomCenterOf(blockposition));
+                     entitylightning.setCause(entity1 instanceof ServerPlayer ? (ServerPlayer) entity1 : null);
++                    entitylightning.setTimes(this.getChanneling()); // KioCG
+                     ((ServerLevel) this.level()).strikeLightning(entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRIDENT); // CraftBukkit
+                     soundeffect = SoundEvents.TRIDENT_THUNDER;
+                     f1 = 5.0F;
+@@ -183,6 +184,12 @@ public class ThrownTrident extends AbstractArrow {
+         return EnchantmentHelper.hasChanneling(this.getPickupItemStackOrigin());
+     }
+ 
++    // KioCG start
++    public int getChanneling() {
++        return EnchantmentHelper.getChanneling(this.getPickupItemStackOrigin());
++    }
++    // KioCG end
++
+     @Override
+     protected boolean tryPickup(Player player) {
+         return super.tryPickup(player) || this.isNoPhysics() && this.ownedBy(player) && player.getInventory().add(this.getPickupItem());
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 index 09bd878824390ebb8bc86325a52bb8234305978e..6a17f21182e3d91da8318771902a834a850b47b8 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
@@ -41,4 +170,57 @@ index eede02c3f125d230af537bb67bebed9b88f7d1b4..95b623cbc8150f759a2f19cc0b8614b5
 +        if (i > 5) i = 5; // KioCG
          return i == 0 ? 25 : 25 - 5 * i;
      }
+ 
+diff --git a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+index ecf640b00007a386290f8dfe9935a8aa610079fd..29c3349bb6daf236ee570b01450097787edc8c56 100644
+--- a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
++++ b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -278,6 +278,36 @@ public class EnchantmentHelper {
+         return getItemEnchantmentLevel(Enchantments.CHANNELING, stack) > 0;
+     }
+ 
++    // KioCG start
++    public static int getAquaAffinity(LivingEntity entity) {
++        return getEnchantmentLevel(Enchantments.AQUA_AFFINITY, entity);
++    }
++
++    public static int getFrostWalker(LivingEntity entity) {
++        return getEnchantmentLevel(Enchantments.FROST_WALKER, entity);
++    }
++
++    public static int getSoulSpeed(LivingEntity entity) {
++        return getEnchantmentLevel(Enchantments.SOUL_SPEED, entity);
++    }
++
++    public static int getBindingCurse(ItemStack stack) {
++        return getItemEnchantmentLevel(Enchantments.BINDING_CURSE, stack);
++    }
++
++    public static int getVanishingCurse(ItemStack stack) {
++        return getItemEnchantmentLevel(Enchantments.VANISHING_CURSE, stack);
++    }
++
++    public static int getSilkTouch(ItemStack stack) {
++        return getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack);
++    }
++
++    public static int getChanneling(ItemStack stack) {
++        return getItemEnchantmentLevel(Enchantments.CHANNELING, stack);
++    }
++    // KioCG end
++
+     @Nullable
+     public static Map.Entry<EquipmentSlot, ItemStack> getRandomItemWith(Enchantment enchantment, LivingEntity entity) {
+         return getRandomItemWith(enchantment, entity, (stack) -> {
+diff --git a/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java b/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
+index ec4aaaca2160312452d724dc6639ac8c4fa42ae4..596455ad2680911adcaf0d6ef76f5f47ac013e9c 100644
+--- a/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
+@@ -158,6 +158,7 @@ public class LightningRodBlock extends RodBlock implements SimpleWaterloggedBloc
+                     Entity entity = projectile.getOwner();
+ 
+                     entitylightning.setCause(entity instanceof ServerPlayer ? (ServerPlayer) entity : null);
++                    entitylightning.setTimes(((ThrownTrident) projectile).getChanneling()); // KioCG
+                     ((ServerLevel) world).strikeLightning(entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRIDENT); // CraftBukkit
+                 }
  
