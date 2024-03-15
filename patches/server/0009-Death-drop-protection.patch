@@ -18,7 +18,7 @@ index cf2fec7817c4077e56b4db7932e9df3404b72bd1..63992c84ec75bd77499cfc921ddc7c44
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index e44afbe2fced840c5dfaaba7839ba80aa82de9af..e187d1c65446eb53869921110740c8e559308d5e 100644
+index d3c2b6fde32708bb876b869adf3c7fcf6c1a32f2..be0f943f4d880e2f43b9c82de011b5a4c4193fb7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -959,7 +959,15 @@ public class ServerPlayer extends Player {

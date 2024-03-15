@@ -5,16 +5,16 @@ Subject: [PATCH] The Long Dark
 
 
 diff --git a/src/main/java/com/kiocg/java/NamespacedKeys.java b/src/main/java/com/kiocg/java/NamespacedKeys.java
-index e3a9806f9972007b732032fd137741a5d14a7e63..c09d96b28876b6c684813f699908b9be1c5d2fc4 100644
+index e3a9806f9972007b732032fd137741a5d14a7e63..f2044f27ec933da4620f0623421659bca2daef16 100644
 --- a/src/main/java/com/kiocg/java/NamespacedKeys.java
 +++ b/src/main/java/com/kiocg/java/NamespacedKeys.java
 @@ -5,4 +5,7 @@ import org.bukkit.NamespacedKey;
  public class NamespacedKeys {
      public static final String KIOCG = "kiocg";
  
-+    public static NamespacedKey kiocgColdValue = new NamespacedKey(KIOCG, "cold_value");
-+    public static NamespacedKey kiocgThirstValue = new NamespacedKey(KIOCG, "thirst_value");
-+    public static NamespacedKey kiocgThirstRegain = new NamespacedKey(KIOCG, "thirst_regain");
++    public static final NamespacedKey kiocgColdValue = new NamespacedKey(KIOCG, "cold_value");
++    public static final NamespacedKey kiocgThirstValue = new NamespacedKey(KIOCG, "thirst_value");
++    public static final NamespacedKey kiocgThirstRegain = new NamespacedKey(KIOCG, "thirst_regain");
  }
 diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
 new file mode 100644
@@ -267,7 +267,7 @@ index 63992c84ec75bd77499cfc921ddc7c4491c7447e..0c4ce9a7a53b353e9415403dd06cd8cb
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index e187d1c65446eb53869921110740c8e559308d5e..882feeb2e39882f269473be2d659f3fbbd3f28bd 100644
+index be0f943f4d880e2f43b9c82de011b5a4c4193fb7..bc7908fae81ef997b10e60037e734406dc4cf75f 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -825,7 +825,7 @@ public class ServerPlayer extends Player {

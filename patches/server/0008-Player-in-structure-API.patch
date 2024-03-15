@@ -4,8 +4,19 @@ Date: Sun, 3 Mar 2024 05:37:52 +0800
 Subject: [PATCH] Player in structure API
 
 
+diff --git a/src/main/java/com/kiocg/java/Tags.java b/src/main/java/com/kiocg/java/Tags.java
+index baa74b8f73ef3412a902c0f92985557404278026..1f393a3e0301d46ea0bfaba375a8e6eea7ba3d3b 100644
+--- a/src/main/java/com/kiocg/java/Tags.java
++++ b/src/main/java/com/kiocg/java/Tags.java
+@@ -1,5 +1,5 @@
+ package com.kiocg.java;
+ 
+ public class Tags {
+-
++    public static final String kiocgInStructure = "KioCG_inStructure";
+ }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index be05a52be037042c6158100e2ce880b8ed415d53..e44afbe2fced840c5dfaaba7839ba80aa82de9af 100644
+index be05a52be037042c6158100e2ce880b8ed415d53..d3c2b6fde32708bb876b869adf3c7fcf6c1a32f2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -832,6 +832,15 @@ public class ServerPlayer extends Player {
@@ -15,9 +26,9 @@ index be05a52be037042c6158100e2ce880b8ed415d53..e44afbe2fced840c5dfaaba7839ba80a
 +                // KioCG start
 +                if (this.tickCount % 20 == 0 && this.serverLevel().isLoaded(this.blockPosition())) {
 +                    if (this.serverLevel().structureManager().hasAnyStructureAtExact(this.blockPosition())) {
-+                        this.addTag("KioCG_inStructure");
++                        this.addTag(com.kiocg.java.Tags.kiocgInStructure);
 +                    } else {
-+                        this.removeTag("KioCG_inStructure");
++                        this.removeTag(com.kiocg.java.Tags.kiocgInStructure);
 +                    }
 +                }
 +                // KioCG end

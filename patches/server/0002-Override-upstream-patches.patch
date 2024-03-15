@@ -18,6 +18,17 @@ index 0000000000000000000000000000000000000000..e3a9806f9972007b732032fd137741a5
 +    public static final String KIOCG = "kiocg";
 +
 +}
+diff --git a/src/main/java/com/kiocg/java/Tags.java b/src/main/java/com/kiocg/java/Tags.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..baa74b8f73ef3412a902c0f92985557404278026
+--- /dev/null
++++ b/src/main/java/com/kiocg/java/Tags.java
+@@ -0,0 +1,5 @@
++package com.kiocg.java;
++
++public class Tags {
++
++}
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 index e4fd372a1d585887287253a02531cd192929377b..f839aee9a42cbbe280daf54def7827876eeb3009 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
