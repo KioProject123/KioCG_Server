@@ -53,3 +53,16 @@ index 127a344f35e194fc7b1a0783c75291fab929fe19..3d67814d58aa137f5910ef592ec3484f
          if (world.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
              return false;
          } else {
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Spider.java b/src/main/java/net/minecraft/world/entity/monster/Spider.java
+index 9063f66b0497a3eb3893e307e685be692cc5c128..b536ca659b9ef8e11adc946166f48896efe69a4f 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Spider.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Spider.java
+@@ -207,7 +207,7 @@ public class Spider extends Monster {
+ 
+         @Override
+         public boolean canUse() {
+-            return super.canUse() && !this.mob.isVehicle();
++            return super.canUse() && !(this.mob.getControllingPassenger() instanceof Monster); // KioCG
+         }
+ 
+         @Override

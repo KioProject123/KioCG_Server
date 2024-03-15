@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Fri, 15 Mar 2024 10:48:31 +0800
+Subject: [PATCH] Discard display entity if not persist
+
+
+diff --git a/src/main/java/com/kiocg/java/Tags.java b/src/main/java/com/kiocg/java/Tags.java
+index 1f393a3e0301d46ea0bfaba375a8e6eea7ba3d3b..8fa50eec987aededf89f454546eb23eff916e1c0 100644
+--- a/src/main/java/com/kiocg/java/Tags.java
++++ b/src/main/java/com/kiocg/java/Tags.java
+@@ -2,4 +2,5 @@ package com.kiocg.java;
+ 
+ public class Tags {
+     public static final String kiocgInStructure = "KioCG_inStructure";
++    public static final String kiocgRiderDisplay = "KioCG_riderDisplay";
+ }
+diff --git a/src/main/java/net/minecraft/world/entity/Display.java b/src/main/java/net/minecraft/world/entity/Display.java
+index 58de4a3ff0b5494fa576a902f33de4cd38b9c7be..a61f5956c1a051ad089276cc1b9816fe99226c22 100644
+--- a/src/main/java/net/minecraft/world/entity/Display.java
++++ b/src/main/java/net/minecraft/world/entity/Display.java
+@@ -126,6 +126,14 @@ public abstract class Display extends Entity {
+             this.stopRiding();
+         }
+ 
++        // KioCG start
++        if (this.getTags().contains(com.kiocg.java.Tags.kiocgRiderDisplay)) {
++            if (!this.isPassenger() && !this.isVehicle()) {
++                this.discard();
++            }
++        }
++        // KioCG end
++
+         if (this.level().isClientSide) {
+             if (this.updateStartTick) {
+                 this.updateStartTick = false;
