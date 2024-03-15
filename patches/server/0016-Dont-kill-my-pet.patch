@@ -4,20 +4,22 @@ Date: Thu, 14 Mar 2024 20:52:54 +0800
 Subject: [PATCH] Dont kill my pet
 
 
-diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 7197ca54ad295d12e44bd6158f8bcdf195a1c3cd..8e2fad99b73d401d843091ec660829642dd069a7 100644
---- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-+++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -583,6 +583,7 @@ public class WorldConfiguration extends ConfigurationPart {
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index 5fc4335649f50d4225916e1e715fa19faae29c3d..f5f2ee44a6c95034af41076ba495d4bbd5b80ce7 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -403,6 +403,9 @@ public class GlobalConfiguration extends ConfigurationPart {
+                 }
+             }
          }
- 
-         public boolean betterMobGriefingSetting = true;
++
 +        public boolean dontKillMyPet = true;
++        public double petTeleportDistanceSqr = 256.0;
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index b7828808d619b36615238e39ed7710333dfd91fa..293dde897cfb73e2151e25f6ee55ecaa9a5f1512 100644
+index b7828808d619b36615238e39ed7710333dfd91fa..c30177f44d4097005cfbb7200bf670e207c7ed3c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2299,7 +2299,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -28,7 +30,7 @@ index b7828808d619b36615238e39ed7710333dfd91fa..293dde897cfb73e2151e25f6ee55ecaa
 +                // KioCG start
 +                float health = this.getHealth() - f;
 +                if (health <= 0.0F && originalDamage != Float.MAX_VALUE && !damagesource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-+                    if (this.level().paperConfig().kiocgConfig.dontKillMyPet && this instanceof TamableAnimal pet && pet.isTame()) {
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dontKillMyPet && this instanceof TamableAnimal pet && pet.isTame()) {
 +                        health = Float.MIN_VALUE;
 +                    }
 +                }
@@ -50,7 +52,7 @@ index a7fbd329ea6d36a46c00b4476c74e426dbbfe238..e06299d9c3da81efa6b1e7d5e8382e97
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 1611a54bb68af34bfcbfd17028f564b7332aa489..b656ead146c08a5122fba6ab0a7d9da4586bba9f 100644
+index 1611a54bb68af34bfcbfd17028f564b7332aa489..3e65145c3f810dbce1d687ed44cd81f8bf6f879f 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 @@ -214,11 +214,57 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
@@ -59,7 +61,7 @@ index 1611a54bb68af34bfcbfd17028f564b7332aa489..b656ead146c08a5122fba6ab0a7d9da4
  
 +    // KioCG start
 +    public boolean onTheVergeOfDeath() {
-+        return this.level().paperConfig().kiocgConfig.dontKillMyPet && this.isTame() && this.getHealth() == Float.MIN_VALUE;
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dontKillMyPet && this.isTame() && this.getHealth() == Float.MIN_VALUE;
 +    }
 +
 +    @Override
@@ -111,6 +113,19 @@ index 1611a54bb68af34bfcbfd17028f564b7332aa489..b656ead146c08a5122fba6ab0a7d9da4
          this.orderedToSit = sitting;
      }
  }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
+index ca0a2191f5bfb3c44c1ddacab8b7a874c2f44cc1..4e1a657eca770842109dd01cd71f579c0cc8ad10 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
+@@ -96,7 +96,7 @@ public class FollowOwnerGoal extends Goal {
+         if (this.tamable.distanceToSqr(this.owner) <= 16 * 16) this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float) this.tamable.getMaxHeadXRot()); // Paper
+         if (--this.timeToRecalcPath <= 0) {
+             this.timeToRecalcPath = this.adjustedTickDelay(10);
+-            if (this.tamable.distanceToSqr((Entity) this.owner) >= 144.0D) {
++            if (this.tamable.distanceToSqr((Entity) this.owner) >= io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petTeleportDistanceSqr) { // KioCG
+                 this.teleportToOwner();
+             } else {
+                 this.navigation.moveTo((Entity) this.owner, this.speedModifier);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
 index dc757e9a2cd6aa327d571646f64e715a846d11cd..82c8fc38f8e10840d85c16cae112bd190b43ac68 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
