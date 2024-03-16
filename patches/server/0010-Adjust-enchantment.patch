@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
-Date: Sun, 3 Mar 2024 05:21:14 +0800
+Date: Sun, 17 Mar 2024 01:21:46 +0800
 Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 5fc4335649f50d4225916e1e715fa19faae29c3d..e555c50dd07c722e45dc08a634994807db897a03 100644
+index 5fc4335649f50d4225916e1e715fa19faae29c3d..5864532b75b433488136ac6c46ca4c1bed477bba 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -403,6 +403,12 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -403,6 +403,11 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }
@@ -16,7 +16,6 @@ index 5fc4335649f50d4225916e1e715fa19faae29c3d..e555c50dd07c722e45dc08a634994807
 +        public Enchant enchant;
 +        public class Enchant extends ConfigurationPart {
 +            public boolean allowUnsafeCommand = true;
-+            public int fixedCumulativeCost = 4;
 +        }
      }
      // KioCG end
@@ -286,18 +285,6 @@ index 01e8f6f36a17c484b825879c377f7d6cc08e1fda..7de39f207c242bdf966f46af58322d87
      @Override
      protected boolean tryPickup(Player player) {
          return super.tryPickup(player) || this.isNoPhysics() && this.ownedBy(player) && player.getInventory().add(this.getPickupItem());
-diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index daa0701dc538b0c97332217bccafc40b0c8824cb..9b5791a1692519e6148e852461a7b6d9a0164b14 100644
---- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-+++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-@@ -321,6 +321,7 @@ public class AnvilMenu extends ItemCombinerMenu {
-     }
- 
-     public static int calculateIncreasedRepairCost(int cost) {
-+        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost; // KioCG
-         return cost * 2 + 1;
-     }
- 
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 index 09bd878824390ebb8bc86325a52bb8234305978e..6a17f21182e3d91da8318771902a834a850b47b8 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
@@ -374,23 +361,6 @@ index eede02c3f125d230af537bb67bebed9b88f7d1b4..ed67909fcca7e29a11d14732c29dd2d4
          return i == 0 ? 25 : 25 - 5 * i;
      }
  
-diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 9ea50a580d6d2162141c37a4416af9b6dc0a93a1..1d50dd46ca8e538c8f4f2ecb3631524f78f04f3a 100644
---- a/src/main/java/net/minecraft/world/item/ItemStack.java
-+++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -1257,10 +1257,12 @@ public final class ItemStack {
-     }
- 
-     public int getBaseRepairCost() {
-+        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost; // KioCG
-         return this.hasTag() && this.tag.contains("RepairCost", 3) ? this.tag.getInt("RepairCost") : 0;
-     }
- 
-     public void setRepairCost(int repairCost) {
-+        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) repairCost = 0; // KioCG
-         if (repairCost > 0) {
-             this.getOrCreateTag().putInt("RepairCost", repairCost);
-         } else {
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 index ecf640b00007a386290f8dfe9935a8aa610079fd..29c3349bb6daf236ee570b01450097787edc8c56 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
