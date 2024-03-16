@@ -311,9 +311,27 @@ index 09bd878824390ebb8bc86325a52bb8234305978e..6a17f21182e3d91da8318771902a834a
                          BlockPos blockposition1 = (BlockPos) iterator.next();
  
 diff --git a/src/main/java/net/minecraft/world/item/BowItem.java b/src/main/java/net/minecraft/world/item/BowItem.java
-index 08d597db1a5345a343777a01427655e6bf2c926b..62f07de6d02bab89dc63ca127cfac2b8cb8acde4 100644
+index 08d597db1a5345a343777a01427655e6bf2c926b..f35092ebebac5389bdc3ae45f73c7b20da32cf8f 100644
 --- a/src/main/java/net/minecraft/world/item/BowItem.java
 +++ b/src/main/java/net/minecraft/world/item/BowItem.java
+@@ -26,7 +26,7 @@ public class BowItem extends ProjectileWeaponItem implements Vanishable {
+     public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
+         if (user instanceof Player) {
+             Player entityhuman = (Player) user;
+-            boolean flag = entityhuman.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
++            boolean flag = entityhuman.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > entityhuman.random.nextInt(10); // KioCG
+             ItemStack itemstack1 = entityhuman.getProjectile(stack);
+ 
+             if (!itemstack1.isEmpty() || flag) {
+@@ -38,7 +38,7 @@ public class BowItem extends ProjectileWeaponItem implements Vanishable {
+                 float f = BowItem.getPowerForTime(j);
+ 
+                 if ((double) f >= 0.1D) {
+-                    boolean flag1 = flag && itemstack1.is(Items.ARROW);
++                    boolean flag1 = flag; // KioCG
+ 
+                     if (!world.isClientSide) {
+                         ArrowItem itemarrow = (ArrowItem) (itemstack1.getItem() instanceof ArrowItem ? itemstack1.getItem() : Items.ARROW);
 @@ -63,6 +63,7 @@ public class BowItem extends ProjectileWeaponItem implements Vanishable {
  
                          if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0) {
