@@ -145,16 +145,3 @@ index d4dcf7fe26474ae07374e7761d823bc5c8b54f97..6c5ebfe9643e247d4b4dc4d24b7cef55
          // Paper start - optimize hoppers
          if (inventory instanceof WorldlyContainer worldlyContainer) {
              for (final int slot : worldlyContainer.getSlotsForFace(direction)) {
-diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index fa170cc1ce7011d201295b89718292d696c7fc24..0e89a6a8a5fb14adbc160c97f08016337edca28c 100644
---- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-+++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -573,7 +573,7 @@ public class LevelChunk extends ChunkAccess {
-             } else {
-                 ServerLevel worldserver = (ServerLevel) world;
- 
--                return this.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING) && worldserver.areEntitiesLoaded(ChunkPos.asLong(pos));
-+                return this.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING) && worldserver.areEntitiesLoaded(ChunkPos.asLong(pos)); // KioCG - use ENTITY_TICKING
-             }
-         }
-     }
