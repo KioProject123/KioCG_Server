@@ -49,6 +49,18 @@ index 37d9c354af887c474094b1a364782007a5f2035d..f5922dd507aae9158c3c9ce348183451
                              itemStack.enchant(enchantment2, level);
                              ++i;
                          } else if (targets.size() == 1) {
+diff --git a/src/main/java/net/minecraft/world/damagesource/CombatRules.java b/src/main/java/net/minecraft/world/damagesource/CombatRules.java
+index ccbfcef3e83b1bef364447657bfd08a92d615cf6..d6dd1cfe9e7046b5284350211673f1b2c481ae81 100644
+--- a/src/main/java/net/minecraft/world/damagesource/CombatRules.java
++++ b/src/main/java/net/minecraft/world/damagesource/CombatRules.java
+@@ -16,6 +16,7 @@ public class CombatRules {
+     }
+ 
+     public static float getDamageAfterMagicAbsorb(float damageDealt, float protection) {
++        if (true) return damageDealt * (1.0F - (protection / (protection + 20.0F))); // KioCG
+         float f = Mth.clamp(protection, 0.0F, 20.0F);
+         return damageDealt * (1.0F - f / 25.0F);
+     }
 diff --git a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
 index 2a689581565bebc01ba354a3564d30327486953d..9cbec0684395ad430fdc0a55cf993cf0eeedda9f 100644
 --- a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
