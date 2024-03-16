@@ -62,10 +62,24 @@ index ccbfcef3e83b1bef364447657bfd08a92d615cf6..d6dd1cfe9e7046b5284350211673f1b2
          return damageDealt * (1.0F - f / 25.0F);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
-index 2a689581565bebc01ba354a3564d30327486953d..9cbec0684395ad430fdc0a55cf993cf0eeedda9f 100644
+index 2a689581565bebc01ba354a3564d30327486953d..cd22b0a15f3c7e4dcad3683f2cfec44254fffca4 100644
 --- a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
-@@ -360,11 +360,11 @@ public class ExperienceOrb extends Entity {
+@@ -335,6 +335,13 @@ public class ExperienceOrb extends Entity {
+ 
+         if (entry != null) {
+             ItemStack itemstack = (ItemStack) entry.getValue();
++            // KioCG start
++            int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, itemstack);
++            if (player.random.nextInt(10) >= level) {
++                return amount;
++            }
++            // KioCG end
++
+             int j = Math.min(this.xpToDurability(amount), itemstack.getDamageValue());
+             // CraftBukkit start
+             org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(player, this, itemstack, entry.getKey(), j, this::durabilityToXp); // Paper
+@@ -360,11 +367,11 @@ public class ExperienceOrb extends Entity {
      }
  
      public int durabilityToXp(int repairAmount) {
