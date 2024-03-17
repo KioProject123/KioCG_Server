@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 17 Mar 2024 11:18:03 +0800
+Subject: [PATCH] Dirt path speed boost
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index bc860c2e71c0b281a4075546991e7959344f09ca..e81a1424af07fa400b38f04be73d89dbe8526561 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -588,6 +588,7 @@ public class WorldConfiguration extends ConfigurationPart {
+         }
+ 
+         public boolean betterMobGriefingSetting = true;
++        public double dirtPathSpeedBoost = 0.04;
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 535aacc10546721bdcdc20a33c1861ba37d6aa6f..faefa71669ea41af4468482fa4183f6704496200 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -1545,6 +1545,34 @@ public class ServerPlayer extends Player {
+             super.onChangedBlock(pos);
+         }
+ 
++        // KioCG start
++        this.removeDirtPathSpeed();
++        if (this.level().paperConfig().kiocgConfig.dirtPathSpeedBoost > 0) {
++            this.tryAddDirtPathSpeed();
++        }
++    }
++
++    private static final java.util.UUID SPEED_MODIFIER_DIRT_PATH_SPEED_UUID = java.util.UUID.fromString("6e281992-cd8c-e065-a326-353ce8a91273");
++
++    protected void removeDirtPathSpeed() {
++        if (this.shouldRemoveSoulSpeed(this.getBlockStateOnLegacy())) {
++            net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
++            if (attributemodifiable != null) {
++                attributemodifiable.removeModifier(SPEED_MODIFIER_DIRT_PATH_SPEED_UUID);
++            }
++        }
++    }
++
++    protected void tryAddDirtPathSpeed() {
++        if (!this.getBlockStateOnLegacy().isAir()) {
++            if (!this.getAbilities().flying && this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).is(Blocks.DIRT_PATH)) {
++                net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
++                if (attributemodifiable != null) {
++                    attributemodifiable.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(SPEED_MODIFIER_DIRT_PATH_SPEED_UUID, "Dirt path speed boost", this.level().paperConfig().kiocgConfig.dirtPathSpeedBoost, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION));
++                }
++            }
++        }
++        // KioCG end
+     }
+ 
+     public void doCheckFallDamage(double xDifference, double yDifference, double zDifference, boolean onGround) {
