@@ -5,10 +5,10 @@ Subject: [PATCH] Add permission to bypass reducedDebugInfo gamerule
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 349820ecd7f5e82255791bea5f9b58fe64bf7746..c5dfa1037dc6ecc18774d55b08dbcc4acb032f7c 100644
+index d2c303dc951e90863171dd20283ac00daf8023db..51902e741f27e9e09d940cf465293a455ad2566a 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -289,7 +289,7 @@ public abstract class PlayerList {
+@@ -290,7 +290,7 @@ public abstract class PlayerList {
          ServerGamePacketListenerImpl playerconnection = new ServerGamePacketListenerImpl(this.server, connection, player, clientData);
          GameRules gamerules = worldserver1.getGameRules();
          boolean flag = gamerules.getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN);

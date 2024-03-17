@@ -56,10 +56,10 @@ index e3a5f1ec376319bdfda87fa27ae217bff3914292..26c6a95966a7751cc22e25092bd6cced
  
      @Override
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index a6f58b3457b7477015c5c6d969e7d83017dd3fa1..8de3c3aac56415dca3815d5b103c7501f6d33f7e 100644
+index f2e30d8743a97c0541808dc5c03300c0d881b843..dd7ad5b2da63ce019defa3b211771cae26fd841b 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -341,4 +341,12 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -344,4 +344,12 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
@@ -73,10 +73,10 @@ index a6f58b3457b7477015c5c6d969e7d83017dd3fa1..8de3c3aac56415dca3815d5b103c7501
 +    // KioCG end
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 385ca2c1022e0985550a5cc2bbff953f1aa33f5c..cf2fec7817c4077e56b4db7932e9df3404b72bd1 100644
+index dc7950f9a52a718317e5f41de9d396cd7b846bf3..23b3534e413597a34226bc6e9aac01bc9e188f55 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -545,4 +545,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -550,4 +550,12 @@ public class WorldConfiguration extends ConfigurationPart {
              VANILLA, EIGENCRAFT, ALTERNATE_CURRENT
          }
      }
@@ -90,7 +90,7 @@ index 385ca2c1022e0985550a5cc2bbff953f1aa33f5c..cf2fec7817c4077e56b4db7932e9df34
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 58536aabf607015939a1326f80207c0a06eed8ff..63494f90f4dc7804b804dc25bba9102af35a16f0 100644
+index 68d268b6fff126e8645b6deec3fb549ea2286b77..ee62397f5d789a3d9b91f64a6f2fa8ac2a370065 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -180,7 +180,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -102,17 +102,17 @@ index 58536aabf607015939a1326f80207c0a06eed8ff..63494f90f4dc7804b804dc25bba9102a
              DedicatedServer.LOGGER.warn("****************************");
              DedicatedServer.LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
              DedicatedServer.LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
-@@ -279,7 +279,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -280,7 +280,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
-         // Paper end
+         // Paper end - Add Velocity IP Forwarding Support
 -        if (!this.usesAuthentication()) {
 +        if (false && !this.usesAuthentication()) { // KioCG
              DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index e98a455b6bca9d094d0da323bddd7b3f2c07bb23..349820ecd7f5e82255791bea5f9b58fe64bf7746 100644
+index 1e5f709115007ff19901c0a6c3cf884d9e4d3a6c..d2c303dc951e90863171dd20283ac00daf8023db 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -1431,7 +1431,7 @@ public abstract class PlayerList {

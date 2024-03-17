@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 0c4ce9a7a53b353e9415403dd06cd8cbf5eaf98d..171e2634a82747a9c87e7184cdea826dea614546 100644
+index 4f227e699abcd6dcea8590d9046751a9218bc09a..5efa3ac0944e6ea7f2650fbd214bea7ff2747029 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,6 +575,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -580,6 +580,12 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
@@ -22,7 +22,7 @@ index 0c4ce9a7a53b353e9415403dd06cd8cbf5eaf98d..171e2634a82747a9c87e7184cdea826d
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index 127a344f35e194fc7b1a0783c75291fab929fe19..3d67814d58aa137f5910ef592ec3484f0d1eac52 100644
+index fbca4d6bc84e8be359b989ef089469838f896910..94fa245204f422d59a193c57bc4a04cc6154564b 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
 @@ -43,6 +43,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
@@ -54,7 +54,7 @@ index 127a344f35e194fc7b1a0783c75291fab929fe19..3d67814d58aa137f5910ef592ec3484f
              return false;
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Spider.java b/src/main/java/net/minecraft/world/entity/monster/Spider.java
-index 9063f66b0497a3eb3893e307e685be692cc5c128..b536ca659b9ef8e11adc946166f48896efe69a4f 100644
+index 7618364e5373fe17cfe45a5a4ee9ab25e591581c..8ef8e64972fe7361dbf37484c24fc2f9037ad166 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Spider.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Spider.java
 @@ -207,7 +207,7 @@ public class Spider extends Monster {

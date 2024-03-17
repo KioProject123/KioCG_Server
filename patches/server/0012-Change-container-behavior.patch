@@ -5,7 +5,7 @@ Subject: [PATCH] Change container behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-index 3ef7292d60c142161e4b0ad64658a68d94b361b4..e3a932eda6399fe0cf3b5d34a2b8d9ee8f8860dc 100644
+index 184a631a59c857beae19376ce7d4aedd016014a8..8682f7b091292187eaf2859bf6ac5279303db1ce 100644
 --- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 @@ -205,6 +205,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
@@ -17,11 +17,11 @@ index 3ef7292d60c142161e4b0ad64658a68d94b361b4..e3a932eda6399fe0cf3b5d34a2b8d9ee
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d684b407aed 100644
+index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..6e2b681f9d3b1125e15e982f2c7dd17fd13baa30 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -142,6 +142,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
-         // Paper end
+@@ -143,6 +143,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+         // Paper end - cache burn durations
          Map<Item, Integer> map = Maps.newLinkedHashMap();
  
 +        // KioCG start
@@ -29,7 +29,7 @@ index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d68
          AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.LAVA_BUCKET, 20000);
          AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.COAL_BLOCK, 16000);
          AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.BLAZE_ROD, 2400);
-@@ -201,6 +203,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -202,6 +204,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
          AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.AZALEA, 100);
          AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.FLOWERING_AZALEA, 100);
          AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.MANGROVE_ROOTS, 300);
@@ -41,7 +41,7 @@ index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d68
          // Paper start - cache burn durations
          cachedBurnDurations = com.google.common.collect.ImmutableMap.copyOf(map);
          return cachedBurnDurations;
-@@ -360,7 +367,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -366,7 +373,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
                  blockEntity.litTime = furnaceBurnEvent.getBurnTime();
                  blockEntity.litDuration = blockEntity.litTime;
@@ -49,11 +49,11 @@ index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d68
 +                if (false && blockEntity.isLit() && furnaceBurnEvent.isBurning()) { // KioCG - 燃烧完成后再扣除燃料
                      // CraftBukkit end
                      flag1 = true;
-                     if (flag3 && furnaceBurnEvent.willConsumeFuel()) { // Paper
-@@ -393,9 +400,32 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+                     if (flag3 && furnaceBurnEvent.willConsumeFuel()) { // Paper - add consumeFuel to FurnaceBurnEvent
+@@ -399,9 +406,32 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
                  if (blockEntity.cookingProgress >= blockEntity.cookingTotalTime) { // Paper - cook speed multiplier API
                      blockEntity.cookingProgress = 0;
-                     blockEntity.cookingTotalTime = AbstractFurnaceBlockEntity.getTotalCookTime(world, blockEntity.recipeType, blockEntity, blockEntity.cookSpeedMultiplier); // Paper
+                     blockEntity.cookingTotalTime = AbstractFurnaceBlockEntity.getTotalCookTime(world, blockEntity.recipeType, blockEntity, blockEntity.cookSpeedMultiplier); // Paper - cook speed multiplier API
 -                    if (AbstractFurnaceBlockEntity.burn(blockEntity.level, blockEntity.worldPosition, world.registryAccess(), recipeholder, blockEntity.items, i)) { // CraftBukkit
 +
 +                    // KioCG start
@@ -84,7 +84,7 @@ index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d68
  
                      flag1 = true;
                  }
-@@ -460,13 +490,16 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -466,13 +496,16 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              itemstack1 = CraftItemStack.asNMSCopy(result);
  
              if (!itemstack1.isEmpty()) {
@@ -108,7 +108,7 @@ index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d68
              }
  
              /*
-@@ -513,6 +546,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -519,6 +552,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
      @Override
      public int[] getSlotsForFace(Direction side) {
@@ -117,7 +117,7 @@ index 490824934c5d2950b9638753d6fefb770a0053aa..d23814ddd08f51ca35a9aa9d35417d68
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 9117e6013b6832ac368996fc1802fed7468b5541..fc08a4ba7ffcf25e5a6366baa648bfeea8b12956 100644
+index de27b8ee81d9269a85daf38c2bb28cd810592b06..60e4cb457120c88867ada0a87aaa9cb29d43c7e7 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -153,6 +153,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
@@ -179,7 +179,7 @@ index 9117e6013b6832ac368996fc1802fed7468b5541..fc08a4ba7ffcf25e5a6366baa648bfee
 +    public boolean canPlaceItem0(int slot, ItemStack stack) {
 +    // KioCG end
          if ((slot == 4 || (slot == 3 ? !PotionBrewing.isCustomIngredient(stack) : !PotionBrewing.isCustomInput(stack))) && !io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
-         return slot == 3 ? PotionBrewing.isIngredient(stack) : (slot == 4 ? stack.is(Items.BLAZE_POWDER) : (stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE) || PotionBrewing.isCustomInput(stack)) && this.getItem(slot).isEmpty()); // Paper
+         return slot == 3 ? PotionBrewing.isIngredient(stack) : (slot == 4 ? stack.is(Items.BLAZE_POWDER) : (stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE) || PotionBrewing.isCustomInput(stack)) && this.getItem(slot).isEmpty()); // Paper - Custom Potion Mixes
      }
  
      @Override
@@ -189,11 +189,11 @@ index 9117e6013b6832ac368996fc1802fed7468b5541..fc08a4ba7ffcf25e5a6366baa648bfee
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index fd822ac3b3cff8b697569dd28a96e0ff26d5d9b5..f929c90c470bd7fd0b40d915a3101e7e73e7f4f0 100644
+index 0c70786e8e5ca5c2b6c69914ce350ff06d3ce437..0e8a22684932cc1e181508ea68c48147339e03d4 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -73,6 +73,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
-                         return recipeholder.value().assemble(inventorysubcontainer, world.registryAccess());
+@@ -74,6 +74,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+                         return ((CampfireCookingRecipe) recipeholder.value()).assemble(inventorysubcontainer, world.registryAccess());
                      }).orElse(itemstack);
  
 +                    // KioCG start
@@ -205,19 +205,19 @@ index fd822ac3b3cff8b697569dd28a96e0ff26d5d9b5..f929c90c470bd7fd0b40d915a3101e7e
                      if (itemstack1.isItemEnabled(world.enabledFeatures())) {
                          // CraftBukkit start - fire BlockCookEvent
                          CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
-@@ -96,6 +102,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -97,6 +103,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                          result = blockCookEvent.getResult();
                          itemstack1 = CraftItemStack.asNMSCopy(result);
                          // CraftBukkit end
 +                        // KioCG start
 +                        /*
-                         // Paper start
+                         // Paper start - Fix item locations dropped from campfires
                          double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
                          while (!itemstack1.isEmpty()) {
-@@ -104,7 +112,16 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -105,7 +113,16 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                              world.addFreshEntity(droppedItem);
                          }
-                         // Paper end
+                         // Paper end - Fix item locations dropped from campfires
 -                        campfire.items.set(i, ItemStack.EMPTY);
 +                        */
 +

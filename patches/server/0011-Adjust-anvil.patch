@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust anvil
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 5864532b75b433488136ac6c46ca4c1bed477bba..6f40cd27e623e4068a637e9d8541ca59aabe1c73 100644
+index 1eae15f8dff440aebdc6805e58460c95d852589b..d1d52d34ab7f079ba6689ea371e0b8b90676efce 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -407,6 +407,8 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -410,6 +410,8 @@ public class GlobalConfiguration extends ConfigurationPart {
          public Enchant enchant;
          public class Enchant extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
@@ -18,7 +18,7 @@ index 5864532b75b433488136ac6c46ca4c1bed477bba..6f40cd27e623e4068a637e9d8541ca59
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index daa0701dc538b0c97332217bccafc40b0c8824cb..0b03a236978639ce156027e984434df0703148ee 100644
+index f280f22fdfc27a61d659d64e0e38318b62a460af..0266de806479b96685cfeccdbd5d06116db23e71 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -274,6 +274,7 @@ public class AnvilMenu extends ItemCombinerMenu {
@@ -46,10 +46,10 @@ index daa0701dc538b0c97332217bccafc40b0c8824cb..0b03a236978639ce156027e984434df0
                  ItemStack itemstack = this.getSlot(2).getItem();
  
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 9ea50a580d6d2162141c37a4416af9b6dc0a93a1..1d50dd46ca8e538c8f4f2ecb3631524f78f04f3a 100644
+index 0d0e4e657e8392dd1029ea9cc005df0997db35b2..b3dd67794e4a9acd1f9a5a089d405d242bc89e4f 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -1257,10 +1257,12 @@ public final class ItemStack {
+@@ -1258,10 +1258,12 @@ public final class ItemStack {
      }
  
      public int getBaseRepairCost() {
