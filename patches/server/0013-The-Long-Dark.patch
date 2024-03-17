@@ -358,18 +358,18 @@ index f5a86c0fb1a7a313afc4c56ffc445a7fe7821428..6778bff8924a24f1777cca1efee3c919
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 23570a0b1227a840b9c1e6ae326827ea655bb5f7..739d2bdb3a02d31ddb99350bf1d62d470b9ecec2 100644
+index 23570a0b1227a840b9c1e6ae326827ea655bb5f7..9226de952f4020daa21f659ea710509fc89d093c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1366,6 +1366,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
          // Paper end
          float f1 = this.getHealth();
  
-+        if (!(this instanceof net.minecraft.world.entity.player.Player player) || !player.thirstData.isThirsty()) // KioCG
++        if (!(this instanceof net.minecraft.world.entity.player.Player player) || !player.thirstData.isThirsty()) { // KioCG
          if (f1 > 0.0F) {
              EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason, isFastRegen); // Paper
              // Suppress during worldgen
-@@ -1375,6 +1376,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1375,10 +1376,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
              if (!event.isCancelled()) {
                  this.setHealth((float) (this.getHealth() + event.getAmount()));
@@ -377,6 +377,11 @@ index 23570a0b1227a840b9c1e6ae326827ea655bb5f7..739d2bdb3a02d31ddb99350bf1d62d47
              }
              // CraftBukkit end
          }
+-
++        } // KioCG
+     }
+ 
+     public float getHealth() {
 @@ -3479,17 +3481,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int i = this.getTicksFrozen();

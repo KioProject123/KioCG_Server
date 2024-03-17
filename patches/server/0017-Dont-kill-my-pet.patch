@@ -19,7 +19,7 @@ index d1d52d34ab7f079ba6689ea371e0b8b90676efce..a35fca31c7264f77a93c671b3bca4e3b
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 739d2bdb3a02d31ddb99350bf1d62d470b9ecec2..ab7123b94507ea7bfd9a43a04cdf879995993600 100644
+index 9226de952f4020daa21f659ea710509fc89d093c..403b8b2e0f7cae449b3f7787e9a225f4a57be397 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2322,7 +2322,15 @@ public abstract class LivingEntity extends Entity implements Attackable {

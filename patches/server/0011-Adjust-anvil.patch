@@ -18,18 +18,26 @@ index 1eae15f8dff440aebdc6805e58460c95d852589b..d1d52d34ab7f079ba6689ea371e0b8b9
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index f280f22fdfc27a61d659d64e0e38318b62a460af..0266de806479b96685cfeccdbd5d06116db23e71 100644
+index f280f22fdfc27a61d659d64e0e38318b62a460af..ce95216805c62c4be62c6b214127fc147263b898 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -274,6 +274,7 @@ public class AnvilMenu extends ItemCombinerMenu {
                  }
              }
  
-+            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.anvilRenameInSurvival || this.player.getAbilities().instabuild) // KioCG
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.anvilRenameInSurvival || this.player.getAbilities().instabuild) { // KioCG
              if (this.itemName != null && !Util.isBlank(this.itemName)) {
                  if (!this.itemName.equals(itemstack.getHoverName().getString())) {
                      b1 = 1;
-@@ -321,6 +322,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -285,6 +286,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+                 i += b1;
+                 itemstack1.resetHoverName();
+             }
++            } // KioCG
+ 
+             this.cost.set(j + i);
+             if (i <= 0) {
+@@ -321,6 +323,7 @@ public class AnvilMenu extends ItemCombinerMenu {
      }
  
      public static int calculateIncreasedRepairCost(int cost) {
@@ -37,14 +45,22 @@ index f280f22fdfc27a61d659d64e0e38318b62a460af..0266de806479b96685cfeccdbd5d0611
          return cost * 2 + 1;
      }
  
-@@ -329,6 +331,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -329,6 +332,7 @@ public class AnvilMenu extends ItemCombinerMenu {
  
          if (s1 != null && !s1.equals(this.itemName)) {
              this.itemName = s1;
-+            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.anvilRenameInSurvival || this.player.getAbilities().instabuild) // KioCG
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.anvilRenameInSurvival || this.player.getAbilities().instabuild) { // KioCG
              if (this.getSlot(2).hasItem()) {
                  ItemStack itemstack = this.getSlot(2).getItem();
  
+@@ -338,6 +342,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+                     itemstack.setHoverName(Component.literal(s1));
+                 }
+             }
++            } // KioCG
+ 
+             this.createResult();
+             org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareResultEvent(this, RESULT_SLOT); // Paper - Add PrepareResultEvent
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
 index 0d0e4e657e8392dd1029ea9cc005df0997db35b2..b3dd67794e4a9acd1f9a5a089d405d242bc89e4f 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
