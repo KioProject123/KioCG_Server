@@ -5,14 +5,15 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 35a62471252209a179c6a75d16ea3735777a40af..ed092b028819f26dcc084978444264d6f362518d 100644
+index 35a62471252209a179c6a75d16ea3735777a40af..a8f765b4afb0264d8dc6b3f0b81d116f25ab0ce9 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -590,6 +590,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -590,6 +590,8 @@ public class WorldConfiguration extends ConfigurationPart {
          public boolean betterMobGriefingSetting = true;
          public double dirtPathSpeedBoost = 0.04;
          public double saplingsWitheredChance = 0.025;
 +        public boolean sleepAnyTime = true;
++        public double sleepHealingRegenRate = 20;
      }
      // KioCG end
  }
@@ -88,3 +89,37 @@ index ca01581d8decc696db11f15bd782308848d97478..e20fd389de1d8363c2c526da4b1c9e99
                  this.stopSleepInBed(false, true);
              }
          } else if (this.sleepCounter > 0) {
+diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
+index 3990fad7ee4d218e182fa322613ec991468de69b..1a07fd1a7f86937a99999075dc17aa8420a903f1 100644
+--- a/src/main/java/net/minecraft/world/food/FoodData.java
++++ b/src/main/java/net/minecraft/world/food/FoodData.java
+@@ -106,6 +106,29 @@ public class FoodData {
+ 
+                 this.tickTimer = 0;
+             }
++        // KioCG start
++        } else if (flag && player.level().paperConfig().kiocgConfig.sleepHealingRegenRate >= 0 && player.isSleeping() && player.isHurt()) {
++            ++this.tickTimer;
++            if (this.tickTimer >= player.level().paperConfig().kiocgConfig.sleepHealingRegenRate) {
++                final float health = player.getHealth();
++                player.heal(1.0F);
++                if (player.getHealth() > health) {
++                    final java.util.ArrayList<org.bukkit.entity.Player> receivers = new java.util.ArrayList<>(player.getBukkitEntity().getTrackedBy());
++                    receivers.add(((ServerPlayer) player).getBukkitEntity());
++                    player.getBukkitEntity().getWorld().spawnParticle(org.bukkit.Particle.HEART,
++                                                                      receivers,
++                                                                      ((ServerPlayer) player).getBukkitEntity(),
++                                                                      player.getX(), player.getY(), player.getZ(),
++                                                                      5,
++                                                                      0.3, 0.3, 0.3,
++                                                                      1.0,
++                                                                      null,
++                                                                      true);
++                }
++
++                this.tickTimer = 0;
++            }
++        // KioCG end
+         } else {
+             this.tickTimer = 0;
+         }
