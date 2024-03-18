@@ -5,14 +5,14 @@ Subject: [PATCH] Dirt path speed boost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index d81f2d9e640c30260c1804feee2a965b8047cd6e..a2d9de443667c22f43044a16cf68d42dcd775d41 100644
+index d81f2d9e640c30260c1804feee2a965b8047cd6e..c7ef473f77c4fa7d1251833e7f6c35dc17f0a24d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -589,6 +589,7 @@ public class WorldConfiguration extends ConfigurationPart {
          }
  
          public boolean betterMobGriefingSetting = true;
-+        public double dirtPathSpeedBoost = 0.04;
++        public double dirtPathSpeedBoost = 0.02;
      }
      // KioCG end
  }
