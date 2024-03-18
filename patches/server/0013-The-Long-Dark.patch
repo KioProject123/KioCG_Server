@@ -18,10 +18,10 @@ index e3a9806f9972007b732032fd137741a5d14a7e63..f2044f27ec933da4620f0623421659bc
  }
 diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..55ce9bc1c93bdaf2bc88d5c9cc7544ddd3f99d0f
+index 0000000000000000000000000000000000000000..168ad1f99870217c155a166d7f3812e1b7ca7d3a
 --- /dev/null
 +++ b/src/main/java/com/kiocg/java/player/ColdData.java
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,110 @@
 +package com.kiocg.java.player;
 +
 +import com.kiocg.java.NamespacedKeys;
@@ -39,7 +39,6 @@ index 0000000000000000000000000000000000000000..55ce9bc1c93bdaf2bc88d5c9cc7544dd
 +    public static final int MAX_VALUE = 60 * 20 * 10;
 +
 +    private Player entityhuman;
-+    private int tempColdValue;
 +    private int coldValueCache;
 +
 +    public ColdData(Player entityhuman) {
@@ -59,10 +58,6 @@ index 0000000000000000000000000000000000000000..55ce9bc1c93bdaf2bc88d5c9cc7544dd
 +        entityhuman.getBukkitEntity().getPersistentDataContainer().set(NamespacedKeys.kiocgColdValue, PersistentDataType.INTEGER, value);
 +    }
 +
-+    public void addColdValue(int add) {
-+        tempColdValue += add;
-+    }
-+
 +    public float getColdProgress() {
 +        return (float) coldValueCache / MAX_VALUE;
 +    }
@@ -71,61 +66,70 @@ index 0000000000000000000000000000000000000000..55ce9bc1c93bdaf2bc88d5c9cc7544dd
 +        return coldValueCache <= 0;
 +    }
 +
++    public boolean isInWater;
++    public boolean isInLava;
++    public double finalTemperatureAdd;
++
 +    public void tick() {
 +        if (!entityhuman.getAbilities().invulnerable) {
 +            final Level world = entityhuman.level();
 +            final BlockPos pos = entityhuman.blockPosition();
 +            final WorldConfiguration.KiocgConfig.TheLongDark theLongDark = world.paperConfig().kiocgConfig.theLongDark;
 +
-+            final float temperature = (world.getBiome(pos).value().getTemperature(pos) + theLongDark.coldValue.ambientTemperatureOffset) * theLongDark.coldValue.ambientTemperatureOffsetMultiplier;
-+            tempColdValue += theLongDark.coldValue.ambientBase + temperature;
-+
-+            if (theLongDark.coldValue.lightSimulationMultiplier != 0) {
-+                int light = world.getRawBrightness(pos, world.getSkyDarken());
-+                tempColdValue += light * theLongDark.coldValue.lightSimulationMultiplier;
++            double ambientTemperature = theLongDark.coldValue.ambientTemperatureBase;
++            if (theLongDark.coldValue.ambientTemperatureMultiplier != 0) {
++                ambientTemperature += (world.getBiome(pos).value().getTemperature(pos) + theLongDark.coldValue.ambientTemperatureOffset) * theLongDark.coldValue.ambientTemperatureMultiplier;
 +            }
-+            if (theLongDark.coldValue.lightBlockMultiplier != 0) {
++            if (theLongDark.coldValue.ambientSkyDarkenMultiplier != 0) {
++                ambientTemperature += world.getSkyDarken() * world.getBrightness(LightLayer.SKY, pos) * theLongDark.coldValue.ambientSkyDarkenMultiplier;
++            }
++
++            double playerTemperature = theLongDark.coldValue.playerTemperatureBase;
++            if (theLongDark.coldValue.playerLightBlockMultiplier != 0.0) {
 +                int blockLight = world.getBrightness(LightLayer.BLOCK, pos);
-+                tempColdValue += blockLight * theLongDark.coldValue.lightBlockMultiplier;
-+            }
-+            if (theLongDark.coldValue.lightSkyMultiplier != 0) {
-+                int skyLight = world.getBrightness(LightLayer.SKY, pos);
-+                tempColdValue += skyLight * theLongDark.coldValue.lightSkyMultiplier;
++                playerTemperature += blockLight * theLongDark.coldValue.playerLightBlockMultiplier;
 +            }
 +
-+            if (theLongDark.coldValue.isInWaterOrBubble != 0 && (entityhuman.isInPowderSnow || entityhuman.isInWaterOrBubble())) {
-+                tempColdValue += theLongDark.coldValue.isInWaterOrBubble;
++            if (theLongDark.coldValue.isInWaterOrBubble != 0 && (this.isInWater || entityhuman.isInPowderSnow || entityhuman.isInWaterOrBubble())) {
++                playerTemperature += theLongDark.coldValue.isInWaterOrBubble;
 +            } else if (theLongDark.coldValue.isInRain != 0 && entityhuman.isInRain()) {
-+                tempColdValue += theLongDark.coldValue.isInRain;
++                playerTemperature += theLongDark.coldValue.isInRain;
 +            }
 +
-+            if (theLongDark.coldValue.isInLava != 0 && entityhuman.isInLava()) {
-+                tempColdValue += theLongDark.coldValue.isInLava;
-+            } else if (theLongDark.coldValue.onFireTickDivision != 0) {
++            if (theLongDark.coldValue.isInLava != 0 && (this.isInLava || entityhuman.isInLava())) {
++                playerTemperature += theLongDark.coldValue.isInLava;
++            } else if (theLongDark.coldValue.isOnFire != 0) {
 +                int remainingFireTicks = entityhuman.getRemainingFireTicks();
 +                if (remainingFireTicks > 0) {
-+                    tempColdValue += remainingFireTicks / theLongDark.coldValue.onFireTickDivision;
++                    playerTemperature += theLongDark.coldValue.isOnFire;
 +                }
 +            }
 +
++            double finalTemperature = (playerTemperature + ambientTemperature) * theLongDark.coldValue.finalTemperatureMultiplier;
++            finalTemperature += finalTemperatureAdd;
++
 +            int prevValue = coldValueCache;
-+            coldValueCache = Mth.clamp(getColdValue0() + tempColdValue, 0, MAX_VALUE);
++            coldValueCache = Mth.clamp(getColdValue0() + (int) finalTemperature, 0, MAX_VALUE);
 +            if (prevValue != coldValueCache) {
 +                setColdValue(coldValueCache);
 +            }
-+            tempColdValue = 0;
 +
 +            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetExperiencePacket(getColdProgress(), entityhuman.totalExperience, entityhuman.experienceLevel));
 +        } else {
 +            coldValueCache = MAX_VALUE;
-+            tempColdValue = 0;
 +        }
++
++        isInWater = false;
++        isInLava = false;
++        finalTemperatureAdd = 0.0;
 +    }
 +
 +    public void reset() {
 +        setColdValue(MAX_VALUE);
 +        coldValueCache = MAX_VALUE;
-+        tempColdValue = 0;
++        isInWater = false;
++        isInLava = false;
++        finalTemperatureAdd = 0.0;
 +    }
 +}
 diff --git a/src/main/java/com/kiocg/java/player/ThirstData.java b/src/main/java/com/kiocg/java/player/ThirstData.java
@@ -232,10 +236,10 @@ index 0000000000000000000000000000000000000000..0b03e97dd5254f11764b3776f86753c4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 8dfa5027987c74eff98f1b27e343bbab392727fa..4f227e699abcd6dcea8590d9046751a9218bc09a 100644
+index 8dfa5027987c74eff98f1b27e343bbab392727fa..c4e439cd4608b7d5761a6dec6361e9759c83bd0c 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -556,6 +556,30 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -556,6 +556,31 @@ public class WorldConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
@@ -246,18 +250,19 @@ index 8dfa5027987c74eff98f1b27e343bbab392727fa..4f227e699abcd6dcea8590d9046751a9
 +
 +            public ColdValue coldValue;
 +            public class ColdValue extends ConfigurationPart {
-+                public int ambientBase = -10;
-+                public float ambientTemperatureOffset = -1.0F;
-+                public int ambientTemperatureOffsetMultiplier = 10;
++                public double ambientTemperatureBase = 0;
++                public double ambientTemperatureOffset = -0.65;
++                public double ambientTemperatureMultiplier = 20;
++                public double ambientSkyDarkenMultiplier = -0.25;
 +
-+                public int lightSimulationMultiplier = 1;
-+                public int lightBlockMultiplier = 2;
-+                public int lightSkyMultiplier = 0;
++                public double playerTemperatureBase = 0;
++                public double playerLightBlockMultiplier = 5;
++                public double isInWaterOrBubble = -50;
++                public double isInRain = -20;
++                public double isInLava = 500;
++                public double isOnFire = 20;
 +
-+                public int isInWaterOrBubble = -30;
-+                public int isInRain = -15;
-+                public int isInLava = 50;
-+                public int onFireTickDivision = 5;
++                public double finalTemperatureMultiplier = 0.5;
 +            }
 +
 +            public int campfireExtinguishingOne = -1;
@@ -311,14 +316,17 @@ index 51902e741f27e9e09d940cf465293a455ad2566a..54eca569be908ca7428706c792fe4e69
          // Paper end - Add PlayerPostRespawnEvent
  
 diff --git a/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java b/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java
-index b994ae09621934df2cdd6a83a7d8ecb44649fb16..e082df98a69246dd015928e2404fa0faab3ae845 100644
+index b994ae09621934df2cdd6a83a7d8ecb44649fb16..4a6bd67dba650a3e157a4b2bc3193a8afb56c3a8 100644
 --- a/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java
 +++ b/src/main/java/net/minecraft/world/effect/SaturationMobEffect.java
-@@ -19,6 +19,8 @@ class SaturationMobEffect extends InstantenousMobEffect {
+@@ -19,6 +19,11 @@ class SaturationMobEffect extends InstantenousMobEffect {
          if (!entity.level().isClientSide && entity instanceof Player) {
              Player entityhuman = (Player) entity;
  
-+            if (true) { entityhuman.coldData.addColdValue(amplifier + 1); return; } // KioCG
++            // KioCG start
++            entityhuman.coldData.finalTemperatureAdd = 5 * (amplifier + 1);
++            if (true) return;
++            // KioCG end
 +
              // CraftBukkit start
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
@@ -445,26 +453,26 @@ index c3448707fd8a632b457cc97b35d08a9c6933d5ee..3990fad7ee4d218e182fa322613ec991
  
                  ((ServerPlayer) player).connection.send(new ClientboundSetHealthPacket(((ServerPlayer) player).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
 diff --git a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
-index 29d4553df54236706c76fdec0bb14b5d9fb82ff2..3c66b5321749c4095a26052acb32924e822510e6 100644
+index 29d4553df54236706c76fdec0bb14b5d9fb82ff2..91d0df183d808640c208fda959a4afbf606e5351 100644
 --- a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 @@ -35,6 +35,7 @@ public class LavaCauldronBlock extends AbstractCauldronBlock {
          if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(world, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
          if (this.isEntityInsideContent(state, pos, entity)) {
              entity.lavaHurt();
-+            if (entity instanceof net.minecraft.world.entity.player.Player player) player.coldData.addColdValue(world.paperConfig().kiocgConfig.theLongDark.coldValue.isInLava); // KioCG
++            if (entity instanceof net.minecraft.world.entity.player.Player player) player.coldData.isInLava = true; // KioCG
          }
  
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index a4857675772d4fe849ba85fc21a369decca42fc0..19881058e5c0920865161a69280374bc79784151 100644
+index a4857675772d4fe849ba85fc21a369decca42fc0..b2c99ed1c7f6b30939f1daf62e518bb45b45cc20 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 @@ -77,6 +77,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
              // CraftBukkit end
          }
  
-+        if (entity instanceof net.minecraft.world.entity.player.Player player && this.isEntityInsideContent(state, pos, entity)) player.coldData.addColdValue(world.paperConfig().kiocgConfig.theLongDark.coldValue.isInWaterOrBubble); // KioCG
++        if (entity instanceof net.minecraft.world.entity.player.Player player && this.isEntityInsideContent(state, pos, entity)) player.coldData.isInWater = true; // KioCG
      }
  
      @io.papermc.paper.annotation.DoNotUse @Deprecated // Paper - fix powdered snow cauldron extinguishing entities; use #handleEntityOnFireInsideWithEvent

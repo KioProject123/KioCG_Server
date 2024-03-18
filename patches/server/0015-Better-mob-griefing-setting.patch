@@ -5,10 +5,10 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 5efa3ac0944e6ea7f2650fbd214bea7ff2747029..bc860c2e71c0b281a4075546991e7959344f09ca 100644
+index 6d30a9c59a295986cc7d33f34cd135bdba1628a4..d81f2d9e640c30260c1804feee2a965b8047cd6e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -586,6 +586,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -587,6 +587,8 @@ public class WorldConfiguration extends ConfigurationPart {
              public boolean spawnInLightAtNight = true;
              public int darkEnoughToSprint = 7;
          }
@@ -120,7 +120,7 @@ index 6e4c852c93f2418ea69e485ed3a10cbe3a6e3bd2..7b4122cf9ce5f1c17efa12162880cc28
              org.bukkit.event.Cancellable cancellable;
              if (entity instanceof Player) {
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 19881058e5c0920865161a69280374bc79784151..717726e061629ffe9882ef7b59b13c735eee3287 100644
+index b2c99ed1c7f6b30939f1daf62e518bb45b45cc20..06cae181414223456491abbef50dc63304131cec 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 @@ -68,7 +68,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {

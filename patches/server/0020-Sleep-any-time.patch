@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 35a62471252209a179c6a75d16ea3735777a40af..a8f765b4afb0264d8dc6b3f0b81d116f25ab0ce9 100644
+index cd74843fa86a27e919df35eed57cea3e277c7124..f752fbff37382caeba982adb7e19b7bb6282750e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -590,6 +590,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -591,6 +591,8 @@ public class WorldConfiguration extends ConfigurationPart {
          public boolean betterMobGriefingSetting = true;
          public double dirtPathSpeedBoost = 0.04;
          public double saplingsWitheredChance = 0.025;
