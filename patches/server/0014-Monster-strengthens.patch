@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index c4e439cd4608b7d5761a6dec6361e9759c83bd0c..6d30a9c59a295986cc7d33f34cd135bdba1628a4 100644
+index c4e439cd4608b7d5761a6dec6361e9759c83bd0c..679a59b1bc9aa8541d295f3beffeff779966cd86 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -581,6 +581,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -581,6 +581,13 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
@@ -17,6 +17,7 @@ index c4e439cd4608b7d5761a6dec6361e9759c83bd0c..6d30a9c59a295986cc7d33f34cd135bd
 +        public class Monster extends ConfigurationPart {
 +            public boolean spawnInLightAtNight = true;
 +            public int darkEnoughToSprint = 7;
++            public boolean babyZombieJockey = true;
 +        }
      }
      // KioCG end
@@ -66,3 +67,24 @@ index 7618364e5373fe17cfe45a5a4ee9ab25e591581c..8ef8e64972fe7361dbf37484c24fc2f9
          }
  
          @Override
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
+index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..5ff99f50b85478e8529f56fb422b04f97d4fff27 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
+@@ -116,6 +116,16 @@ public class Zombie extends Monster {
+     }
+ 
+     protected void addBehaviourGoals() {
++        // KioCG start
++        if (this.level().paperConfig().kiocgConfig.monster.babyZombieJockey) {
++            this.goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.LeapAtTargetGoal(this, 0.4F) {
++                @Override
++                public boolean canUse() {
++                    return Zombie.this.isBaby() && super.canUse();
++                }
++            });
++        }
++        // KioCG end
+         this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
+         // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
+         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));

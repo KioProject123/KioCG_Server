@@ -18,13 +18,13 @@ index f2044f27ec933da4620f0623421659bca2daef16..bb51e9f42d823bdc1d77b6afd1c2c7b2
 +    public static final NamespacedKey kiocgTurretDamage = new NamespacedKey(KIOCG, "turret_damage");
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f4c79dc1b2c40105e14f3a505906c54a1ac7b5ef..2adc4979142f4cb3c511a8a740843f201684066b 100644
+index 19fc968abcbd37db6d0ace1516a2167967bcf5f7..6afa8f2c2e8b8aa8e95ec0bb8b935f11b034a9db 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -586,6 +586,10 @@ public class WorldConfiguration extends ConfigurationPart {
-         public class Monster extends ConfigurationPart {
+@@ -587,6 +587,10 @@ public class WorldConfiguration extends ConfigurationPart {
              public boolean spawnInLightAtNight = true;
              public int darkEnoughToSprint = 7;
+             public boolean babyZombieJockey = true;
 +            public boolean endCrystalTurret = true;
 +            public int turretTicks = 100;
 +            public double turretRange = 8.0;

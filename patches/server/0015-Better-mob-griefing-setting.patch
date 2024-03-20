@@ -5,12 +5,12 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 6d30a9c59a295986cc7d33f34cd135bdba1628a4..d81f2d9e640c30260c1804feee2a965b8047cd6e 100644
+index 679a59b1bc9aa8541d295f3beffeff779966cd86..7595653d2b35328d0c5786ae622253bf6c7a74b8 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,6 +587,8 @@ public class WorldConfiguration extends ConfigurationPart {
-             public boolean spawnInLightAtNight = true;
+@@ -588,6 +588,8 @@ public class WorldConfiguration extends ConfigurationPart {
              public int darkEnoughToSprint = 7;
+             public boolean babyZombieJockey = true;
          }
 +
 +        public boolean betterMobGriefingSetting = true;
