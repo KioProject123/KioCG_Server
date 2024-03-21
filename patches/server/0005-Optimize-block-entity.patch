@@ -66,7 +66,7 @@ index 5c3104bbb824bd4a07e26abd16ff45dd8f391a9a..80e0b122ebdc7480444f5b84abe2070e
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 31efaf524270d514064ba07abfeaca3a9d6813ef..de27b8ee81d9269a85daf38c2bb28cd810592b06 100644
+index 9fc7c60d85761141358aa60efb8a2306d7c8da8e..31bbaf4f7f3110695fcae96029495363756c924d 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -148,7 +148,9 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements

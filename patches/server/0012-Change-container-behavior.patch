@@ -5,9 +5,26 @@ Subject: [PATCH] Change container behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-index 184a631a59c857beae19376ce7d4aedd016014a8..8682f7b091292187eaf2859bf6ac5279303db1ce 100644
+index 184a631a59c857beae19376ce7d4aedd016014a8..e83f4454c2649c4db94cdf7fb18e536d6df58e9d 100644
 --- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -86,12 +86,12 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+ 
+             itemstack = itemstack1.copy();
+             if ((slot < 0 || slot > 2) && slot != 3 && slot != 4) {
+-                if (BrewingStandMenu.FuelSlot.mayPlaceItem(itemstack)) {
+-                    if (this.moveItemStackTo(itemstack1, 4, 5, false) || this.ingredientSlot.mayPlace(itemstack1) && !this.moveItemStackTo(itemstack1, 3, 4, false)) {
++                if (this.ingredientSlot.mayPlace(itemstack1)) { // KioCG - 调换材料槽和燃料槽的判断顺序
++                    if (this.moveItemStackTo(itemstack1, 3, 4, false) || BrewingStandMenu.FuelSlot.mayPlaceItem(itemstack) && !this.moveItemStackTo(itemstack1, 4, 5, false)) { // KioCG - 调换材料槽和燃料槽的判断顺序
+                         return ItemStack.EMPTY;
+                     }
+-                } else if (this.ingredientSlot.mayPlace(itemstack1)) {
+-                    if (!this.moveItemStackTo(itemstack1, 3, 4, false)) {
++                } else if (BrewingStandMenu.FuelSlot.mayPlaceItem(itemstack)) { // KioCG - 调换材料槽和燃料槽的判断顺序
++                    if (!this.moveItemStackTo(itemstack1, 4, 5, false)) { // KioCG - 调换材料槽和燃料槽的判断顺序
+                         return ItemStack.EMPTY;
+                     }
+                 } else if (BrewingStandMenu.PotionSlot.mayPlaceItem(itemstack) && itemstack.getCount() == 1) {
 @@ -205,6 +205,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
  
          public static boolean mayPlaceItem(ItemStack stack) {
@@ -16,6 +33,36 @@ index 184a631a59c857beae19376ce7d4aedd016014a8..8682f7b091292187eaf2859bf6ac5279
              return stack.is(Items.BLAZE_POWDER);
          }
  
+diff --git a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
+index 0bba74bd22d66881fc6851797d29c1442f509445..6791902e3036bb10540b47c29b21fd8d2b4996cf 100644
+--- a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
++++ b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
+@@ -69,6 +69,7 @@ public class PotionBrewing {
+         if (!ALLOWED_CONTAINER.test(input)) {
+             return false;
+         } else {
++            if (true) return true; // KioCG - 自定义失败的酿造
+             return hasContainerMix(input, ingredient) || hasPotionMix(input, ingredient);
+         }
+     }
+@@ -120,6 +121,8 @@ public class PotionBrewing {
+                     return PotionUtils.setPotion(new ItemStack(item), mix2.to);
+                 }
+             }
++
++            return PotionUtils.setPotion(new ItemStack(item), Potions.EMPTY); // KioCG - 自定义失败的酿造
+         }
+ 
+         return input;
+@@ -203,7 +206,7 @@ public class PotionBrewing {
+         addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
+         addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
+         addMix(Potions.SLOWNESS, Items.GLOWSTONE_DUST, Potions.STRONG_SLOWNESS);
+-        addMix(Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
++        addMix(Potions.AWKWARD, Items.SCUTE, Potions.TURTLE_MASTER); // KioCG - 海龟壳改为鳞甲
+         addMix(Potions.TURTLE_MASTER, Items.REDSTONE, Potions.LONG_TURTLE_MASTER);
+         addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
+         addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..6e2b681f9d3b1125e15e982f2c7dd17fd13baa30 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
@@ -117,7 +164,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..6e2b681f9d3b1125e15e982f2c7dd17f
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index de27b8ee81d9269a85daf38c2bb28cd810592b06..60e4cb457120c88867ada0a87aaa9cb29d43c7e7 100644
+index 31bbaf4f7f3110695fcae96029495363756c924d..88aa95276117d760df405b2176af980a169187ae 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -153,6 +153,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
