@@ -181,7 +181,7 @@ index 327f00736ede0c58d6078433235cf798ea59ba79..0c987c5896a9c507bf228c4ba03eb336
  
                          enuminteractionresult = super.mobInteract(player, hand);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index 5f3553e2e255b79d1b6ea686eefc5e84766e3366..c3d1c3f54079b615eb5f61e82f82d29ddb2b4762 100644
+index 0fd04f96ed697ddf0fcf93c7bd258e5e2ebcf659..b147863410813da9469ce5193dea834c5891456a 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 @@ -155,7 +155,14 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot

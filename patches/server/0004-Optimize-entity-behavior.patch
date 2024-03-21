@@ -17,19 +17,6 @@ index 3d95257d2203fe40bb1fab58ad2a1f9e815184a9..2ed9f6d3579ea5b9cece1160a4bf3142
      }
  
      protected double followLeashSpeed() {
-diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowMobGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowMobGoal.java
-index 495ac7779ad782488d20da8daa8e28b75c1f2f0d..54a5158274e868c90255e009f7168b811d90d4b9 100644
---- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowMobGoal.java
-+++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowMobGoal.java
-@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
- 
- public class FollowMobGoal extends Goal {
--    private final Mob mob;
-+    protected final Mob mob; // KioCG - private -> protected
-     private final Predicate<Mob> followPredicate;
-     @Nullable
-     private Mob followingMob;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 index 676e1580849e8942eb41c7a3a80f464138b22764..9c57a2e4b1a80711efbf2a756458c0250a43f880 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
@@ -73,7 +60,7 @@ index f760ce7d9df79ef58f8963de3e901cba3e12fcaa..327f00736ede0c58d6078433235cf798
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index f3f48225c2a1e4bd3d0091d1b4b7e4e150850ed2..5f3553e2e255b79d1b6ea686eefc5e84766e3366 100644
+index f3f48225c2a1e4bd3d0091d1b4b7e4e150850ed2..0fd04f96ed697ddf0fcf93c7bd258e5e2ebcf659 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 @@ -160,9 +160,23 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
@@ -95,7 +82,7 @@ index f3f48225c2a1e4bd3d0091d1b4b7e4e150850ed2..5f3553e2e255b79d1b6ea686eefc5e84
 +        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0D, 3.0F, 7.0F) {
 +            @Override
 +            public boolean canUse() {
-+                return !((net.minecraft.world.entity.TamableAnimal) this.mob).isOrderedToSit() && super.canUse();
++                return !Parrot.this.isOrderedToSit() && super.canUse();
 +            }
 +        });
 +        // KioCG end
