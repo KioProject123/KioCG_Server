@@ -447,7 +447,7 @@ index 89d06253b00604114e543ebbe12a9993ae95dc41..5c3104bbb824bd4a07e26abd16ff45dd
          }
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 9bb542ce3a8c52e1688bb1f66fc916dd23a5fd10..31efaf524270d514064ba07abfeaca3a9d6813ef 100644
+index 9bb542ce3a8c52e1688bb1f66fc916dd23a5fd10..9fc7c60d85761141358aa60efb8a2306d7c8da8e 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -154,6 +154,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
@@ -467,7 +467,7 @@ index 9bb542ce3a8c52e1688bb1f66fc916dd23a5fd10..31efaf524270d514064ba07abfeaca3a
                  ItemStack itemstack1 = (ItemStack) slots.get(i);
  
                  if (!itemstack1.isEmpty() && PotionBrewing.hasMix(itemstack1, itemstack)) {
-+                    if (!PotionBrewing.isCustomInput(itemstack1) && !io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, itemstack1)) break; // KioCG - 模型物品: 判断药水能否酿造
++                    if (!PotionBrewing.isCustomInput(itemstack1) && !io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, itemstack1)) continue; // KioCG - 模型物品: 判断药水能否酿造
                      return true;
                  }
              }
