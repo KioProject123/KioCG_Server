@@ -52,7 +52,7 @@ index 2439f8d48daca7329049436414f06a36b4b79029..2ea31c46c8be7cd84e0f9dd78a6f9e3d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..6102d86a8dc98420498012ddcdcc7a49a9fb2b7d 100644
+index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..9d78fcb98a971d24908700848007bb9bc340a99d 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 @@ -214,11 +214,57 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
@@ -84,7 +84,7 @@ index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..6102d86a8dc98420498012ddcdcc7a49
 +            if (display != null) {
 +                display.moveTo(this.position());
 +                display.persist = false;
-+                display.addTag(com.kiocg.java.Tags.kiocgRiderDisplay);
++                display.setRiderDisplay(true);
 +                display.setItemStack(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
 +                display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
 +                display.setBillboardConstraints(Display.BillboardConstraints.VERTICAL);
