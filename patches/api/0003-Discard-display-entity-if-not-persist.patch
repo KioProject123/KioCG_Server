@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: vicisacat <victor.branchu@gmail.com>
+Date: Fri, 15 Mar 2024 17:35:18 +0100
+Subject: [PATCH] Discard display entity if not persist
+
+
+diff --git a/src/main/java/org/bukkit/entity/Display.java b/src/main/java/org/bukkit/entity/Display.java
+index 2b6f0c627a848f37bc5b3f1732d0e0b82d9f89ad..363483fd357b35f087dcbb93f837c0322db457b3 100644
+--- a/src/main/java/org/bukkit/entity/Display.java
++++ b/src/main/java/org/bukkit/entity/Display.java
+@@ -204,6 +204,8 @@ public interface Display extends Entity {
+      */
+     public void setBrightness(@Nullable Brightness brightness);
+ 
++    public boolean isRiderDisplay(); public void setRiderDisplay(boolean riderDisplay); // KioCG
++
+     /**
+      * Describes the axes/points around which the entity can pivot.
+      */

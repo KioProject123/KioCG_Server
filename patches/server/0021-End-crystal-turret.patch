@@ -4,67 +4,73 @@ Date: Mon, 18 Mar 2024 12:04:58 +0800
 Subject: [PATCH] End crystal turret
 
 
-diff --git a/src/main/java/com/kiocg/java/NamespacedKeys.java b/src/main/java/com/kiocg/java/NamespacedKeys.java
-index f2044f27ec933da4620f0623421659bca2daef16..bb51e9f42d823bdc1d77b6afd1c2c7b2071c1693 100644
---- a/src/main/java/com/kiocg/java/NamespacedKeys.java
-+++ b/src/main/java/com/kiocg/java/NamespacedKeys.java
-@@ -8,4 +8,8 @@ public class NamespacedKeys {
-     public static final NamespacedKey kiocgColdValue = new NamespacedKey(KIOCG, "cold_value");
-     public static final NamespacedKey kiocgThirstValue = new NamespacedKey(KIOCG, "thirst_value");
-     public static final NamespacedKey kiocgThirstRegain = new NamespacedKey(KIOCG, "thirst_regain");
-+
-+    public static final NamespacedKey kiocgTurretTicks = new NamespacedKey(KIOCG, "turret_ticks");
-+    public static final NamespacedKey kiocgTurretRange = new NamespacedKey(KIOCG, "turret_range");
-+    public static final NamespacedKey kiocgTurretDamage = new NamespacedKey(KIOCG, "turret_damage");
- }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 19fc968abcbd37db6d0ace1516a2167967bcf5f7..6afa8f2c2e8b8aa8e95ec0bb8b935f11b034a9db 100644
+index 19fc968abcbd37db6d0ace1516a2167967bcf5f7..9639fde7779ca6f61bf0d1667df1afe5f28489fb 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -587,6 +587,10 @@ public class WorldConfiguration extends ConfigurationPart {
              public boolean spawnInLightAtNight = true;
              public int darkEnoughToSprint = 7;
              public boolean babyZombieJockey = true;
-+            public boolean endCrystalTurret = true;
-+            public int turretTicks = 100;
-+            public double turretRange = 8.0;
-+            public double turretDamage = 1.0;
++            public boolean enableCrystalTurret = true;
++            public int turretCooldownDefault = 100;
++            public double turretRangeDefault = 8.0;
++            public double turretDamageDefault = 1.0;
          }
  
          public boolean betterMobGriefingSetting = true;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..afc543d6dfd7c8b88ee1d68582b654ed606161fd 100644
+index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d75895546 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-@@ -31,11 +31,16 @@ public class EndCrystal extends Entity {
+@@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
      private static final EntityDataAccessor<Boolean> DATA_SHOW_BOTTOM = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.BOOLEAN);
      public int time;
      public boolean generatedByDragonFight = false; // Paper - Fix invulnerable end crystals
 +    // KioCG start
-+    private int idleCooldown = 0;
++    @Nullable
++    private Integer turretCooldown = null;
++    public int getTurretCooldown() {
++        return java.util.Objects.requireNonNullElse(this.turretCooldown, this.level().paperConfig().kiocgConfig.monster.turretCooldownDefault);
++    }
++    public void setTurretCooldown(int cooldown) {
++        this.turretCooldown = cooldown;
++    }
++
++    @Nullable
++    private Double turretRange = null;
++    public double getTurretRange() {
++        return java.util.Objects.requireNonNullElse(this.turretRange, this.level().paperConfig().kiocgConfig.monster.turretRangeDefault);
++    }
++    public void setTurretRange(double range) {
++        this.turretRange = range;
++    }
++
++    @Nullable
++    private Double turretDamage = null;
++    public double getTurretDamage() {
++        return java.util.Objects.requireNonNullElse(this.turretDamage, this.level().paperConfig().kiocgConfig.monster.turretDamageDefault);
++    }
++    public void setTurretDamage(double damage) {
++        this.turretDamage = damage;
++    }
++
 +    private int beamTicks = 0;
 +    // KioCG end
  
      public EndCrystal(EntityType<? extends EndCrystal> type, Level world) {
          super(type, world);
-         this.blocksBuilding = true;
-         this.time = this.random.nextInt(100000);
-+        this.idleCooldown = this.getBukkitEntity().getPersistentDataContainer().getOrDefault(com.kiocg.java.NamespacedKeys.kiocgTurretTicks, org.bukkit.persistence.PersistentDataType.INTEGER, this.level().paperConfig().kiocgConfig.monster.turretTicks); // KioCG
-     }
- 
-     public EndCrystal(Level world, double x, double y, double z) {
-@@ -78,6 +83,37 @@ public class EndCrystal extends Entity {
+@@ -78,6 +108,34 @@ public class EndCrystal extends Entity {
                  }
              }
              // Paper end - Fix invulnerable end crystals
 +            // KioCG start
-+            if (this.level().paperConfig().kiocgConfig.monster.endCrystalTurret && !this.generatedByDragonFight) {
++            if (this.level().paperConfig().kiocgConfig.monster.enableCrystalTurret && !this.generatedByDragonFight) {
 +                if (--beamTicks <= 0) {
 +                    setBeamTarget(null);
 +                }
 +
-+                if (idleCooldown == 0 || this.time % idleCooldown == 0) { // 使炮塔间的发射间隔错开
-+                    idleCooldown = this.getBukkitEntity().getPersistentDataContainer().getOrDefault(com.kiocg.java.NamespacedKeys.kiocgTurretTicks, org.bukkit.persistence.PersistentDataType.INTEGER, this.level().paperConfig().kiocgConfig.monster.turretTicks);
++                if (getTurretCooldown() > 0 || this.time % getTurretCooldown() == 0) { // 使炮塔间的发射间隔错开
 +                    destroyTarget();
 +                }
 +            }
@@ -72,16 +78,14 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..afc543d6dfd7c8b88ee1d68582b654ed
 +    }
 +
 +    private void destroyTarget() {
-+        double range = this.getBukkitEntity().getPersistentDataContainer().getOrDefault(com.kiocg.java.NamespacedKeys.kiocgTurretRange, org.bukkit.persistence.PersistentDataType.DOUBLE, this.level().paperConfig().kiocgConfig.monster.turretRange);
-+        java.util.List<net.minecraft.world.entity.monster.Monster> list1 = this.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, this.getBoundingBox().inflate(range), (entityliving1) -> {
++        java.util.List<net.minecraft.world.entity.monster.Monster> list1 = this.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, this.getBoundingBox().inflate(getTurretRange()), (entityliving1) -> {
 +            return entityliving1.isAlive() && entityliving1.hasLineOfSight(this);
 +        });
 +
 +        if (!list1.isEmpty()) {
 +            net.minecraft.world.entity.LivingEntity entityliving = list1.get(this.level().random.nextInt(list1.size()));
 +
-+            double damage = this.getBukkitEntity().getPersistentDataContainer().getOrDefault(com.kiocg.java.NamespacedKeys.kiocgTurretDamage, org.bukkit.persistence.PersistentDataType.DOUBLE, this.level().paperConfig().kiocgConfig.monster.turretDamage);
-+            if (entityliving.hurt(this.level().damageSources().indirectMagic(this, this), (float) damage)) {
++            if (entityliving.hurt(this.level().damageSources().indirectMagic(this, this), (float) getTurretDamage())) {
 +                this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
 +            }
 +
@@ -91,3 +95,83 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..afc543d6dfd7c8b88ee1d68582b654ed
          }
  
      }
+@@ -90,6 +148,18 @@ public class EndCrystal extends Entity {
+ 
+         nbt.putBoolean("ShowBottom", this.showsBottom());
+         if (this.generatedByDragonFight) nbt.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
++
++        // KioCG start
++        if (this.turretCooldown != null) {
++            nbt.putInt("KioCG.TurretCooldown", this.turretCooldown);
++        }
++        if (this.turretRange != null) {
++            nbt.putDouble("KioCG.TurretRange", this.turretRange);
++        }
++        if (this.turretDamage != null) {
++            nbt.putDouble("KioCG.TurretDamage", this.turretDamage);
++        }
++        // KioCG end
+     }
+ 
+     @Override
+@@ -103,6 +173,17 @@ public class EndCrystal extends Entity {
+         }
+         if (nbt.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = nbt.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
+ 
++        // KioCG start
++        if (nbt.contains("KioCG.TurretCooldown")) {
++            this.turretCooldown = nbt.getInt("KioCG.TurretCooldown");
++        }
++        if (nbt.contains("KioCG.TurretRange")) {
++            this.turretRange = nbt.getDouble("KioCG.TurretRange");
++        }
++        if (nbt.contains("KioCG.TurretDamage")) {
++            this.turretDamage = nbt.getDouble("KioCG.TurretDamage");
++        }
++        // KioCG end
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
+index 676dd5331bec75407a74aea2a89e78ab72d69724..984c78334f77efe960e03a0ba2043c3ace20c076 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
+@@ -39,6 +39,38 @@ public class CraftEnderCrystal extends CraftEntity implements EnderCrystal {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public int getTurretCooldown() {
++        return this.getHandle().getTurretCooldown();
++    }
++
++    @Override
++    public void setTurretCooldown(int cooldown) {
++        this.getHandle().setTurretCooldown(cooldown);
++    }
++
++    @Override
++    public double getTurretRange() {
++        return this.getHandle().getTurretRange();
++    }
++
++    @Override
++    public void setTurretRange(double range) {
++        this.getHandle().setTurretRange(range);
++    }
++
++    @Override
++    public double getTurretDamage() {
++        return this.getHandle().getTurretDamage();
++    }
++
++    @Override
++    public void setTurretDamage(double damage) {
++        this.getHandle().setTurretDamage(damage);
++    }
++    // KioCG end
++
+     @Override
+     public EndCrystal getHandle() {
+         return (EndCrystal) this.entity;

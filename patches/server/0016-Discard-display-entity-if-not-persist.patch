@@ -4,28 +4,28 @@ Date: Fri, 15 Mar 2024 10:48:31 +0800
 Subject: [PATCH] Discard display entity if not persist
 
 
-diff --git a/src/main/java/com/kiocg/java/Tags.java b/src/main/java/com/kiocg/java/Tags.java
-index 1f393a3e0301d46ea0bfaba375a8e6eea7ba3d3b..8fa50eec987aededf89f454546eb23eff916e1c0 100644
---- a/src/main/java/com/kiocg/java/Tags.java
-+++ b/src/main/java/com/kiocg/java/Tags.java
-@@ -2,4 +2,5 @@ package com.kiocg.java;
- 
- public class Tags {
-     public static final String kiocgInStructure = "KioCG_inStructure";
-+    public static final String kiocgRiderDisplay = "KioCG_riderDisplay";
- }
 diff --git a/src/main/java/net/minecraft/world/entity/Display.java b/src/main/java/net/minecraft/world/entity/Display.java
-index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..aab60e5481a4a7b8947ee50a7b36efc1ea626b8a 100644
+index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..35113c336c379eddb17f1652242380b94e3a00ee 100644
 --- a/src/main/java/net/minecraft/world/entity/Display.java
 +++ b/src/main/java/net/minecraft/world/entity/Display.java
-@@ -126,6 +126,14 @@ public abstract class Display extends Entity {
+@@ -82,6 +82,7 @@ public abstract class Display extends Entity {
+     private Display.RenderState renderState;
+     @Nullable
+     private Display.PosRotInterpolationTarget posRotInterpolationTarget;
++    private boolean riderDisplay = false; public boolean isRiderDisplay() { return this.riderDisplay; } public void setRiderDisplay(boolean riderDisplay) { this.riderDisplay = riderDisplay; } // KioCG
+ 
+     public Display(EntityType<?> type, Level world) {
+         super(type, world);
+@@ -126,6 +127,16 @@ public abstract class Display extends Entity {
              this.stopRiding();
          }
  
 +        // KioCG start
-+        if (this.getTags().contains(com.kiocg.java.Tags.kiocgRiderDisplay)) {
-+            if (!this.isPassenger() && !this.isVehicle()) {
-+                this.discard();
++        if (this.riderDisplay) {
++            if (!this.hasPassenger(passenger -> !(passenger instanceof Display display) || !display.riderDisplay)) {
++                if (entity == null || entity instanceof Display display && display.riderDisplay) {
++                    this.discard();
++                }
 +            }
 +        }
 +        // KioCG end
@@ -33,3 +33,30 @@ index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..aab60e5481a4a7b8947ee50a7b36efc1
          if (this.level().isClientSide) {
              if (this.updateStartTick) {
                  this.updateStartTick = false;
+@@ -249,6 +260,7 @@ public abstract class Display extends Entity {
+             this.setBrightnessOverride((Brightness)null);
+         }
+ 
++        if (nbt.contains("KioCG.RiderDisplay")) this.riderDisplay = nbt.getBoolean("KioCG.RiderDisplay"); // KioCG
+     }
+ 
+     public void setTransformation(Transformation transformation) {
+@@ -281,6 +293,7 @@ public abstract class Display extends Entity {
+             });
+         }
+ 
++        nbt.putBoolean("KioCG.RiderDisplay", this.riderDisplay); // KioCG
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
+index 48eeb1d9ba0ad6f895bfe507a6fbe4b9c9530e47..b58d22c40d071f2ab90fc6069f4dfa35d93682c1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
+@@ -167,4 +167,6 @@ public class CraftDisplay extends CraftEntity implements Display {
+             this.getHandle().setBrightnessOverride(null);
+         }
+     }
++
++    public boolean isRiderDisplay() { return this.getHandle().isRiderDisplay(); } public void setRiderDisplay(boolean riderDisplay) { this.getHandle().setRiderDisplay(riderDisplay); } // KioCG
+ }

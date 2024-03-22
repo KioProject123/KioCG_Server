@@ -18,10 +18,10 @@ index 23b3534e413597a34226bc6e9aac01bc9e188f55..8dfa5027987c74eff98f1b27e343bbab
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index bf5faf452d920d7709594f65f20aa98dcd398a4f..bb31b5f33709334fe29f0536c5e4beab1b098aaf 100644
+index 20700837649b2fd08994996edc61ffb449b8af97..353e7e18956d40cad4ab22d0f00cf9627e84bce4 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -959,7 +959,15 @@ public class ServerPlayer extends Player {
+@@ -960,7 +960,15 @@ public class ServerPlayer extends Player {
          if (!keepInventory) {
              for (ItemStack item : this.getInventory().getContents()) {
                  if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item)) {

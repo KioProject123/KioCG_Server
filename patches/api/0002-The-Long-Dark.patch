@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jake Potrebic <jake.m.potrebic@gmail.com>
+Date: Sat, 16 Mar 2024 11:21:14 -0700
+Subject: [PATCH] The Long Dark
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index d4bdbf48544b113a00f3d97462587ee9e57eea62..6768597db9d5b4edc1c5e6d4837ae212046ce2e7 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -3709,6 +3709,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     void resetIdleDuration();
+     // Paper end
+ 
++    // KioCG start
++    int getColdValue();
++    void setColdValue(int value);
++    void addColdValue(int add);
++
++    int getThirstValue();
++    void setThirstValue(int value);
++    void addThirstValue(int add);
++
++    double getThirstRegain();
++    void setThirstRegain(double value);
++    void addThirstRegain(double add);
++    // KioCG end
++
+     @NotNull
+     @Override
+     Spigot spigot();

@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Initial Source <auto@mated.null>
+Date: Fri, 22 Mar 2024 14:03:21 +0800
+Subject: [PATCH] End crystal turret
+
+
+diff --git a/src/main/java/org/bukkit/entity/EnderCrystal.java b/src/main/java/org/bukkit/entity/EnderCrystal.java
+index febc7b3f4c9a402d74d2bcf27e89578fc6d7d6a3..2bd641c62d01e8646f2adccbb0ea707c6c5088e3 100644
+--- a/src/main/java/org/bukkit/entity/EnderCrystal.java
++++ b/src/main/java/org/bukkit/entity/EnderCrystal.java
+@@ -40,4 +40,15 @@ public interface EnderCrystal extends Entity {
+      * @throws IllegalArgumentException for differing worlds
+      */
+     void setBeamTarget(@Nullable Location location);
++
++    // KioCG start
++    int getTurretCooldown();
++    void setTurretCooldown(int cooldown);
++
++    double getTurretRange();
++    void setTurretRange(double range);
++
++    double getTurretDamage();
++    void setTurretDamage(double damage);
++    // KioCG end
+ }

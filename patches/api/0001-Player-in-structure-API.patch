@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Fri, 22 Mar 2024 16:21:27 +0800
+Subject: [PATCH] Player in structure API
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index c6cb4f17469a8f2e60dd3e28d41402851ce5fb21..d4bdbf48544b113a00f3d97462587ee9e57eea62 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -3574,6 +3574,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     String getClientBrandName();
+     // Paper end
+ 
++    boolean isInStructure(); // KioCG
++
+     // Paper start - Teleport API
+     /**
+      * Sets the player's rotation.
