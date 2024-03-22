@@ -90,15 +90,15 @@ index 77edeb58633d83832567980e0e7482a04f3fed3b..7739157ce334221e450a80755173c73a
              }
          } else if (this.sleepCounter > 0) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index 3990fad7ee4d218e182fa322613ec991468de69b..1a07fd1a7f86937a99999075dc17aa8420a903f1 100644
+index 3990fad7ee4d218e182fa322613ec991468de69b..84be9cf5f65fb9d9988061f83a7ff3805fec7018 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
-@@ -106,6 +106,29 @@ public class FoodData {
+@@ -79,6 +79,30 @@ public class FoodData {
  
-                 this.tickTimer = 0;
-             }
+         boolean flag = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+ 
 +        // KioCG start
-+        } else if (flag && player.level().paperConfig().kiocgConfig.sleepHealingRegenRate >= 0 && player.isSleeping() && player.isHurt()) {
++        if (player.level().paperConfig().kiocgConfig.sleepHealingRegenRate >= 0 && this.foodLevel > 6 && player.isSleeping() && player.isHurt()) {
 +            ++this.tickTimer;
 +            if (this.tickTimer >= player.level().paperConfig().kiocgConfig.sleepHealingRegenRate) {
 +                final float health = player.getHealth();
@@ -119,7 +119,8 @@ index 3990fad7ee4d218e182fa322613ec991468de69b..1a07fd1a7f86937a99999075dc17aa84
 +
 +                this.tickTimer = 0;
 +            }
++        } else
 +        // KioCG end
-         } else {
-             this.tickTimer = 0;
-         }
+         if (flag && this.saturationLevel > 0.0F && player.isHurt() && this.foodLevel >= 20) {
+             ++this.tickTimer;
+             if (this.tickTimer >= this.saturatedRegenRate) { // CraftBukkit
