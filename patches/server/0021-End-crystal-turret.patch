@@ -20,7 +20,7 @@ index 19fc968abcbd37db6d0ace1516a2167967bcf5f7..9639fde7779ca6f61bf0d1667df1afe5
  
          public boolean betterMobGriefingSetting = true;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..271b40f4122b7ab569cf58b3f83545aab0a62009 100644
+index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..7b27c1030934370ce95dd5cab56efc1cd97c54fe 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
@@ -60,7 +60,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..271b40f4122b7ab569cf58b3f83545aa
  
      public EndCrystal(EntityType<? extends EndCrystal> type, Level world) {
          super(type, world);
-@@ -78,6 +108,34 @@ public class EndCrystal extends Entity {
+@@ -78,6 +108,31 @@ public class EndCrystal extends Entity {
                  }
              }
              // Paper end - Fix invulnerable end crystals
@@ -84,18 +84,15 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..271b40f4122b7ab569cf58b3f83545aa
 +
 +        if (!list1.isEmpty()) {
 +            net.minecraft.world.entity.LivingEntity entityliving = list1.get(this.level().random.nextInt(list1.size()));
-+
-+            if (entityliving.hurt(this.level().damageSources().indirectMagic(this, this), (float) getTurretDamage())) {
-+                this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
-+            }
-+
++            entityliving.hurt(this.level().damageSources().indirectMagic(this, this), (float) getTurretDamage());
 +            setBeamTarget(entityliving.blockPosition().atY((int) entityliving.getEyeY()).offset(0, -2, 0));
++            this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
 +            beamTicks = 4;
 +            // KioCG end
          }
  
      }
-@@ -90,6 +148,18 @@ public class EndCrystal extends Entity {
+@@ -90,6 +145,18 @@ public class EndCrystal extends Entity {
  
          nbt.putBoolean("ShowBottom", this.showsBottom());
          if (this.generatedByDragonFight) nbt.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
@@ -114,7 +111,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..271b40f4122b7ab569cf58b3f83545aa
      }
  
      @Override
-@@ -103,6 +173,17 @@ public class EndCrystal extends Entity {
+@@ -103,6 +170,17 @@ public class EndCrystal extends Entity {
          }
          if (nbt.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = nbt.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
  
