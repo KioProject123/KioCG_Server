@@ -5,7 +5,7 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/org/bukkit/entity/EnderCrystal.java b/src/main/java/org/bukkit/entity/EnderCrystal.java
-index febc7b3f4c9a402d74d2bcf27e89578fc6d7d6a3..2bd641c62d01e8646f2adccbb0ea707c6c5088e3 100644
+index febc7b3f4c9a402d74d2bcf27e89578fc6d7d6a3..c7e307128b9d4243a7c56c9dddb6d7497fc800fa 100644
 --- a/src/main/java/org/bukkit/entity/EnderCrystal.java
 +++ b/src/main/java/org/bukkit/entity/EnderCrystal.java
 @@ -40,4 +40,15 @@ public interface EnderCrystal extends Entity {
@@ -15,12 +15,12 @@ index febc7b3f4c9a402d74d2bcf27e89578fc6d7d6a3..2bd641c62d01e8646f2adccbb0ea707c
 +
 +    // KioCG start
 +    int getTurretCooldown();
-+    void setTurretCooldown(int cooldown);
++    void setTurretCooldown(@Nullable Integer cooldown);
 +
 +    double getTurretRange();
-+    void setTurretRange(double range);
++    void setTurretRange(@Nullable Double range);
 +
 +    double getTurretDamage();
-+    void setTurretDamage(double damage);
++    void setTurretDamage(@Nullable Double damage);
 +    // KioCG end
  }

@@ -20,7 +20,7 @@ index 19fc968abcbd37db6d0ace1516a2167967bcf5f7..9639fde7779ca6f61bf0d1667df1afe5
  
          public boolean betterMobGriefingSetting = true;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d75895546 100644
+index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..271b40f4122b7ab569cf58b3f83545aab0a62009 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
@@ -33,7 +33,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d
 +    public int getTurretCooldown() {
 +        return java.util.Objects.requireNonNullElse(this.turretCooldown, this.level().paperConfig().kiocgConfig.monster.turretCooldownDefault);
 +    }
-+    public void setTurretCooldown(int cooldown) {
++    public void setTurretCooldown(@Nullable Integer cooldown) {
 +        this.turretCooldown = cooldown;
 +    }
 +
@@ -42,7 +42,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d
 +    public double getTurretRange() {
 +        return java.util.Objects.requireNonNullElse(this.turretRange, this.level().paperConfig().kiocgConfig.monster.turretRangeDefault);
 +    }
-+    public void setTurretRange(double range) {
++    public void setTurretRange(@Nullable Double range) {
 +        this.turretRange = range;
 +    }
 +
@@ -51,7 +51,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d
 +    public double getTurretDamage() {
 +        return java.util.Objects.requireNonNullElse(this.turretDamage, this.level().paperConfig().kiocgConfig.monster.turretDamageDefault);
 +    }
-+    public void setTurretDamage(double damage) {
++    public void setTurretDamage(@Nullable Double damage) {
 +        this.turretDamage = damage;
 +    }
 +
@@ -70,7 +70,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d
 +                    setBeamTarget(null);
 +                }
 +
-+                if (getTurretCooldown() > 0 || this.time % getTurretCooldown() == 0) { // 使炮塔间的发射间隔错开
++                if (getTurretCooldown() <= 0 || this.time % getTurretCooldown() == 0) { // 使炮塔间的发射间隔错开
 +                    destroyTarget();
 +                }
 +            }
@@ -133,7 +133,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..b15bd5de7c54fc77cb40954225d2104d
  
      @Override
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
-index 676dd5331bec75407a74aea2a89e78ab72d69724..984c78334f77efe960e03a0ba2043c3ace20c076 100644
+index 676dd5331bec75407a74aea2a89e78ab72d69724..a8c797219e8c89c05ac7b22ecf954678d0e7292b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
 @@ -39,6 +39,38 @@ public class CraftEnderCrystal extends CraftEntity implements EnderCrystal {
@@ -147,7 +147,7 @@ index 676dd5331bec75407a74aea2a89e78ab72d69724..984c78334f77efe960e03a0ba2043c3a
 +    }
 +
 +    @Override
-+    public void setTurretCooldown(int cooldown) {
++    public void setTurretCooldown(@javax.annotation.Nullable Integer cooldown) {
 +        this.getHandle().setTurretCooldown(cooldown);
 +    }
 +
@@ -157,7 +157,7 @@ index 676dd5331bec75407a74aea2a89e78ab72d69724..984c78334f77efe960e03a0ba2043c3a
 +    }
 +
 +    @Override
-+    public void setTurretRange(double range) {
++    public void setTurretRange(@javax.annotation.Nullable Double range) {
 +        this.getHandle().setTurretRange(range);
 +    }
 +
@@ -167,7 +167,7 @@ index 676dd5331bec75407a74aea2a89e78ab72d69724..984c78334f77efe960e03a0ba2043c3a
 +    }
 +
 +    @Override
-+    public void setTurretDamage(double damage) {
++    public void setTurretDamage(@javax.annotation.Nullable Double damage) {
 +        this.getHandle().setTurretDamage(damage);
 +    }
 +    // KioCG end
