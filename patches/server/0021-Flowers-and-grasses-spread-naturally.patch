@@ -1,0 +1,122 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sat, 23 Mar 2024 20:14:36 +0800
+Subject: [PATCH] Flowers and grasses spread naturally
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index cdcd6866fd5642eea8831094d387f35c4e4ad734..f7ca0e045ac4de9d0ddb49be10a57795ed3bfdb2 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -593,6 +593,7 @@ public class WorldConfiguration extends ConfigurationPart {
+         public boolean betterMobGriefingSetting = true;
+         public double dirtPathSpeedBoost = 0.02;
+         public double saplingsWitheredChance = 0.025;
++        public boolean flowersAndGrassesSpreadNaturally = true;
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/level/block/FlowerBlock.java b/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
+index e602ba8777444a64646e92725a178537e2432769..c683f8d8d8a403cafa722a8f23b4fe90ef7c4bb5 100644
+--- a/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
+@@ -56,4 +56,47 @@ public class FlowerBlock extends BushBlock implements SuspiciousEffectHolder {
+     public List<SuspiciousEffectHolder.EffectEntry> getSuspiciousEffects() {
+         return this.suspiciousStewEffects;
+     }
++
++    // KioCG start
++    @Override
++    public boolean isRandomlyTicking(BlockState state) {
++        return true;
++    }
++
++    @Override
++    public void randomTick(BlockState state, net.minecraft.server.level.ServerLevel world, BlockPos pos, net.minecraft.util.RandomSource random) {
++        if (!world.paperConfig().kiocgConfig.flowersAndGrassesSpreadNaturally || !world.isRainingAt(pos)) return;
++        if (random.nextFloat() < (world.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
++            int i = 5;
++            java.util.Iterator iterator = BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).iterator();
++
++            while (iterator.hasNext()) {
++                BlockPos blockposition1 = (BlockPos) iterator.next();
++
++                if (world.getBlockState(blockposition1).getBlock() instanceof FlowerBlock) {
++                    --i;
++                    if (i <= 0) {
++                        return;
++                    }
++                }
++            }
++
++            BlockPos blockposition2 = pos.offset(random.nextInt(3) - 1, random.nextInt(2) - random.nextInt(2), random.nextInt(3) - 1);
++            final BlockPos sourcePos = pos; // Paper - Use correct source for mushroom block spread event
++
++            for (int j = 0; j < 4; ++j) {
++                if (world.isEmptyBlock(blockposition2) && state.canSurvive(world, blockposition2)) {
++                    pos = blockposition2;
++                }
++
++                blockposition2 = pos.offset(random.nextInt(3) - 1, random.nextInt(2) - random.nextInt(2), random.nextInt(3) - 1);
++            }
++
++            if (world.isEmptyBlock(blockposition2) && state.canSurvive(world, blockposition2)) {
++                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(world, sourcePos, blockposition2, state, 2); // CraftBukkit // Paper - Use correct source for mushroom block spread event
++            }
++        }
++
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java b/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
+index 4019ce6dd4add3cb59314fa585af1387f076b586..5e3fb873272fd63e52651c812d6e5d5e16be1ada 100644
+--- a/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
+@@ -49,4 +49,47 @@ public class TallGrassBlock extends BushBlock implements BonemealableBlock {
+         }
+ 
+     }
++
++    // KioCG start
++    @Override
++    public boolean isRandomlyTicking(BlockState state) {
++        return true;
++    }
++
++    @Override
++    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++        if (!world.paperConfig().kiocgConfig.flowersAndGrassesSpreadNaturally || !world.isRainingAt(pos)) return;
++        if (random.nextFloat() < (world.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
++            int i = 5;
++            java.util.Iterator iterator = BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).iterator();
++
++            while (iterator.hasNext()) {
++                BlockPos blockposition1 = (BlockPos) iterator.next();
++
++                if (world.getBlockState(blockposition1).getBlock() instanceof TallGrassBlock) {
++                    --i;
++                    if (i <= 0) {
++                        return;
++                    }
++                }
++            }
++
++            BlockPos blockposition2 = pos.offset(random.nextInt(3) - 1, random.nextInt(2) - random.nextInt(2), random.nextInt(3) - 1);
++            final BlockPos sourcePos = pos; // Paper - Use correct source for mushroom block spread event
++
++            for (int j = 0; j < 4; ++j) {
++                if (world.isEmptyBlock(blockposition2) && state.canSurvive(world, blockposition2)) {
++                    pos = blockposition2;
++                }
++
++                blockposition2 = pos.offset(random.nextInt(3) - 1, random.nextInt(2) - random.nextInt(2), random.nextInt(3) - 1);
++            }
++
++            if (world.isEmptyBlock(blockposition2) && state.canSurvive(world, blockposition2)) {
++                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(world, sourcePos, blockposition2, state, 2); // CraftBukkit // Paper - Use correct source for mushroom block spread event
++            }
++        }
++
++    }
++    // KioCG end
+ }
