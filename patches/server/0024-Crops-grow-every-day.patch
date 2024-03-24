@@ -1,0 +1,277 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 24 Mar 2024 09:51:12 +0800
+Subject: [PATCH] Crops grow every day
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..2bf07fb71b5d60a39b33dd9a1bb0c14ed0957b92 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
+ 
+         gameprofilerfiller.popPush("tickBlocks");
+         timings.chunkTicksBlocks.startTiming(); // Paper
++
++        // KioCG start - 农作物每天生长
++        int daysSpent = 0;
++        int today = (int) (this.getDayTime() / 24000);
++        if (today != chunk.cropDays) {
++            daysSpent = Math.min(today - chunk.cropDays, 7);
++            chunk.cropDays = today;
++        }
++        // KioCG end - 农作物每天生长
++
+         if (randomTickSpeed > 0) {
+             // Paper start - optimize random block ticking
+             LevelChunkSection[] sections = chunk.getSections();
+@@ -1066,6 +1076,33 @@ public class ServerLevel extends Level implements WorldGenLevel {
+                 // We drop the fluid tick since LAVA is ALREADY TICKED by the above method (See LiquidBlock).
+                 // TODO CHECK ON UPDATE (ping the Canadian)
+             }
++
++            // KioCG start - 农作物每天生长
++            for (int i = 0; i < daysSpent; ++i) {
++                for (int sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
++                    LevelChunkSection section = sections[sectionIndex];
++                    if (section == null || section.cropsList.size() == 0) continue;
++
++                    List<Pair<BlockPos, BlockState>> tickCrops = new ArrayList<>();
++                    int yPos = (sectionIndex + minSection) << 4;
++                    for (int a = 0; a < section.cropsList.size(); ++a) {
++                        long raw = section.cropsList.getRaw(a);
++                        int location = com.destroystokyo.paper.util.maplist.IBlockDataList.getLocationFromRaw(raw);
++                        int x = location & 15;
++                        int y = ((location >>> (4 + 4)) & 255) | yPos;
++                        int z = (location >>> 4) & 15;
++
++                        BlockPos blockposition2 = new BlockPos(j + x, y, k + z);
++                        BlockState iblockdata = com.destroystokyo.paper.util.maplist.IBlockDataList.getBlockDataFromRaw(raw);
++
++                        tickCrops.add(Pair.of(blockposition2, iblockdata));
++                    }
++                    for (Pair<BlockPos, BlockState> pair : tickCrops) {
++                        pair.getSecond().randomTick(this, pair.getFirst(), this.randomTickRandom);
++                    }
++                }
++            }
++            // KioCG end - 农作物每天生长
+         }
+         // Paper end - optimise random block ticking
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
+index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..225cd008359b0f54000fb04f97280eb7f3b6eaf0 100644
+--- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
+@@ -99,7 +99,7 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
+                     modifier = world.spigotConfig.wheatModifier;
+                 }
+ 
+-                if (random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                if (true || random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
+                     // Spigot end
+                     CraftEventFactory.handleBlockGrowEvent(world, pos, this.getStateForAge(i + 1), 2); // CraftBukkit
+                 }
+diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
+index d20c009baf69d083bf8a14000028991b6518cd50..192408d3b2bb66ee0d5440a5eeaf9514a51b25b9 100644
+--- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
+@@ -120,7 +120,7 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         float f = CropBlock.getGrowthSpeed(this, world, pos);
+         boolean bl = random.nextFloat() < (world.spigotConfig.pitcherPlantModifier / (100.0F * (Math.floor(25.0F / f) + 1))); // Paper - Fix Spigot growth modifiers
+-        if (bl) {
++        if (true || bl) { // KioCG - 农作物每天生长
+             this.grow(world, state, pos, 1);
+         }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
+index 121a872cd750a87b779895687ae1abf5bb77b088..32e085dd294b18f578ff4f9c38f82f9788ef7f00 100644
+--- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/StemBlock.java
+@@ -75,7 +75,7 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
+         if (world.getRawBrightness(pos, 0) >= 9) {
+             float f = CropBlock.getGrowthSpeed(this, world, pos);
+ 
+-            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
++            if (true || random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
+                 int i = (Integer) state.getValue(StemBlock.AGE);
+ 
+                 if (i < 7) {
+diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
+index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a5341399e5c6c3 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
++++ b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
+@@ -64,6 +64,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+     private volatile boolean isLightCorrect;
+     protected final ChunkPos chunkPos; public final long coordinateKey; public final int locX; public final int locZ; // Paper - cache coordinate key
+     private long inhabitedTime;
++    public int cropDays; // KioCG
+     /** @deprecated */
+     @Nullable
+     @Deprecated
+@@ -128,7 +129,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+     }
+     // Paper end - rewrite light engine
+ 
+-    public ChunkAccess(ChunkPos pos, UpgradeData upgradeData, LevelHeightAccessor heightLimitView, Registry<Biome> biomeRegistry, long inhabitedTime, @Nullable LevelChunkSection[] sectionArray, @Nullable BlendingData blendingData) {
++    public ChunkAccess(ChunkPos pos, UpgradeData upgradeData, LevelHeightAccessor heightLimitView, Registry<Biome> biomeRegistry, long inhabitedTime, int cropDays, @Nullable LevelChunkSection[] sectionArray, @Nullable BlendingData blendingData) { // KioCG - CropDays
+         // Paper start - rewrite light engine
+         if (!(this instanceof ImposterProtoChunk)) {
+             this.setBlockNibbles(ca.spottedleaf.starlight.common.light.StarLightEngine.getFilledEmptyLight(heightLimitView));
+@@ -141,6 +142,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+         this.levelHeightAccessor = heightLimitView;
+         this.sections = new LevelChunkSection[heightLimitView.getSectionsCount()];
+         this.inhabitedTime = inhabitedTime;
++        this.cropDays = cropDays; // KioCG
+         this.postProcessing = new ShortList[heightLimitView.getSectionsCount()];
+         this.blendingData = blendingData;
+         // Paper - starlight - remove skyLightSources
+diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
+index 6ec3fc801453fd54c25b642e6fa71c19b463311d..27de22ea6eb31c039fbada85f52463e04f690b94 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
++++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -87,11 +87,11 @@ public class LevelChunk extends ChunkAccess {
+     public volatile FullChunkStatus chunkStatus = FullChunkStatus.INACCESSIBLE; // Paper - rewrite chunk system
+ 
+     public LevelChunk(Level world, ChunkPos pos) {
+-        this(world, pos, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, (LevelChunkSection[]) null, (LevelChunk.PostLoadProcessor) null, (BlendingData) null);
++        this(world, pos, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, 0, (LevelChunkSection[]) null, (LevelChunk.PostLoadProcessor) null, (BlendingData) null); // KioCG - CropDays
+     }
+ 
+-    public LevelChunk(Level world, ChunkPos pos, UpgradeData upgradeData, LevelChunkTicks<Block> blockTickScheduler, LevelChunkTicks<Fluid> fluidTickScheduler, long inhabitedTime, @Nullable LevelChunkSection[] sectionArrayInitializer, @Nullable LevelChunk.PostLoadProcessor entityLoader, @Nullable BlendingData blendingData) {
+-        super(pos, upgradeData, world, net.minecraft.server.MinecraftServer.getServer().registryAccess().registryOrThrow(Registries.BIOME), inhabitedTime, sectionArrayInitializer, blendingData); // Paper - Anti-Xray - The world isn't ready yet, use server singleton for registry
++    public LevelChunk(Level world, ChunkPos pos, UpgradeData upgradeData, LevelChunkTicks<Block> blockTickScheduler, LevelChunkTicks<Fluid> fluidTickScheduler, long inhabitedTime, int cropDays, @Nullable LevelChunkSection[] sectionArrayInitializer, @Nullable LevelChunk.PostLoadProcessor entityLoader, @Nullable BlendingData blendingData) { // KioCG - CropDays
++        super(pos, upgradeData, world, net.minecraft.server.MinecraftServer.getServer().registryAccess().registryOrThrow(Registries.BIOME), inhabitedTime, cropDays, sectionArrayInitializer, blendingData); // Paper - Anti-Xray - The world isn't ready yet, use server singleton for registry // KioCG - CropDays
+         this.tickersInLevel = Maps.newHashMap();
+         this.level = (ServerLevel) world; // CraftBukkit - type
+         this.gameEventListenerRegistrySections = new Int2ObjectOpenHashMap();
+@@ -220,7 +220,7 @@ public class LevelChunk extends ChunkAccess {
+     // Paper end
+ 
+     public LevelChunk(ServerLevel world, ProtoChunk protoChunk, @Nullable LevelChunk.PostLoadProcessor entityLoader) {
+-        this(world, protoChunk.getPos(), protoChunk.getUpgradeData(), protoChunk.unpackBlockTicks(), protoChunk.unpackFluidTicks(), protoChunk.getInhabitedTime(), protoChunk.getSections(), entityLoader, protoChunk.getBlendingData());
++        this(world, protoChunk.getPos(), protoChunk.getUpgradeData(), protoChunk.unpackBlockTicks(), protoChunk.unpackFluidTicks(), protoChunk.getInhabitedTime(), protoChunk.cropDays, protoChunk.getSections(), entityLoader, protoChunk.getBlendingData()); // KioCG - CropDays
+         // Paper start - rewrite light engine
+         this.setBlockNibbles(protoChunk.getBlockNibbles());
+         this.setSkyNibbles(protoChunk.getSkyNibbles());
+diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
+index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..cec720e7810a2aef427d3e48b66b5960ea17e31f 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
++++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
+@@ -26,6 +26,7 @@ public class LevelChunkSection {
+     // CraftBukkit start - read/write
+     private PalettedContainer<Holder<Biome>> biomes;
+     public final com.destroystokyo.paper.util.maplist.IBlockDataList tickingList = new com.destroystokyo.paper.util.maplist.IBlockDataList(); // Paper
++    public final com.destroystokyo.paper.util.maplist.IBlockDataList cropsList = new com.destroystokyo.paper.util.maplist.IBlockDataList(); // KioCG
+     // Paper start - optimise collisions
+     private int specialCollidingBlocks;
+ 
+@@ -93,10 +94,12 @@ public class LevelChunkSection {
+         if (!iblockdata1.isAir()) {
+             --this.nonEmptyBlockCount;
+             if (iblockdata1.isRandomlyTicking()) {
++                if (isCrops(iblockdata1)) { this.cropsList.remove(x, y, z); } else { // KioCG
+                 --this.tickingBlockCount;
+                 // Paper start
+                 this.tickingList.remove(x, y, z);
+                 // Paper end
++                } // KioCG
+             }
+         }
+ 
+@@ -107,10 +110,12 @@ public class LevelChunkSection {
+         if (!state.isAir()) {
+             ++this.nonEmptyBlockCount;
+             if (state.isRandomlyTicking()) {
++                if (isCrops(state)) { this.cropsList.add(x, y, z, state); } else { // KioCG
+                 ++this.tickingBlockCount;
+                 // Paper start
+                 this.tickingList.add(x, y, z, state);
+                 // Paper end
++                } // KioCG
+             }
+         }
+ 
+@@ -122,6 +127,12 @@ public class LevelChunkSection {
+         return iblockdata1;
+     }
+ 
++    // KioCG start
++    private boolean isCrops(BlockState state) {
++        return state.is(net.minecraft.tags.BlockTags.CROPS);
++    }
++    // KioCG end
++
+     public boolean hasOnlyAir() {
+         return this.nonEmptyBlockCount == 0;
+     }
+@@ -141,6 +152,7 @@ public class LevelChunkSection {
+     public void recalcBlockCounts() {
+         // Paper start - unfuck this
+         this.tickingList.clear();
++        this.cropsList.clear(); // KioCG
+         this.nonEmptyBlockCount = 0;
+         this.tickingBlockCount = 0;
+         this.tickingFluidCount = 0;
+@@ -152,8 +164,10 @@ public class LevelChunkSection {
+                 if (!iblockdata.isAir()) {
+                     this.nonEmptyBlockCount = (short) (this.nonEmptyBlockCount + 1);
+                     if (iblockdata.isRandomlyTicking()) {
++                        if (isCrops(iblockdata)) { this.cropsList.add(i, iblockdata); } else { // KioCG
+                         this.tickingBlockCount = (short)(this.tickingBlockCount + 1);
+                         this.tickingList.add(i, iblockdata);
++                        } // KioCG
+                     }
+                 }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java b/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
+index 7aa585875dad5296526bb5d67fc5ea0f8875e452..f0ce6f5629e05df57a8aa658405a203ae8ee6ca6 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
++++ b/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
+@@ -52,7 +52,7 @@ public class ProtoChunk extends ChunkAccess {
+     }
+ 
+     public ProtoChunk(ChunkPos pos, UpgradeData upgradeData, @Nullable LevelChunkSection[] sections, ProtoChunkTicks<Block> blockTickScheduler, ProtoChunkTicks<Fluid> fluidTickScheduler, LevelHeightAccessor world, Registry<Biome> biomeRegistry, @Nullable BlendingData blendingData) {
+-        super(pos, upgradeData, world, biomeRegistry, 0L, sections, blendingData);
++        super(pos, upgradeData, world, biomeRegistry, 0L, 0, sections, blendingData); // KioCG - CropDays
+         this.blockTicks = blockTickScheduler;
+         this.fluidTicks = fluidTickScheduler;
+     }
+diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+index d53c4f3d47a8728d56fbd9b5e12be51885560d52..2a9aca7c758b271f36bb69be5db8c693f3704617 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
++++ b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+@@ -261,6 +261,7 @@ public class ChunkSerializer {
+         }
+ 
+         long l = nbt.getLong("InhabitedTime");
++        int cropDays = nbt.getInt("KioCG.CropDays"); // KioCG
+         ChunkStatus.ChunkType chunkstatus_type = ChunkSerializer.getChunkTypeFromTag(nbt);
+         Logger logger1;
+         BlendingData blendingdata;
+@@ -284,7 +285,7 @@ public class ChunkSerializer {
+                 return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(s));
+             }, chunkPos);
+ 
+-            object1 = new LevelChunk(world.getLevel(), chunkPos, chunkconverter, levelchunkticks, levelchunkticks1, l, achunksection, ChunkSerializer.postLoadChunk(world, nbt), blendingdata);
++            object1 = new LevelChunk(world.getLevel(), chunkPos, chunkconverter, levelchunkticks, levelchunkticks1, l, cropDays, achunksection, ChunkSerializer.postLoadChunk(world, nbt), blendingdata); // KioCG - CropDays
+             ((LevelChunk)object1).setBlockNibbles(blockNibbles); // Paper - replace light impl
+             ((LevelChunk)object1).setSkyNibbles(skyNibbles); // Paper - replace light impl
+         } else {
+@@ -300,6 +301,7 @@ public class ChunkSerializer {
+ 
+             object1 = protochunk;
+             protochunk.setInhabitedTime(l);
++            protochunk.cropDays = cropDays; // KioCG
+             if (nbt.contains("below_zero_retrogen", 10)) {
+                 dataresult = BelowZeroRetrogen.CODEC.parse(new Dynamic(NbtOps.INSTANCE, nbt.getCompound("below_zero_retrogen")));
+                 logger1 = ChunkSerializer.LOGGER;
+@@ -469,6 +471,7 @@ public class ChunkSerializer {
+         nbttagcompound.putInt("zPos", chunkcoordintpair.z);
+         nbttagcompound.putLong("LastUpdate", asyncsavedata != null ? asyncsavedata.worldTime : world.getGameTime()); // Paper - async chunk unloading // Paper - diff on change
+         nbttagcompound.putLong("InhabitedTime", chunk.getInhabitedTime());
++        nbttagcompound.putInt("KioCG.CropDays", chunk.cropDays); // KioCG
+         nbttagcompound.putString("Status", BuiltInRegistries.CHUNK_STATUS.getKey(chunk.getStatus()).toString());
+         BlendingData blendingdata = chunk.getBlendingData();
+         DataResult<Tag> dataresult; // CraftBukkit - decompile error
