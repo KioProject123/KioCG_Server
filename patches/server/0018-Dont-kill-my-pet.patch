@@ -5,19 +5,32 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index d1d52d34ab7f079ba6689ea371e0b8b90676efce..a35fca31c7264f77a93c671b3bca4e3b7f5f4f22 100644
+index d1d52d34ab7f079ba6689ea371e0b8b90676efce..b509a8cdcb8d0b5a058700c7fa72a4cbe17f239d 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -413,6 +413,9 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -413,6 +413,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public int fixedCumulativeCost = 4;
              public boolean anvilRenameInSurvival = false;
          }
 +
 +        public boolean dontKillMyPet = true;
 +        public double petTeleportDistanceSqr = 256.0;
++        public boolean petFollowKeepChunkLoaded = true;
      }
      // KioCG end
  }
+diff --git a/src/main/java/net/minecraft/server/level/TicketType.java b/src/main/java/net/minecraft/server/level/TicketType.java
+index 658e63ebde81dc14c8ab5850fb246dc0aab25dea..59b1fc323174dcd9c5d3b98724f6eec575635b8c 100644
+--- a/src/main/java/net/minecraft/server/level/TicketType.java
++++ b/src/main/java/net/minecraft/server/level/TicketType.java
+@@ -28,6 +28,7 @@ public class TicketType<T> {
+     public static final TicketType<Unit> PLUGIN = TicketType.create("plugin", (a, b) -> 0); // CraftBukkit
+     public static final TicketType<org.bukkit.plugin.Plugin> PLUGIN_TICKET = TicketType.create("plugin_ticket", (plugin1, plugin2) -> plugin1.getClass().getName().compareTo(plugin2.getClass().getName())); // CraftBukkit
+     public static final TicketType<Long> CHUNK_RELIGHT = create("light_update", Long::compareTo); // Paper - ensure chunks stay loaded for lighting
++    public static final TicketType<Integer> PET_FOLLOW = TicketType.create("pet_follow", Integer::compareTo, 20 * 3); // KioCG
+     // Paper start - rewrite chunk system
+     public static final TicketType<Long> CHUNK_LOAD = create("chunk_load", Long::compareTo);
+     public static final TicketType<Long> STATUS_UPGRADE = create("status_upgrade", Long::compareTo);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 index 9226de952f4020daa21f659ea710509fc89d093c..403b8b2e0f7cae449b3f7787e9a225f4a57be397 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
@@ -114,10 +127,48 @@ index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..9d78fcb98a971d24908700848007bb9b
      }
  }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..fb483e6d76713426954381ea4633c3f46a758a8c 100644
+index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..f7db8157ba6c5ab7dcffb126d72de2ac0155976f 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-@@ -96,7 +96,7 @@ public class FollowOwnerGoal extends Goal {
+@@ -35,6 +35,7 @@ public class FollowOwnerGoal extends Goal {
+     private final float startDistance;
+     private float oldWaterCost;
+     private final boolean canFly;
++    private int ticketTicks; // KioCG
+ 
+     public FollowOwnerGoal(TamableAnimal tameable, double speed, float minDistance, float maxDistance, boolean leavesAllowed) {
+         this.tamable = tameable;
+@@ -61,13 +62,25 @@ public class FollowOwnerGoal extends Goal {
+         } else if (this.unableToMove()) {
+             return false;
+         } else if (this.tamable.distanceToSqr((Entity) entityliving) < (double) (this.startDistance * this.startDistance)) {
++            keepChunkLoaded(); // KioCG
+             return false;
+         } else {
++            keepChunkLoaded(); // KioCG
+             this.owner = entityliving;
+             return true;
+         }
+     }
+ 
++    // KioCG start
++    private void keepChunkLoaded() {
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petFollowKeepChunkLoaded) return;
++        if (this.tamable.tickCount >= ticketTicks + 20) {
++            ticketTicks = this.tamable.tickCount;
++            ((net.minecraft.server.level.ServerLevel) this.level).getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.PET_FOLLOW, new net.minecraft.world.level.ChunkPos(this.tamable.blockPosition()), 2, this.tamable.getId()); // KioCG
++        }
++    }
++    // KioCG end
++
+     @Override
+     public boolean canContinueToUse() {
+         return this.navigation.isDone() ? false : (this.unableToMove() ? false : this.tamable.distanceToSqr((Entity) this.owner) > (double) (this.stopDistance * this.stopDistance));
+@@ -93,10 +106,11 @@ public class FollowOwnerGoal extends Goal {
+ 
+     @Override
+     public void tick() {
++        keepChunkLoaded(); // KioCG
          if (this.tamable.distanceToSqr(this.owner) <= 16 * 16) this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float) this.tamable.getMaxHeadXRot()); // Paper - Limit pet look distance
          if (--this.timeToRecalcPath <= 0) {
              this.timeToRecalcPath = this.adjustedTickDelay(10);
