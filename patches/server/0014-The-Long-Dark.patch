@@ -316,11 +316,11 @@ index b994ae09621934df2cdd6a83a7d8ecb44649fb16..135379d0a579ec89ee303ec69a88800e
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
              org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index f5a86c0fb1a7a313afc4c56ffc445a7fe7821428..6778bff8924a24f1777cca1efee3c919190675f5 100644
+index b2eff51f1ad1e702525ef298807ea7d2083f6218..5c6424a3800344c7fc5f3a0cbdf36a4b57e0a12c 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -357,7 +357,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
-     private static final int FLAG_INVISIBLE = 5;
+     public static final int FLAG_INVISIBLE = 5;
      protected static final int FLAG_GLOWING = 6;
      protected static final int FLAG_FALL_FLYING = 7;
 -    private static final EntityDataAccessor<Integer> DATA_AIR_SUPPLY_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.INT);
