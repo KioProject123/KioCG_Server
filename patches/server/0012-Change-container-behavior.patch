@@ -64,7 +64,7 @@ index 0bba74bd22d66881fc6851797d29c1442f509445..6791902e3036bb10540b47c29b21fd8d
          addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
          addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..6e2b681f9d3b1125e15e982f2c7dd17fd13baa30 100644
+index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..7cf5e8e4e2818fe718d0b414b55aea8069bd0ded 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -143,6 +143,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -155,7 +155,23 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..6e2b681f9d3b1125e15e982f2c7dd17f
              }
  
              /*
-@@ -519,6 +552,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -485,10 +518,13 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+             // CraftBukkit end
+ 
+             if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !((ItemStack) nonnulllist.get(1)).isEmpty() && ((ItemStack) nonnulllist.get(1)).is(Items.BUCKET)) {
+-                nonnulllist.set(1, new ItemStack(Items.WATER_BUCKET));
++                // KioCG start
++                nonnulllist.set(1, ItemStack.EMPTY);
++                net.minecraft.world.Containers.dropItemStack(world, (double) blockposition.getX(), (double) blockposition.getY(), (double) blockposition.getZ(), new ItemStack(Items.WATER_BUCKET));
++                // KioCG end
+             }
+ 
+-            itemstack.shrink(1);
++            itemstack.setCount(0); // KioCG - 直接清除材料, 因为配方不支持指定材料数量 (使用插件自定义行为)
+             return true;
+         } else {
+             return false;
+@@ -519,6 +555,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
      @Override
      public int[] getSlotsForFace(Direction side) {
@@ -164,9 +180,18 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..6e2b681f9d3b1125e15e982f2c7dd17f
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 31bbaf4f7f3110695fcae96029495363756c924d..88aa95276117d760df405b2176af980a169187ae 100644
+index 31bbaf4f7f3110695fcae96029495363756c924d..8bafa0c012b01923ccb636d04fcc841d539cbd27 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -88,7 +88,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+ 
+     public BrewingStandBlockEntity(BlockPos pos, BlockState state) {
+         super(BlockEntityType.BREWING_STAND, pos, state);
+-        this.items = NonNullList.withSize(5, ItemStack.EMPTY);
++        this.items = NonNullList.withSize(10, ItemStack.EMPTY); // KioCG
+         this.dataAccess = new ContainerData() {
+             @Override
+             public int get(int index) {
 @@ -153,6 +153,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          if (blockEntity.brewTime <= 0 && !blockEntity.shouldTick) return; else blockEntity.shouldTick = false; // KioCG - 优化未燃烧的tick
          ItemStack itemstack = (ItemStack) blockEntity.items.get(4);
@@ -175,16 +200,21 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..88aa95276117d760df405b2176af980a
          if (blockEntity.fuel <= 0 && itemstack.is(Items.BLAZE_POWDER)) {
              // CraftBukkit start
              BrewingStandFuelEvent event = new BrewingStandFuelEvent(CraftBlock.at(world, pos), CraftItemStack.asCraftMirror(itemstack), 20);
-@@ -279,9 +280,17 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -279,9 +280,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          }
          // CraftBukkit end
  
-+        ItemStack fuel = nonnulllist.get(4); // KioCG
++        // KioCG start
++        itemstack.shrink(1);
++        nonnulllist.set(3, itemstack);
++        boolean autoBrewing = tryFillNextIngredient(nonnulllist);
++        // KioCG end
++
          for (int i = 0; i < 3; ++i) {
              // CraftBukkit start - validate index in case it is cleared by plugins
              if (i < brewResults.size()) {
 +                // KioCG start
-+                if (fuel.isEmpty()) {
++                if (!autoBrewing) {
 +                    Containers.dropItemStack(world, (double) blockposition.getX(), (double) blockposition.getY(), (double) blockposition.getZ(), CraftItemStack.asNMSCopy(brewResults.get(i)));
 +                    nonnulllist.set(i, ItemStack.EMPTY);
 +                    continue;
@@ -193,15 +223,52 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..88aa95276117d760df405b2176af980a
                  nonnulllist.set(i, CraftItemStack.asNMSCopy(brewResults.get(i)));
              } else {
                  nonnulllist.set(i, ItemStack.EMPTY);
-@@ -300,6 +309,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -289,21 +303,41 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+             // CraftBukkit end
+         }
+ 
+-        itemstack.shrink(1);
++        // itemstack.shrink(1); // KioCG - 上移
+         if (itemstack.getItem().hasCraftingRemainingItem()) {
+             ItemStack itemstack1 = new ItemStack(itemstack.getItem().getCraftingRemainingItem());
+ 
+-            if (itemstack.isEmpty()) {
++            if (false && itemstack.isEmpty()) { // KioCG - 始终掉落玻璃瓶. 但由于MC-259583, 实际上最后一瓶龙息不会产生玻璃瓶
+                 itemstack = itemstack1;
+             } else {
+                 Containers.dropItemStack(world, (double) blockposition.getX(), (double) blockposition.getY(), (double) blockposition.getZ(), itemstack1);
              }
          }
  
-+        if (!fuel.isEmpty() && itemstack.isEmpty()) itemstack = fuel.copyAndClear(); // KioCG - 燃料槽物品移入材料槽
-         nonnulllist.set(3, itemstack);
+-        nonnulllist.set(3, itemstack);
++        // nonnulllist.set(3, itemstack); // KioCG - 上移
          world.levelEvent(1035, blockposition, 0);
      }
-@@ -352,12 +362,33 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+ 
++    // KioCG start
++    private static boolean tryFillNextIngredient(NonNullList<ItemStack> nonnulllist) {
++        if (nonnulllist.get(3).isEmpty()) {
++            int[] slots = {3, 5, 6, 7, 8, 9};
++            int index = 0;
++
++            for (int i = 1; i <= 5; ++i) {
++                final ItemStack itemStack = nonnulllist.get(slots[i]);
++                if (!itemStack.isEmpty()) {
++                    nonnulllist.set(slots[index++], itemStack);
++                    nonnulllist.set(slots[i], ItemStack.EMPTY);
++                }
++            }
++
++            return index != 0;
++        }
++        return false;
++    }
++    // KioCG end
++
+     @Override
+     public void load(CompoundTag nbt) {
+         super.load(nbt);
+@@ -352,12 +386,33 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      @Override
      public boolean canPlaceItem(int slot, ItemStack stack) {
