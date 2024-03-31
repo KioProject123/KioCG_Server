@@ -64,7 +64,7 @@ index 0bba74bd22d66881fc6851797d29c1442f509445..6791902e3036bb10540b47c29b21fd8d
          addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
          addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..7cf5e8e4e2818fe718d0b414b55aea8069bd0ded 100644
+index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..66aa9353e0543bcc222c7007a082b10879d11949 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -143,6 +143,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -171,7 +171,15 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..7cf5e8e4e2818fe718d0b414b55aea80
              return true;
          } else {
              return false;
-@@ -519,6 +555,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -509,6 +545,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+     public static int getTotalCookTime(@Nullable Level world, RecipeType<? extends AbstractCookingRecipe> recipeType, AbstractFurnaceBlockEntity furnace, double cookSpeedMultiplier) {
+         /* Scale the recipe's cooking time to the current cookSpeedMultiplier */
+         int cookTime = world != null ? furnace.quickCheck.getRecipeFor(furnace, world).map(holder -> holder.value().getCookingTime()).orElse(200) : (net.minecraft.server.MinecraftServer.getServer().getRecipeManager().getRecipeFor(recipeType, furnace, world /* passing a null level here is safe. world is only used for map extending recipes which won't happen here */).map(holder -> holder.value().getCookingTime()).orElse(200));
++        if (furnace instanceof BlastFurnaceBlockEntity || furnace instanceof SmokerBlockEntity) cookTime *= 2; // KioCG - 不要加速高炉和烟熏炉
+         return (int) Math.ceil (cookTime / cookSpeedMultiplier);
+         // Paper end - cook speed multiplier API
+     }
+@@ -519,6 +556,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
      @Override
      public int[] getSlotsForFace(Direction side) {
@@ -179,6 +187,27 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..7cf5e8e4e2818fe718d0b414b55aea80
          return side == Direction.DOWN ? AbstractFurnaceBlockEntity.SLOTS_FOR_DOWN : (side == Direction.UP ? AbstractFurnaceBlockEntity.SLOTS_FOR_UP : AbstractFurnaceBlockEntity.SLOTS_FOR_SIDES);
      }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/BlastFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BlastFurnaceBlockEntity.java
+index fb4f57b2ed17ff9b4853e1ba2aac7a002989e5c8..a394e06d24cd99f672f762f75260c743bcee0b83 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/BlastFurnaceBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/BlastFurnaceBlockEntity.java
+@@ -19,10 +19,12 @@ public class BlastFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
+         return Component.translatable("container.blast_furnace");
+     }
+ 
+-    @Override
+-    protected int getBurnDuration(ItemStack fuel) {
+-        return super.getBurnDuration(fuel) / 2;
+-    }
++    // KioCG start - 不要加速高炉和烟熏炉
++    // @Override
++    // protected int getBurnDuration(ItemStack fuel) {
++    //     return super.getBurnDuration(fuel) / 2;
++    // }
++    // KioCG end - 不要加速高炉和烟熏炉
+ 
+     @Override
+     protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 index 31bbaf4f7f3110695fcae96029495363756c924d..8bafa0c012b01923ccb636d04fcc841d539cbd27 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
@@ -346,3 +375,24 @@ index 0c70786e8e5ca5c2b6c69914ce350ff06d3ce437..0e8a22684932cc1e181508ea68c48147
                          world.sendBlockUpdated(pos, state, state, 3);
                          world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/SmokerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
+index 7d9548f89fda9f4ba203d95d6e64826e9a697013..ceb8f3c4edb7ce331939b31d8d81c4ec4426cdd4 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
+@@ -19,10 +19,12 @@ public class SmokerBlockEntity extends AbstractFurnaceBlockEntity {
+         return Component.translatable("container.smoker");
+     }
+ 
+-    @Override
+-    protected int getBurnDuration(ItemStack fuel) {
+-        return super.getBurnDuration(fuel) / 2;
+-    }
++    // KioCG start - 不要加速高炉和烟熏炉
++    // @Override
++    // protected int getBurnDuration(ItemStack fuel) {
++    //     return super.getBurnDuration(fuel) / 2;
++    // }
++    // KioCG end - 不要加速高炉和烟熏炉
+ 
+     @Override
+     protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
