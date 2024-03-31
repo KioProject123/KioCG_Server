@@ -4,6 +4,19 @@ Date: Wed, 28 Feb 2024 23:17:21 +0800
 Subject: [PATCH] Change container behavior
 
 
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index ce95216805c62c4be62c6b214127fc147263b898..ec6c450cd889cffccedc14ec29e7b1e568100075 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -105,7 +105,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+         this.access.execute((world, blockposition) -> {
+             BlockState iblockdata = world.getBlockState(blockposition);
+ 
+-            if (!player.getAbilities().instabuild && iblockdata.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) {
++            if (false && !player.getAbilities().instabuild && iblockdata.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) { // KioCG - 铁砧无法损坏
+                 BlockState iblockdata1 = AnvilBlock.damage(iblockdata);
+ 
+                 // Paper start - AnvilDamageEvent
 diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 index 184a631a59c857beae19376ce7d4aedd016014a8..e83f4454c2649c4db94cdf7fb18e536d6df58e9d 100644
 --- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
