@@ -5,10 +5,10 @@ Subject: [PATCH] Lead can place anywhere
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index c406c2784cfc14761a13dfd70a77e67d99c614ff..d9617bc6f16e576cfa683c877ad89e03666180d8 100644
+index 604bbae43d54a4402b65bd1e0612d1c269bac919..662b44a66754e3dcc35006375d7093beb2c0e674 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -600,6 +600,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -602,6 +602,7 @@ public class WorldConfiguration extends ConfigurationPart {
          public boolean flowersAndGrassesSpreadNaturally = true;
          public boolean sleepAnyTime = true;
          public double sleepHealingRegenRate = 20;

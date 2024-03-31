@@ -5,13 +5,14 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 6b7e0401a7340313ee6dbb6027cc02c435b2a7da..c406c2784cfc14761a13dfd70a77e67d99c614ff 100644
+index 4ed7a939f2af2045ace5575f8542cb17a145fa4c..604bbae43d54a4402b65bd1e0612d1c269bac919 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -588,6 +588,10 @@ public class WorldConfiguration extends ConfigurationPart {
-             public boolean spawnInLightAtNight = true;
+@@ -589,6 +589,11 @@ public class WorldConfiguration extends ConfigurationPart {
              public int darkEnoughToSprint = 7;
              public boolean babyZombieJockey = true;
+             public boolean zombiesSkinnedIntoSkeletons = true;
++
 +            public boolean enableCrystalTurret = true;
 +            public int turretCooldownDefault = 100;
 +            public double turretRangeDefault = 8.0;

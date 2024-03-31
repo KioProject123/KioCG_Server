@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: vicisacat <victor.branchu@gmail.com>
 Date: Fri, 15 Mar 2024 17:35:18 +0100
-Subject: [PATCH] Discard display entity if not persist
+Subject: [PATCH] Auto discard rider display entity
 
 
 diff --git a/src/main/java/org/bukkit/entity/Display.java b/src/main/java/org/bukkit/entity/Display.java

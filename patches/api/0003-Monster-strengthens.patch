@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 31 Mar 2024 17:18:31 +0800
+Subject: [PATCH] Monster strengthens
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
+index 4065432c884324b107d04f4ccd486085b0c440e7..e83c50e20707157ccdae977a5ef03db05580505d 100644
+--- a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
++++ b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
+@@ -194,6 +194,12 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
+          * When an Allay duplicate itself
+          */
+         DUPLICATION,
++        // KioCG start
++        /**
++         * 当僵尸被剥皮
++         */
++        PEELING,
++        // KioCG end
+         /**
+          * When a creature is spawned by the "/summon" command
+          */
+diff --git a/src/main/java/org/bukkit/event/entity/EntityTransformEvent.java b/src/main/java/org/bukkit/event/entity/EntityTransformEvent.java
+index 1592aac603eb839607c7a1faa6437e442ab8fb30..4f7e3d51d1942ed1d01a2fafb73af386874be4ad 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityTransformEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityTransformEvent.java
+@@ -116,6 +116,12 @@ public class EntityTransformEvent extends EntityEvent implements Cancellable {
+          * When a tadpole converts to a frog
+          */
+         METAMORPHOSIS,
++        // KioCG start
++        /**
++         * 当僵尸被剥皮
++         */
++        PEELING,
++        // KioCG end
+         /**
+          * When reason is unknown.
+          */

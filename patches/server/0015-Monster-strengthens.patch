@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 386a3af68b0d0288a5fabf8728a4ac18077a38a8..3af1ad3db87d4510b99bc141ac063754f6375853 100644
+index 386a3af68b0d0288a5fabf8728a4ac18077a38a8..72477c0ee5f2577518a6937aaf7ba90e8f6fbd38 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -582,6 +582,13 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -582,6 +582,14 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
@@ -18,6 +18,7 @@ index 386a3af68b0d0288a5fabf8728a4ac18077a38a8..3af1ad3db87d4510b99bc141ac063754
 +            public boolean spawnInLightAtNight = true;
 +            public int darkEnoughToSprint = 7;
 +            public boolean babyZombieJockey = true;
++            public boolean zombiesSkinnedIntoSkeletons = true;
 +        }
      }
      // KioCG end
@@ -68,7 +69,7 @@ index 7618364e5373fe17cfe45a5a4ee9ab25e591581c..8ef8e64972fe7361dbf37484c24fc2f9
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..5ff99f50b85478e8529f56fb422b04f97d4fff27 100644
+index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..dd128ed095ecfe6612d284a0d32c1c64fb2284c3 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -116,6 +116,16 @@ public class Zombie extends Monster {
@@ -88,3 +89,60 @@ index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..5ff99f50b85478e8529f56fb422b04f9
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+@@ -304,6 +314,48 @@ public class Zombie extends Monster {
+ 
+     }
+ 
++    // KioCG start
++    @Override
++    public void die(DamageSource damageSource) {
++        if (this.level().paperConfig().kiocgConfig.monster.zombiesSkinnedIntoSkeletons) {
++            if (!this.isRemoved() && !this.dead) {
++                Entity entity = damageSource.getEntity();
++                Level world = this.level();
++
++                if (world instanceof ServerLevel) {
++                    org.bukkit.event.entity.EntityDeathEvent deathEvent = this.dropAllDeathLoot(damageSource);
++                    if (deathEvent == null || !deathEvent.isCancelled()) {
++                        if (this.isSleeping()) {
++                            this.stopSleeping();
++                        }
++
++                        this.getCombatTracker().recheckStatus();
++                        if (entity != null) {
++                            entity.killedEntity((ServerLevel) this.level(), this);
++                        }
++                    } else {
++                        this.setHealth((float) deathEvent.getReviveHealth());
++                        return;
++                    }
++
++                    Skeleton skeleton = this.convertTo(EntityType.SKELETON, true, EntityTransformEvent.TransformReason.PEELING, CreatureSpawnEvent.SpawnReason.PEELING);
++                    if (skeleton != null) {
++                        skeleton.setTarget(this.getTarget(), null, true);
++                        skeleton.getNavigation().moveTo(this.getNavigation().getPath(), 1.2D);
++                        skeleton.setAggressive(this.isAggressive());
++                    }
++
++                    if (!this.isSilent()) {
++                        this.level().levelEvent((Player) null, net.minecraft.world.level.block.LevelEvent.SOUND_SKELETON_TO_STRAY, this.blockPosition(), 0);
++                    }
++                }
++            }
++        } else {
++            super.die(damageSource);
++        }
++    }
++    // KioCG end
++
+     public boolean isSunSensitive() {
+         return this.shouldBurnInDay; // Paper - Add more Zombie API
+     }
+@@ -603,6 +655,7 @@ public class Zombie extends Monster {
+ 
+     @Override
+     protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
++        if (!this.level().paperConfig().kiocgConfig.monster.zombiesSkinnedIntoSkeletons) // KioCG - 僵尸剥皮: 不要掉落护甲
+         super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
+         Entity entity = source.getEntity();
+ 
