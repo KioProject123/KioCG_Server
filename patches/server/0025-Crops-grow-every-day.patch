@@ -5,7 +5,7 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..2bf07fb71b5d60a39b33dd9a1bb0c14ed0957b92 100644
+index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..64138f03eba0f85431cdefc38117aa4ffe923512 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -15,7 +15,7 @@ index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..2bf07fb71b5d60a39b33dd9a1bb0c14e
 +
 +        // KioCG start - 农作物每天生长
 +        int daysSpent = 0;
-+        int today = (int) (this.getDayTime() / 24000);
++        int today = (int) (this.getDayTime() / 24000L);
 +        if (today != chunk.cropDays) {
 +            daysSpent = Math.min(today - chunk.cropDays, 7);
 +            chunk.cropDays = today;
@@ -59,6 +59,19 @@ index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..2bf07fb71b5d60a39b33dd9a1bb0c14e
          }
          // Paper end - optimise random block ticking
  
+diff --git a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
+index 24a5a402cba62bf591a014b0527236cde8851e00..d638ca86f0621ab31230de72b916b79b1c43f5af 100644
+--- a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
+@@ -48,7 +48,7 @@ public class BeetrootBlock extends CropBlock {
+ 
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+-        if (random.nextInt(3) != 0) {
++        if (true || random.nextInt(3) != 0) { // KioCG - 农作物每天生长
+             super.randomTick(state, world, pos, random);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..225cd008359b0f54000fb04f97280eb7f3b6eaf0 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
@@ -72,6 +85,19 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..225cd008359b0f54000fb04f97280eb7
                      // Spigot end
                      CraftEventFactory.handleBlockGrowEvent(world, pos, this.getStateForAge(i + 1), 2); // CraftBukkit
                  }
+diff --git a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
+index 0fc333f240d6918e841a9221be42973839408802..cdaa480c6926605dabb52d3cc079cef239ea160a 100644
+--- a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
+@@ -52,7 +52,7 @@ public class NetherWartBlock extends BushBlock {
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         int i = (Integer) state.getValue(NetherWartBlock.AGE);
+ 
+-        if (i < 3 && random.nextFloat() < (world.spigotConfig.wartModifier / (100.0f * 10))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (i < 3 && (true || random.nextFloat() < (world.spigotConfig.wartModifier / (100.0f * 10)))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
+             state = (BlockState) state.setValue(NetherWartBlock.AGE, i + 1);
+             org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
+         }
 diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 index d20c009baf69d083bf8a14000028991b6518cd50..192408d3b2bb66ee0d5440a5eeaf9514a51b25b9 100644
 --- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
@@ -98,6 +124,19 @@ index 121a872cd750a87b779895687ae1abf5bb77b088..32e085dd294b18f578ff4f9c38f82f97
                  int i = (Integer) state.getValue(StemBlock.AGE);
  
                  if (i < 7) {
+diff --git a/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java b/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
+index d5c0fd1c2bbd85d0aa312ef74dc8dab14dfdf8f3..aa7c5e1c91051e87ee947df2496bfc57d46bfc44 100644
+--- a/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
+@@ -65,7 +65,7 @@ public class TorchflowerCropBlock extends CropBlock {
+ 
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+-        if (random.nextInt(3) != 0) {
++        if (true || random.nextInt(3) != 0) { // KioCG - 农作物每天生长
+             super.randomTick(state, world, pos, random);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
 index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a5341399e5c6c3 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
@@ -156,7 +195,7 @@ index 6ec3fc801453fd54c25b642e6fa71c19b463311d..27de22ea6eb31c039fbada85f52463e0
          this.setBlockNibbles(protoChunk.getBlockNibbles());
          this.setSkyNibbles(protoChunk.getSkyNibbles());
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
-index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..cec720e7810a2aef427d3e48b66b5960ea17e31f 100644
+index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..357acb660f61fd471a22b926927a0d63566b8176 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 @@ -26,6 +26,7 @@ public class LevelChunkSection {
@@ -199,7 +238,7 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..cec720e7810a2aef427d3e48b66b5960
  
 +    // KioCG start
 +    private boolean isCrops(BlockState state) {
-+        return state.is(net.minecraft.tags.BlockTags.CROPS);
++        return state.is(net.minecraft.tags.BlockTags.CROPS) || state.is(Blocks.NETHER_WART_BLOCK);
 +    }
 +    // KioCG end
 +
