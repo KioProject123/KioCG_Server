@@ -5,7 +5,7 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..64138f03eba0f85431cdefc38117aa4ffe923512 100644
+index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..311a48ee9641b8e322e8b897d3e789ccd785bea2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -15,10 +15,10 @@ index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..64138f03eba0f85431cdefc38117aa4f
 +
 +        // KioCG start - 农作物每天生长
 +        int daysSpent = 0;
-+        int today = (int) (this.getDayTime() / 24000L);
-+        if (today != chunk.cropDays) {
-+            daysSpent = Math.min(today - chunk.cropDays, 7);
-+            chunk.cropDays = today;
++        int days = (int) this.getDays();
++        if (days != chunk.cropDays) {
++            daysSpent = Mth.clamp(days - chunk.cropDays, 0, 7);
++            chunk.cropDays = days;
 +        }
 +        // KioCG end - 农作物每天生长
 +
@@ -59,6 +59,19 @@ index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..64138f03eba0f85431cdefc38117aa4f
          }
          // Paper end - optimise random block ticking
  
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index bc89f9e90af3d69872a58c47a4c2545ba91b6ba5..1ea722c6075cb647f8dc43ad5d102386102a1b97 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -1583,6 +1583,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+         return this.levelData.getDayTime();
+     }
+ 
++    public long getDays() { return this.getDayTime() / 24000L; } // KioCG
++
+     public boolean mayInteract(Player player, BlockPos pos) {
+         return true;
+     }
 diff --git a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
 index 24a5a402cba62bf591a014b0527236cde8851e00..d638ca86f0621ab31230de72b916b79b1c43f5af 100644
 --- a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java

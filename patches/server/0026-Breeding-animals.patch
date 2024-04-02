@@ -20,6 +20,66 @@ index 604bbae43d54a4402b65bd1e0612d1c269bac919..00c9f2006078cd5cc7650ec8608ecb32
          public boolean betterMobGriefingSetting = true;
          public double dirtPathSpeedBoost = 0.02;
          public double saplingsWitheredChance = 0.025;
+diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
+index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..a194f74c6eb31b05b878d4556296e2f28e570426 100644
+--- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
++++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
+@@ -21,6 +21,10 @@ public abstract class AgeableMob extends PathfinderMob {
+     protected int forcedAge;
+     protected int forcedAgeTimer;
+     public boolean ageLocked; // CraftBukkit
++    // KioCG start
++    public int lastEaten;
++    public int eatenDays;
++    // KioCG end
+ 
+     protected AgeableMob(EntityType<? extends AgeableMob> type, Level world) {
+         super(type, world);
+@@ -131,6 +135,10 @@ public abstract class AgeableMob extends PathfinderMob {
+         nbt.putInt("Age", this.getAge());
+         nbt.putInt("ForcedAge", this.forcedAge);
+         nbt.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
++        // KioCG start
++        nbt.putInt("KioCG.LastEaten", this.lastEaten);
++        nbt.putInt("KioCG.EatenDays", this.eatenDays);
++        // KioCG end
+     }
+ 
+     @Override
+@@ -139,6 +147,14 @@ public abstract class AgeableMob extends PathfinderMob {
+         this.setAge(nbt.getInt("Age"));
+         this.forcedAge = nbt.getInt("ForcedAge");
+         this.ageLocked = nbt.getBoolean("AgeLocked"); // CraftBukkit
++        // KioCG start
++        if (nbt.contains("KioCG.LastEaten", net.minecraft.nbt.Tag.TAG_INT)) {
++            this.lastEaten = nbt.getInt("KioCG.LastEaten");
++        }
++        if (nbt.contains("KioCG.EatenDays", net.minecraft.nbt.Tag.TAG_INT)) {
++            this.eatenDays = nbt.getInt("KioCG.EatenDays");
++        }
++        // KioCG end
+     }
+ 
+     @Override
+@@ -204,6 +220,18 @@ public abstract class AgeableMob extends PathfinderMob {
+         return (int) ((float) (breedingAge / 20) * 0.1F);
+     }
+ 
++    // KioCG start
++    public boolean canFeed() {
++        boolean canFeed = false;
++        int days = (int) this.level().getDays();
++        if (days != this.lastEaten) {
++            canFeed = days > this.lastEaten;
++            this.lastEaten = days;
++        }
++        return canFeed;
++    }
++    // KioCG end
++
+     public static class AgeableMobGroupData implements SpawnGroupData {
+ 
+         private int groupSize;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
 index 06662325df5b119ad049e04572ff5c5aaf3ef073..8c43b278dcb49276fabdded164a1d87b4cb14fea 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
@@ -44,6 +104,88 @@ index dbd01cb7828cbe65613dc07a2d0107c83c5fdf98..b630356324a150f1b34128e53992649c
          if (!this.animal.isInLove()) {
              return false;
          } else {
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
+index 081d1e38b7b1f286e138b0981aaa760e58761215..9300c096c0a428c4b12f431fef8e922b5776fa0b 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
+@@ -151,7 +151,7 @@ public abstract class Animal extends AgeableMob {
+         if (this.isFood(itemstack)) {
+             int i = this.getAge();
+ 
+-            if (!this.level().isClientSide && i == 0 && this.canFallInLove()) {
++            if (!this.level().isClientSide && this.canFeed()) { // KioCG
+                 final ItemStack breedCopy = itemstack.copy(); // Paper - Fix EntityBreedEvent copying
+                 this.usePlayerItem(player, hand, itemstack);
+                 this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
+@@ -203,6 +203,7 @@ public abstract class Animal extends AgeableMob {
+             this.loveCause = player.getUUID();
+         }
+         // Paper - Fix EntityBreedEvent copying; set breed item in better place
++        ++this.eatenDays; // KioCG
+ 
+         this.level().broadcastEntityEvent(this, (byte) 18);
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Panda.java b/src/main/java/net/minecraft/world/entity/animal/Panda.java
+index d683c49fdf2d1e5b0f2620641f9c241e82f96825..b8a5158a6d55164d56d2050e515959baf4699a1b 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Panda.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Panda.java
+@@ -649,7 +649,7 @@ public class Panda extends Animal {
+             if (this.isBaby()) {
+                 this.usePlayerItem(player, hand, itemstack);
+                 this.ageUp((int) ((float) (-this.getAge() / 20) * 0.1F), true);
+-            } else if (!this.level().isClientSide && this.getAge() == 0 && this.canFallInLove()) {
++            } else if (!this.level().isClientSide && this.canFeed()) { // KioCG
+                 final ItemStack breedCopy = itemstack.copy(); // Paper - Fix EntityBreedEvent copying
+                 this.usePlayerItem(player, hand, itemstack);
+                 this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
+diff --git a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
+index 84ae19bf9bddd2b6ee4737577d8836d59be028c2..5401b6411be324d1d5efe99b2bfdba02b8036d92 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
++++ b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
+@@ -395,7 +395,7 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
+                 this.heal(2.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // Paper - Add missing regain reason
+             }
+ 
+-            boolean flag1 = this.isTamed() && this.getAge() == 0 && this.canFallInLove();
++            boolean flag1 = this.isTamed() && this.canFeed(); // KioCG
+ 
+             if (flag1) {
+                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
+index 815eb15086976b8f9e03bf8182d9ed50aec14720..00d9f8e682b67c23315cb77d950f4f5068ecde4b 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
++++ b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
+@@ -511,7 +511,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+             f = 4.0F;
+             short0 = 60;
+             b0 = 5;
+-            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
++            if (!this.level().isClientSide && this.isTamed() && this.canFeed()) { // KioCG
+                 flag = true;
+                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+             }
+@@ -519,7 +519,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+             f = 10.0F;
+             short0 = 240;
+             b0 = 10;
+-            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
++            if (!this.level().isClientSide && this.isTamed() && this.canFeed()) { // KioCG
+                 flag = true;
+                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+             }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
+index 6623674136b0f865d5b3d7a10d3bf05793b82f87..f7e92392b0a578d890269b0ad8562bd28d168720 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
++++ b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
+@@ -189,7 +189,7 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
+             b0 = 90;
+             b1 = 6;
+             f = 10.0F;
+-            if (this.isTamed() && this.getAge() == 0 && this.canFallInLove()) {
++            if (this.isTamed() && this.canFeed()) { // KioCG
+                 flag = true;
+                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+             }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 index 24044795d8e0f1fb15a4f2f5401f44897092f2a3..48e31cb123caa3c3f1dce23b9a73e547c2ac86b0 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
