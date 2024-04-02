@@ -1,0 +1,58 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 2 Apr 2024 19:33:24 +0800
+Subject: [PATCH] Breeding animals
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 604bbae43d54a4402b65bd1e0612d1c269bac919..00c9f2006078cd5cc7650ec8608ecb32ce9efcbf 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -596,6 +596,11 @@ public class WorldConfiguration extends ConfigurationPart {
+             public double turretDamageDefault = 1.0;
+         }
+ 
++        public Animal animal;
++        public class Animal extends ConfigurationPart {
++            public boolean animalCanBreed = false;
++        }
++
+         public boolean betterMobGriefingSetting = true;
+         public double dirtPathSpeedBoost = 0.02;
+         public double saplingsWitheredChance = 0.025;
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
+index 06662325df5b119ad049e04572ff5c5aaf3ef073..8c43b278dcb49276fabdded164a1d87b4cb14fea 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
+@@ -25,6 +25,7 @@ public class AnimalMakeLove extends Behavior<Animal> {
+ 
+     @Override
+     protected boolean checkExtraStartConditions(ServerLevel world, Animal entity) {
++        if (!entity.level().paperConfig().kiocgConfig.animal.animalCanBreed) return false; // KioCG
+         return entity.isInLove() && this.findValidBreedPartner(entity).isPresent();
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
+index dbd01cb7828cbe65613dc07a2d0107c83c5fdf98..b630356324a150f1b34128e53992649c8d6c43bb 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
+@@ -32,6 +32,7 @@ public class BreedGoal extends Goal {
+ 
+     @Override
+     public boolean canUse() {
++        if (!this.animal.level().paperConfig().kiocgConfig.animal.animalCanBreed) return false; // KioCG
+         if (!this.animal.isInLove()) {
+             return false;
+         } else {
+diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
+index 24044795d8e0f1fb15a4f2f5401f44897092f2a3..48e31cb123caa3c3f1dce23b9a73e547c2ac86b0 100644
+--- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
++++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
+@@ -746,6 +746,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+ 
+     @Override
+     public boolean canBreed() {
++        if (!this.level().paperConfig().kiocgConfig.animal.animalCanBreed) return false; // KioCG
+         return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
+     }
+ 
