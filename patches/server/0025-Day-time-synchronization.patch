@@ -1,0 +1,115 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Thu, 4 Apr 2024 00:59:59 +0800
+Subject: [PATCH] Day time synchronization
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index b509a8cdcb8d0b5a058700c7fa72a4cbe17f239d..3099d3d85bfb20c70e7e6da2bec84ebb2ed1f9c5 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -417,6 +417,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+         public boolean dontKillMyPet = true;
+         public double petTeleportDistanceSqr = 256.0;
+         public boolean petFollowKeepChunkLoaded = true;
++        public boolean dayTimeSynchronization = true;
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 5c8a585b46b14d4ecaed4f4b8254943e86583314..ce50e37f5add8389c0c97c9cfb6d2235be52a41d 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1722,6 +1722,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             try {
+                 worldserver.timings.doTick.startTiming(); // Spigot
+                 worldserver.tick(shouldKeepTicking);
++                ++PrimaryLevelData.dayTimeSync; // KioCG
+                 // Paper start
+                 for (final io.papermc.paper.chunk.SingleThreadChunkRegionManager regionManager : worldserver.getChunkSource().chunkMap.regionManagers) {
+                     regionManager.recalculateRegions();
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..9962008ea411a1ece5f4142714c81d6882a9cc77 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -947,6 +947,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+             this.serverLevelData.setGameTime(i);
+             this.serverLevelData.getScheduledEvents().tick(this.server, i);
+             if (this.levelData.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dayTimeSynchronization) { this.days = this.getDayTime() / 24000L; } else // KioCG
+                 this.setDayTime(this.levelData.getDayTime() + 1L);
+             }
+ 
+@@ -955,6 +956,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+ 
+     public void setDayTime(long timeOfDay) {
+         this.serverLevelData.setDayTime(timeOfDay);
++        this.days = this.getDayTime() / 24000L; // KioCG
+     }
+ 
+     public void tickCustomSpawners(boolean spawnMonsters, boolean spawnAnimals) {
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index bc89f9e90af3d69872a58c47a4c2545ba91b6ba5..5b395abe051dd2d2d36bf71c32dc82de3fbc357f 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -135,6 +135,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+     private final ResourceKey<DimensionType> dimensionTypeId;
+     private final Holder<DimensionType> dimensionTypeRegistration;
+     public final WritableLevelData levelData;
++    public long days; // KioCG
+     private final Supplier<ProfilerFiller> profiler;
+     public final boolean isClientSide;
+     private final WorldBorder worldBorder;
+@@ -232,6 +233,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+         // CraftBukkit end
+         this.profiler = supplier;
+         this.levelData = worlddatamutable;
++        this.days = this.getDayTime() / 24000L; // KioCG
+         this.dimensionTypeRegistration = holder;
+         this.dimensionTypeId = (ResourceKey) holder.unwrapKey().orElseThrow(() -> {
+             return new IllegalArgumentException("Dimension must be registered, got " + holder);
+@@ -1583,6 +1585,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+         return this.levelData.getDayTime();
+     }
+ 
++    public long getDays() { return this.days; } // KioCG
++
+     public boolean mayInteract(Player player, BlockPos pos) {
+         return true;
+     }
+diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
+index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..e513edcf79f64beb8d7226acca5ba476bae68c77 100644
+--- a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
++++ b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
+@@ -70,6 +70,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+     private float spawnAngle;
+     private long gameTime;
+     private long dayTime;
++    public static long dayTimeSync; // KioCG
+     @Nullable
+     private final CompoundTag loadedPlayerTag;
+     private final int version;
+@@ -115,6 +116,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+         this.spawnAngle = spawnAngle;
+         this.gameTime = time;
+         this.dayTime = timeOfDay;
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dayTimeSynchronization && dayTimeSync == 0) dayTimeSync = this.dayTime; // KioCG
+         this.version = version;
+         this.clearWeatherTime = clearWeatherTime;
+         this.rainTime = rainTime;
+@@ -299,6 +301,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public long getDayTime() {
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dayTimeSynchronization && world.levelData.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) return dayTimeSync; // KioCG
+         return this.dayTime;
+     }
+ 
+@@ -335,6 +338,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public void setDayTime(long timeOfDay) {
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dayTimeSynchronization && world.levelData.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) dayTimeSync = timeOfDay; // KioCG
+         this.dayTime = timeOfDay;
+     }
+ 
