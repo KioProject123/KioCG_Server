@@ -5,10 +5,18 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..311a48ee9641b8e322e8b897d3e789ccd785bea2 100644
+index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..02ea552c0610114405c355eee50c76e2af042272 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -955,6 +955,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+ 
+     public void setDayTime(long timeOfDay) {
+         this.serverLevelData.setDayTime(timeOfDay);
++        this.days = timeOfDay / 24000L; // KioCG
+     }
+ 
+     public void tickCustomSpawners(boolean spawnMonsters, boolean spawnAnimals) {
+@@ -1036,6 +1037,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
          gameprofilerfiller.popPush("tickBlocks");
          timings.chunkTicksBlocks.startTiming(); // Paper
@@ -25,7 +33,7 @@ index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..311a48ee9641b8e322e8b897d3e789cc
          if (randomTickSpeed > 0) {
              // Paper start - optimize random block ticking
              LevelChunkSection[] sections = chunk.getSections();
-@@ -1066,6 +1076,33 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1066,6 +1077,33 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  // We drop the fluid tick since LAVA is ALREADY TICKED by the above method (See LiquidBlock).
                  // TODO CHECK ON UPDATE (ping the Canadian)
              }
@@ -60,14 +68,30 @@ index c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26..311a48ee9641b8e322e8b897d3e789cc
          // Paper end - optimise random block ticking
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index bc89f9e90af3d69872a58c47a4c2545ba91b6ba5..1ea722c6075cb647f8dc43ad5d102386102a1b97 100644
+index bc89f9e90af3d69872a58c47a4c2545ba91b6ba5..5b395abe051dd2d2d36bf71c32dc82de3fbc357f 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -1583,6 +1583,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -135,6 +135,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+     private final ResourceKey<DimensionType> dimensionTypeId;
+     private final Holder<DimensionType> dimensionTypeRegistration;
+     public final WritableLevelData levelData;
++    public long days; // KioCG
+     private final Supplier<ProfilerFiller> profiler;
+     public final boolean isClientSide;
+     private final WorldBorder worldBorder;
+@@ -232,6 +233,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+         // CraftBukkit end
+         this.profiler = supplier;
+         this.levelData = worlddatamutable;
++        this.days = this.getDayTime() / 24000L; // KioCG
+         this.dimensionTypeRegistration = holder;
+         this.dimensionTypeId = (ResourceKey) holder.unwrapKey().orElseThrow(() -> {
+             return new IllegalArgumentException("Dimension must be registered, got " + holder);
+@@ -1583,6 +1585,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          return this.levelData.getDayTime();
      }
  
-+    public long getDays() { return this.getDayTime() / 24000L; } // KioCG
++    public long getDays() { return this.days; } // KioCG
 +
      public boolean mayInteract(Player player, BlockPos pos) {
          return true;
