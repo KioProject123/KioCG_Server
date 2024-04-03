@@ -21,7 +21,7 @@ index 604bbae43d54a4402b65bd1e0612d1c269bac919..00c9f2006078cd5cc7650ec8608ecb32
          public double dirtPathSpeedBoost = 0.02;
          public double saplingsWitheredChance = 0.025;
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..6df0c7ba0a75f7cfc867c07c065c613374ac0254 100644
+index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e49954baa22a 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
 +++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
 @@ -21,6 +21,12 @@ public abstract class AgeableMob extends PathfinderMob {
@@ -29,8 +29,8 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..6df0c7ba0a75f7cfc867c07c065c6133
      protected int forcedAgeTimer;
      public boolean ageLocked; // CraftBukkit
 +    // KioCG start
-+    public int feedingDay;
-+    public int produceDay;
++    private int feedingDay;
++    private int produceDay;
 +    public int totalFeedingDays;
 +    public int numberOfProducedToday;
 +    // KioCG end
@@ -71,7 +71,16 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..6df0c7ba0a75f7cfc867c07c065c6133
      }
  
      @Override
-@@ -204,6 +230,38 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -171,6 +197,8 @@ public abstract class AgeableMob extends PathfinderMob {
+                 --i;
+                 this.setAge(i);
+             }
++
++            tickProduce(); // KioCG
+         }
+ 
+     }
+@@ -204,6 +232,50 @@ public abstract class AgeableMob extends PathfinderMob {
          return (int) ((float) (breedingAge / 20) * 0.1F);
      }
  
@@ -81,7 +90,6 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..6df0c7ba0a75f7cfc867c07c065c6133
 +    }
 +
 +    public void feedingFeed() {
-+        ++this.totalFeedingDays;
 +        this.feedingDay = (int) this.level().getDays();
 +        this.produceDay = this.feedingDay;
 +    }
@@ -89,20 +97,33 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..6df0c7ba0a75f7cfc867c07c065c6133
 +    public void tickProduce() {
 +        int days = (int) this.level().getDays();
 +
-+        if (this.produceDay != -1 && days > this.produceDay) {
-+            this.produceDay = -1;
++        if (this.produceDay != 0 && days > this.produceDay) {
++            this.produceDay = 0;
++            ++this.totalFeedingDays;
 +            this.numberOfProducedToday = getNumberOfProduced();
 +        }
 +
 +        if (days < this.feedingDay) {
 +            this.feedingDay = days;
-+            if (this.produceDay != -1) {
++            if (this.produceDay != 0) {
 +                this.produceDay = this.feedingDay;
 +            }
 +        }
 +    }
 +
-+    protected int getNumberOfProduced() {
++    public boolean canProduce() {
++        return this.numberOfProducedToday > 0;
++    }
++
++    public void produce() {
++        produce(1);
++    }
++
++    public void produce(int amount) {
++        this.numberOfProducedToday = this.numberOfProducedToday - amount;
++    }
++
++    public int getNumberOfProduced() {
 +        return 1;
 +    }
 +    // KioCG end
@@ -155,6 +176,68 @@ index 081d1e38b7b1f286e138b0981aaa760e58761215..8fe739cb62a738d4e0a496da6f1dc441
  
          this.level().broadcastEntityEvent(this, (byte) 18);
      }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Chicken.java b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
+index 5e7e6526e2750d508a870dfbdbb46e520d201796..92d48218b034afdf461fc2511d62603f1f79c147 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Chicken.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
+@@ -95,13 +95,14 @@ public class Chicken extends Animal {
+         }
+ 
+         this.flap += this.flapping * 2.0F;
+-        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && !this.isChickenJockey() && --this.eggTime <= 0) {
++        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.canProduce() && !this.isChickenJockey() && --this.eggTime <= 0) { // KioCG
+             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+             this.forceDrops = true; // CraftBukkit
+             this.spawnAtLocation((ItemLike) Items.EGG);
+             this.forceDrops = false; // CraftBukkit
+             this.gameEvent(GameEvent.ENTITY_PLACE);
+             this.eggTime = this.random.nextInt(6000) + 6000;
++            this.produce(); // KioCG
+         }
+ 
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Cow.java b/src/main/java/net/minecraft/world/entity/animal/Cow.java
+index 3cdd9f379c7e2d46ea47c9ef55b121c93ec0bb4a..75475703cc988da92c92a182b19d244d5881a62a 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Cow.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Cow.java
+@@ -90,7 +90,7 @@ public class Cow extends Animal {
+     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+         ItemStack itemstack = player.getItemInHand(hand);
+ 
+-        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
++        if (itemstack.is(Items.BUCKET) && !this.isBaby() && this.canProduce()) { // KioCG
+             // CraftBukkit start - Got milk?
+             PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
+ 
+@@ -102,6 +102,7 @@ public class Cow extends Animal {
+             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
+             ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, player, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+ 
++            this.produce(); // KioCG
+             player.setItemInHand(hand, itemstack1);
+             return InteractionResult.sidedSuccess(this.level().isClientSide);
+         } else {
+diff --git a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java b/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
+index 161c128d27f50f145f88142191f1a5c93649ea65..759cb392c342a892526bea4fbd276dff0c1bf172 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
++++ b/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
+@@ -95,7 +95,7 @@ public class MushroomCow extends Cow implements Shearable, VariantHolder<Mushroo
+     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+         ItemStack itemstack = player.getItemInHand(hand);
+ 
+-        if (itemstack.is(Items.BOWL) && !this.isBaby()) {
++        if (itemstack.is(Items.BOWL) && !this.isBaby() && this.canProduce()) { // KioCG
+             boolean flag = false;
+             ItemStack itemstack1;
+ 
+@@ -110,6 +110,7 @@ public class MushroomCow extends Cow implements Shearable, VariantHolder<Mushroo
+ 
+             ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, player, itemstack1, false);
+ 
++            this.produce(); // KioCG
+             player.setItemInHand(hand, itemstack2);
+             SoundEvent soundeffect;
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Panda.java b/src/main/java/net/minecraft/world/entity/animal/Panda.java
 index d683c49fdf2d1e5b0f2620641f9c241e82f96825..b8a5158a6d55164d56d2050e515959baf4699a1b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Panda.java
@@ -168,6 +251,63 @@ index d683c49fdf2d1e5b0f2620641f9c241e82f96825..b8a5158a6d55164d56d2050e515959ba
                  final ItemStack breedCopy = itemstack.copy(); // Paper - Fix EntityBreedEvent copying
                  this.usePlayerItem(player, hand, itemstack);
                  this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Sheep.java b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
+index 1d80678f7e8f658e43616f0baf723f096a99122a..5e09d8ed5754cbf4c1d211c19654995f3cfa33d5 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Sheep.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
+@@ -251,7 +251,7 @@ public class Sheep extends Animal implements Shearable {
+         ItemStack itemstack = player.getItemInHand(hand);
+ 
+         if (itemstack.is(Items.SHEARS)) {
+-            if (!this.level().isClientSide && this.readyForShearing()) {
++            if (!this.level().isClientSide && this.readyForShearing() && this.canProduce()) { // KioCG
+                 // CraftBukkit start
+                 // Paper start - custom shear drops
+                 java.util.List<ItemStack> drops = this.generateDefaultDrops();
+@@ -264,6 +264,7 @@ public class Sheep extends Animal implements Shearable {
+                 }
+                 // Paper end - custom shear drops
+                 // CraftBukkit end
++                this.produce(); // KioCG
+                 this.shear(SoundSource.PLAYERS, drops); // Paper
+                 this.gameEvent(GameEvent.SHEAR, player);
+                 itemstack.hurtAndBreak(1, player, (entityhuman1) -> {
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Turtle.java b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
+index 2eb099957a3d0bae3339ff4edbab103fb348abed..980c7067d8af011e0c77e9d917f6dd3994a98298 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Turtle.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
+@@ -186,10 +186,12 @@ public class Turtle extends Animal {
+         return pos.getY() < world.getSeaLevel() + 4 && TurtleEggBlock.onSand(world, pos) && isBrightEnoughToSpawn(world, pos);
+     }
+ 
++    private Turtle.TurtleBreedGoal turtleBreedGoal; // KioCG
++
+     @Override
+     protected void registerGoals() {
+         this.goalSelector.addGoal(0, new Turtle.TurtlePanicGoal(this, 1.2D));
+-        this.goalSelector.addGoal(1, new Turtle.TurtleBreedGoal(this, 1.0D));
++        this.goalSelector.addGoal(1, turtleBreedGoal = new Turtle.TurtleBreedGoal(this, 1.0D)); // KioCG
+         this.goalSelector.addGoal(1, new Turtle.TurtleLayEggGoal(this, 1.0D));
+         this.goalSelector.addGoal(2, new TemptGoal(this, 1.1D, Turtle.FOOD_ITEMS, false));
+         this.goalSelector.addGoal(3, new Turtle.TurtleGoToWaterGoal(this, 1.0D));
+@@ -303,6 +305,17 @@ public class Turtle extends Animal {
+ 
+     }
+ 
++    // KioCG start
++    @Override
++    public void tickProduce() {
++        super.tickProduce();
++        if (this.canProduce()) {
++            this.produce();
++            turtleBreedGoal.breed();
++        }
++    }
++    // KioCG end
++
+     @Override
+     protected void ageBoundaryReached() {
+         super.ageBoundaryReached();
 diff --git a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
 index 84ae19bf9bddd2b6ee4737577d8836d59be028c2..5401b6411be324d1d5efe99b2bfdba02b8036d92 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
@@ -181,6 +321,49 @@ index 84ae19bf9bddd2b6ee4737577d8836d59be028c2..5401b6411be324d1d5efe99b2bfdba02
  
              if (flag1) {
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
+index 295769d039f2a1e4f48912a60f9dbe267d8992c1..b4f309f7902727591ea7374fcbcb22fe8c0908d6 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
++++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
+@@ -179,6 +179,17 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
+         super.tick();
+     }
+ 
++    // KioCG start
++    @Override
++    public void tickProduce() {
++        super.tickProduce();
++        if (this.canProduce()) {
++            this.produce();
++            this.spawnChildFromBreeding((ServerLevel) this.level(), this);
++        }
++    }
++    // KioCG end
++
+     @Override
+     public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+         if (DATA_POSE.equals(data)) {
+diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
+index 5d247ac38fe8a61603b3d934f3000bcda773142b..a3d93cd9717fca06f024f4a0a55b942267778bef 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
++++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
+@@ -225,7 +225,7 @@ public class Goat extends Animal {
+     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+         ItemStack itemstack = player.getItemInHand(hand);
+ 
+-        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
++        if (itemstack.is(Items.BUCKET) && !this.isBaby() && this.canProduce()) { // KioCG
+             // CraftBukkit start - Got milk?
+             PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
+ 
+@@ -236,6 +236,7 @@ public class Goat extends Animal {
+             player.playSound(this.getMilkingSound(), 1.0F, 1.0F);
+             ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, player, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+ 
++            this.produce(); // KioCG
+             player.setItemInHand(hand, itemstack1);
+             return InteractionResult.sidedSuccess(this.level().isClientSide);
+         } else {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 index 815eb15086976b8f9e03bf8182d9ed50aec14720..00d9f8e682b67c23315cb77d950f4f5068ecde4b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
@@ -216,6 +399,28 @@ index 6623674136b0f865d5b3d7a10d3bf05793b82f87..f7e92392b0a578d890269b0ad8562bd2
                  flag = true;
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
              }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+index 0a5b953bd8c0c7f181da4090b950e9e6524b6d61..33e50f1a3a861ef3ecb905c03bbb1b8add992fc7 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -498,6 +498,17 @@ public class Sniffer extends Animal {
+         super.customServerAiStep();
+     }
+ 
++    // KioCG start
++    @Override
++    public void tickProduce() {
++        super.tickProduce();
++        if (this.canProduce()) {
++            this.produce();
++            this.spawnChildFromBreeding((ServerLevel) this.level(), this);
++        }
++    }
++    // KioCG end
++
+     @Override
+     protected void sendDebugPackets() {
+         super.sendDebugPackets();
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 index 24044795d8e0f1fb15a4f2f5401f44897092f2a3..48e31cb123caa3c3f1dce23b9a73e547c2ac86b0 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
@@ -228,3 +433,41 @@ index 24044795d8e0f1fb15a4f2f5401f44897092f2a3..48e31cb123caa3c3f1dce23b9a73e547
          return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
      }
  
+diff --git a/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java b/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
+index 3fb1e558c3510243c94981211f9a0e5e0ef1895b..d0512d012381d97bb0fe975e77880e04b47f4d65 100644
+--- a/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
++++ b/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
+@@ -54,6 +54,7 @@ public class LootingEnchantFunction extends LootItemConditionalFunction {
+     @Override
+     public ItemStack run(ItemStack stack, LootContext context) {
+         Entity entity = (Entity) context.getParamOrNull(LootContextParams.KILLER_ENTITY);
++        int i0 = 0; // KioCG
+ 
+         if (entity instanceof LivingEntity) {
+             int i = EnchantmentHelper.getMobLooting((LivingEntity) entity);
+@@ -62,6 +63,13 @@ public class LootingEnchantFunction extends LootItemConditionalFunction {
+                 i = context.getParamOrNull(LootContextParams.LOOTING_MOD);
+             }
+             // CraftBukkit end
++            // KioCG start
++            i0 = i;
++        }
++        {
++            int i = i0;
++            if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.totalFeedingDays * 4;
++            // KioCG end
+ 
+             if (i <= 0) { // CraftBukkit - account for possible negative looting values from Bukkit
+                 return stack;
+diff --git a/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java b/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
+index 2c9161e9f798a1e3770afbed26737bf9a7ceb2d5..71d59e4aac3850f50324deb2f4cfb3b5719fc09b 100644
+--- a/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
++++ b/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
+@@ -34,6 +34,7 @@ public record LootItemRandomChanceWithLootingCondition(float percent, float loot
+         if (entity instanceof LivingEntity) {
+             i = EnchantmentHelper.getMobLooting((LivingEntity) entity);
+         }
++        if (loottableinfo.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.totalFeedingDays * 4; // KioCG
+         // CraftBukkit start - only use lootingModifier if set by Bukkit
+         if (loottableinfo.hasParam(LootContextParams.LOOTING_MOD)) {
+             i = loottableinfo.getParamOrNull(LootContextParams.LOOTING_MOD);
