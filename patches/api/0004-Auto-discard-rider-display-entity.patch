@@ -5,14 +5,14 @@ Subject: [PATCH] Auto discard rider display entity
 
 
 diff --git a/src/main/java/org/bukkit/entity/Display.java b/src/main/java/org/bukkit/entity/Display.java
-index 2b6f0c627a848f37bc5b3f1732d0e0b82d9f89ad..363483fd357b35f087dcbb93f837c0322db457b3 100644
+index 2b6f0c627a848f37bc5b3f1732d0e0b82d9f89ad..37722100eea68431bbd8045f3598cfc9aad46209 100644
 --- a/src/main/java/org/bukkit/entity/Display.java
 +++ b/src/main/java/org/bukkit/entity/Display.java
 @@ -204,6 +204,8 @@ public interface Display extends Entity {
       */
      public void setBrightness(@Nullable Brightness brightness);
  
-+    public boolean isRiderDisplay(); public void setRiderDisplay(boolean riderDisplay); // KioCG
++    public int getRiderPriority(); public void setRiderPriority(int riderPriority); // KioCG
 +
      /**
       * Describes the axes/points around which the entity can pivot.

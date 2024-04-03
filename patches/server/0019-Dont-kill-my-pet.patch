@@ -65,10 +65,10 @@ index 2439f8d48daca7329049436414f06a36b4b79029..2ea31c46c8be7cd84e0f9dd78a6f9e3d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..458c15fdb6692b42c510b4f2b6efbe8a7563caf7 100644
+index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..20f9a6b7479b9f1ba50270b7d0cfc3b40699576f 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-@@ -214,11 +214,43 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -214,11 +214,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
@@ -87,18 +87,25 @@ index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..458c15fdb6692b42c510b4f2b6efbe8a
 +        return (amount == Float.MAX_VALUE || !onTheVergeOfDeath()) && super.hurt(source, amount);
 +    }
 +
-+    @Nullable private Display helpDisplay;
++    @Nullable private UUID helpDisplayUUID;
 +
 +    public void tryAddHelpDisplay() {
-+        if (this.canAddRiderDisplay(99)) {
-+            helpDisplay = this.addRiderDisplay(99, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
++        final Display.ItemDisplay itemDisplay = this.addRiderDisplay(EntityType.ITEM_DISPLAY, 99, display -> {
++            display.setItemStack(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
++            display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
++            display.setBillboardConstraints(Display.BillboardConstraints.VERTICAL);
++            display.setTransformation(new com.mojang.math.Transformation(new org.joml.Vector3f(0.0F, 0.5F, 0.0F), null, null, null));
++        });
++
++        if (itemDisplay != null) {
++            helpDisplayUUID = itemDisplay.getUUID();
 +        }
 +    }
 +
 +    public void tryRemoveHelpDisplay() {
-+        if (this.helpDisplay != null) {
-+            this.helpDisplay.discard();
-+            this.helpDisplay = null;
++        if (helpDisplayUUID != null) {
++            this.removeRiderDisplay(helpDisplayUUID);
++            helpDisplayUUID = null;
 +        }
 +    }
 +    // KioCG end

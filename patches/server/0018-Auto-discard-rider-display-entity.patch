@@ -5,98 +5,92 @@ Subject: [PATCH] Auto discard rider display entity
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Display.java b/src/main/java/net/minecraft/world/entity/Display.java
-index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..05a0c6804036b8cf6fabcf21d21a8c6653868d05 100644
+index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..827f3ca4da682d7f5af09368e654875f12dc760e 100644
 --- a/src/main/java/net/minecraft/world/entity/Display.java
 +++ b/src/main/java/net/minecraft/world/entity/Display.java
-@@ -82,6 +82,10 @@ public abstract class Display extends Entity {
+@@ -82,6 +82,7 @@ public abstract class Display extends Entity {
      private Display.RenderState renderState;
      @Nullable
      private Display.PosRotInterpolationTarget posRotInterpolationTarget;
-+    // KioCG start
-+    private boolean riderDisplay = false; public boolean isRiderDisplay() { return this.riderDisplay; } public void setRiderDisplay(boolean riderDisplay) { this.riderDisplay = riderDisplay; }
-+    private int riderPriority = 0; public int getRiderPriority() { return this.riderPriority; } public void setRiderPriority(int riderPriority) { this.riderPriority = riderPriority; }
-+    // KioCG end
++    private int riderPriority = 0; public int getRiderPriority() { return this.riderPriority; } public void setRiderPriority(int riderPriority) { this.riderPriority = riderPriority; } // KioCG
  
      public Display(EntityType<?> type, Level world) {
          super(type, world);
-@@ -126,6 +130,16 @@ public abstract class Display extends Entity {
-             this.stopRiding();
-         }
+@@ -167,6 +168,17 @@ public abstract class Display extends Entity {
  
-+        // KioCG start
-+        if (this.riderDisplay) {
-+            if (!this.hasPassenger(passenger -> !(passenger instanceof Display display) || !display.riderDisplay)) {
-+                if (entity == null || entity instanceof Display display && display.riderDisplay) {
-+                    this.discard();
-+                }
-+            }
+     }
+ 
++    // KioCG start
++    @Override
++    public void stopRiding(boolean suppressCancellation) {
++        Entity entity = this.getVehicle();
++        super.stopRiding(suppressCancellation);
++        if (entity != null && this.getVehicle() == null) {
++            this.discard();
 +        }
-+        // KioCG end
++    }
++    // KioCG end
 +
-         if (this.level().isClientSide) {
-             if (this.updateStartTick) {
-                 this.updateStartTick = false;
-@@ -249,6 +263,14 @@ public abstract class Display extends Entity {
+     protected abstract void updateRenderSubState(boolean shouldLerp, float lerpProgress);
+ 
+     @Override
+@@ -249,6 +261,7 @@ public abstract class Display extends Entity {
              this.setBrightnessOverride((Brightness)null);
          }
  
-+        // KioCG start
-+        if (nbt.contains("KioCG.RiderDisplay")) {
-+            this.riderDisplay = nbt.getBoolean("KioCG.RiderDisplay");
-+        }
-+        if (nbt.contains("KioCG.RiderPriority")) {
-+            this.riderPriority = nbt.getInt("KioCG.RiderPriority");
-+        }
-+        // KioCG end
++        if (nbt.contains("KioCG.RiderPriority")) this.riderPriority = nbt.getInt("KioCG.RiderPriority"); // KioCG
      }
  
      public void setTransformation(Transformation transformation) {
-@@ -281,6 +303,10 @@ public abstract class Display extends Entity {
+@@ -281,6 +294,7 @@ public abstract class Display extends Entity {
              });
          }
  
-+        // KioCG start
-+        nbt.putBoolean("KioCG.RiderDisplay", this.riderDisplay);
-+        nbt.putInt("KioCG.RiderPriority", this.riderPriority);
-+        // KioCG end
++        nbt.putInt("KioCG.RiderPriority", this.riderPriority); // KioCG
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 5c6424a3800344c7fc5f3a0cbdf36a4b57e0a12c..599b8c2d29af288a65ba9bb21d3fdb25d257e6a3 100644
+index 5c6424a3800344c7fc5f3a0cbdf36a4b57e0a12c..e1ea2bbe0a35cc261ae5ba7b4e12c9927c67ea3f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4877,6 +4877,36 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4877,6 +4877,42 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          this.setRot(f, f1);
      }
  
 +    // KioCG start
-+    public boolean canAddRiderDisplay(int priority) {
++    @Nullable
++    public <T extends Display> T addRiderDisplay(EntityType<T> type, java.util.function.Consumer<T> function) {
++        return addRiderDisplay(type, 0, function);
++    }
++
++    @Nullable
++    public <T extends Display> T addRiderDisplay(EntityType<T> type, int priority, java.util.function.Consumer<T> function) {
 +        final Entity firstPassenger = this.getFirstPassenger();
-+        return firstPassenger == null || firstPassenger instanceof Display display && display.isRiderDisplay() && display.getRiderPriority() < priority;
-+    }
++        if (firstPassenger == null || firstPassenger instanceof Display display && display.getRiderPriority() < priority) {
++            this.ejectPassengers();
 +
-+    public Display addRiderDisplay(ItemStack itemStack) {
-+        return addRiderDisplay(0, itemStack);
-+    }
-+
-+    public Display addRiderDisplay(int priority, ItemStack itemStack) {
-+        this.ejectPassengers();
-+
-+        Display.ItemDisplay display = EntityType.ITEM_DISPLAY.create(this.level());
-+        if (display != null) {
-+            display.moveTo(this.position());
-+            display.persist = false;
-+            display.setRiderDisplay(true);
-+            display.setRiderPriority(priority);
-+            display.setItemStack(itemStack);
-+            display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
-+            display.setBillboardConstraints(Display.BillboardConstraints.VERTICAL);
-+            display.setTransformation(new com.mojang.math.Transformation(new org.joml.Vector3f(0.0F, 0.5F, 0.0F), null, null, null));
-+            display.startRiding(this);
-+            this.level().addFreshEntity(display);
++            T display = type.create(this.level());
++            if (display != null) {
++                display.moveTo(this.position());
++                display.persist = false;
++                display.setRiderPriority(priority);
++                display.startRiding(this);
++                function.accept(display);
++                this.level().addFreshEntity(display);
++            }
++            return display;
 +        }
-+        return display;
++        return null;
++    }
++
++    public boolean removeRiderDisplay(@Nullable UUID uuid) {
++        final Entity firstPassenger = this.getFirstPassenger();
++        if (firstPassenger instanceof Display display && (uuid == null || display.getUUID().equals(uuid))) {
++            firstPassenger.discard();
++            return true;
++        }
++        return false;
 +    }
 +    // KioCG end
 +
@@ -104,7 +98,7 @@ index 5c6424a3800344c7fc5f3a0cbdf36a4b57e0a12c..599b8c2d29af288a65ba9bb21d3fdb25
  
          KILLED(true, false), DISCARDED(true, false), UNLOADED_TO_CHUNK(false, true), UNLOADED_WITH_PLAYER(false, false), CHANGED_DIMENSION(false, false);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
-index 48eeb1d9ba0ad6f895bfe507a6fbe4b9c9530e47..b58d22c40d071f2ab90fc6069f4dfa35d93682c1 100644
+index 48eeb1d9ba0ad6f895bfe507a6fbe4b9c9530e47..9f188b9e47948c111a89f3923c0d5386811215e1 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
 @@ -167,4 +167,6 @@ public class CraftDisplay extends CraftEntity implements Display {
@@ -112,5 +106,5 @@ index 48eeb1d9ba0ad6f895bfe507a6fbe4b9c9530e47..b58d22c40d071f2ab90fc6069f4dfa35
          }
      }
 +
-+    public boolean isRiderDisplay() { return this.getHandle().isRiderDisplay(); } public void setRiderDisplay(boolean riderDisplay) { this.getHandle().setRiderDisplay(riderDisplay); } // KioCG
++    public int getRiderPriority() { return this.getHandle().getRiderPriority(); } public void setRiderPriority(int riderPriority) { this.getHandle().setRiderPriority(riderPriority); } // KioCG
  }
