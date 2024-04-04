@@ -18,7 +18,7 @@ index eab74e222e7e51aaccff3f67bab04bf0827b3339..4ed7a939f2af2045ace5575f8542cb17
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index bf5e47e8c3706590fdc0731bd9a5858b56d06136..c2ce37c1c14a3cbdeea9d4ef0d26200a3f274d26 100644
+index a96b5cc58c3f82b2d991229ae4a3e9e0f5239b07..6195afec487c03706a91fced502112d62bd309cb 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -819,6 +819,7 @@ public class ServerLevel extends Level implements WorldGenLevel {

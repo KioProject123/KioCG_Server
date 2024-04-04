@@ -5,10 +5,10 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 9962008ea411a1ece5f4142714c81d6882a9cc77..73617e3b1fc56d712c35878fcd762169899cb890 100644
+index 6195afec487c03706a91fced502112d62bd309cb..dfca2e479b2add98aec3eac9533dff5c9bb15364 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1038,6 +1038,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
          gameprofilerfiller.popPush("tickBlocks");
          timings.chunkTicksBlocks.startTiming(); // Paper
@@ -25,7 +25,7 @@ index 9962008ea411a1ece5f4142714c81d6882a9cc77..73617e3b1fc56d712c35878fcd762169
          if (randomTickSpeed > 0) {
              // Paper start - optimize random block ticking
              LevelChunkSection[] sections = chunk.getSections();
-@@ -1068,6 +1078,33 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1066,6 +1076,33 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  // We drop the fluid tick since LAVA is ALREADY TICKED by the above method (See LiquidBlock).
                  // TODO CHECK ON UPDATE (ping the Canadian)
              }

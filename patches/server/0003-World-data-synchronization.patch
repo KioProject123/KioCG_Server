@@ -1,0 +1,153 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Thu, 4 Apr 2024 00:59:59 +0800
+Subject: [PATCH] World data synchronization
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index bf5e47e8c3706590fdc0731bd9a5858b56d06136..a96b5cc58c3f82b2d991229ae4a3e9e0f5239b07 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -1471,6 +1471,13 @@ public class ServerLevel extends Level implements WorldGenLevel {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public long getDays() {
++        return this.serverLevelData.getDays();
++    }
++    // KioCG end
++
+     @Override
+     public boolean mayInteract(Player player, BlockPos pos) {
+         return !this.server.isUnderSpawnProtection(this, pos, player) && this.getWorldBorder().isWithinBounds(pos);
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index bc89f9e90af3d69872a58c47a4c2545ba91b6ba5..359a4a60847c9dc479c4c5a6bf3f6415e10bf6a7 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -1583,6 +1583,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+         return this.levelData.getDayTime();
+     }
+ 
++    // KioCG start
++    public long getDays() {
++        return 0;
++    }
++    // KioCG end
++
+     public boolean mayInteract(Player player, BlockPos pos) {
+         return true;
+     }
+diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
+index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d6706329ae6e 100644
+--- a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
++++ b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
+@@ -70,6 +70,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+     private float spawnAngle;
+     private long gameTime;
+     private long dayTime;
++    private long days; // KioCG
+     @Nullable
+     private final CompoundTag loadedPlayerTag;
+     private final int version;
+@@ -115,6 +116,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+         this.spawnAngle = spawnAngle;
+         this.gameTime = time;
+         this.dayTime = timeOfDay;
++        this.days = this.dayTime / 24000L; // KioCG
+         this.version = version;
+         this.clearWeatherTime = clearWeatherTime;
+         this.rainTime = rainTime;
+@@ -299,9 +301,23 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public long getDayTime() {
++        // KioCG start - 同步世界时间
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getDayTime();
++        }
++        // KioCG end - 同步世界时间
+         return this.dayTime;
+     }
+ 
++    // KioCG start
++    public long getDays() {
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getDays();
++        }
++        return this.days;
++    }
++    // KioCG end
++
+     @Nullable
+     @Override
+     public CompoundTag getLoadedPlayerTag() {
+@@ -336,6 +352,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+     @Override
+     public void setDayTime(long timeOfDay) {
+         this.dayTime = timeOfDay;
++        this.days = this.dayTime / 24000L; // KioCG
+     }
+ 
+     @Override
+@@ -358,6 +375,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public int getClearWeatherTime() {
++        // KioCG start - 同步世界天气
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getClearWeatherTime();
++        }
++        // KioCG end - 同步世界天气
+         return this.clearWeatherTime;
+     }
+ 
+@@ -368,6 +390,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public boolean isThundering() {
++        // KioCG start - 同步世界天气
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).isThundering();
++        }
++        // KioCG end - 同步世界天气
+         return this.thundering;
+     }
+ 
+@@ -397,6 +424,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public int getThunderTime() {
++        // KioCG start - 同步世界天气
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getThunderTime();
++        }
++        // KioCG end - 同步世界天气
+         return this.thunderTime;
+     }
+ 
+@@ -407,6 +439,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public boolean isRaining() {
++        // KioCG start - 同步世界天气
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).isRaining();
++        }
++        // KioCG end - 同步世界天气
+         return this.raining;
+     }
+ 
+@@ -437,6 +474,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+ 
+     @Override
+     public int getRainTime() {
++        // KioCG start - 同步世界天气
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getRainTime();
++        }
++        // KioCG end - 同步世界天气
+         return this.rainTime;
+     }
+ 
