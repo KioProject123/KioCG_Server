@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Fri, 5 Apr 2024 19:22:58 +0800
+Subject: [PATCH] Real big chest
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/ChestBlock.java b/src/main/java/net/minecraft/world/level/block/ChestBlock.java
+index 305bce4d833116cc21e64fdcdfe13f03e94ff4ba..901d06dff432dd259fe6802a0135f69786181eb2 100644
+--- a/src/main/java/net/minecraft/world/level/block/ChestBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/ChestBlock.java
+@@ -228,6 +228,7 @@ public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements
+             }
+         }
+ 
++        blockpropertychesttype = ChestType.SINGLE; // KioCG - 强制单箱子
+         return (BlockState) ((BlockState) ((BlockState) this.defaultBlockState().setValue(ChestBlock.FACING, enumdirection)).setValue(ChestBlock.TYPE, blockpropertychesttype)).setValue(ChestBlock.WATERLOGGED, fluid.getType() == Fluids.WATER);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
+index 484de6546e2ad5c91a421593f42332352ace5941..8d14cac4a5dcb5c9f4038c2d4a5f34213bceb2f7 100644
+--- a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
+@@ -39,6 +39,8 @@ public class TrappedChestBlock extends ChestBlock {
+         return Stats.CUSTOM.get(Stats.TRIGGER_TRAPPED_CHEST);
+     }
+ 
++    // KioCG start
++    /*
+     @Override
+     public boolean isSignalSource(BlockState state) {
+         return true;
+@@ -53,4 +55,6 @@ public class TrappedChestBlock extends ChestBlock {
+     public int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
+         return direction == Direction.UP ? state.getSignal(world, pos, direction) : 0;
+     }
++     */
++    // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
+index 9b1243d96e0694c62fc9e82e9be540bce0d2b3ad..b2c1858f444ea808c8461f5a665ff986200e3d73 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
+@@ -67,7 +67,7 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
+ 
+     protected ChestBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+         super(type, pos, state);
+-        this.items = NonNullList.withSize(27, ItemStack.EMPTY);
++        this.items = NonNullList.withSize(type == BlockEntityType.TRAPPED_CHEST ? 54 : 27, ItemStack.EMPTY); // KioCG
+         this.openersCounter = new ContainerOpenersCounter() {
+             @Override
+             protected void onOpen(Level world, BlockPos pos, BlockState state) {
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
+index 14c0e76e1c5340e8aad459751549c6bdfb513846..e922e7403b8db115c71624145e94c15d3653f5af 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
+@@ -10,6 +10,8 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
+         super(BlockEntityType.TRAPPED_CHEST, pos, state);
+     }
+ 
++    // KioCG start
++    /*
+     @Override
+     protected void signalOpenCount(Level world, BlockPos pos, BlockState state, int oldViewerCount, int newViewerCount) {
+         super.signalOpenCount(world, pos, state, oldViewerCount, newViewerCount);
+@@ -20,4 +22,21 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
+         }
+ 
+     }
++     */
++
++    @Override
++    protected net.minecraft.world.inventory.AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory) {
++        return net.minecraft.world.inventory.ChestMenu.sixRows(syncId, playerInventory, this);
++    }
++
++    @Override
++    protected net.minecraft.network.chat.Component getDefaultName() {
++        return net.minecraft.network.chat.Component.translatable("container.chestDouble");
++    }
++
++    @Override
++    public int getContainerSize() {
++        return 54;
++    }
++    // KioCG end
+ }
