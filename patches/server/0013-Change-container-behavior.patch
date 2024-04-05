@@ -17,35 +17,6 @@ index ce95216805c62c4be62c6b214127fc147263b898..ec6c450cd889cffccedc14ec29e7b1e5
                  BlockState iblockdata1 = AnvilBlock.damage(iblockdata);
  
                  // Paper start - AnvilDamageEvent
-diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-index 184a631a59c857beae19376ce7d4aedd016014a8..e83f4454c2649c4db94cdf7fb18e536d6df58e9d 100644
---- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-+++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-@@ -86,12 +86,12 @@ public class BrewingStandMenu extends AbstractContainerMenu {
- 
-             itemstack = itemstack1.copy();
-             if ((slot < 0 || slot > 2) && slot != 3 && slot != 4) {
--                if (BrewingStandMenu.FuelSlot.mayPlaceItem(itemstack)) {
--                    if (this.moveItemStackTo(itemstack1, 4, 5, false) || this.ingredientSlot.mayPlace(itemstack1) && !this.moveItemStackTo(itemstack1, 3, 4, false)) {
-+                if (this.ingredientSlot.mayPlace(itemstack1)) { // KioCG - 调换材料槽和燃料槽的判断顺序
-+                    if (this.moveItemStackTo(itemstack1, 3, 4, false) || BrewingStandMenu.FuelSlot.mayPlaceItem(itemstack) && !this.moveItemStackTo(itemstack1, 4, 5, false)) { // KioCG - 调换材料槽和燃料槽的判断顺序
-                         return ItemStack.EMPTY;
-                     }
--                } else if (this.ingredientSlot.mayPlace(itemstack1)) {
--                    if (!this.moveItemStackTo(itemstack1, 3, 4, false)) {
-+                } else if (BrewingStandMenu.FuelSlot.mayPlaceItem(itemstack)) { // KioCG - 调换材料槽和燃料槽的判断顺序
-+                    if (!this.moveItemStackTo(itemstack1, 4, 5, false)) { // KioCG - 调换材料槽和燃料槽的判断顺序
-                         return ItemStack.EMPTY;
-                     }
-                 } else if (BrewingStandMenu.PotionSlot.mayPlaceItem(itemstack) && itemstack.getCount() == 1) {
-@@ -205,6 +205,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
- 
-         public static boolean mayPlaceItem(ItemStack stack) {
-             if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
-+            if (true) return PotionBrewing.isIngredient(stack); // KioCG - 燃料槽允许放置材料
-             return stack.is(Items.BLAZE_POWDER);
-         }
- 
 diff --git a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
 index 0bba74bd22d66881fc6851797d29c1442f509445..6791902e3036bb10540b47c29b21fd8d2b4996cf 100644
 --- a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
@@ -222,7 +193,7 @@ index fb4f57b2ed17ff9b4853e1ba2aac7a002989e5c8..a394e06d24cd99f672f762f75260c743
      @Override
      protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 31bbaf4f7f3110695fcae96029495363756c924d..8bafa0c012b01923ccb636d04fcc841d539cbd27 100644
+index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a5d462312 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -88,7 +88,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
@@ -310,33 +281,7 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..8bafa0c012b01923ccb636d04fcc841d
      @Override
      public void load(CompoundTag nbt) {
          super.load(nbt);
-@@ -352,12 +386,33 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
- 
-     @Override
-     public boolean canPlaceItem(int slot, ItemStack stack) {
-+    // KioCG start
-+        boolean vanillaRecipeCanUse = io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack);
-+        if (slot == 3) {
-+            return vanillaRecipeCanUse && PotionBrewing.isIngredient(stack) || PotionBrewing.isCustomIngredient(stack);
-+        } else if (slot == 4) {
-+            // 燃料槽允许放置材料
-+            return vanillaRecipeCanUse && PotionBrewing.isIngredient(stack) || PotionBrewing.isCustomIngredient(stack);
-+        } else {
-+            if (!this.getItem(slot).isEmpty()) {
-+                return false;
-+            } else if (PotionBrewing.isCustomInput(stack)) {
-+                return true;
-+            } else {
-+                return vanillaRecipeCanUse && (stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE));
-+            }
-+        }
-+    }
-+
-+    public boolean canPlaceItem0(int slot, ItemStack stack) {
-+    // KioCG end
-         if ((slot == 4 || (slot == 3 ? !PotionBrewing.isCustomIngredient(stack) : !PotionBrewing.isCustomInput(stack))) && !io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(net.minecraft.world.inventory.MenuType.BREWING_STAND, stack)) return false; // KioCG
-         return slot == 3 ? PotionBrewing.isIngredient(stack) : (slot == 4 ? stack.is(Items.BLAZE_POWDER) : (stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE) || PotionBrewing.isCustomInput(stack)) && this.getItem(slot).isEmpty()); // Paper - Custom Potion Mixes
-     }
+@@ -358,6 +392,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      @Override
      public int[] getSlotsForFace(Direction side) {
