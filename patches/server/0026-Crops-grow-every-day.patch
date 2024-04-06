@@ -5,7 +5,7 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 6195afec487c03706a91fced502112d62bd309cb..dfca2e479b2add98aec3eac9533dff5c9bb15364 100644
+index 6195afec487c03706a91fced502112d62bd309cb..540bb32e187512964a6458f270e1eae6bf4d5eff 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -31,26 +31,26 @@ index 6195afec487c03706a91fced502112d62bd309cb..dfca2e479b2add98aec3eac9533dff5c
              }
 +
 +            // KioCG start - 农作物每天生长
-+            for (int i = 0; i < daysSpent; ++i) {
-+                for (int sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
-+                    LevelChunkSection section = sections[sectionIndex];
-+                    if (section == null || section.cropsList.size() == 0) continue;
++            for (int sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
++                LevelChunkSection section = sections[sectionIndex];
++                if (section == null || section.cropsList.size() == 0) continue;
 +
-+                    List<Pair<BlockPos, BlockState>> tickCrops = new ArrayList<>();
-+                    int yPos = (sectionIndex + minSection) << 4;
-+                    for (int a = 0; a < section.cropsList.size(); ++a) {
-+                        long raw = section.cropsList.getRaw(a);
-+                        int location = com.destroystokyo.paper.util.maplist.IBlockDataList.getLocationFromRaw(raw);
-+                        int x = location & 15;
-+                        int y = ((location >>> (4 + 4)) & 255) | yPos;
-+                        int z = (location >>> 4) & 15;
++                List<Pair<BlockPos, BlockState>> tickCrops = new ArrayList<>();
++                int yPos = (sectionIndex + minSection) << 4;
++                for (int a = 0; a < section.cropsList.size(); ++a) {
++                    long raw = section.cropsList.getRaw(a);
++                    int location = com.destroystokyo.paper.util.maplist.IBlockDataList.getLocationFromRaw(raw);
++                    int x = location & 15;
++                    int y = ((location >>> (4 + 4)) & 255) | yPos;
++                    int z = (location >>> 4) & 15;
 +
-+                        BlockPos blockposition2 = new BlockPos(j + x, y, k + z);
-+                        BlockState iblockdata = com.destroystokyo.paper.util.maplist.IBlockDataList.getBlockDataFromRaw(raw);
++                    BlockPos blockposition2 = new BlockPos(j + x, y, k + z);
++                    BlockState iblockdata = com.destroystokyo.paper.util.maplist.IBlockDataList.getBlockDataFromRaw(raw);
 +
-+                        tickCrops.add(Pair.of(blockposition2, iblockdata));
-+                    }
-+                    for (Pair<BlockPos, BlockState> pair : tickCrops) {
++                    tickCrops.add(Pair.of(blockposition2, iblockdata));
++                }
++                for (Pair<BlockPos, BlockState> pair : tickCrops) {
++                    for (int i = 0; i < daysSpent; ++i) {
 +                        pair.getSecond().randomTick(this, pair.getFirst(), this.randomTickRandom);
 +                    }
 +                }
