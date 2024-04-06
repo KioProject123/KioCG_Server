@@ -177,9 +177,18 @@ index 081d1e38b7b1f286e138b0981aaa760e58761215..8fe739cb62a738d4e0a496da6f1dc441
          this.level().broadcastEntityEvent(this, (byte) 18);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Chicken.java b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
-index 5e7e6526e2750d508a870dfbdbb46e520d201796..92d48218b034afdf461fc2511d62603f1f79c147 100644
+index 5e7e6526e2750d508a870dfbdbb46e520d201796..e8c536555993fd62b66b2ff8bf4e5b05f626d4c1 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
+@@ -51,7 +51,7 @@ public class Chicken extends Animal {
+ 
+     public Chicken(EntityType<? extends Chicken> type, Level world) {
+         super(type, world);
+-        this.eggTime = this.random.nextInt(6000) + 6000;
++        this.eggTime = this.random.nextInt(20 * 10); // KioCG
+         this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+     }
+ 
 @@ -95,13 +95,14 @@ public class Chicken extends Animal {
          }
  
@@ -191,7 +200,8 @@ index 5e7e6526e2750d508a870dfbdbb46e520d201796..92d48218b034afdf461fc2511d62603f
              this.spawnAtLocation((ItemLike) Items.EGG);
              this.forceDrops = false; // CraftBukkit
              this.gameEvent(GameEvent.ENTITY_PLACE);
-             this.eggTime = this.random.nextInt(6000) + 6000;
+-            this.eggTime = this.random.nextInt(6000) + 6000;
++            this.eggTime = this.random.nextInt(20 * 10); // KioCG
 +            this.produce(); // KioCG
          }
  
@@ -252,10 +262,28 @@ index d683c49fdf2d1e5b0f2620641f9c241e82f96825..b8a5158a6d55164d56d2050e515959ba
                  this.usePlayerItem(player, hand, itemstack);
                  this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Sheep.java b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-index 1d80678f7e8f658e43616f0baf723f096a99122a..5e09d8ed5754cbf4c1d211c19654995f3cfa33d5 100644
+index 1d80678f7e8f658e43616f0baf723f096a99122a..c338fa3859cd64af0f6a60c8c604a1fe87467482 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Sheep.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-@@ -251,7 +251,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -148,6 +148,17 @@ public class Sheep extends Animal implements Shearable {
+         super.aiStep();
+     }
+ 
++    // KioCG start
++    @Override
++    public void tickProduce() {
++        super.tickProduce();
++        if (this.canProduce()) {
++            this.ate();
++            this.produce();
++        }
++    }
++    // KioCG end
++
+     public static AttributeSupplier.Builder createAttributes() {
+         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D);
+     }
+@@ -251,7 +262,7 @@ public class Sheep extends Animal implements Shearable {
          ItemStack itemstack = player.getItemInHand(hand);
  
          if (itemstack.is(Items.SHEARS)) {
@@ -264,7 +292,7 @@ index 1d80678f7e8f658e43616f0baf723f096a99122a..5e09d8ed5754cbf4c1d211c19654995f
                  // CraftBukkit start
                  // Paper start - custom shear drops
                  java.util.List<ItemStack> drops = this.generateDefaultDrops();
-@@ -264,6 +264,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -264,6 +275,7 @@ public class Sheep extends Animal implements Shearable {
                  }
                  // Paper end - custom shear drops
                  // CraftBukkit end
@@ -272,6 +300,14 @@ index 1d80678f7e8f658e43616f0baf723f096a99122a..5e09d8ed5754cbf4c1d211c19654995f
                  this.shear(SoundSource.PLAYERS, drops); // Paper
                  this.gameEvent(GameEvent.SHEAR, player);
                  itemstack.hurtAndBreak(1, player, (entityhuman1) -> {
+@@ -404,6 +416,7 @@ public class Sheep extends Animal implements Shearable {
+         if (event.isCancelled()) return;
+         // CraftBukkit end
+         super.ate();
++        if (this.canProduce()) // KioCG
+         this.setSheared(false);
+         if (this.isBaby()) {
+             this.ageUp(60);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Turtle.java b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 index 2eb099957a3d0bae3339ff4edbab103fb348abed..980c7067d8af011e0c77e9d917f6dd3994a98298 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Turtle.java
