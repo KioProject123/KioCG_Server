@@ -21,23 +21,30 @@ index 604bbae43d54a4402b65bd1e0612d1c269bac919..00c9f2006078cd5cc7650ec8608ecb32
          public double dirtPathSpeedBoost = 0.02;
          public double saplingsWitheredChance = 0.025;
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e49954baa22a 100644
+index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1620414239e4585685e73199372390c457b56721 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
 +++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-@@ -21,6 +21,12 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -21,6 +21,19 @@ public abstract class AgeableMob extends PathfinderMob {
      protected int forcedAge;
      protected int forcedAgeTimer;
      public boolean ageLocked; // CraftBukkit
 +    // KioCG start
 +    private int feedingDay;
 +    private int produceDay;
-+    public int totalFeedingDays;
-+    public int numberOfProducedToday;
++    private int totalFeedingDays;
++    private int numberOfProducedToday;
++
++    public int getTotalFeedingDays() {
++        return this.totalFeedingDays;
++    }
++    public int getNumberOfProducedToday() {
++        return this.numberOfProducedToday;
++    }
 +    // KioCG end
  
      protected AgeableMob(EntityType<? extends AgeableMob> type, Level world) {
          super(type, world);
-@@ -131,6 +137,12 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -131,6 +144,12 @@ public abstract class AgeableMob extends PathfinderMob {
          nbt.putInt("Age", this.getAge());
          nbt.putInt("ForcedAge", this.forcedAge);
          nbt.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
@@ -50,7 +57,7 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e499
      }
  
      @Override
-@@ -139,6 +151,20 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -139,6 +158,20 @@ public abstract class AgeableMob extends PathfinderMob {
          this.setAge(nbt.getInt("Age"));
          this.forcedAge = nbt.getInt("ForcedAge");
          this.ageLocked = nbt.getBoolean("AgeLocked"); // CraftBukkit
@@ -71,7 +78,7 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e499
      }
  
      @Override
-@@ -171,6 +197,8 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -171,6 +204,8 @@ public abstract class AgeableMob extends PathfinderMob {
                  --i;
                  this.setAge(i);
              }
@@ -80,20 +87,11 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e499
          }
  
      }
-@@ -204,6 +232,50 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -204,6 +239,50 @@ public abstract class AgeableMob extends PathfinderMob {
          return (int) ((float) (breedingAge / 20) * 0.1F);
      }
  
 +    // KioCG start
-+    public boolean canFeed() {
-+        return (int) this.level().getDays() > this.feedingDay;
-+    }
-+
-+    public void feedingFeed() {
-+        this.feedingDay = (int) this.level().getDays();
-+        this.produceDay = this.feedingDay;
-+    }
-+
 +    public void tickProduce() {
 +        int days = (int) this.level().getDays();
 +
@@ -111,6 +109,19 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e499
 +        }
 +    }
 +
++    public int getNumberOfProduced() {
++        return 1;
++    }
++
++    public boolean canFeed() {
++        return (int) this.level().getDays() > this.feedingDay;
++    }
++
++    public void feedingFeed() {
++        this.feedingDay = (int) this.level().getDays();
++        this.produceDay = this.feedingDay;
++    }
++
 +    public boolean canProduce() {
 +        return this.numberOfProducedToday > 0;
 +    }
@@ -120,11 +131,7 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1bf34ddcce2a6cf071e861c438b5e499
 +    }
 +
 +    public void produce(int amount) {
-+        this.numberOfProducedToday = this.numberOfProducedToday - amount;
-+    }
-+
-+    public int getNumberOfProduced() {
-+        return 1;
++        this.numberOfProducedToday -= amount;
 +    }
 +    // KioCG end
 +
@@ -177,7 +184,7 @@ index 081d1e38b7b1f286e138b0981aaa760e58761215..8fe739cb62a738d4e0a496da6f1dc441
          this.level().broadcastEntityEvent(this, (byte) 18);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Chicken.java b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
-index 5e7e6526e2750d508a870dfbdbb46e520d201796..e8c536555993fd62b66b2ff8bf4e5b05f626d4c1 100644
+index 5e7e6526e2750d508a870dfbdbb46e520d201796..c303c563bdaaa7cba6b7de11471fe633b2596ea6 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 @@ -51,7 +51,7 @@ public class Chicken extends Animal {
@@ -189,7 +196,7 @@ index 5e7e6526e2750d508a870dfbdbb46e520d201796..e8c536555993fd62b66b2ff8bf4e5b05
          this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
      }
  
-@@ -95,13 +95,14 @@ public class Chicken extends Animal {
+@@ -95,17 +95,25 @@ public class Chicken extends Animal {
          }
  
          this.flap += this.flapping * 2.0F;
@@ -197,17 +204,29 @@ index 5e7e6526e2750d508a870dfbdbb46e520d201796..e8c536555993fd62b66b2ff8bf4e5b05
 +        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.canProduce() && !this.isChickenJockey() && --this.eggTime <= 0) { // KioCG
              this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
              this.forceDrops = true; // CraftBukkit
-             this.spawnAtLocation((ItemLike) Items.EGG);
+-            this.spawnAtLocation((ItemLike) Items.EGG);
++            this.spawnAtLocation((ItemLike) Items.EGG, this.getNumberOfProducedToday()); // KioCG
              this.forceDrops = false; // CraftBukkit
              this.gameEvent(GameEvent.ENTITY_PLACE);
 -            this.eggTime = this.random.nextInt(6000) + 6000;
 +            this.eggTime = this.random.nextInt(20 * 10); // KioCG
-+            this.produce(); // KioCG
++            this.produce(this.getNumberOfProducedToday()); // KioCG
          }
  
      }
+ 
++    // KioCG start
++    @Override
++    public int getNumberOfProduced() {
++        return Math.min(1 + this.getTotalFeedingDays() / 10, 5);
++    }
++    // KioCG end
++
+     @Override
+     protected boolean isFlapping() {
+         return this.flyDist > this.nextFlap;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cow.java b/src/main/java/net/minecraft/world/entity/animal/Cow.java
-index 3cdd9f379c7e2d46ea47c9ef55b121c93ec0bb4a..75475703cc988da92c92a182b19d244d5881a62a 100644
+index 3cdd9f379c7e2d46ea47c9ef55b121c93ec0bb4a..8c49a4c49a7360d9c6a9188f1530d891be5e053c 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cow.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cow.java
 @@ -90,7 +90,7 @@ public class Cow extends Animal {
@@ -227,6 +246,20 @@ index 3cdd9f379c7e2d46ea47c9ef55b121c93ec0bb4a..75475703cc988da92c92a182b19d244d
              player.setItemInHand(hand, itemstack1);
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
+@@ -109,6 +110,13 @@ public class Cow extends Animal {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public int getNumberOfProduced() {
++        return Math.min(1 + this.getTotalFeedingDays() / 30, 3);
++    }
++    // KioCG end
++
+     @Nullable
+     @Override
+     public Cow getBreedOffspring(ServerLevel world, AgeableMob entity) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java b/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
 index 161c128d27f50f145f88142191f1a5c93649ea65..759cb392c342a892526bea4fbd276dff0c1bf172 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
@@ -262,10 +295,10 @@ index d683c49fdf2d1e5b0f2620641f9c241e82f96825..b8a5158a6d55164d56d2050e515959ba
                  this.usePlayerItem(player, hand, itemstack);
                  this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Sheep.java b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-index 1d80678f7e8f658e43616f0baf723f096a99122a..c338fa3859cd64af0f6a60c8c604a1fe87467482 100644
+index 1d80678f7e8f658e43616f0baf723f096a99122a..82c1adc6b6538894d78c5d46f80d03d03976f396 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Sheep.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-@@ -148,6 +148,17 @@ public class Sheep extends Animal implements Shearable {
+@@ -148,6 +148,16 @@ public class Sheep extends Animal implements Shearable {
          super.aiStep();
      }
  
@@ -273,9 +306,8 @@ index 1d80678f7e8f658e43616f0baf723f096a99122a..c338fa3859cd64af0f6a60c8c604a1fe
 +    @Override
 +    public void tickProduce() {
 +        super.tickProduce();
-+        if (this.canProduce()) {
++        if (this.canProduce() && this.isSheared()) {
 +            this.ate();
-+            this.produce();
 +        }
 +    }
 +    // KioCG end
@@ -283,7 +315,7 @@ index 1d80678f7e8f658e43616f0baf723f096a99122a..c338fa3859cd64af0f6a60c8c604a1fe
      public static AttributeSupplier.Builder createAttributes() {
          return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D);
      }
-@@ -251,7 +262,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -251,7 +261,7 @@ public class Sheep extends Animal implements Shearable {
          ItemStack itemstack = player.getItemInHand(hand);
  
          if (itemstack.is(Items.SHEARS)) {
@@ -292,7 +324,7 @@ index 1d80678f7e8f658e43616f0baf723f096a99122a..c338fa3859cd64af0f6a60c8c604a1fe
                  // CraftBukkit start
                  // Paper start - custom shear drops
                  java.util.List<ItemStack> drops = this.generateDefaultDrops();
-@@ -264,6 +275,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -264,6 +274,7 @@ public class Sheep extends Animal implements Shearable {
                  }
                  // Paper end - custom shear drops
                  // CraftBukkit end
@@ -300,7 +332,29 @@ index 1d80678f7e8f658e43616f0baf723f096a99122a..c338fa3859cd64af0f6a60c8c604a1fe
                  this.shear(SoundSource.PLAYERS, drops); // Paper
                  this.gameEvent(GameEvent.SHEAR, player);
                  itemstack.hurtAndBreak(1, player, (entityhuman1) -> {
-@@ -404,6 +416,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -278,6 +289,13 @@ public class Sheep extends Animal implements Shearable {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public int getNumberOfProduced() {
++        return Math.min(1 + this.getTotalFeedingDays() / 15, 5);
++    }
++    // KioCG end
++
+     @Override
+     public void shear(SoundSource shearedSoundCategory) {
+         // Paper start - custom shear drops
+@@ -298,6 +316,7 @@ public class Sheep extends Animal implements Shearable {
+     public void shear(SoundSource shearedSoundCategory, java.util.List<ItemStack> drops) {
+         // Paper end - custom shear drops
+         this.level().playSound((Player) null, (Entity) this, SoundEvents.SHEEP_SHEAR, shearedSoundCategory, 1.0F, 1.0F);
++        if (!this.canProduce()) // KioCG
+         this.setSheared(true);
+         int i = 1 + this.random.nextInt(3);
+ 
+@@ -404,6 +423,7 @@ public class Sheep extends Animal implements Shearable {
          if (event.isCancelled()) return;
          // CraftBukkit end
          super.ate();
@@ -380,7 +434,7 @@ index 295769d039f2a1e4f48912a60f9dbe267d8992c1..b4f309f7902727591ea7374fcbcb22fe
      public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
          if (DATA_POSE.equals(data)) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-index 5d247ac38fe8a61603b3d934f3000bcda773142b..a3d93cd9717fca06f024f4a0a55b942267778bef 100644
+index 5d247ac38fe8a61603b3d934f3000bcda773142b..0de7394563a27a5c8b745b568635c23efb5a0f3a 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 @@ -225,7 +225,7 @@ public class Goat extends Animal {
@@ -400,6 +454,20 @@ index 5d247ac38fe8a61603b3d934f3000bcda773142b..a3d93cd9717fca06f024f4a0a55b9422
              player.setItemInHand(hand, itemstack1);
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
+@@ -250,6 +251,13 @@ public class Goat extends Animal {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public int getNumberOfProduced() {
++        return Math.min(1 + this.getTotalFeedingDays() / 25, 3);
++    }
++    // KioCG end
++
+     @Override
+     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag entityNbt) {
+         RandomSource randomsource = world.getRandom();
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 index 815eb15086976b8f9e03bf8182d9ed50aec14720..00d9f8e682b67c23315cb77d950f4f5068ecde4b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
@@ -470,7 +538,7 @@ index 24044795d8e0f1fb15a4f2f5401f44897092f2a3..48e31cb123caa3c3f1dce23b9a73e547
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java b/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
-index 3fb1e558c3510243c94981211f9a0e5e0ef1895b..d0512d012381d97bb0fe975e77880e04b47f4d65 100644
+index 3fb1e558c3510243c94981211f9a0e5e0ef1895b..3fd790d924a3c9ef90849dbef2b901fa4f5c055e 100644
 --- a/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
 +++ b/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
 @@ -54,6 +54,7 @@ public class LootingEnchantFunction extends LootItemConditionalFunction {
@@ -490,20 +558,20 @@ index 3fb1e558c3510243c94981211f9a0e5e0ef1895b..d0512d012381d97bb0fe975e77880e04
 +        }
 +        {
 +            int i = i0;
-+            if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.totalFeedingDays * 4;
++            if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.getTotalFeedingDays() * 4;
 +            // KioCG end
  
              if (i <= 0) { // CraftBukkit - account for possible negative looting values from Bukkit
                  return stack;
 diff --git a/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java b/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-index 2c9161e9f798a1e3770afbed26737bf9a7ceb2d5..71d59e4aac3850f50324deb2f4cfb3b5719fc09b 100644
+index 2c9161e9f798a1e3770afbed26737bf9a7ceb2d5..8c24138f4d2451de92ed025fefe649c006a4704e 100644
 --- a/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
 +++ b/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
 @@ -34,6 +34,7 @@ public record LootItemRandomChanceWithLootingCondition(float percent, float loot
          if (entity instanceof LivingEntity) {
              i = EnchantmentHelper.getMobLooting((LivingEntity) entity);
          }
-+        if (loottableinfo.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.totalFeedingDays * 4; // KioCG
++        if (loottableinfo.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.getTotalFeedingDays() * 4; // KioCG
          // CraftBukkit start - only use lootingModifier if set by Bukkit
          if (loottableinfo.hasParam(LootContextParams.LOOTING_MOD)) {
              i = loottableinfo.getParamOrNull(LootContextParams.LOOTING_MOD);
