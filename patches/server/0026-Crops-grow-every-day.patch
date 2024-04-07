@@ -90,7 +90,7 @@ index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb
          BlockState iblockdata1 = world.getBlockState(otherPos);
  
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..61248a7c6b37cef476cdec7151b5f217c4b3f256 100644
+index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..2f5e00f406dda940753c53568d971ab159239de2 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,24 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -107,9 +107,9 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..61248a7c6b37cef476cdec7151b5f217
 +        BlockPos blockposition1 = pos.below();
 +        BlockState iblockdata = world.getBlockState(blockposition1);
 +        if (iblockdata.is(Blocks.FARMLAND)) {
-+            boolean moisture = (Integer) state.getValue(FarmBlock.MOISTURE) > 0;
++            boolean moisture = (Integer) iblockdata.getValue(FarmBlock.MOISTURE) > 0;
 +            ((FarmBlock) iblockdata.getBlock()).randomTick0(iblockdata, world, blockposition1, random);
-+            return moisture || (Integer) state.getValue(FarmBlock.MOISTURE) > 0;
++            return moisture || (Integer) world.getBlockState(blockposition1).getValue(FarmBlock.MOISTURE) > 0;
 +        }
 +        return false;
 +    }
