@@ -90,7 +90,7 @@ index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb
          BlockState iblockdata1 = world.getBlockState(otherPos);
  
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..2f5e00f406dda940753c53568d971ab159239de2 100644
+index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..1974495538ded5454c6555e9d17e663c4040005f 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,24 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -123,7 +123,7 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..2f5e00f406dda940753c53568d971ab1
                  }
  
 -                if (random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+                if (tickFarmland(state, world, pos, random) || random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
++                if (tickFarmland(state, world, pos, random)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
                      // Spigot end
                      CraftEventFactory.handleBlockGrowEvent(world, pos, this.getStateForAge(i + 1), 2); // CraftBukkit
                  }
@@ -136,7 +136,7 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..2f5e00f406dda940753c53568d971ab1
          BlockPos blockposition1 = pos.below();
  
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index 7b4122cf9ce5f1c17efa12162880cc285d50af97..c1ce1c7d30864fe75d8827ac499ddc1c3f1d5e2e 100644
+index 7b4122cf9ce5f1c17efa12162880cc285d50af97..42e4cfd4e83e74218e9cd57e32adfd3323cb4c12 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 @@ -89,15 +89,33 @@ public class FarmBlock extends Block {
@@ -167,7 +167,8 @@ index 7b4122cf9ce5f1c17efa12162880cc285d50af97..c1ce1c7d30864fe75d8827ac499ddc1c
 +        */
 +        // KioCG end
  
-         if (!FarmBlock.isNearWater(world, pos) && !world.isRainingAt(pos.above())) {
+-        if (!FarmBlock.isNearWater(world, pos) && !world.isRainingAt(pos.above())) {
++        if (!world.isRainingAt(pos.above())) { // KioCG - 水源不要湿润耕地
              if (i > 0) {
 -                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
 +                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 0), 2); // CraftBukkit // KioCG - 强制干燥
@@ -199,7 +200,7 @@ index 0fc333f240d6918e841a9221be42973839408802..f3acbeaad6779c6837c0c5dd4554b2eb
              org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
          }
 diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-index d20c009baf69d083bf8a14000028991b6518cd50..0c8047f034218e3c55bed27bbfaabd147bcc7f0e 100644
+index d20c009baf69d083bf8a14000028991b6518cd50..c199356975f2de413867f700a24e450f0077a954 100644
 --- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 @@ -116,11 +116,18 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
@@ -218,12 +219,12 @@ index d20c009baf69d083bf8a14000028991b6518cd50..0c8047f034218e3c55bed27bbfaabd14
          float f = CropBlock.getGrowthSpeed(this, world, pos);
          boolean bl = random.nextFloat() < (world.spigotConfig.pitcherPlantModifier / (100.0F * (Math.floor(25.0F / f) + 1))); // Paper - Fix Spigot growth modifiers
 -        if (bl) {
-+        if (CropBlock.tickFarmland(state, world, pos, random) || bl) { // KioCG - 农作物每天生长
++        if (CropBlock.tickFarmland(state, world, pos, random)) { // KioCG - 农作物每天生长
              this.grow(world, state, pos, 1);
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
-index 121a872cd750a87b779895687ae1abf5bb77b088..cb39cf9c86996c5dcb7c223ecc3770bc4d61fcfd 100644
+index 121a872cd750a87b779895687ae1abf5bb77b088..8b3d8552bee06d884383d0f46dcbbefd7f52bd5e 100644
 --- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/StemBlock.java
 @@ -70,12 +70,19 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
@@ -243,7 +244,7 @@ index 121a872cd750a87b779895687ae1abf5bb77b088..cb39cf9c86996c5dcb7c223ecc3770bc
              float f = CropBlock.getGrowthSpeed(this, world, pos);
  
 -            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+            if (CropBlock.tickFarmland(state, world, pos, random) || random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
++            if (CropBlock.tickFarmland(state, world, pos, random)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
                  int i = (Integer) state.getValue(StemBlock.AGE);
  
                  if (i < 7) {
