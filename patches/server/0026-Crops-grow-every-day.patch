@@ -72,24 +72,124 @@ index 24a5a402cba62bf591a014b0527236cde8851e00..d638ca86f0621ab31230de72b916b79b
              super.randomTick(state, world, pos, random);
          }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
+index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb4496e0b5 100644
+--- a/src/main/java/net/minecraft/world/level/block/Block.java
++++ b/src/main/java/net/minecraft/world/level/block/Block.java
+@@ -233,6 +233,12 @@ public class Block extends BlockBehaviour implements ItemLike {
+         return this.isRandomlyTicking;
+     }
+ 
++    // KioCG start
++    public boolean isDayTicking() {
++        return false;
++    }
++    // KioCG end
++
+     public static boolean shouldRenderFace(BlockState state, BlockGetter world, BlockPos pos, Direction side, BlockPos otherPos) {
+         BlockState iblockdata1 = world.getBlockState(otherPos);
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..225cd008359b0f54000fb04f97280eb7f3b6eaf0 100644
+index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..61248a7c6b37cef476cdec7151b5f217c4b3f256 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-@@ -99,7 +99,7 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
+@@ -75,6 +75,24 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
+         return !this.isMaxAge(state);
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++
++    public static boolean tickFarmland(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++        BlockPos blockposition1 = pos.below();
++        BlockState iblockdata = world.getBlockState(blockposition1);
++        if (iblockdata.is(Blocks.FARMLAND)) {
++            boolean moisture = (Integer) state.getValue(FarmBlock.MOISTURE) > 0;
++            ((FarmBlock) iblockdata.getBlock()).randomTick0(iblockdata, world, blockposition1, random);
++            return moisture || (Integer) state.getValue(FarmBlock.MOISTURE) > 0;
++        }
++        return false;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if (world.getRawBrightness(pos, 0) >= 9) {
+@@ -99,7 +117,7 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
                      modifier = world.spigotConfig.wheatModifier;
                  }
  
 -                if (random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+                if (true || random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
++                if (tickFarmland(state, world, pos, random) || random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
                      // Spigot end
                      CraftEventFactory.handleBlockGrowEvent(world, pos, this.getStateForAge(i + 1), 2); // CraftBukkit
                  }
+@@ -124,6 +142,7 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
+     }
+ 
+     protected static float getGrowthSpeed(Block block, BlockGetter world, BlockPos pos) {
++        if (true) return 1.0F; // KioCG - 跳过无用且繁重的运算
+         float f = 1.0F;
+         BlockPos blockposition1 = pos.below();
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
+index 7b4122cf9ce5f1c17efa12162880cc285d50af97..c1ce1c7d30864fe75d8827ac499ddc1c3f1d5e2e 100644
+--- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
+@@ -89,15 +89,33 @@ public class FarmBlock extends Block {
+ 
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++    // KioCG start - 使农作物来运算耕地
++        if (!world.getBlockState(pos.above()).is(BlockTags.CROPS)) {
++            randomTick0(state, world, pos, random);
++        }
++    }
++    public void randomTick0(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++    // KioCG end - 使农作物来运算耕地
+         int i = (Integer) state.getValue(FarmBlock.MOISTURE);
++        // KioCG start
++        /*
+         if (i > 0 && world.paperConfig().tickRates.wetFarmland != 1 && (world.paperConfig().tickRates.wetFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.wetFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
+         if (i == 0 && world.paperConfig().tickRates.dryFarmland != 1 && (world.paperConfig().tickRates.dryFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.dryFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
++        */
++        // KioCG end
+ 
+         if (!FarmBlock.isNearWater(world, pos) && !world.isRainingAt(pos.above())) {
+             if (i > 0) {
+-                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
++                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 0), 2); // CraftBukkit // KioCG - 强制干燥
+             } else if (!FarmBlock.shouldMaintainFarmland(world, pos)) {
+                 FarmBlock.turnToDirt((Entity) null, state, world, pos);
+             }
 diff --git a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
-index 0fc333f240d6918e841a9221be42973839408802..cdaa480c6926605dabb52d3cc079cef239ea160a 100644
+index 0fc333f240d6918e841a9221be42973839408802..f3acbeaad6779c6837c0c5dd4554b2eb6b60a10c 100644
 --- a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
-@@ -52,7 +52,7 @@ public class NetherWartBlock extends BushBlock {
+@@ -48,11 +48,18 @@ public class NetherWartBlock extends BushBlock {
+         return (Integer) state.getValue(NetherWartBlock.AGE) < 3;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
      public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          int i = (Integer) state.getValue(NetherWartBlock.AGE);
  
@@ -99,28 +199,51 @@ index 0fc333f240d6918e841a9221be42973839408802..cdaa480c6926605dabb52d3cc079cef2
              org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
          }
 diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-index d20c009baf69d083bf8a14000028991b6518cd50..192408d3b2bb66ee0d5440a5eeaf9514a51b25b9 100644
+index d20c009baf69d083bf8a14000028991b6518cd50..0c8047f034218e3c55bed27bbfaabd147bcc7f0e 100644
 --- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-@@ -120,7 +120,7 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
+@@ -116,11 +116,18 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
+         return state.getValue(HALF) == DoubleBlockHalf.LOWER && !this.isMaxAge(state);
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
      public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          float f = CropBlock.getGrowthSpeed(this, world, pos);
          boolean bl = random.nextFloat() < (world.spigotConfig.pitcherPlantModifier / (100.0F * (Math.floor(25.0F / f) + 1))); // Paper - Fix Spigot growth modifiers
 -        if (bl) {
-+        if (true || bl) { // KioCG - 农作物每天生长
++        if (CropBlock.tickFarmland(state, world, pos, random) || bl) { // KioCG - 农作物每天生长
              this.grow(world, state, pos, 1);
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
-index 121a872cd750a87b779895687ae1abf5bb77b088..32e085dd294b18f578ff4f9c38f82f9788ef7f00 100644
+index 121a872cd750a87b779895687ae1abf5bb77b088..cb39cf9c86996c5dcb7c223ecc3770bc4d61fcfd 100644
 --- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/StemBlock.java
-@@ -75,7 +75,7 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
+@@ -70,12 +70,19 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
+         return floor.is(Blocks.FARMLAND);
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (world.getRawBrightness(pos, 0) >= 9) {
              float f = CropBlock.getGrowthSpeed(this, world, pos);
  
 -            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+            if (true || random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
++            if (CropBlock.tickFarmland(state, world, pos, random) || random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
                  int i = (Integer) state.getValue(StemBlock.AGE);
  
                  if (i < 7) {
@@ -137,6 +260,23 @@ index d5c0fd1c2bbd85d0aa312ef74dc8dab14dfdf8f3..aa7c5e1c91051e87ee947df2496bfc57
              super.randomTick(state, world, pos, random);
          }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
+index 2892e586146cbc560f0bcf4b9af6d0575cb0a82e..db1bfe890b4e36ec8364866f06c0aa542175313b 100644
+--- a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
++++ b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
+@@ -1387,6 +1387,12 @@ public abstract class BlockBehaviour implements FeatureElement {
+             return this.isRandomlyTicking;
+         }
+ 
++        // KioCG start
++        public final boolean isRandomlyDayTicking() {
++            return this.getBlock().isDayTicking();
++        }
++        // KioCG end
++
+         public long getSeed(BlockPos pos) {
+             return this.getBlock().getSeed(this.asState(), pos);
+         }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
 index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a5341399e5c6c3 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
@@ -195,7 +335,7 @@ index 6ec3fc801453fd54c25b642e6fa71c19b463311d..27de22ea6eb31c039fbada85f52463e0
          this.setBlockNibbles(protoChunk.getBlockNibbles());
          this.setSkyNibbles(protoChunk.getSkyNibbles());
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
-index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..357acb660f61fd471a22b926927a0d63566b8176 100644
+index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..92caf0b5a60b213aeae01f5f7841b9a3fa6d308f 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 @@ -26,6 +26,7 @@ public class LevelChunkSection {
@@ -210,7 +350,7 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..357acb660f61fd471a22b926927a0d63
          if (!iblockdata1.isAir()) {
              --this.nonEmptyBlockCount;
              if (iblockdata1.isRandomlyTicking()) {
-+                if (isCrops(iblockdata1)) { this.cropsList.remove(x, y, z); } else { // KioCG
++                if (iblockdata1.isRandomlyDayTicking()) { this.cropsList.remove(x, y, z); } else { // KioCG
                  --this.tickingBlockCount;
                  // Paper start
                  this.tickingList.remove(x, y, z);
@@ -223,7 +363,7 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..357acb660f61fd471a22b926927a0d63
          if (!state.isAir()) {
              ++this.nonEmptyBlockCount;
              if (state.isRandomlyTicking()) {
-+                if (isCrops(state)) { this.cropsList.add(x, y, z, state); } else { // KioCG
++                if (state.isRandomlyDayTicking()) { this.cropsList.add(x, y, z, state); } else { // KioCG
                  ++this.tickingBlockCount;
                  // Paper start
                  this.tickingList.add(x, y, z, state);
@@ -232,20 +372,7 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..357acb660f61fd471a22b926927a0d63
              }
          }
  
-@@ -122,6 +127,12 @@ public class LevelChunkSection {
-         return iblockdata1;
-     }
- 
-+    // KioCG start
-+    private boolean isCrops(BlockState state) {
-+        return state.is(net.minecraft.tags.BlockTags.CROPS) || state.is(Blocks.NETHER_WART_BLOCK);
-+    }
-+    // KioCG end
-+
-     public boolean hasOnlyAir() {
-         return this.nonEmptyBlockCount == 0;
-     }
-@@ -141,6 +152,7 @@ public class LevelChunkSection {
+@@ -141,6 +146,7 @@ public class LevelChunkSection {
      public void recalcBlockCounts() {
          // Paper start - unfuck this
          this.tickingList.clear();
@@ -253,11 +380,11 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..357acb660f61fd471a22b926927a0d63
          this.nonEmptyBlockCount = 0;
          this.tickingBlockCount = 0;
          this.tickingFluidCount = 0;
-@@ -152,8 +164,10 @@ public class LevelChunkSection {
+@@ -152,8 +158,10 @@ public class LevelChunkSection {
                  if (!iblockdata.isAir()) {
                      this.nonEmptyBlockCount = (short) (this.nonEmptyBlockCount + 1);
                      if (iblockdata.isRandomlyTicking()) {
-+                        if (isCrops(iblockdata)) { this.cropsList.add(i, iblockdata); } else { // KioCG
++                        if (iblockdata.isRandomlyDayTicking()) { this.cropsList.add(i, iblockdata); } else { // KioCG
                          this.tickingBlockCount = (short)(this.tickingBlockCount + 1);
                          this.tickingList.add(i, iblockdata);
 +                        } // KioCG
