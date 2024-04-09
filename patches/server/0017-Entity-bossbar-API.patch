@@ -1,0 +1,155 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 9 Apr 2024 12:35:05 +0800
+Subject: [PATCH] Entity bossbar API
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerBossEvent.java b/src/main/java/net/minecraft/server/level/ServerBossEvent.java
+index ca42c2642a729b90d22b968af7258f3aee72e14b..2c5513c42a032b9b2b8c48b42fb47f3e0c1a39a7 100644
+--- a/src/main/java/net/minecraft/server/level/ServerBossEvent.java
++++ b/src/main/java/net/minecraft/server/level/ServerBossEvent.java
+@@ -139,4 +139,32 @@ public class ServerBossEvent extends BossEvent {
+     public Collection<ServerPlayer> getPlayers() {
+         return this.unmodifiablePlayers;
+     }
++
++    // KioCG start
++    public net.minecraft.nbt.CompoundTag save() {
++        net.minecraft.nbt.CompoundTag nbttagcompound = new net.minecraft.nbt.CompoundTag();
++
++        nbttagcompound.putString("Name", Component.Serializer.toJson(this.name));
++        nbttagcompound.putBoolean("Visible", this.isVisible());
++        nbttagcompound.putString("Color", this.getColor().getName());
++        nbttagcompound.putString("Overlay", this.getOverlay().getName());
++        nbttagcompound.putBoolean("DarkenScreen", this.shouldDarkenScreen());
++        nbttagcompound.putBoolean("PlayBossMusic", this.shouldPlayBossMusic());
++        nbttagcompound.putBoolean("CreateWorldFog", this.shouldCreateWorldFog());
++        return nbttagcompound;
++    }
++
++    public static ServerBossEvent load(net.minecraft.nbt.CompoundTag nbt) {
++        Component displayName1 = Component.Serializer.fromJson(nbt.getString("Name"));
++        BossBarColor color1 = BossBarColor.byName(nbt.getString("Color"));
++        BossBarOverlay overlay1 = BossBarOverlay.byName(nbt.getString("Overlay"));
++        ServerBossEvent bossbar = new ServerBossEvent(displayName1, color1, overlay1);
++
++        bossbar.setVisible(nbt.getBoolean("Visible"));
++        bossbar.setDarkenScreen(nbt.getBoolean("DarkenScreen"));
++        bossbar.setPlayBossMusic(nbt.getBoolean("PlayBossMusic"));
++        bossbar.setCreateWorldFog(nbt.getBoolean("CreateWorldFog"));
++        return bossbar;
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 2439f8d48daca7329049436414f06a36b4b79029..288cd59506a22b5d9ff1ce6ca138011fdb39ff90 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -135,6 +135,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+     public CompoundTag leashInfoTag;
+     private BlockPos restrictCenter;
+     private float restrictRadius;
++    @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG
+ 
+     public boolean aware = true; // CraftBukkit
+ 
+@@ -443,6 +444,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+             }
+         }
+ 
++        updateBossbar(); // KioCG
+     }
+ 
+     protected void updateControlFlags() {
+@@ -561,6 +563,8 @@ public abstract class Mob extends LivingEntity implements Targeting {
+         }
+ 
+         nbt.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
++
++        if (this.bossbar != null) nbt.put("KioCG.Bossbar", this.bossbar.save()); // KioCG
+     }
+ 
+     @Override
+@@ -631,6 +635,8 @@ public abstract class Mob extends LivingEntity implements Targeting {
+             this.aware = nbt.getBoolean("Bukkit.Aware");
+         }
+         // CraftBukkit end
++
++        if (nbt.contains("KioCG.Bossbar")) this.bossbar = net.minecraft.server.level.ServerBossEvent.load(nbt.getCompound("KioCG.Bossbar")); // KioCG
+     }
+ 
+     @Override
+@@ -1781,4 +1787,52 @@ public abstract class Mob extends LivingEntity implements Targeting {
+ 
+         return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
+     }
++
++    // KioCG start
++    @Nullable
++    public net.minecraft.server.level.ServerBossEvent getBossBar() {
++        return this.bossbar;
++    }
++
++    public void setBossBar(net.minecraft.server.level.ServerBossEvent bossbar) {
++        removeBossBar();
++        this.bossbar = bossbar;
++    }
++
++    public void removeBossBar() {
++        if (this.bossbar != null) {
++            this.bossbar.removeAllPlayers();
++            this.bossbar = null;
++        }
++    }
++
++    private void updateBossbar() {
++        if (this.bossbar != null) {
++            this.bossbar.setProgress(this.getHealth() / this.getMaxHealth());
++
++            java.util.Set<ServerPlayer> set = com.google.common.collect.Sets.newHashSet();
++            Iterator iterator = this.tracker.seenBy.iterator();
++
++            while (iterator.hasNext()) {
++                ServerPlayer entityplayer = (ServerPlayer) iterator.next();
++
++                if (this.position().distanceToSqr(entityplayer.position()) <= 16 * 16) {
++                    this.bossbar.addPlayer(entityplayer);
++                    set.add(entityplayer);
++                }
++            }
++
++            java.util.Set<ServerPlayer> set1 = com.google.common.collect.Sets.newHashSet(this.bossbar.getPlayers());
++
++            set1.removeAll(set);
++            Iterator iterator1 = set1.iterator();
++
++            while (iterator1.hasNext()) {
++                ServerPlayer entityplayer1 = (ServerPlayer) iterator1.next();
++
++                this.bossbar.removePlayer(entityplayer1);
++            }
++        }
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
+index 31f62fbb54ec7b270fbd8afba7bd7c4bfafa09e3..6375e68da35124499dd395f83466e8ad61523ea6 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
+@@ -177,4 +177,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
+         return getHandle().getExperienceReward();
+     }
+     // Paper end
++
++    // KioCG start
++    @Override
++    public org.bukkit.boss.BossBar getBossbar() {
++        return new org.bukkit.craftbukkit.boss.CraftBossBar(getHandle().getBossBar());
++    }
++
++    @Override
++    public void setBossbar(org.bukkit.boss.BossBar bossbar) {
++        getHandle().setBossBar(((org.bukkit.craftbukkit.boss.CraftBossBar) bossbar).getHandle());
++    }
++    // KioCG end
+ }

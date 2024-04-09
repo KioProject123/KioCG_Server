@@ -53,10 +53,10 @@ index 9226de952f4020daa21f659ea710509fc89d093c..403b8b2e0f7cae449b3f7787e9a225f4
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 2439f8d48daca7329049436414f06a36b4b79029..2ea31c46c8be7cd84e0f9dd78a6f9e3d88f9409d 100644
+index 288cd59506a22b5d9ff1ce6ca138011fdb39ff90..97c4a79677278ff7872fc0a92ca6323c149a8afc 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -289,6 +289,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -290,6 +290,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
      @Nullable
      @Override
      public LivingEntity getTarget() {

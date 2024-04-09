@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 9 Apr 2024 18:38:54 +0800
+Subject: [PATCH] Entity bossbar API
+
+
+diff --git a/src/main/java/org/bukkit/entity/Mob.java b/src/main/java/org/bukkit/entity/Mob.java
+index 30ef0c20df8ff2ed56adb40fea103265dd3e886c..3cd539e265e1c2a10b231ac16bc4ae3415e60356 100644
+--- a/src/main/java/org/bukkit/entity/Mob.java
++++ b/src/main/java/org/bukkit/entity/Mob.java
+@@ -221,4 +221,10 @@ public interface Mob extends LivingEntity, Lootable {
+      */
+     public int getPossibleExperienceReward();
+     // Paper end
++
++    // KioCG start
++    @Nullable
++    public org.bukkit.boss.BossBar getBossbar();
++    public void setBossbar(org.bukkit.boss.BossBar bossbar);
++    // KioCG end
+ }
