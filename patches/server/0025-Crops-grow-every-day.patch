@@ -62,6 +62,51 @@ index 6195afec487c03706a91fced502112d62bd309cb..270b377364d3af4264c48bc15650d98f
          }
          // Paper end - optimise random block ticking
  
+diff --git a/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java b/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
+index 8430f4ecee42e7112b7bafe04cec237b22dade88..5dc220e18ee67cb14543e1f0250aa2c8aa597bc4 100644
+--- a/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
+@@ -43,9 +43,16 @@ public class BambooSaplingBlock extends Block implements BonemealableBlock {
+         return BambooSaplingBlock.SAPLING_SHAPE.move(vec3d.x, vec3d.y, vec3d.z);
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+-        if (random.nextFloat() < (world.spigotConfig.bambooModifier / (100.0f * 3)) && world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+             this.growBamboo(world, pos);
+         }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java b/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java
+index e8dc4ea90d74036dacb0785fcb9125df192a4c22..9897ce8fb39c5350d2705a537ccf1cca483a13c5 100644
+--- a/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java
+@@ -131,10 +131,17 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
+         return (Integer) state.getValue(BambooStalkBlock.STAGE) == 0;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if ((Integer) state.getValue(BambooStalkBlock.STAGE) == 0) {
+-            if (random.nextFloat() < (world.spigotConfig.bambooModifier / (100.0f * 3)) && world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
++            if (world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+                 int i = this.getHeightBelowUpToMax(world, pos) + 1;
+ 
+                 if (i < world.paperConfig().maxGrowthHeight.bamboo.max) { // Paper - Configurable cactus/bamboo/reed growth height
 diff --git a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
 index 24a5a402cba62bf591a014b0527236cde8851e00..d638ca86f0621ab31230de72b916b79b1c43f5af 100644
 --- a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
@@ -92,6 +137,105 @@ index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb
      public static boolean shouldRenderFace(BlockState state, BlockGetter world, BlockPos pos, Direction side, BlockPos otherPos) {
          BlockState iblockdata1 = world.getBlockState(otherPos);
  
+diff --git a/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java b/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java
+index 7f58c9f5935cd14ea1096de14633f653eb486d7e..3af4a82cf659d50224f2ec6961d40f0acbd25a05 100644
+--- a/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java
+@@ -24,6 +24,13 @@ public class BuddingAmethystBlock extends AmethystBlock {
+         super(settings);
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if (random.nextInt(5) == 0) {
+diff --git a/src/main/java/net/minecraft/world/level/block/CactusBlock.java b/src/main/java/net/minecraft/world/level/block/CactusBlock.java
+index ba4aaf850af36a84517c70581e141157c4f15b99..6e323efa5d469d948025a30ef074ffa7543071c3 100644
+--- a/src/main/java/net/minecraft/world/level/block/CactusBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CactusBlock.java
+@@ -50,6 +50,13 @@ public class CactusBlock extends Block {
+ 
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         BlockPos blockposition1 = pos.above();
+@@ -65,7 +72,7 @@ public class CactusBlock extends Block {
+                 int j = (Integer) state.getValue(CactusBlock.AGE);
+ 
+                 int modifier = world.spigotConfig.cactusModifier; // Spigot - SPIGOT-7159: Better modifier resolution
+-                if (j >= 15 || (modifier != 100 && random.nextFloat() < (modifier / (100.0f * 16)))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+                     CraftEventFactory.handleBlockGrowEvent(world, blockposition1, this.defaultBlockState()); // CraftBukkit
+                     BlockState iblockdata1 = (BlockState) state.setValue(CactusBlock.AGE, 0);
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java b/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java
+index 0ab1bbd7c8dc8e45f754434357898d8fc990a021..bb1937f64f6ae56e26640b9446225c9f4a5ba086 100644
+--- a/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java
+@@ -60,6 +60,13 @@ public class ChorusFlowerBlock extends Block {
+         return (Integer) state.getValue(ChorusFlowerBlock.AGE) < 5;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public VoxelShape getBlockSupportShape(BlockState state, BlockGetter world, BlockPos pos) {
+         return ChorusFlowerBlock.BLOCK_SUPPORT_SHAPE;
+@@ -154,8 +161,12 @@ public class ChorusFlowerBlock extends Block {
+     }
+ 
+     private void placeGrownFlower(Level world, BlockPos pos, int age) {
+-        world.setBlock(pos, (BlockState) this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, age), 2);
++        // KioCG start
++        BlockState blockState = this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, age);
++        world.setBlock(pos, blockState, 2);
+         world.levelEvent(1033, pos, 0);
++        blockState.randomTick((ServerLevel) world, pos, world.random);
++        // KioCG end
+     }
+ 
+     private void placeDeadFlower(Level world, BlockPos pos) {
+diff --git a/src/main/java/net/minecraft/world/level/block/CocoaBlock.java b/src/main/java/net/minecraft/world/level/block/CocoaBlock.java
+index 9ddc3a5333894cbd2a3cc94752b54b091f4e8293..2fae1dc3345bccfd457f907a78034dc628f86c90 100644
+--- a/src/main/java/net/minecraft/world/level/block/CocoaBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CocoaBlock.java
+@@ -56,9 +56,16 @@ public class CocoaBlock extends HorizontalDirectionalBlock implements Bonemealab
+         return (Integer) state.getValue(CocoaBlock.AGE) < 2;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+-        if (world.random.nextFloat() < (world.spigotConfig.cocoaModifier / (100.0f * 5))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+             int i = (Integer) state.getValue(CocoaBlock.AGE);
+ 
+             if (i < 2) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..1974495538ded5454c6555e9d17e663c4040005f 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
@@ -178,8 +322,120 @@ index 7b4122cf9ce5f1c17efa12162880cc285d50af97..42e4cfd4e83e74218e9cd57e32adfd33
              } else if (!FarmBlock.shouldMaintainFarmland(world, pos)) {
                  FarmBlock.turnToDirt((Entity) null, state, world, pos);
              }
+diff --git a/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java b/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
+index 30300ef3ec839dfa944c992ab50db4d3859bb02e..37cca5f0492888235f912fcb7428d7d16f6a0c66 100644
+--- a/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
+@@ -34,14 +34,21 @@ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements
+ 
+     @Override
+     public BlockState getStateForPlacement(LevelAccessor world) {
+-        return (BlockState) this.defaultBlockState().setValue(GrowingPlantHeadBlock.AGE, world.getRandom().nextInt(25));
++        return (BlockState) this.defaultBlockState().setValue(GrowingPlantHeadBlock.AGE, world.getRandom().nextInt(15)); // KioCG
+     }
+ 
+     @Override
+     public boolean isRandomlyTicking(BlockState state) {
+-        return (Integer) state.getValue(GrowingPlantHeadBlock.AGE) < 25;
++        return (Integer) state.getValue(GrowingPlantHeadBlock.AGE) < 15; // KioCG
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         // Spigot start
+@@ -55,7 +62,7 @@ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements
+         } else {
+             modifier = world.spigotConfig.caveVinesModifier;
+         }
+-        if ((Integer) state.getValue(GrowingPlantHeadBlock.AGE) < 25 && random.nextDouble() < ((modifier / 100.0D) * this.growPerTickProbability)) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if ((Integer) state.getValue(GrowingPlantHeadBlock.AGE) < 15) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+             // Spigot end
+             BlockPos blockposition1 = pos.relative(this.growthDirection);
+ 
+@@ -77,11 +84,11 @@ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements
+     }
+ 
+     public BlockState getMaxAgeState(BlockState state) {
+-        return (BlockState) state.setValue(GrowingPlantHeadBlock.AGE, 25);
++        return (BlockState) state.setValue(GrowingPlantHeadBlock.AGE, 15); // KioCG
+     }
+ 
+     public boolean isMaxAge(BlockState state) {
+-        return (Integer) state.getValue(GrowingPlantHeadBlock.AGE) == 25;
++        return (Integer) state.getValue(GrowingPlantHeadBlock.AGE) == 15; // KioCG
+     }
+ 
+     protected BlockState updateBodyAfterConvertedFromHead(BlockState from, BlockState to) {
+@@ -123,13 +130,13 @@ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements
+     @Override
+     public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state) {
+         BlockPos blockposition1 = pos.relative(this.growthDirection);
+-        int i = Math.min((Integer) state.getValue(GrowingPlantHeadBlock.AGE) + 1, 25);
++        int i = Math.min((Integer) state.getValue(GrowingPlantHeadBlock.AGE) + 1, 15); // KioCG
+         int j = this.getBlocksToGrowWhenBonemealed(random);
+ 
+         for (int k = 0; k < j && this.canGrowInto(world.getBlockState(blockposition1)); ++k) {
+             world.setBlockAndUpdate(blockposition1, (BlockState) state.setValue(GrowingPlantHeadBlock.AGE, i));
+             blockposition1 = blockposition1.relative(this.growthDirection);
+-            i = Math.min(i + 1, 25);
++            i = Math.min(i + 1, 15); // KioCG
+         }
+ 
+     }
+diff --git a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
+index d5257272ac8b0cf36e9f92e32a4a4ae6782f770c..928a02dc3d74ee0334f4a717e7061da3b63b0267 100644
+--- a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
+@@ -97,10 +97,17 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
+         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if (!isHanging(state)) {
+-            if (random.nextFloat() < (world.spigotConfig.saplingModifier / (100.0F * 7))) { // Paper - Fix Spigot growth modifiers
++            if (true) { // Paper - Fix Spigot growth modifiers // KioCG
+                 this.advanceTree(world, pos, state, random);
+             }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/MushroomBlock.java b/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
+index 1f27ae8abd5891a0b8057b454f2210b088b4e95a..62f192f0aa9751ffe2f4975887a9e91d2513d5b4 100644
+--- a/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
+@@ -49,9 +49,16 @@ public class MushroomBlock extends BushBlock implements BonemealableBlock {
+         return MushroomBlock.SHAPE;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+-        if (random.nextFloat() < (world.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+             int i = 5;
+             boolean flag = true;
+             Iterator iterator = BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).iterator();
 diff --git a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
-index 0fc333f240d6918e841a9221be42973839408802..f3acbeaad6779c6837c0c5dd4554b2eb6b60a10c 100644
+index 0fc333f240d6918e841a9221be42973839408802..5660a581039dbeaf751c8fc7645cdb7db6e3d3ad 100644
 --- a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
 @@ -48,11 +48,18 @@ public class NetherWartBlock extends BushBlock {
@@ -198,7 +454,7 @@ index 0fc333f240d6918e841a9221be42973839408802..f3acbeaad6779c6837c0c5dd4554b2eb
          int i = (Integer) state.getValue(NetherWartBlock.AGE);
  
 -        if (i < 3 && random.nextFloat() < (world.spigotConfig.wartModifier / (100.0f * 10))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+        if (i < 3 && (true || random.nextFloat() < (world.spigotConfig.wartModifier / (100.0f * 10)))) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
++        if (i < 3) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - 农作物每天生长
              state = (BlockState) state.setValue(NetherWartBlock.AGE, i + 1);
              org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
          }
@@ -226,6 +482,28 @@ index d20c009baf69d083bf8a14000028991b6518cd50..c199356975f2de413867f700a24e450f
              this.grow(world, state, pos, 1);
          }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
+index 3ff0d08e4964aae82d8e51d3b8bf9aa002096f81..23b19bba383f2feb795c7eca14d019906b6869bb 100644
+--- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
+@@ -53,9 +53,16 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
+         return SaplingBlock.SHAPE;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(net.minecraft.world.level.block.state.BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+-        if (world.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextFloat() < (world.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (world.getMaxLocalRawBrightness(pos.above()) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+             this.advanceTree(world, pos, state, random);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
 index 121a872cd750a87b779895687ae1abf5bb77b088..8b3d8552bee06d884383d0f46dcbbefd7f52bd5e 100644
 --- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
@@ -251,6 +529,57 @@ index 121a872cd750a87b779895687ae1abf5bb77b088..8b3d8552bee06d884383d0f46dcbbefd
                  int i = (Integer) state.getValue(StemBlock.AGE);
  
                  if (i < 7) {
+diff --git a/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java b/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
+index 04957d461d0e968d443737068aaeec1d0bce78b2..b8a25ad733e7d112614978bdc47d5eaf240b5af3 100644
+--- a/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
+@@ -50,6 +50,13 @@ public class SugarCaneBlock extends Block {
+ 
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if (world.isEmptyBlock(pos.above())) {
+@@ -63,7 +70,7 @@ public class SugarCaneBlock extends Block {
+                 int j = (Integer) state.getValue(SugarCaneBlock.AGE);
+ 
+                 int modifier = world.spigotConfig.caneModifier; // Spigot - SPIGOT-7159: Better modifier resolution
+-                if (j >= 15 || (modifier != 100 && random.nextFloat() < (modifier / (100.0f * 16)))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos.above(), this.defaultBlockState()); // CraftBukkit
+                     world.setBlock(pos, (BlockState) state.setValue(SugarCaneBlock.AGE, 0), 4);
+                 } else if (modifier == 100 || random.nextFloat() < (modifier / (100.0f * 16))) { // Spigot - SPIGOT-7159: Better modifier resolution
+diff --git a/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java b/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
+index 62ed86114c1a6e724ccfea119a331356d0a22600..ff140206f2d4e94e3dc8107416528990f457462e 100644
+--- a/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
+@@ -68,11 +68,18 @@ public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock
+         return (Integer) state.getValue(SweetBerryBushBlock.AGE) < 3;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         int i = (Integer) state.getValue(SweetBerryBushBlock.AGE);
+ 
+-        if (i < 3 && random.nextFloat() < (world.spigotConfig.sweetBerryModifier / (100.0f * 5)) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (i < 3 && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+             BlockState iblockdata1 = (BlockState) state.setValue(SweetBerryBushBlock.AGE, i + 1);
+ 
+             if (!CraftEventFactory.handleBlockGrowEvent(world, pos, iblockdata1, 2)) return; // CraftBukkit
 diff --git a/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java b/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
 index d5c0fd1c2bbd85d0aa312ef74dc8dab14dfdf8f3..aa7c5e1c91051e87ee947df2496bfc57d46bfc44 100644
 --- a/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
@@ -264,6 +593,29 @@ index d5c0fd1c2bbd85d0aa312ef74dc8dab14dfdf8f3..aa7c5e1c91051e87ee947df2496bfc57
              super.randomTick(state, world, pos, random);
          }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/VineBlock.java b/src/main/java/net/minecraft/world/level/block/VineBlock.java
+index 75297e5e006d2009fd7582349e27a4afe3e67e80..33dd6e1e00e88fd57f7e3cfe72675ea84215131a 100644
+--- a/src/main/java/net/minecraft/world/level/block/VineBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/VineBlock.java
+@@ -182,10 +182,17 @@ public class VineBlock extends Block {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++    // KioCG end
++
+     @Override
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if (world.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
+-            if (random.nextFloat() < (world.spigotConfig.vineModifier / (100.0f * 4))) { // Spigot - SPIGOT-7159: Better modifier resolution
++            if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
+                 Direction enumdirection = Direction.getRandom(random);
+                 BlockPos blockposition1 = pos.above();
+                 BlockPos blockposition2;
 diff --git a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 index 2892e586146cbc560f0bcf4b9af6d0575cb0a82e..db1bfe890b4e36ec8364866f06c0aa542175313b 100644
 --- a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java

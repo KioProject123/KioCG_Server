@@ -5,22 +5,22 @@ Subject: [PATCH] Flowers and grasses spread naturally
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 8b66f51ba08020404ea05e70980d05ac6994f33b..eab74e222e7e51aaccff3f67bab04bf0827b3339 100644
+index c95730ea16bce0b5da7fffb0245146f2da75e5d0..19f6dd0b2a733586da2d9df99c77bb1baf406843 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -594,6 +594,7 @@ public class WorldConfiguration extends ConfigurationPart {
-         public boolean betterMobGriefingSetting = true;
-         public double dirtPathSpeedBoost = 0.02;
+@@ -601,6 +601,7 @@ public class WorldConfiguration extends ConfigurationPart {
+         public boolean sleepAnyTime = true;
+         public double sleepHealingRegenRate = 20;
          public double saplingsWitheredChance = 0.025;
 +        public boolean flowersAndGrassesSpreadNaturally = true;
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/FlowerBlock.java b/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
-index e602ba8777444a64646e92725a178537e2432769..c683f8d8d8a403cafa722a8f23b4fe90ef7c4bb5 100644
+index e602ba8777444a64646e92725a178537e2432769..a31ce06db40e27a2780f47f923ac3d908714c23b 100644
 --- a/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
-@@ -56,4 +56,47 @@ public class FlowerBlock extends BushBlock implements SuspiciousEffectHolder {
+@@ -56,4 +56,52 @@ public class FlowerBlock extends BushBlock implements SuspiciousEffectHolder {
      public List<SuspiciousEffectHolder.EffectEntry> getSuspiciousEffects() {
          return this.suspiciousStewEffects;
      }
@@ -32,9 +32,14 @@ index e602ba8777444a64646e92725a178537e2432769..c683f8d8d8a403cafa722a8f23b4fe90
 +    }
 +
 +    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++
++    @Override
 +    public void randomTick(BlockState state, net.minecraft.server.level.ServerLevel world, BlockPos pos, net.minecraft.util.RandomSource random) {
 +        if (!world.paperConfig().kiocgConfig.flowersAndGrassesSpreadNaturally || !world.isRainingAt(pos)) return;
-+        if (random.nextFloat() < (world.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
 +            int i = 5;
 +            java.util.Iterator iterator = BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).iterator();
 +
@@ -69,10 +74,10 @@ index e602ba8777444a64646e92725a178537e2432769..c683f8d8d8a403cafa722a8f23b4fe90
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java b/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
-index 4019ce6dd4add3cb59314fa585af1387f076b586..5e3fb873272fd63e52651c812d6e5d5e16be1ada 100644
+index 4019ce6dd4add3cb59314fa585af1387f076b586..849939e30ed91ab8f99c17438737f7a30c7b2115 100644
 --- a/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
-@@ -49,4 +49,47 @@ public class TallGrassBlock extends BushBlock implements BonemealableBlock {
+@@ -49,4 +49,52 @@ public class TallGrassBlock extends BushBlock implements BonemealableBlock {
          }
  
      }
@@ -84,9 +89,14 @@ index 4019ce6dd4add3cb59314fa585af1387f076b586..5e3fb873272fd63e52651c812d6e5d5e
 +    }
 +
 +    @Override
++    public boolean isDayTicking() {
++        return true;
++    }
++
++    @Override
 +    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 +        if (!world.paperConfig().kiocgConfig.flowersAndGrassesSpreadNaturally || !world.isRainingAt(pos)) return;
-+        if (random.nextFloat() < (world.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
 +            int i = 5;
 +            java.util.Iterator iterator = BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).iterator();
 +

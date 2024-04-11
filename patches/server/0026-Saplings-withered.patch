@@ -5,35 +5,32 @@ Subject: [PATCH] Saplings withered
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 76db2be1a1a70aabb3d23865e7d1ed793650410f..8b66f51ba08020404ea05e70980d05ac6994f33b 100644
+index 09f754d9652e39efa10ff6cf29d6a9dbc1f3d38d..c95730ea16bce0b5da7fffb0245146f2da75e5d0 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -593,6 +593,7 @@ public class WorldConfiguration extends ConfigurationPart {
- 
-         public boolean betterMobGriefingSetting = true;
+@@ -600,6 +600,7 @@ public class WorldConfiguration extends ConfigurationPart {
          public double dirtPathSpeedBoost = 0.02;
+         public boolean sleepAnyTime = true;
+         public double sleepHealingRegenRate = 20;
 +        public double saplingsWitheredChance = 0.025;
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-index 3ff0d08e4964aae82d8e51d3b8bf9aa002096f81..53666ce348a07ca59d6aef416ddda623dc453dfb 100644
+index 23b19bba383f2feb795c7eca14d019906b6869bb..b50a8c3cbfa35e93c761e267f45a4a3b1a04c4ec 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-@@ -55,7 +55,15 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
+@@ -62,6 +62,13 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
  
      @Override
      public void randomTick(net.minecraft.world.level.block.state.BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
--        if (world.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextFloat() < (world.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        // KioCG start
-+        if (random.nextFloat() < (world.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+            if (random.nextDouble() < world.paperConfig().kiocgConfig.saplingsWitheredChance) {
-+                world.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
-+                return;
-+            }
-+
-+            if (world.getMaxLocalRawBrightness(pos.above()) >= 9)
++        if (random.nextDouble() < world.paperConfig().kiocgConfig.saplingsWitheredChance) {
++            world.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
++            return;
++        }
 +        // KioCG end
++
+         if (world.getMaxLocalRawBrightness(pos.above()) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              this.advanceTree(world, pos, state, random);
          }
- 
