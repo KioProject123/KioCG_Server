@@ -16,6 +16,24 @@ index 09f754d9652e39efa10ff6cf29d6a9dbc1f3d38d..c95730ea16bce0b5da7fffb0245146f2
      }
      // KioCG end
  }
+diff --git a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
+index 928a02dc3d74ee0334f4a717e7061da3b63b0267..5784a903845c30e3814b93f4ad38634ca821f78a 100644
+--- a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
+@@ -108,6 +108,13 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
+     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+         if (!isHanging(state)) {
+             if (true) { // Paper - Fix Spigot growth modifiers // KioCG
++                // KioCG start
++                if (random.nextDouble() < world.paperConfig().kiocgConfig.saplingsWitheredChance) {
++                    world.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
++                    return;
++                }
++                // KioCG end
++
+                 this.advanceTree(world, pos, state, random);
+             }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 index 23b19bba383f2feb795c7eca14d019906b6869bb..b50a8c3cbfa35e93c761e267f45a4a3b1a04c4ec 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
