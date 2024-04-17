@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Thu, 18 Apr 2024 04:53:43 +0800
+Subject: [PATCH] Anti auto fishing
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
+index d0eb970f79bcad1f9dbf992925db0212d12e6c92..7659620c0adc41327e8c11879a8e9f2b5b9635e1 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
+@@ -329,7 +329,10 @@ public class FishingHook extends Projectile {
+             if (this.nibble <= 0) {
+                 this.timeUntilLured = 0;
+                 this.timeUntilHooked = 0;
+-                this.getEntityData().set(FishingHook.DATA_BITING, false);
++                // KioCG start - 防止自动钓鱼
++                // this.getEntityData().set(FishingHook.DATA_BITING, false);
++                this.biting = false;
++                // KioCG end - 防止自动钓鱼
+                 // CraftBukkit start
+                 PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.getPlayerOwner().getBukkitEntity(), null, (FishHook) this.getBukkitEntity(), PlayerFishEvent.State.FAILED_ATTEMPT);
+                 this.level().getCraftServer().getPluginManager().callEvent(playerFishEvent);
+@@ -380,7 +383,11 @@ public class FishingHook extends Projectile {
+                     worldserver.sendParticles(ParticleTypes.BUBBLE, this.getX(), d3, this.getZ(), (int) (1.0F + this.getBbWidth() * 20.0F), (double) this.getBbWidth(), 0.0D, (double) this.getBbWidth(), 0.20000000298023224D);
+                     worldserver.sendParticles(ParticleTypes.FISHING, this.getX(), d3, this.getZ(), (int) (1.0F + this.getBbWidth() * 20.0F), (double) this.getBbWidth(), 0.0D, (double) this.getBbWidth(), 0.20000000298023224D);
+                     this.nibble = Mth.nextInt(this.random, 20, 40);
+-                    this.getEntityData().set(FishingHook.DATA_BITING, true);
++                    // KioCG start - 防止自动钓鱼
++                    // this.getEntityData().set(FishingHook.DATA_BITING, true);
++                    this.biting = true;
++                    this.setDeltaMovement(this.getDeltaMovement().x, (double) (-0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F)), this.getDeltaMovement().z);
++                    // KioCG end - 防止自动钓鱼
+                 }
+             } else if (this.timeUntilLured > 0) {
+                 this.timeUntilLured -= i;
