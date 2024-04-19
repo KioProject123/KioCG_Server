@@ -52,18 +52,6 @@ index 9bcdc90664b7c416dd34075993c5c5f823fd1c84..bfa3cf01c2a6b0fd9af9a2dd5b2cbd80
                  // CraftBukkit start
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
-diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 288cd59506a22b5d9ff1ce6ca138011fdb39ff90..97c4a79677278ff7872fc0a92ca6323c149a8afc 100644
---- a/src/main/java/net/minecraft/world/entity/Mob.java
-+++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -290,6 +290,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
-     @Nullable
-     @Override
-     public LivingEntity getTarget() {
-+        if (this.target instanceof TamableAnimal pet && pet.onTheVergeOfDeath()) this.target = null; // KioCG
-         return this.target;
-     }
- 
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 index cf5cd0e49c4966e7b636a8ad4dec7a12806c6a4d..1828e1f4e46fefb8df79eb5da9af1cfb7895075c 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
@@ -119,6 +107,19 @@ index cf5cd0e49c4966e7b636a8ad4dec7a12806c6a4d..1828e1f4e46fefb8df79eb5da9af1cfb
          this.orderedToSit = sitting;
      }
  }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
+index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3587ec637 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
+@@ -53,7 +53,7 @@ public class StopAttackingIfTargetInvalid {
+                             reason = EntityTargetEvent.TargetReason.TARGET_INVALID;
+                         } else if (shouldForgetIfTargetUnreachable && StopAttackingIfTargetInvalid.isTiredOfTryingToReachTarget(entityinsentient, behaviorbuilder_b.tryGet(memoryaccessor1))) {
+                             reason = EntityTargetEvent.TargetReason.FORGOT_TARGET;
+-                        } else if (!entityliving.isAlive()) {
++                        } else if (!entityliving.isAlive() || entityliving instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.onTheVergeOfDeath()) { // KioCG
+                             reason = EntityTargetEvent.TargetReason.TARGET_DIED;
+                         } else if (entityliving.level() != entityinsentient.level()) {
+                             reason = EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..f7db8157ba6c5ab7dcffb126d72de2ac0155976f 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
@@ -170,6 +171,41 @@ index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..f7db8157ba6c5ab7dcffb126d72de2ac
                  this.teleportToOwner();
              } else {
                  this.navigation.moveTo((Entity) this.owner, this.speedModifier);
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
+index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c2e784b73 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
+@@ -39,7 +39,7 @@ public class MeleeAttackGoal extends Goal {
+             LivingEntity livingEntity = this.mob.getTarget();
+             if (livingEntity == null) {
+                 return false;
+-            } else if (!livingEntity.isAlive()) {
++            } else if (!livingEntity.isAlive() || livingEntity instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.onTheVergeOfDeath()) { // KioCG
+                 return false;
+             } else {
+                 this.path = this.mob.getNavigation().createPath(livingEntity, 0);
+@@ -53,7 +53,7 @@ public class MeleeAttackGoal extends Goal {
+         LivingEntity livingEntity = this.mob.getTarget();
+         if (livingEntity == null) {
+             return false;
+-        } else if (!livingEntity.isAlive()) {
++        } else if (!livingEntity.isAlive() || livingEntity instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.onTheVergeOfDeath()) { // KioCG
+             return false;
+         } else {
+             return !this.followingTargetEvenIfNotSeen
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
+index fee8d45103a12e9213f62ae030073611fe77e0af..acee05e0de568eab0b0b5a2c69ae41691ade5eb9 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
+@@ -44,7 +44,7 @@ public class RangedCrossbowAttackGoal<T extends Monster & RangedAttackMob & Cros
+     }
+ 
+     private boolean isValidTarget() {
+-        return this.mob.getTarget() != null && this.mob.getTarget().isAlive();
++        return this.mob.getTarget() != null && this.mob.getTarget().isAlive() && (!(this.mob.getTarget() instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal) || !tamableAnimal.onTheVergeOfDeath()); // KioCG
+     }
+ 
+     @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
 index 327f00736ede0c58d6078433235cf798ea59ba79..0c987c5896a9c507bf228c4ba03eb336adde7fdb 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java

@@ -5,18 +5,18 @@ Subject: [PATCH] Optimize entity behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/PathfinderMob.java b/src/main/java/net/minecraft/world/entity/PathfinderMob.java
-index 3d95257d2203fe40bb1fab58ad2a1f9e815184a9..2ed9f6d3579ea5b9cece1160a4bf3142b9f662f3 100644
+index 3d95257d2203fe40bb1fab58ad2a1f9e815184a9..a04e9394888ac516a3e38e4bdacbeb118267e8df 100644
 --- a/src/main/java/net/minecraft/world/entity/PathfinderMob.java
 +++ b/src/main/java/net/minecraft/world/entity/PathfinderMob.java
-@@ -94,7 +94,7 @@ public abstract class PathfinderMob extends Mob {
-     }
+@@ -82,7 +82,7 @@ public abstract class PathfinderMob extends Mob {
  
-     protected boolean shouldStayCloseToLeashHolder() {
--        return true;
-+        return false; //TODO KioCG - 临时修复https://github.com/PaperMC/Paper/issues/8587
-     }
- 
-     protected double followLeashSpeed() {
+                 this.setDeltaMovement(this.getDeltaMovement().add(Math.copySign(d0 * d0 * 0.4D, d0), Math.copySign(d1 * d1 * 0.4D, d1), Math.copySign(d2 * d2 * 0.4D, d2)));
+                 this.checkSlowFallDistance();
+-            } else if (this.shouldStayCloseToLeashHolder() && !this.isPanicking()) {
++            } else if (this.shouldStayCloseToLeashHolder() && !this.isPanicking() && !(entity instanceof net.minecraft.world.entity.decoration.LeashFenceKnotEntity)) { // KioCG - TODO 临时修复https://github.com/PaperMC/Paper/issues/8587
+                 this.goalSelector.enableControlFlag(Goal.Flag.MOVE);
+                 float f1 = 2.0F;
+                 Vec3 vec3d = (new Vec3(entity.getX() - this.getX(), entity.getY() - this.getY(), entity.getZ() - this.getZ())).normalize().scale((double) Math.max(f - 2.0F, 0.0F));
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 index 676e1580849e8942eb41c7a3a80f464138b22764..9c57a2e4b1a80711efbf2a756458c0250a43f880 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java

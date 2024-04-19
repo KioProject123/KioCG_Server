@@ -49,7 +49,7 @@ index 96197185d1cba4a77bd6afd0e57615b45d4dfc85..71b6aa60e9b89e85032792c279ba4a36
          addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
          addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..66aa9353e0543bcc222c7007a082b10879d11949 100644
+index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf9e734c2f 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -143,6 +143,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -82,7 +82,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..66aa9353e0543bcc222c7007a082b108
                      // CraftBukkit end
                      flag1 = true;
                      if (flag3 && furnaceBurnEvent.willConsumeFuel()) { // Paper - add consumeFuel to FurnaceBurnEvent
-@@ -399,9 +406,32 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -399,8 +406,31 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
                  if (blockEntity.cookingProgress >= blockEntity.cookingTotalTime) { // Paper - cook speed multiplier API
                      blockEntity.cookingProgress = 0;
                      blockEntity.cookingTotalTime = AbstractFurnaceBlockEntity.getTotalCookTime(world, blockEntity.recipeType, blockEntity, blockEntity.cookSpeedMultiplier); // Paper - cook speed multiplier API
@@ -111,36 +111,23 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..66aa9353e0543bcc222c7007a082b108
 +                                blockEntity.items.set(1, item1 == null ? ItemStack.EMPTY : new ItemStack(item1));
 +                            }
 +                        }
-                     }
 +                    // KioCG end
+                     }
  
                      flag1 = true;
-                 }
-@@ -466,13 +496,16 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -466,6 +496,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              itemstack1 = CraftItemStack.asNMSCopy(result);
  
              if (!itemstack1.isEmpty()) {
--                if (itemstack2.isEmpty()) {
--                    nonnulllist.set(2, itemstack1.copy());
--                } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
--                    itemstack2.grow(itemstack1.getCount());
--                } else {
--                    return false;
--                }
 +                // KioCG start
 +                net.minecraft.world.Containers.dropItemStack(world, (double) blockposition.getX(), (double) blockposition.getY(), (double) blockposition.getZ(), itemstack1);
-+                // if (itemstack2.isEmpty()) {
-+                //     nonnulllist.set(2, itemstack1.copy());
-+                // } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
-+                //     itemstack2.grow(itemstack1.getCount());
-+                // } else {
-+                //     return false;
-+                // }
++            }
++            if (false) {
 +                // KioCG end
-             }
- 
-             /*
-@@ -485,10 +518,13 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+                 if (itemstack2.isEmpty()) {
+                     nonnulllist.set(2, itemstack1.copy());
+                 } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
+@@ -485,10 +520,13 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              // CraftBukkit end
  
              if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !((ItemStack) nonnulllist.get(1)).isEmpty() && ((ItemStack) nonnulllist.get(1)).is(Items.BUCKET)) {
@@ -156,7 +143,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..66aa9353e0543bcc222c7007a082b108
              return true;
          } else {
              return false;
-@@ -509,6 +545,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -509,6 +547,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
      public static int getTotalCookTime(@Nullable Level world, RecipeType<? extends AbstractCookingRecipe> recipeType, AbstractFurnaceBlockEntity furnace, double cookSpeedMultiplier) {
          /* Scale the recipe's cooking time to the current cookSpeedMultiplier */
          int cookTime = world != null ? furnace.quickCheck.getRecipeFor(furnace, world).map(holder -> holder.value().getCookingTime()).orElse(200) : (net.minecraft.server.MinecraftServer.getServer().getRecipeManager().getRecipeFor(recipeType, furnace, world /* passing a null level here is safe. world is only used for map extending recipes which won't happen here */).map(holder -> holder.value().getCookingTime()).orElse(200));
@@ -164,7 +151,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..66aa9353e0543bcc222c7007a082b108
          return (int) Math.ceil (cookTime / cookSpeedMultiplier);
          // Paper end - cook speed multiplier API
      }
-@@ -519,6 +556,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -519,6 +558,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
      @Override
      public int[] getSlotsForFace(Direction side) {

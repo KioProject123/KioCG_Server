@@ -237,7 +237,7 @@ index 9ddc3a5333894cbd2a3cc94752b54b091f4e8293..2fae1dc3345bccfd457f907a78034dc6
  
              if (i < 2) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..1974495538ded5454c6555e9d17e663c4040005f 100644
+index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..88f30bc1c0bbe139e03d94689f47065de444dc24 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,24 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -278,7 +278,7 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..1974495538ded5454c6555e9d17e663c
      }
  
      protected static float getGrowthSpeed(Block block, BlockGetter world, BlockPos pos) {
-+        if (true) return 1.0F; // KioCG - 跳过无用且繁重的运算
++        if (true) return 1.0F; // KioCG - 已弃用, 跳过繁重的运算
          float f = 1.0F;
          BlockPos blockposition1 = pos.below();
  

@@ -16,6 +16,210 @@ index 8dfa5027987c74eff98f1b27e343bbab392727fa..21117c367314d0e2ee19005bbfba1ca8
      }
      // KioCG end
  }
+diff --git a/src/main/java/net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior.java b/src/main/java/net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior.java
+index bc2e763a848b4bf7e9598ffe1ca2aa35a9af4677..e649e328fbc7a36f38ca59e0c361c74e46d96361 100644
+--- a/src/main/java/net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior.java
+@@ -46,7 +46,7 @@ public abstract class AbstractProjectileDispenseBehavior extends DefaultDispense
+             shrink = false; // Paper - shrink below
+             // Chain to handler for new item
+             ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+             if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                 idispensebehavior.dispense(pointer, eventStack);
+                 return stack;
+diff --git a/src/main/java/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
+index 6df0db8b4cdab23494ea34236949ece4989110a3..58d35628aff16b7d9d86c4231776e3e07774623d 100644
+--- a/src/main/java/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
+@@ -77,7 +77,7 @@ public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
+             shrink = false; // Paper - shrink below
+             // Chain to handler for new item
+             ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+             if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                 idispensebehavior.dispense(pointer, eventStack);
+                 return stack;
+diff --git a/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
+index f28705547a62da790f5df071400986aacba39367..0a08d4706d23a3b85c326a114391c1aa251acea2 100644
+--- a/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
+@@ -99,7 +99,7 @@ public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
+         if (!dropper && !event.getItem().getType().equals(craftItem.getType())) {
+             // Chain to handler for new item
+             ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) sourceblock.state().getBlock()).getDispenseMethod(sourceblock.level(), eventStack); // KioCG
+             if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
+                 idispensebehavior.dispense(sourceblock, eventStack);
+             } else {
+diff --git a/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
+index e2e1273d787536d2fe1bdbbf8af36eb5ac220599..34d822b069f88b2c47fd3494c0ef398b0d27b0d1 100644
+--- a/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
+@@ -236,7 +236,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink below
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -295,7 +295,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink below
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -352,7 +352,7 @@ public interface DispenseItemBehavior {
+                         shrink = false; // Paper - shrink below
+                         // Chain to handler for new item
+                         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                        DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                        DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
+                             idispensebehavior.dispense(pointer, eventStack);
+                             return stack;
+@@ -408,7 +408,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink below
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -482,7 +482,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink below
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -521,7 +521,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink below
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -579,7 +579,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink at end
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -656,7 +656,7 @@ public interface DispenseItemBehavior {
+                     if (!event.getItem().equals(craftItem)) {
+                         // Chain to handler for new item
+                         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                        DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                        DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                             idispensebehavior.dispense(pointer, eventStack);
+                             return stack;
+@@ -733,7 +733,7 @@ public interface DispenseItemBehavior {
+                         if (!event.getItem().equals(craftItem)) {
+                             // Chain to handler for new item
+                             ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                             if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                                 idispensebehavior.dispense(pointer, eventStack);
+                                 return stack;
+@@ -780,7 +780,7 @@ public interface DispenseItemBehavior {
+                 if (!event.getItem().equals(craftItem)) {
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -841,7 +841,7 @@ public interface DispenseItemBehavior {
+                 if (!event.getItem().equals(craftItem)) {
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -913,7 +913,7 @@ public interface DispenseItemBehavior {
+                     shrink = false; // Paper - shrink below
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -967,7 +967,7 @@ public interface DispenseItemBehavior {
+                 if (!event.getItem().equals(craftItem)) {
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -1016,7 +1016,7 @@ public interface DispenseItemBehavior {
+                 if (!event.getItem().equals(craftItem)) {
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+@@ -1089,7 +1089,7 @@ public interface DispenseItemBehavior {
+                 if (!event.getItem().equals(craftItem)) {
+                     // Chain to handler for new item
+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                    DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                         idispensebehavior.dispense(pointer, eventStack);
+                         return stack;
+diff --git a/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
+index 8d65cdb013706a932c2c73231108b2810b99e1c7..0b62142de067028581b00b6904297a76d0dccfd6 100644
+--- a/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
+@@ -51,7 +51,7 @@ public class ShearsDispenseItemBehavior extends OptionalDispenseItemBehavior {
+         if (!event.getItem().equals(craftItem)) {
+             // Chain to handler for new item
+             ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+             if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                 idispensebehavior.dispense(pointer, eventStack);
+                 return stack;
+diff --git a/src/main/java/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java b/src/main/java/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
+index cb308808906a8cdb127df8284e106e00553473ca..a71af17d5d587b93e3034a195ece254748be5973 100644
+--- a/src/main/java/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
+@@ -48,7 +48,7 @@ public class ShulkerBoxDispenseBehavior extends OptionalDispenseItemBehavior {
+             if (!event.getItem().equals(craftItem)) {
+                 // Chain to handler for new item
+                 ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                 if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                     idispensebehavior.dispense(pointer, eventStack);
+                     return stack;
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
 index b7293b263ec2abe158f28c4c961d3fd67e312ced..ee9270fc7a21283acf70c508952b35b17bca596b 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
@@ -32,6 +236,90 @@ index b7293b263ec2abe158f28c4c961d3fd67e312ced..ee9270fc7a21283acf70c508952b35b1
      }
  
      public boolean suckInItems() {
+diff --git a/src/main/java/net/minecraft/world/item/ArmorItem.java b/src/main/java/net/minecraft/world/item/ArmorItem.java
+index 6b81be03f87967124b046708557e05d519aa79e4..6bf680e413ad10fcc67daa6d6db4546427776aea 100644
+--- a/src/main/java/net/minecraft/world/item/ArmorItem.java
++++ b/src/main/java/net/minecraft/world/item/ArmorItem.java
+@@ -89,7 +89,7 @@ public class ArmorItem extends Item implements Equipable {
+                 shrink = false; // Paper - shrink below
+                 // Chain to handler for new item
+                 ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                 if (idispensebehavior != DispenseItemBehavior.NOOP && (currentBehavior == null || idispensebehavior != currentBehavior)) { // Paper - fix possible StackOverflowError
+                     idispensebehavior.dispense(pointer, eventStack);
+                     return true;
+diff --git a/src/main/java/net/minecraft/world/item/MinecartItem.java b/src/main/java/net/minecraft/world/item/MinecartItem.java
+index 3aa73cd44aa8c86b78c35bc1788e4f83018c49ed..566b8a64d6df2e7d193a57534edf8d69140bd9b2 100644
+--- a/src/main/java/net/minecraft/world/item/MinecartItem.java
++++ b/src/main/java/net/minecraft/world/item/MinecartItem.java
+@@ -84,7 +84,7 @@ public class MinecartItem extends Item {
+                 shrink = false; // Paper - shrink below
+                 // Chain to handler for new item
+                 ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-                DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++                DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+                 if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
+                     idispensebehavior.dispense(pointer, eventStack);
+                     return stack;
+diff --git a/src/main/java/net/minecraft/world/level/block/DispenserBlock.java b/src/main/java/net/minecraft/world/level/block/DispenserBlock.java
+index 644e64850479cea20a98b8a65503ccf3a34fd32a..acae1f2c5f06852abfa92e6d813e0be65f432c60 100644
+--- a/src/main/java/net/minecraft/world/level/block/DispenserBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/DispenserBlock.java
+@@ -45,7 +45,7 @@ public class DispenserBlock extends BaseEntityBlock {
+     public static final MapCodec<DispenserBlock> CODEC = simpleCodec(DispenserBlock::new);
+     public static final DirectionProperty FACING = DirectionalBlock.FACING;
+     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
+-    public static final Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY = (Map) Util.make(new Object2ObjectOpenHashMap(), (object2objectopenhashmap) -> {
++    private static final Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY = (Map) Util.make(new Object2ObjectOpenHashMap(), (object2objectopenhashmap) -> { // KioCG - public -> private
+         object2objectopenhashmap.defaultReturnValue(new DefaultDispenseItemBehavior());
+     });
+     private static final int TRIGGER_DURATION = 4;
+@@ -101,7 +101,7 @@ public class DispenserBlock extends BaseEntityBlock {
+                 } // Paper - Add BlockFailedDispenseEvent
+             } else {
+                 ItemStack itemstack = tileentitydispenser.getItem(i);
+-                DispenseItemBehavior idispensebehavior = this.getDispenseMethod(itemstack);
++                DispenseItemBehavior idispensebehavior = this.getDispenseMethod(world, itemstack); // KioCG - add world
+ 
+                 if (idispensebehavior != DispenseItemBehavior.NOOP) {
+                     if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockPreDispenseEvent(world, pos, itemstack, i)) return; // Paper - Add BlockPreDispenseEvent
+@@ -113,7 +113,12 @@ public class DispenserBlock extends BaseEntityBlock {
+         }
+     }
+ 
+-    protected DispenseItemBehavior getDispenseMethod(ItemStack stack) {
++    // KioCG start - add world
++    public DispenseItemBehavior getDispenseMethod(Level world, ItemStack stack) {
++        if (world.paperConfig().kiocgConfig.removeAutomationGameplay) {
++            return (DispenseItemBehavior) ((Object2ObjectOpenHashMap<Item, DispenseItemBehavior>) DispenserBlock.DISPENSER_REGISTRY).defaultReturnValue();
++        }
++    // KioCG end - add world
+         return (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(stack.getItem());
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/DropperBlock.java b/src/main/java/net/minecraft/world/level/block/DropperBlock.java
+index 9a8a0fb958e8ec782111507bae957f854b2aac72..6e009f1db9d4e677d790ab719bc7a90202d01755 100644
+--- a/src/main/java/net/minecraft/world/level/block/DropperBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/DropperBlock.java
+@@ -39,7 +39,7 @@ public class DropperBlock extends DispenserBlock {
+     }
+ 
+     @Override
+-    protected DispenseItemBehavior getDispenseMethod(ItemStack stack) {
++    public DispenseItemBehavior getDispenseMethod(net.minecraft.world.level.Level world, ItemStack stack) { // KioCG - add world
+         return DropperBlock.DISPENSE_BEHAVIOUR;
+     }
+ 
+@@ -69,7 +69,7 @@ public class DropperBlock extends DispenserBlock {
+                     Container iinventory = HopperBlockEntity.getContainerAt(world, pos.relative(enumdirection));
+                     ItemStack itemstack1;
+ 
+-                    if (iinventory == null) {
++                    if (iinventory == null || world.paperConfig().kiocgConfig.removeAutomationGameplay) { // KioCG
+                         if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockPreDispenseEvent(world, pos, itemstack, i)) return; // Paper - Add BlockPreDispenseEvent
+                         itemstack1 = DropperBlock.DISPENSE_BEHAVIOUR.dispense(sourceblock, itemstack);
+                     } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 index c948efe0eafb592627b608c2db6fdb0126f89863..b94b99bfd45072c69c4bb7d6d55fcd0a0ce237a6 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
@@ -45,33 +333,30 @@ index c948efe0eafb592627b608c2db6fdb0126f89863..b94b99bfd45072c69c4bb7d6d55fcd0a
          blockEntity.tickedGameTime = world.getGameTime();
          if (!blockEntity.isOnCooldown()) {
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-index be74adc86f0ca467f3b59e7b57fd47a8f381d86e..c66361d94edbc92b55b9a58d19882afe5bccae2a 100644
+index be74adc86f0ca467f3b59e7b57fd47a8f381d86e..62f9290a71d3d33a69b42b452821cecfd6b557ac 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -402,6 +402,7 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -402,8 +402,10 @@ public class PistonBaseBlock extends DirectionalBlock {
              org.bukkit.event.block.BlockPistonEvent event;
              if (retract) {
                  event = new BlockPistonExtendEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumdirection1));
-+                if (world.paperConfig().kiocgConfig.removeAutomationGameplay) event.setCancelled(true); // KioCG
++                if (world.paperConfig().kiocgConfig.removeAutomationGameplay && moved.size() > 1) event.setCancelled(true); // KioCG
              } else {
                  event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumdirection1));
++                if (world.paperConfig().kiocgConfig.removeAutomationGameplay && moved.size() > 1) event.setCancelled(true); // KioCG
              }
+             world.getCraftServer().getPluginManager().callEvent(event);
+ 
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index c0823c612de9dc2a64cc797f061eef25c5f31359..41dedd0601a58094985854a5ea3174381f760417 100644
+index c0823c612de9dc2a64cc797f061eef25c5f31359..2b6ce99aee645c61376b6513d0b74939598f0d22 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -2129,12 +2129,14 @@ public class CraftEventFactory {
-     public static boolean handleBlockFailedDispenseEvent(ServerLevel serverLevel, BlockPos pos) {
-         org.bukkit.block.Block block = CraftBlock.at(serverLevel, pos);
-         io.papermc.paper.event.block.BlockFailedDispenseEvent event = new io.papermc.paper.event.block.BlockFailedDispenseEvent(block);
-+        if (serverLevel.paperConfig().kiocgConfig.removeAutomationGameplay) event.shouldPlayEffect(false); // KioCG
-         return event.callEvent();
-     }
- 
-     public static boolean handleBlockPreDispenseEvent(ServerLevel serverLevel, BlockPos pos, ItemStack itemStack, int slot) {
-         org.bukkit.block.Block block = CraftBlock.at(serverLevel, pos);
-         io.papermc.paper.event.block.BlockPreDispenseEvent event = new io.papermc.paper.event.block.BlockPreDispenseEvent(block, org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemStack), slot);
-+        if (serverLevel.paperConfig().kiocgConfig.removeAutomationGameplay) event.setCancelled(true); // KioCG
-         return event.callEvent();
-     }
-     // Paper end
+@@ -2155,7 +2155,7 @@ public class CraftEventFactory {
+         if (!event.getItem().equals(craftItem)) {
+             // Chain to handler for new item
+             ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+-            net.minecraft.core.dispenser.DispenseItemBehavior itemBehavior = net.minecraft.world.level.block.DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            net.minecraft.core.dispenser.DispenseItemBehavior itemBehavior = ((net.minecraft.world.level.block.DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
+             if (itemBehavior != net.minecraft.core.dispenser.DispenseItemBehavior.NOOP && itemBehavior != instance) {
+                 itemBehavior.dispense(pointer, eventStack);
+                 return itemStack;
