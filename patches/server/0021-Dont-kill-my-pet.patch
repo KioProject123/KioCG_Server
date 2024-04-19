@@ -5,10 +5,10 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index d1d52d34ab7f079ba6689ea371e0b8b90676efce..b509a8cdcb8d0b5a058700c7fa72a4cbe17f239d 100644
+index de976f9491ccb01cb145b409cf470838df6a1cce..f39bc5c132a0a22184be6f7a94b8a4c2ba05d835 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -413,6 +413,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -415,6 +415,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public int fixedCumulativeCost = 4;
              public boolean anvilRenameInSurvival = false;
          }
@@ -32,7 +32,7 @@ index 658e63ebde81dc14c8ab5850fb246dc0aab25dea..59b1fc323174dcd9c5d3b98724f6eec5
      public static final TicketType<Long> CHUNK_LOAD = create("chunk_load", Long::compareTo);
      public static final TicketType<Long> STATUS_UPGRADE = create("status_upgrade", Long::compareTo);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 9226de952f4020daa21f659ea710509fc89d093c..403b8b2e0f7cae449b3f7787e9a225f4a57be397 100644
+index 9bcdc90664b7c416dd34075993c5c5f823fd1c84..bfa3cf01c2a6b0fd9af9a2dd5b2cbd80155793a1 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2322,7 +2322,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -65,10 +65,10 @@ index 288cd59506a22b5d9ff1ce6ca138011fdb39ff90..97c4a79677278ff7872fc0a92ca6323c
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index e4550d3ac8d93e0dd9a54e41fbbbef2ef9d4f55e..20f9a6b7479b9f1ba50270b7d0cfc3b40699576f 100644
+index cf5cd0e49c4966e7b636a8ad4dec7a12806c6a4d..1828e1f4e46fefb8df79eb5da9af1cfb7895075c 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-@@ -214,11 +214,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -212,11 +212,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  

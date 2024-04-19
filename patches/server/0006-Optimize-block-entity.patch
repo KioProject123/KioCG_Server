@@ -5,10 +5,10 @@ Subject: [PATCH] Optimize block entity
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
-index fc35cfc9d045f3e5b6a50af1d0ba83b6e322091f..9c681f39695f7a2b6321b848472be9019fd8bac6 100644
+index 761142374f793a1cd4228936b21a68d7a0458894..b7293b263ec2abe158f28c4c961d3fd67e312ced 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
-@@ -89,6 +89,7 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+@@ -87,6 +87,7 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
      }
  
      public boolean suckInItems() {

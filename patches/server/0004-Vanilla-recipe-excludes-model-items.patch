@@ -5,10 +5,10 @@ Subject: [PATCH] Vanilla recipe excludes model items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index dd7ad5b2da63ce019defa3b211771cae26fd841b..e84a5c529ca45128ab99f5ae1f653a9f18663fff 100644
+index 8d63fb0fefe77ee9119165a70c12d2c6870f7422..3039c203d1834219210b204dea7bcbfee1d374d1 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -350,6 +350,62 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -352,6 +352,62 @@ public class GlobalConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public String feedbackForwardingSenderName = "MOSS";
@@ -72,11 +72,11 @@ index dd7ad5b2da63ce019defa3b211771cae26fd841b..e84a5c529ca45128ab99f5ae1f653a9f
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/advancements/critereon/ItemPredicate.java b/src/main/java/net/minecraft/advancements/critereon/ItemPredicate.java
-index 6bd963516ad994f77aeea90628c421705ae3da95..24c6543ed5211e1505019e9b772348a50c3ad23c 100644
+index cdb16899e7320e21f5a1bc0a9f4eda9a8adaa714..036a3117976631f3fcd0d141db430eaa1575ec46 100644
 --- a/src/main/java/net/minecraft/advancements/critereon/ItemPredicate.java
 +++ b/src/main/java/net/minecraft/advancements/critereon/ItemPredicate.java
-@@ -31,6 +31,7 @@ public record ItemPredicate(Optional<TagKey<Item>> tag, Optional<HolderSet<Item>
-     });
+@@ -52,6 +52,7 @@ public record ItemPredicate(
+     );
  
      public boolean matches(ItemStack stack) {
 +        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.canTriggerAdvancements(stack)) return false; // KioCG
@@ -220,7 +220,7 @@ index c3800bdd5096cb06e085e28f6bf0f65586ecf11e..9434eb15a5975b1604c12e6cfb4b374a
                  }
              }
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index 343f44db579839eb61376f876b5eff2e615dc2e5..eaaa54e4b6a19d2bbd62dcc7b7fc733668f684ab 100644
+index e6935b6632c7a7e07f4da459c95f564356242f98..f7a48a6a5e4ffdc0caaec600ef96adc568afd010 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 @@ -90,6 +90,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {

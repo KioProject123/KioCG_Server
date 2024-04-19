@@ -5,10 +5,10 @@ Subject: [PATCH] Entity bossbar API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerBossEvent.java b/src/main/java/net/minecraft/server/level/ServerBossEvent.java
-index ca42c2642a729b90d22b968af7258f3aee72e14b..2c5513c42a032b9b2b8c48b42fb47f3e0c1a39a7 100644
+index 4f91107f9ae42f96c060c310596db9aa869a8dbc..87b37e82886c7e50cd2fab144bc9760089b020e9 100644
 --- a/src/main/java/net/minecraft/server/level/ServerBossEvent.java
 +++ b/src/main/java/net/minecraft/server/level/ServerBossEvent.java
-@@ -139,4 +139,32 @@ public class ServerBossEvent extends BossEvent {
+@@ -131,4 +131,32 @@ public class ServerBossEvent extends BossEvent {
      public Collection<ServerPlayer> getPlayers() {
          return this.unmodifiablePlayers;
      }

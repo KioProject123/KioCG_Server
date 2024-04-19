@@ -256,7 +256,7 @@ index 21117c367314d0e2ee19005bbfba1ca822e8d77d..386a3af68b0d0288a5fabf8728a4ac18
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 353e7e18956d40cad4ab22d0f00cf9627e84bce4..317efef0a4be0539e36cb763a51fee0d49e2a767 100644
+index 7ce8fbafd46fa1f0c8fc4332d5cd1a382a58c3ea..9487bf56e1dd353e30936d9d8c11bcd3a29d4ab3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -826,7 +826,7 @@ public class ServerPlayer extends Player {
@@ -316,7 +316,7 @@ index b994ae09621934df2cdd6a83a7d8ecb44649fb16..135379d0a579ec89ee303ec69a88800e
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
              org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index b2eff51f1ad1e702525ef298807ea7d2083f6218..5c6424a3800344c7fc5f3a0cbdf36a4b57e0a12c 100644
+index 637478fd8a284e6833cf8f5fa17ccf9d73d1dd3f..ab187003b71afa0f08e0da2f9cb9b8a42128f4ee 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -357,7 +357,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -350,7 +350,7 @@ index b2eff51f1ad1e702525ef298807ea7d2083f6218..5c6424a3800344c7fc5f3a0cbdf36a4b
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 23570a0b1227a840b9c1e6ae326827ea655bb5f7..9226de952f4020daa21f659ea710509fc89d093c 100644
+index e9bb7feb591032904516d1b9374f486d8a7d066c..9bcdc90664b7c416dd34075993c5c5f823fd1c84 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1366,6 +1366,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -459,7 +459,7 @@ index c3448707fd8a632b457cc97b35d08a9c6933d5ee..3990fad7ee4d218e182fa322613ec991
  
                  ((ServerPlayer) player).connection.send(new ClientboundSetHealthPacket(((ServerPlayer) player).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
 diff --git a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
-index 29d4553df54236706c76fdec0bb14b5d9fb82ff2..91d0df183d808640c208fda959a4afbf606e5351 100644
+index 25b3f2550a099e9938a82f2c0ff31da4e5f23614..99d742487d409346645ae7c7ceafb59701ee0901 100644
 --- a/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LavaCauldronBlock.java
 @@ -35,6 +35,7 @@ public class LavaCauldronBlock extends AbstractCauldronBlock {
@@ -468,8 +468,8 @@ index 29d4553df54236706c76fdec0bb14b5d9fb82ff2..91d0df183d808640c208fda959a4afbf
              entity.lavaHurt();
 +            if (entity instanceof net.minecraft.world.entity.player.Player player) player.coldData.isInLava = true; // KioCG
          }
- 
      }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 index a4857675772d4fe849ba85fc21a369decca42fc0..b2c99ed1c7f6b30939f1daf62e518bb45b45cc20 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
@@ -549,7 +549,7 @@ index 0e8a22684932cc1e181508ea68c48147339e03d4..8f6ffb5f08f3e6d9dbdc50914a85cb89
  
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 7205238856d51edc65009b0da9015585cca0fab0..ab44775c7379a3506bf25f69f4ff7b909d8e02a9 100644
+index 0e73202fad78cbbf789cbc90e3477ee350c4ee5c..16571d84bd11e7d766c9f85c821845cde5bedac0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -194,6 +194,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -569,7 +569,7 @@ index 7205238856d51edc65009b0da9015585cca0fab0..ab44775c7379a3506bf25f69f4ff7b90
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect));
          }
-@@ -3399,6 +3400,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3397,6 +3398,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

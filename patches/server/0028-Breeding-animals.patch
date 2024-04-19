@@ -139,10 +139,10 @@ index 8dcdc664470fcac00c203b9499ea0a45df7d86ef..1620414239e4585685e73199372390c4
  
          private int groupSize;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
-index 06662325df5b119ad049e04572ff5c5aaf3ef073..8c43b278dcb49276fabdded164a1d87b4cb14fea 100644
+index c97b42852c4ed1b167bda95678a0dfb769fbad19..63fc79a2d9e774932f4c3b522aef1424e777cbec 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
-@@ -25,6 +25,7 @@ public class AnimalMakeLove extends Behavior<Animal> {
+@@ -39,6 +39,7 @@ public class AnimalMakeLove extends Behavior<Animal> {
  
      @Override
      protected boolean checkExtraStartConditions(ServerLevel world, Animal entity) {
@@ -151,7 +151,7 @@ index 06662325df5b119ad049e04572ff5c5aaf3ef073..8c43b278dcb49276fabdded164a1d87b
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
-index dbd01cb7828cbe65613dc07a2d0107c83c5fdf98..b630356324a150f1b34128e53992649c8d6c43bb 100644
+index 262653d72d1452b6f17582dbebbcad0c0a49ef63..cc82f9c023686c8cc24b32c045981825a112fdfd 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
 @@ -32,6 +32,7 @@ public class BreedGoal extends Goal {
@@ -412,10 +412,10 @@ index 84ae19bf9bddd2b6ee4737577d8836d59be028c2..5401b6411be324d1d5efe99b2bfdba02
              if (flag1) {
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
 diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-index 295769d039f2a1e4f48912a60f9dbe267d8992c1..b4f309f7902727591ea7374fcbcb22fe8c0908d6 100644
+index a03fb7aa9f4528f4885db88eaf480202d5f54750..43ccb06d29c7a30ad1a8377030848fa32b3c4a90 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-@@ -179,6 +179,17 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
+@@ -203,6 +203,17 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
          super.tick();
      }
  

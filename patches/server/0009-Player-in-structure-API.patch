@@ -5,7 +5,7 @@ Subject: [PATCH] Player in structure API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 58591bf2f63b9c5e97d9ce4188dff3366968a178..20700837649b2fd08994996edc61ffb449b8af97 100644
+index b3781efbd3edcf102fe1bda5d6149915dc1127c6..514efef6d4b99889c42c184b13aeb79f4386a174 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -280,6 +280,7 @@ public class ServerPlayer extends Player {
@@ -33,10 +33,10 @@ index 58591bf2f63b9c5e97d9ce4188dff3366968a178..20700837649b2fd08994996edc61ffb4
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
 diff --git a/src/main/java/net/minecraft/world/level/StructureManager.java b/src/main/java/net/minecraft/world/level/StructureManager.java
-index b59581b92aed0bc1b09008c695b0b112c3e65743..5edeaa78e58328be9e079e431765542eeb905285 100644
+index 07eb481380e8fd4e492f36342ba633579c1b624e..8a5d44ea079111a5fa046db3de21354c3e9bf884 100644
 --- a/src/main/java/net/minecraft/world/level/StructureManager.java
 +++ b/src/main/java/net/minecraft/world/level/StructureManager.java
-@@ -158,6 +158,41 @@ public class StructureManager {
+@@ -159,6 +159,41 @@ public class StructureManager {
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).hasAnyStructureReferences();
      }
  
@@ -79,10 +79,10 @@ index b59581b92aed0bc1b09008c695b0b112c3e65743..5edeaa78e58328be9e079e431765542e
          SectionPos sectionPos = SectionPos.of(pos);
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 616d2e479d91673695ade0db151a0099b568904f..7205238856d51edc65009b0da9015585cca0fab0 100644
+index e77bf7f432387bdfa7f69d31b014e8cd254fd4ca..0e73202fad78cbbf789cbc90e3477ee350c4ee5c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3338,6 +3338,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3336,6 +3336,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

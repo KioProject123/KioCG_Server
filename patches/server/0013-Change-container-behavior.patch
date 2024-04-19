@@ -18,18 +18,19 @@ index ce95216805c62c4be62c6b214127fc147263b898..ec6c450cd889cffccedc14ec29e7b1e5
  
                  // Paper start - AnvilDamageEvent
 diff --git a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
-index 0bba74bd22d66881fc6851797d29c1442f509445..6791902e3036bb10540b47c29b21fd8d2b4996cf 100644
+index 96197185d1cba4a77bd6afd0e57615b45d4dfc85..71b6aa60e9b89e85032792c279ba4a361918c5e5 100644
 --- a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
 +++ b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
-@@ -69,6 +69,7 @@ public class PotionBrewing {
-         if (!ALLOWED_CONTAINER.test(input)) {
-             return false;
-         } else {
-+            if (true) return true; // KioCG - 自定义失败的酿造
-             return hasContainerMix(input, ingredient) || hasPotionMix(input, ingredient);
+@@ -66,7 +66,7 @@ public class PotionBrewing {
+             return true;
          }
+         // Paper end - Custom Potion Mixes
+-        return ALLOWED_CONTAINER.test(input) && (hasContainerMix(input, ingredient) || hasPotionMix(input, ingredient));
++        return ALLOWED_CONTAINER.test(input) && (true || hasContainerMix(input, ingredient) || hasPotionMix(input, ingredient)); // KioCG - 自定义失败的酿造
      }
-@@ -120,6 +121,8 @@ public class PotionBrewing {
+ 
+     protected static boolean hasContainerMix(ItemStack input, ItemStack ingredient) {
+@@ -116,6 +116,8 @@ public class PotionBrewing {
                      return PotionUtils.setPotion(new ItemStack(item), mix2.to);
                  }
              }
@@ -38,7 +39,7 @@ index 0bba74bd22d66881fc6851797d29c1442f509445..6791902e3036bb10540b47c29b21fd8d
          }
  
          return input;
-@@ -203,7 +206,7 @@ public class PotionBrewing {
+@@ -199,7 +201,7 @@ public class PotionBrewing {
          addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
          addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
          addMix(Potions.SLOWNESS, Items.GLOWSTONE_DUST, Potions.STRONG_SLOWNESS);

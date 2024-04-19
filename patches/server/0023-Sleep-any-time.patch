@@ -18,7 +18,7 @@ index 76db2be1a1a70aabb3d23865e7d1ed793650410f..5a70d19e7416405e37e006b78cf05081
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index a96b5cc58c3f82b2d991229ae4a3e9e0f5239b07..6195afec487c03706a91fced502112d62bd309cb 100644
+index 63af67101363522e55a9e473bfd893e70c38a0d8..7c49f1a9dd0e50e2638501e7a248e7e67c84bc0b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -819,6 +819,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -46,7 +46,7 @@ index a96b5cc58c3f82b2d991229ae4a3e9e0f5239b07..6195afec487c03706a91fced502112d6
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 8a776d6c8e83306e1504b93328cbaf658e24d79d..115024920b8fa15093f4e6a5b47e5a197e78ec8f 100644
+index f704e377094f170a05c809d9e83d82a2631f665e..e5f6119d09418907eee77d4bd8d08ed0a3b15b50 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1411,7 +1411,7 @@ public class ServerPlayer extends Player {

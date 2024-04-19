@@ -5,7 +5,7 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 6195afec487c03706a91fced502112d62bd309cb..270b377364d3af4264c48bc15650d98f6a1ec106 100644
+index 7c49f1a9dd0e50e2638501e7a248e7e67c84bc0b..3c7899dac0083582e53b4e142b026b2b9494ca0c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -108,10 +108,10 @@ index e8dc4ea90d74036dacb0785fcb9125df192a4c22..9897ce8fb39c5350d2705a537ccf1cca
  
                  if (i < world.paperConfig().maxGrowthHeight.bamboo.max) { // Paper - Configurable cactus/bamboo/reed growth height
 diff --git a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
-index 24a5a402cba62bf591a014b0527236cde8851e00..d638ca86f0621ab31230de72b916b79b1c43f5af 100644
+index c06d24b7494d247cf2e6fdef2233588c794414ea..5e5954bd4a0fb6b8c3532e1482e31afcf20bf065 100644
 --- a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
-@@ -48,7 +48,7 @@ public class BeetrootBlock extends CropBlock {
+@@ -53,7 +53,7 @@ public class BeetrootBlock extends CropBlock {
  
      @Override
      public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
@@ -119,7 +119,7 @@ index 24a5a402cba62bf591a014b0527236cde8851e00..d638ca86f0621ab31230de72b916b79b
 +        if (true || random.nextInt(3) != 0) { // KioCG - 农作物每天生长
              super.randomTick(state, world, pos, random);
          }
- 
+     }
 diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
 index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb4496e0b5 100644
 --- a/src/main/java/net/minecraft/world/level/block/Block.java
@@ -390,10 +390,10 @@ index 30300ef3ec839dfa944c992ab50db4d3859bb02e..37cca5f0492888235f912fcb7428d7d1
  
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-index d5257272ac8b0cf36e9f92e32a4a4ae6782f770c..928a02dc3d74ee0334f4a717e7061da3b63b0267 100644
+index d3827a6759c99d945767498d37a6dbb6b70b6d0d..a52826928ed534a2a5a43b6b57512e9a38a340fc 100644
 --- a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-@@ -97,10 +97,17 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
+@@ -111,10 +111,17 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
          return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
      }
  
@@ -411,7 +411,7 @@ index d5257272ac8b0cf36e9f92e32a4a4ae6782f770c..928a02dc3d74ee0334f4a717e7061da3
 +            if (true) { // Paper - Fix Spigot growth modifiers // KioCG
                  this.advanceTree(world, pos, state, random);
              }
- 
+         } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/MushroomBlock.java b/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
 index 1f27ae8abd5891a0b8057b454f2210b088b4e95a..62f192f0aa9751ffe2f4975887a9e91d2513d5b4 100644
 --- a/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
@@ -459,10 +459,10 @@ index 0fc333f240d6918e841a9221be42973839408802..5660a581039dbeaf751c8fc7645cdb7d
              org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
          }
 diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-index d20c009baf69d083bf8a14000028991b6518cd50..c199356975f2de413867f700a24e450f0077a954 100644
+index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..3d66bf5abb57ccda2ac637680ab7459c812e1915 100644
 --- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-@@ -116,11 +116,18 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
+@@ -120,11 +120,18 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
          return state.getValue(HALF) == DoubleBlockHalf.LOWER && !this.isMaxAge(state);
      }
  
@@ -481,7 +481,7 @@ index d20c009baf69d083bf8a14000028991b6518cd50..c199356975f2de413867f700a24e450f
 +        if (CropBlock.tickFarmland(state, world, pos, random)) { // KioCG - 农作物每天生长
              this.grow(world, state, pos, 1);
          }
- 
+     }
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 index 3ff0d08e4964aae82d8e51d3b8bf9aa002096f81..23b19bba383f2feb795c7eca14d019906b6869bb 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
@@ -581,7 +581,7 @@ index 62ed86114c1a6e724ccfea119a331356d0a22600..ff140206f2d4e94e3dc8107416528990
  
              if (!CraftEventFactory.handleBlockGrowEvent(world, pos, iblockdata1, 2)) return; // CraftBukkit
 diff --git a/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java b/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
-index d5c0fd1c2bbd85d0aa312ef74dc8dab14dfdf8f3..aa7c5e1c91051e87ee947df2496bfc57d46bfc44 100644
+index 3bb1ed8423e7f18eae8967d4bee5bd48720a689e..faca60be26a5b91b59f758d651bb9dec68dfd1b6 100644
 --- a/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TorchflowerCropBlock.java
 @@ -65,7 +65,7 @@ public class TorchflowerCropBlock extends CropBlock {
@@ -592,7 +592,7 @@ index d5c0fd1c2bbd85d0aa312ef74dc8dab14dfdf8f3..aa7c5e1c91051e87ee947df2496bfc57
 +        if (true || random.nextInt(3) != 0) { // KioCG - 农作物每天生长
              super.randomTick(state, world, pos, random);
          }
- 
+     }
 diff --git a/src/main/java/net/minecraft/world/level/block/VineBlock.java b/src/main/java/net/minecraft/world/level/block/VineBlock.java
 index 75297e5e006d2009fd7582349e27a4afe3e67e80..33dd6e1e00e88fd57f7e3cfe72675ea84215131a 100644
 --- a/src/main/java/net/minecraft/world/level/block/VineBlock.java
@@ -663,7 +663,7 @@ index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a53413
          this.blendingData = blendingData;
          // Paper - starlight - remove skyLightSources
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 6ec3fc801453fd54c25b642e6fa71c19b463311d..27de22ea6eb31c039fbada85f52463e04f690b94 100644
+index 465458e8a7dbaf9afb32709a71c7b2620d1e1fd2..d5813f7e6bd90e2071c5c24246bde66bc459f08d 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -87,11 +87,11 @@ public class LevelChunk extends ChunkAccess {
@@ -748,13 +748,13 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..92caf0b5a60b213aeae01f5f7841b9a3
                  }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java b/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
-index 7aa585875dad5296526bb5d67fc5ea0f8875e452..f0ce6f5629e05df57a8aa658405a203ae8ee6ca6 100644
+index a1f6274c9b1ab02ee55f1ae6011fc2dbb6e4824f..a4615913c5bacdfaa2ef3d4b461626cdfdd9e446 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
-@@ -52,7 +52,7 @@ public class ProtoChunk extends ChunkAccess {
-     }
- 
-     public ProtoChunk(ChunkPos pos, UpgradeData upgradeData, @Nullable LevelChunkSection[] sections, ProtoChunkTicks<Block> blockTickScheduler, ProtoChunkTicks<Fluid> fluidTickScheduler, LevelHeightAccessor world, Registry<Biome> biomeRegistry, @Nullable BlendingData blendingData) {
+@@ -61,7 +61,7 @@ public class ProtoChunk extends ChunkAccess {
+         Registry<Biome> biomeRegistry,
+         @Nullable BlendingData blendingData
+     ) {
 -        super(pos, upgradeData, world, biomeRegistry, 0L, sections, blendingData);
 +        super(pos, upgradeData, world, biomeRegistry, 0L, 0, sections, blendingData); // KioCG - CropDays
          this.blockTicks = blockTickScheduler;

@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index e84a5c529ca45128ab99f5ae1f653a9f18663fff..1eae15f8dff440aebdc6805e58460c95d852589b 100644
+index 3039c203d1834219210b204dea7bcbfee1d374d1..af1cf6c3421dc78af30cf4aeab4ebf8c80b8361b 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -406,6 +406,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -408,6 +408,11 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }
@@ -21,10 +21,10 @@ index e84a5c529ca45128ab99f5ae1f653a9f18663fff..1eae15f8dff440aebdc6805e58460c95
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/commands/EnchantCommand.java b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
-index 37d9c354af887c474094b1a364782007a5f2035d..f5922dd507aae9158c3c9ce3481834519fd98f52 100644
+index 15bfe2e58d16864af29b04c17181ebf45fa21eba..ce5706d9679fabe66e9593f9ba105f7b27aa0b81 100644
 --- a/src/main/java/net/minecraft/server/commands/EnchantCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
-@@ -48,7 +48,7 @@ public class EnchantCommand {
+@@ -70,7 +70,7 @@ public class EnchantCommand {
  
      private static int enchant(CommandSourceStack source, Collection<? extends Entity> targets, Holder<Enchantment> enchantment, int level) throws CommandSyntaxException {
          Enchantment enchantment2 = enchantment.value();
@@ -33,20 +33,23 @@ index 37d9c354af887c474094b1a364782007a5f2035d..f5922dd507aae9158c3c9ce348183451
              throw ERROR_LEVEL_TOO_HIGH.create(level, enchantment2.getMaxLevel());
          } else {
              int i = 0;
-@@ -58,7 +58,13 @@ public class EnchantCommand {
+@@ -80,8 +80,15 @@ public class EnchantCommand {
                      LivingEntity livingEntity = (LivingEntity)entity;
                      ItemStack itemStack = livingEntity.getMainHandItem();
                      if (!itemStack.isEmpty()) {
--                        if (enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment2)) {
+-                        if (enchantment2.canEnchant(itemStack)
+-                            && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment2)) {
 +                        // KioCG start
 +                        final java.util.Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
 +                        if (enchantments.remove(enchantment2) != null) {
 +                            EnchantmentHelper.setEnchantments(enchantments, itemStack);
 +                        }
-+                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand || enchantment2.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(enchantments.keySet(), enchantment2)) {
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand ||
++                            enchantment2.canEnchant(itemStack)
++                            && EnchantmentHelper.isEnchantmentCompatible(enchantments.keySet(), enchantment2)) {
 +                        // KioCG end
                              itemStack.enchant(enchantment2, level);
-                             ++i;
+                             i++;
                          } else if (targets.size() == 1) {
 diff --git a/src/main/java/net/minecraft/world/damagesource/CombatRules.java b/src/main/java/net/minecraft/world/damagesource/CombatRules.java
 index ccbfcef3e83b1bef364447657bfd08a92d615cf6..d6dd1cfe9e7046b5284350211673f1b2c481ae81 100644
@@ -286,7 +289,7 @@ index 8ae7d62b72fb72d893e68b02b645d48374595ae6..411ee2f17a5d5a7916e329a231b8cba9
      protected boolean tryPickup(Player player) {
          return super.tryPickup(player) || this.isNoPhysics() && this.ownedBy(player) && player.getInventory().add(this.getPickupItem());
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index eaaa54e4b6a19d2bbd62dcc7b7fc733668f684ab..9cad6c4d87bfa78973afbac323860d63270d964c 100644
+index f7a48a6a5e4ffdc0caaec600ef96adc568afd010..e5b9eee51be4f29801d038ebf0d93d0761a0edf7 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 @@ -137,6 +137,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
@@ -362,10 +365,10 @@ index f3a428f80c265639250114498b10067b4bf1ada1..4206c9eacfa84507c69858d84bc3fb05
      }
  
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-index ecf640b00007a386290f8dfe9935a8aa610079fd..29c3349bb6daf236ee570b01450097787edc8c56 100644
+index 496a9b9b095bd322fba8229a5d47e2a0107aeb96..0602ebe9142dc05a5e8017743cad8386085e6897 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-@@ -278,6 +278,36 @@ public class EnchantmentHelper {
+@@ -266,6 +266,36 @@ public class EnchantmentHelper {
          return getItemEnchantmentLevel(Enchantments.CHANNELING, stack) > 0;
      }
  
@@ -400,8 +403,8 @@ index ecf640b00007a386290f8dfe9935a8aa610079fd..29c3349bb6daf236ee570b0145009778
 +    // KioCG end
 +
      @Nullable
-     public static Map.Entry<EquipmentSlot, ItemStack> getRandomItemWith(Enchantment enchantment, LivingEntity entity) {
-         return getRandomItemWith(enchantment, entity, (stack) -> {
+     public static Entry<EquipmentSlot, ItemStack> getRandomItemWith(Enchantment enchantment, LivingEntity entity) {
+         return getRandomItemWith(enchantment, entity, stack -> true);
 diff --git a/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java b/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
 index ec4aaaca2160312452d724dc6639ac8c4fa42ae4..596455ad2680911adcaf0d6ef76f5f47ac013e9c 100644
 --- a/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java

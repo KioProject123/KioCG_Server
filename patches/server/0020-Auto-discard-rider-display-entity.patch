@@ -5,10 +5,10 @@ Subject: [PATCH] Auto discard rider display entity
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Display.java b/src/main/java/net/minecraft/world/entity/Display.java
-index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..827f3ca4da682d7f5af09368e654875f12dc760e 100644
+index bba45aa7ba4fa578344ec2b9dfa552097770a59f..f93cf7a056f3172720f30de0391920b875c0b9c6 100644
 --- a/src/main/java/net/minecraft/world/entity/Display.java
 +++ b/src/main/java/net/minecraft/world/entity/Display.java
-@@ -82,6 +82,7 @@ public abstract class Display extends Entity {
+@@ -97,6 +97,7 @@ public abstract class Display extends Entity {
      private Display.RenderState renderState;
      @Nullable
      private Display.PosRotInterpolationTarget posRotInterpolationTarget;
@@ -16,8 +16,8 @@ index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..827f3ca4da682d7f5af09368e654875f
  
      public Display(EntityType<?> type, Level world) {
          super(type, world);
-@@ -167,6 +168,17 @@ public abstract class Display extends Entity {
- 
+@@ -180,6 +181,17 @@ public abstract class Display extends Entity {
+         }
      }
  
 +    // KioCG start
@@ -34,24 +34,26 @@ index 2ecd3ed5b36475125c6f63af2612011fc8fba8a5..827f3ca4da682d7f5af09368e654875f
      protected abstract void updateRenderSubState(boolean shouldLerp, float lerpProgress);
  
      @Override
-@@ -249,6 +261,7 @@ public abstract class Display extends Entity {
-             this.setBrightnessOverride((Brightness)null);
+@@ -264,6 +276,8 @@ public abstract class Display extends Entity {
+         } else {
+             this.setBrightnessOverride(null);
          }
- 
++
 +        if (nbt.contains("KioCG.RiderPriority")) this.riderPriority = nbt.getInt("KioCG.RiderPriority"); // KioCG
      }
  
      public void setTransformation(Transformation transformation) {
-@@ -281,6 +294,7 @@ public abstract class Display extends Entity {
-             });
+@@ -295,6 +309,8 @@ public abstract class Display extends Entity {
+         if (brightness != null) {
+             Brightness.CODEC.encodeStart(NbtOps.INSTANCE, brightness).result().ifPresent(brightnessx -> nbt.put("brightness", brightnessx));
          }
- 
++
 +        nbt.putInt("KioCG.RiderPriority", this.riderPriority); // KioCG
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 5c6424a3800344c7fc5f3a0cbdf36a4b57e0a12c..e1ea2bbe0a35cc261ae5ba7b4e12c9927c67ea3f 100644
+index ab187003b71afa0f08e0da2f9cb9b8a42128f4ee..58ce2776d2fd454e91a911c1a2aba6759e209797 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -4877,6 +4877,42 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S

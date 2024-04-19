@@ -17,10 +17,10 @@ index 8dfa5027987c74eff98f1b27e343bbab392727fa..21117c367314d0e2ee19005bbfba1ca8
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
-index 9c681f39695f7a2b6321b848472be9019fd8bac6..de7e129fe596904595356efc13b9ca9b336649c5 100644
+index b7293b263ec2abe158f28c4c961d3fd67e312ced..ee9270fc7a21283acf70c508952b35b17bca596b 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
-@@ -82,9 +82,11 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+@@ -81,9 +81,11 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
      @Override
      public void tick() {
          super.tick();
@@ -29,9 +29,9 @@ index 9c681f39695f7a2b6321b848472be9019fd8bac6..de7e129fe596904595356efc13b9ca9b
              this.setChanged();
          }
 +        } // KioCG
- 
      }
  
+     public boolean suckInItems() {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 index c948efe0eafb592627b608c2db6fdb0126f89863..b94b99bfd45072c69c4bb7d6d55fcd0a0ce237a6 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
@@ -57,10 +57,10 @@ index be74adc86f0ca467f3b59e7b57fd47a8f381d86e..c66361d94edbc92b55b9a58d19882afe
                  event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumdirection1));
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index cb3e9672f375a1a660757a05362729ddb5ca7504..dd094fd82266105c4f52333ebd544c03938d990a 100644
+index c0823c612de9dc2a64cc797f061eef25c5f31359..41dedd0601a58094985854a5ea3174381f760417 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -2123,12 +2123,14 @@ public class CraftEventFactory {
+@@ -2129,12 +2129,14 @@ public class CraftEventFactory {
      public static boolean handleBlockFailedDispenseEvent(ServerLevel serverLevel, BlockPos pos) {
          org.bukkit.block.Block block = CraftBlock.at(serverLevel, pos);
          io.papermc.paper.event.block.BlockFailedDispenseEvent event = new io.papermc.paper.event.block.BlockFailedDispenseEvent(block);

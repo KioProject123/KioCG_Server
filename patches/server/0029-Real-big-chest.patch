@@ -17,10 +17,10 @@ index 305bce4d833116cc21e64fdcdfe13f03e94ff4ba..901d06dff432dd259fe6802a0135f697
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
-index 484de6546e2ad5c91a421593f42332352ace5941..8d14cac4a5dcb5c9f4038c2d4a5f34213bceb2f7 100644
+index e5a2343f9281371fd7665c1146959e09a18a50b7..71c415023f57006c931f06dcb509056056150d92 100644
 --- a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
-@@ -39,6 +39,8 @@ public class TrappedChestBlock extends ChestBlock {
+@@ -37,6 +37,8 @@ public class TrappedChestBlock extends ChestBlock {
          return Stats.CUSTOM.get(Stats.TRIGGER_TRAPPED_CHEST);
      }
  
@@ -29,7 +29,7 @@ index 484de6546e2ad5c91a421593f42332352ace5941..8d14cac4a5dcb5c9f4038c2d4a5f3421
      @Override
      public boolean isSignalSource(BlockState state) {
          return true;
-@@ -53,4 +55,6 @@ public class TrappedChestBlock extends ChestBlock {
+@@ -51,4 +53,6 @@ public class TrappedChestBlock extends ChestBlock {
      public int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
          return direction == Direction.UP ? state.getSignal(world, pos, direction) : 0;
      }
@@ -50,7 +50,7 @@ index 9b1243d96e0694c62fc9e82e9be540bce0d2b3ad..b2c1858f444ea808c8461f5a665ff986
              @Override
              protected void onOpen(Level world, BlockPos pos, BlockState state) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
-index 14c0e76e1c5340e8aad459751549c6bdfb513846..e922e7403b8db115c71624145e94c15d3653f5af 100644
+index 74ad37e2b6ebb7a54497767337df98525cf55f22..46ca82cc4f29f8f404ac8049268d1488a9a959ba 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
 @@ -10,6 +10,8 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
@@ -62,9 +62,9 @@ index 14c0e76e1c5340e8aad459751549c6bdfb513846..e922e7403b8db115c71624145e94c15d
      @Override
      protected void signalOpenCount(Level world, BlockPos pos, BlockState state, int oldViewerCount, int newViewerCount) {
          super.signalOpenCount(world, pos, state, oldViewerCount, newViewerCount);
-@@ -20,4 +22,21 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
+@@ -19,4 +21,21 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
+             world.updateNeighborsAt(pos.below(), block);
          }
- 
      }
 +     */
 +

@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust anvil
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 1eae15f8dff440aebdc6805e58460c95d852589b..d1d52d34ab7f079ba6689ea371e0b8b90676efce 100644
+index af1cf6c3421dc78af30cf4aeab4ebf8c80b8361b..de976f9491ccb01cb145b409cf470838df6a1cce 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -410,6 +410,8 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -412,6 +412,8 @@ public class GlobalConfiguration extends ConfigurationPart {
          public Enchant enchant;
          public class Enchant extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
