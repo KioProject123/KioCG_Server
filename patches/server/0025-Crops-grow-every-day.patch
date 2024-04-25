@@ -761,10 +761,10 @@ index a1f6274c9b1ab02ee55f1ae6011fc2dbb6e4824f..a4615913c5bacdfaa2ef3d4b461626cd
          this.fluidTicks = fluidTickScheduler;
      }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-index d53c4f3d47a8728d56fbd9b5e12be51885560d52..2a9aca7c758b271f36bb69be5db8c693f3704617 100644
+index d312ce27364f84d32dec8d58a2b37a8a6ad756af..d38ad38c2504f8ef138576de8a28f1f5dea473d7 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -261,6 +261,7 @@ public class ChunkSerializer {
+@@ -262,6 +262,7 @@ public class ChunkSerializer {
          }
  
          long l = nbt.getLong("InhabitedTime");
@@ -772,7 +772,7 @@ index d53c4f3d47a8728d56fbd9b5e12be51885560d52..2a9aca7c758b271f36bb69be5db8c693
          ChunkStatus.ChunkType chunkstatus_type = ChunkSerializer.getChunkTypeFromTag(nbt);
          Logger logger1;
          BlendingData blendingdata;
-@@ -284,7 +285,7 @@ public class ChunkSerializer {
+@@ -285,7 +286,7 @@ public class ChunkSerializer {
                  return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(s));
              }, chunkPos);
  
@@ -781,7 +781,7 @@ index d53c4f3d47a8728d56fbd9b5e12be51885560d52..2a9aca7c758b271f36bb69be5db8c693
              ((LevelChunk)object1).setBlockNibbles(blockNibbles); // Paper - replace light impl
              ((LevelChunk)object1).setSkyNibbles(skyNibbles); // Paper - replace light impl
          } else {
-@@ -300,6 +301,7 @@ public class ChunkSerializer {
+@@ -301,6 +302,7 @@ public class ChunkSerializer {
  
              object1 = protochunk;
              protochunk.setInhabitedTime(l);
@@ -789,7 +789,7 @@ index d53c4f3d47a8728d56fbd9b5e12be51885560d52..2a9aca7c758b271f36bb69be5db8c693
              if (nbt.contains("below_zero_retrogen", 10)) {
                  dataresult = BelowZeroRetrogen.CODEC.parse(new Dynamic(NbtOps.INSTANCE, nbt.getCompound("below_zero_retrogen")));
                  logger1 = ChunkSerializer.LOGGER;
-@@ -469,6 +471,7 @@ public class ChunkSerializer {
+@@ -470,6 +472,7 @@ public class ChunkSerializer {
          nbttagcompound.putInt("zPos", chunkcoordintpair.z);
          nbttagcompound.putLong("LastUpdate", asyncsavedata != null ? asyncsavedata.worldTime : world.getGameTime()); // Paper - async chunk unloading // Paper - diff on change
          nbttagcompound.putLong("InhabitedTime", chunk.getInhabitedTime());

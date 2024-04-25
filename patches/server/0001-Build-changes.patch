@@ -42,7 +42,7 @@ index bcfe59b6efb628ee1e7f9d60667360d4d885fb6a..ac8b64724e32b679946b46740a2aa68a
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 27db614d46dffc2d10f18d79cc5a084f3421d86b..1ac64dc76df0361e1d8a3fa6ed57d92184ee3339 100644
+index 2dc07e5ef249636e85ad9c78e3729e9e066a8fe8..cbe7242f2f594623eccb1690d99f5dd6ed0e0edf 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1865,7 +1865,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

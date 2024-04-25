@@ -5,11 +5,11 @@ Subject: [PATCH] The Long Dark
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index d4bdbf48544b113a00f3d97462587ee9e57eea62..6768597db9d5b4edc1c5e6d4837ae212046ce2e7 100644
+index c773e24e2021d0029df5a85648d52e565de75060..e9e218a5edb5041d8338cd490adb34a8dbcb8f0a 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3709,6 +3709,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
-     void resetIdleDuration();
+@@ -3750,6 +3750,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     boolean isChunkSent(long chunkKey);
      // Paper end
  
 +    // KioCG start

@@ -5,7 +5,7 @@ Subject: [PATCH] Player in structure API
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index c6cb4f17469a8f2e60dd3e28d41402851ce5fb21..d4bdbf48544b113a00f3d97462587ee9e57eea62 100644
+index d048ae07cc33fd77d128cc1ebf88b0804969fa3c..c773e24e2021d0029df5a85648d52e565de75060 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -3574,6 +3574,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM

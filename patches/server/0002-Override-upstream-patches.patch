@@ -5,10 +5,10 @@ Subject: [PATCH] Override upstream patches
 
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index e4fd372a1d585887287253a02531cd192929377b..f839aee9a42cbbe280daf54def7827876eeb3009 100644
+index 1d78e8beacbc93ef2cd6beb418edca843f8a5429..a62d02a54985136c2151de31ca10a4e71bdc8af7 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 +++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-@@ -355,7 +355,7 @@ public final class ChatProcessor {
+@@ -317,7 +317,7 @@ public final class ChatProcessor {
  
          private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
              final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
@@ -48,10 +48,10 @@ index 30fe1c0645a07d663b08c0f988a1ab3a750bf7c4..8d63fb0fefe77ee9119165a70c12d2c6
 +    // KioCG end
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index dc7950f9a52a718317e5f41de9d396cd7b846bf3..23b3534e413597a34226bc6e9aac01bc9e188f55 100644
+index d3fdf62912d190f8b468b77230a927023c361074..33aed0712856d4e583ab109cfdaddbf73e944194 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -550,4 +550,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -551,4 +551,12 @@ public class WorldConfiguration extends ConfigurationPart {
              VANILLA, EIGENCRAFT, ALTERNATE_CURRENT
          }
      }

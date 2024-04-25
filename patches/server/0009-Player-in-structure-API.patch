@@ -79,10 +79,10 @@ index 07eb481380e8fd4e492f36342ba633579c1b624e..8a5d44ea079111a5fa046db3de21354c
          SectionPos sectionPos = SectionPos.of(pos);
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index e77bf7f432387bdfa7f69d31b014e8cd254fd4ca..0e73202fad78cbbf789cbc90e3477ee350c4ee5c 100644
+index 44f4665db613c558078df5bb49106e4ca5679dfe..746997056bb124b276853dc5de76e0618f86c9b3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3336,6 +3336,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3338,6 +3338,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

@@ -220,10 +220,10 @@ index 0000000000000000000000000000000000000000..3a26ee2694e23f87d031f5cabd8fd5f7
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 21117c367314d0e2ee19005bbfba1ca822e8d77d..386a3af68b0d0288a5fabf8728a4ac18077a38a8 100644
+index 9c6adf078e258682c429b92ea1e88a815dd86055..93abcc1740e9ff05b4cdf4465a3c676b4176a668 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -557,6 +557,31 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -558,6 +558,31 @@ public class WorldConfiguration extends ConfigurationPart {
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
          public boolean removeAutomationGameplay = true;
@@ -549,7 +549,7 @@ index 0e8a22684932cc1e181508ea68c48147339e03d4..8f6ffb5f08f3e6d9dbdc50914a85cb89
  
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 0e73202fad78cbbf789cbc90e3477ee350c4ee5c..16571d84bd11e7d766c9f85c821845cde5bedac0 100644
+index 746997056bb124b276853dc5de76e0618f86c9b3..2a29d751ca7e7ed1f7acfbc12e16779f8b7c950a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -194,6 +194,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -560,7 +560,7 @@ index 0e73202fad78cbbf789cbc90e3477ee350c4ee5c..16571d84bd11e7d766c9f85c821845cd
      private CraftWorldBorder clientWorldBorder = null;
      private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
      public org.bukkit.event.player.PlayerResourcePackStatusEvent.Status resourcePackStatus; // Paper - more resource pack API
-@@ -2123,7 +2124,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2125,7 +2126,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it
@@ -569,7 +569,7 @@ index 0e73202fad78cbbf789cbc90e3477ee350c4ee5c..16571d84bd11e7d766c9f85c821845cd
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect));
          }
-@@ -3397,6 +3398,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3428,6 +3429,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

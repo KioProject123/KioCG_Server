@@ -5,10 +5,10 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 19f6dd0b2a733586da2d9df99c77bb1baf406843..fdaa86b21457adb05c707e421684d08a0aa5d9c7 100644
+index b3664c05a01a0036f3d43e6ec1e8a01a5ba3c91c..689a8289bb0ded5229f4edb2fa3532a08bc9faf8 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -596,6 +596,11 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -597,6 +597,11 @@ public class WorldConfiguration extends ConfigurationPart {
              public double turretDamageDefault = 1.0;
          }
  

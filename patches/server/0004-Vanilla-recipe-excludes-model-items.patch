@@ -168,7 +168,7 @@ index 054555c6b9c61243b1f14139b5c0eb2579403707..184a631a59c857beae19376ce7d4aedd
          }
  
 diff --git a/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java b/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java
-index 45bf1c95d86bdfc709c5f1a1fbefb18e1cc51f4c..ab27bfa5ac56ffd459eac33b042a071f0962395b 100644
+index 5ae3fd3ec22b4c3aa6bbd0cbda770f39dcab24a1..9ce54c681b82c20c1a7258a508a1833ebe3c5401 100644
 --- a/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/CartographyTableMenu.java
 @@ -84,12 +84,14 @@ public class CartographyTableMenu extends AbstractContainerMenu {

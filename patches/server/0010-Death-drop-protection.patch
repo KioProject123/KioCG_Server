@@ -5,10 +5,10 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 23b3534e413597a34226bc6e9aac01bc9e188f55..8dfa5027987c74eff98f1b27e343bbab392727fa 100644
+index 33aed0712856d4e583ab109cfdaddbf73e944194..f75cdcc228c4c30074905298aaa88fb6576307e6 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -555,7 +555,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -556,7 +556,7 @@ public class WorldConfiguration extends ConfigurationPart {
      public KiocgConfig kiocgConfig;
  
      public class KiocgConfig extends ConfigurationPart {
