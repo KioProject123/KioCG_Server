@@ -5,10 +5,10 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 7c49f1a9dd0e50e2638501e7a248e7e67c84bc0b..3c7899dac0083582e53b4e142b026b2b9494ca0c 100644
+index 51bad1d177a65c74372c04e93c5c06053258fabe..86f7b03f18f32e039acaac92cf5f9526a9c33232 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1036,6 +1036,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1042,6 +1042,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
          gameprofilerfiller.popPush("tickBlocks");
          timings.chunkTicksBlocks.startTiming(); // Paper
@@ -25,7 +25,7 @@ index 7c49f1a9dd0e50e2638501e7a248e7e67c84bc0b..3c7899dac0083582e53b4e142b026b2b
          if (randomTickSpeed > 0) {
              // Paper start - optimize random block ticking
              LevelChunkSection[] sections = chunk.getSections();
-@@ -1066,6 +1076,36 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1072,6 +1082,36 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  // We drop the fluid tick since LAVA is ALREADY TICKED by the above method (See LiquidBlock).
                  // TODO CHECK ON UPDATE (ping the Canadian)
              }
@@ -63,7 +63,7 @@ index 7c49f1a9dd0e50e2638501e7a248e7e67c84bc0b..3c7899dac0083582e53b4e142b026b2b
          // Paper end - optimise random block ticking
  
 diff --git a/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java b/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
-index 8430f4ecee42e7112b7bafe04cec237b22dade88..5dc220e18ee67cb14543e1f0250aa2c8aa597bc4 100644
+index ac0881f64ef98ea92d32b600c08c77aa3442a410..b1be268d99bd6617c5ff664624efa29407f3325f 100644
 --- a/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
 @@ -43,9 +43,16 @@ public class BambooSaplingBlock extends Block implements BonemealableBlock {
@@ -78,14 +78,14 @@ index 8430f4ecee42e7112b7bafe04cec237b22dade88..5dc220e18ee67cb14543e1f0250aa2c8
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 -        if (random.nextFloat() < (world.spigotConfig.bambooModifier / (100.0f * 3)) && world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        if (world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              this.growBamboo(world, pos);
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java b/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java
-index e8dc4ea90d74036dacb0785fcb9125df192a4c22..9897ce8fb39c5350d2705a537ccf1cca483a13c5 100644
+index e2951dd077441fe9cda461a2d3ef0c0671308316..962e13ffa3cd82c95e9b4bc0582a6f7c6682f741 100644
 --- a/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/BambooStalkBlock.java
 @@ -131,10 +131,17 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
@@ -100,7 +100,7 @@ index e8dc4ea90d74036dacb0785fcb9125df192a4c22..9897ce8fb39c5350d2705a537ccf1cca
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if ((Integer) state.getValue(BambooStalkBlock.STAGE) == 0) {
 -            if (random.nextFloat() < (world.spigotConfig.bambooModifier / (100.0f * 3)) && world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
 +            if (world.isEmptyBlock(pos.above()) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
@@ -108,24 +108,24 @@ index e8dc4ea90d74036dacb0785fcb9125df192a4c22..9897ce8fb39c5350d2705a537ccf1cca
  
                  if (i < world.paperConfig().maxGrowthHeight.bamboo.max) { // Paper - Configurable cactus/bamboo/reed growth height
 diff --git a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
-index c06d24b7494d247cf2e6fdef2233588c794414ea..5e5954bd4a0fb6b8c3532e1482e31afcf20bf065 100644
+index 0ac0efc1a744774521298307b973c6f2a28a8aaf..41f163432174afcf6a53f2ebe17e53c732dbf291 100644
 --- a/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/BeetrootBlock.java
 @@ -53,7 +53,7 @@ public class BeetrootBlock extends CropBlock {
  
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 -        if (random.nextInt(3) != 0) {
 +        if (true || random.nextInt(3) != 0) { // KioCG - 农作物每天生长
              super.randomTick(state, world, pos, random);
          }
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
-index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb4496e0b5 100644
+index cf8b8c8efd1c9c81eb5f02d75bd75875eb66771f..6e9dee20bd5a39fd80f0eecd21f151fb26adbea2 100644
 --- a/src/main/java/net/minecraft/world/level/block/Block.java
 +++ b/src/main/java/net/minecraft/world/level/block/Block.java
-@@ -233,6 +233,12 @@ public class Block extends BlockBehaviour implements ItemLike {
-         return this.isRandomlyTicking;
+@@ -229,6 +229,12 @@ public class Block extends BlockBehaviour implements ItemLike {
+         return state.getBlock() instanceof LeavesBlock || state.is(Blocks.BARRIER) || state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN) || state.is(Blocks.MELON) || state.is(Blocks.PUMPKIN) || state.is(BlockTags.SHULKER_BOXES);
      }
  
 +    // KioCG start
@@ -138,7 +138,7 @@ index 22036ed3ea0629bc12981a8d91a03e55cc2117d6..6bdb5b0b4b74744365a457d6094f56bb
          BlockState iblockdata1 = world.getBlockState(otherPos);
  
 diff --git a/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java b/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java
-index 7f58c9f5935cd14ea1096de14633f653eb486d7e..3af4a82cf659d50224f2ec6961d40f0acbd25a05 100644
+index 8920855b07a31715327b8102c7faafc9f916825d..0d7f5a81c7db2c6b204929761319dd975c0b0cc8 100644
 --- a/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/BuddingAmethystBlock.java
 @@ -24,6 +24,13 @@ public class BuddingAmethystBlock extends AmethystBlock {
@@ -153,10 +153,10 @@ index 7f58c9f5935cd14ea1096de14633f653eb486d7e..3af4a82cf659d50224f2ec6961d40f0a
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (random.nextInt(5) == 0) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CactusBlock.java b/src/main/java/net/minecraft/world/level/block/CactusBlock.java
-index ba4aaf850af36a84517c70581e141157c4f15b99..6e323efa5d469d948025a30ef074ffa7543071c3 100644
+index ff4dda48116a2969704b355ff96407ba869b466e..ce9d86c3e19806da52181a4fff3a8a4c8888087e 100644
 --- a/src/main/java/net/minecraft/world/level/block/CactusBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CactusBlock.java
 @@ -50,6 +50,13 @@ public class CactusBlock extends Block {
@@ -171,7 +171,7 @@ index ba4aaf850af36a84517c70581e141157c4f15b99..6e323efa5d469d948025a30ef074ffa7
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          BlockPos blockposition1 = pos.above();
 @@ -65,7 +72,7 @@ public class CactusBlock extends Block {
                  int j = (Integer) state.getValue(CactusBlock.AGE);
@@ -183,7 +183,7 @@ index ba4aaf850af36a84517c70581e141157c4f15b99..6e323efa5d469d948025a30ef074ffa7
                      BlockState iblockdata1 = (BlockState) state.setValue(CactusBlock.AGE, 0);
  
 diff --git a/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java b/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java
-index 0ab1bbd7c8dc8e45f754434357898d8fc990a021..bb1937f64f6ae56e26640b9446225c9f4a5ba086 100644
+index 6709cb6b657a8612781c2fe4dd76ee38f329c5ba..39b3257fee2b1297d5083440b833912f9ae9c4cf 100644
 --- a/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/ChorusFlowerBlock.java
 @@ -60,6 +60,13 @@ public class ChorusFlowerBlock extends Block {
@@ -215,7 +215,7 @@ index 0ab1bbd7c8dc8e45f754434357898d8fc990a021..bb1937f64f6ae56e26640b9446225c9f
  
      private void placeDeadFlower(Level world, BlockPos pos) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CocoaBlock.java b/src/main/java/net/minecraft/world/level/block/CocoaBlock.java
-index 9ddc3a5333894cbd2a3cc94752b54b091f4e8293..2fae1dc3345bccfd457f907a78034dc628f86c90 100644
+index fe4237b40af32415f8635ab769edc0f948a3e12d..4a31f5582453db1ff3c741efb886dd294593d4e4 100644
 --- a/src/main/java/net/minecraft/world/level/block/CocoaBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CocoaBlock.java
 @@ -56,9 +56,16 @@ public class CocoaBlock extends HorizontalDirectionalBlock implements Bonemealab
@@ -230,14 +230,14 @@ index 9ddc3a5333894cbd2a3cc94752b54b091f4e8293..2fae1dc3345bccfd457f907a78034dc6
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 -        if (world.random.nextFloat() < (world.spigotConfig.cocoaModifier / (100.0f * 5))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              int i = (Integer) state.getValue(CocoaBlock.AGE);
  
              if (i < 2) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..88f30bc1c0bbe139e03d94689f47065de444dc24 100644
+index 112d2feba5f75a2a873b595617780515945c10e4..d60b12582c9ab9d09bb844eddd4f8ba160b96b8a 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,24 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -263,7 +263,7 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..88f30bc1c0bbe139e03d94689f47065d
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (world.getRawBrightness(pos, 0) >= 9) {
 @@ -99,7 +117,7 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
                      modifier = world.spigotConfig.wheatModifier;
@@ -283,10 +283,10 @@ index 5b96d1ae4bd8546311e986bc312b1f85883a67f4..88f30bc1c0bbe139e03d94689f47065d
          BlockPos blockposition1 = pos.below();
  
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index 7b4122cf9ce5f1c17efa12162880cc285d50af97..42e4cfd4e83e74218e9cd57e32adfd3323cb4c12 100644
+index a1df2cc7988e4a20b25c61097e44a627ff58e134..4358c676490176dd77272550c48a26052c6af957 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-@@ -89,15 +89,33 @@ public class FarmBlock extends Block {
+@@ -90,15 +90,33 @@ public class FarmBlock extends Block {
  
      }
  
@@ -298,7 +298,7 @@ index 7b4122cf9ce5f1c17efa12162880cc285d50af97..42e4cfd4e83e74218e9cd57e32adfd33
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 +    // KioCG start - 使农作物来运算耕地
 +        if (!world.getBlockState(pos.above()).is(BlockTags.CROPS)) {
 +            randomTick0(state, world, pos, random);
@@ -323,7 +323,7 @@ index 7b4122cf9ce5f1c17efa12162880cc285d50af97..42e4cfd4e83e74218e9cd57e32adfd33
                  FarmBlock.turnToDirt((Entity) null, state, world, pos);
              }
 diff --git a/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java b/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
-index 30300ef3ec839dfa944c992ab50db4d3859bb02e..37cca5f0492888235f912fcb7428d7d16f6a0c66 100644
+index cf05da1c86e3018db11dc079bf50317b6639e5cc..220ce680cf8e72390b47f64d327de89d3d81c5e3 100644
 --- a/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
 @@ -34,14 +34,21 @@ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements
@@ -335,7 +335,7 @@ index 30300ef3ec839dfa944c992ab50db4d3859bb02e..37cca5f0492888235f912fcb7428d7d1
      }
  
      @Override
-     public boolean isRandomlyTicking(BlockState state) {
+     protected boolean isRandomlyTicking(BlockState state) {
 -        return (Integer) state.getValue(GrowingPlantHeadBlock.AGE) < 25;
 +        return (Integer) state.getValue(GrowingPlantHeadBlock.AGE) < 15; // KioCG
      }
@@ -348,7 +348,7 @@ index 30300ef3ec839dfa944c992ab50db4d3859bb02e..37cca5f0492888235f912fcb7428d7d1
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          // Spigot start
 @@ -55,7 +62,7 @@ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements
          } else {
@@ -390,7 +390,7 @@ index 30300ef3ec839dfa944c992ab50db4d3859bb02e..37cca5f0492888235f912fcb7428d7d1
  
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-index d3827a6759c99d945767498d37a6dbb6b70b6d0d..a52826928ed534a2a5a43b6b57512e9a38a340fc 100644
+index b98e17d21d43610fb7a7ce1641c518598ff48cb0..f270e5aa7dfd722a44fd717c9a7186b6f1fe695e 100644
 --- a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 @@ -111,10 +111,17 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
@@ -405,7 +405,7 @@ index d3827a6759c99d945767498d37a6dbb6b70b6d0d..a52826928ed534a2a5a43b6b57512e9a
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (!isHanging(state)) {
 -            if (random.nextFloat() < (world.spigotConfig.saplingModifier / (100.0F * 7))) { // Paper - Fix Spigot growth modifiers
 +            if (true) { // Paper - Fix Spigot growth modifiers // KioCG
@@ -413,7 +413,7 @@ index d3827a6759c99d945767498d37a6dbb6b70b6d0d..a52826928ed534a2a5a43b6b57512e9a
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/MushroomBlock.java b/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
-index 1f27ae8abd5891a0b8057b454f2210b088b4e95a..62f192f0aa9751ffe2f4975887a9e91d2513d5b4 100644
+index 1172d85c5c26ab2142343d91149766e5993cb36a..b0a4879c7497131712c1f674db61e9bea1d19d70 100644
 --- a/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/MushroomBlock.java
 @@ -49,9 +49,16 @@ public class MushroomBlock extends BushBlock implements BonemealableBlock {
@@ -428,14 +428,14 @@ index 1f27ae8abd5891a0b8057b454f2210b088b4e95a..62f192f0aa9751ffe2f4975887a9e91d
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 -        if (random.nextFloat() < (world.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              int i = 5;
              boolean flag = true;
              Iterator iterator = BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).iterator();
 diff --git a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
-index 0fc333f240d6918e841a9221be42973839408802..5660a581039dbeaf751c8fc7645cdb7db6e3d3ad 100644
+index acbd60a2f162fe0e254e36d0e8e7face3fc8a7b3..5b7b03db604011e5aa3519b31a67b4e2fa92a9dc 100644
 --- a/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/NetherWartBlock.java
 @@ -48,11 +48,18 @@ public class NetherWartBlock extends BushBlock {
@@ -450,7 +450,7 @@ index 0fc333f240d6918e841a9221be42973839408802..5660a581039dbeaf751c8fc7645cdb7d
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          int i = (Integer) state.getValue(NetherWartBlock.AGE);
  
 -        if (i < 3 && random.nextFloat() < (world.spigotConfig.wartModifier / (100.0f * 10))) { // Spigot - SPIGOT-7159: Better modifier resolution
@@ -483,7 +483,7 @@ index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..3d66bf5abb57ccda2ac637680ab7459c
          }
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-index 3ff0d08e4964aae82d8e51d3b8bf9aa002096f81..23b19bba383f2feb795c7eca14d019906b6869bb 100644
+index d262a5a6da57ef9ba9a6fe0dfbc88f577105e74f..f9a94734c87cdda19f283f6a25a6a016fb354be9 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 @@ -53,9 +53,16 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
@@ -498,14 +498,14 @@ index 3ff0d08e4964aae82d8e51d3b8bf9aa002096f81..23b19bba383f2feb795c7eca14d01990
 +    // KioCG end
 +
      @Override
-     public void randomTick(net.minecraft.world.level.block.state.BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(net.minecraft.world.level.block.state.BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 -        if (world.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextFloat() < (world.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        if (world.getMaxLocalRawBrightness(pos.above()) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              this.advanceTree(world, pos, state, random);
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
-index 121a872cd750a87b779895687ae1abf5bb77b088..8b3d8552bee06d884383d0f46dcbbefd7f52bd5e 100644
+index 924d80eb41d9a71d1e521c40742557251cf51832..bcb6c68d0cddd5b345c941f51711e7d6e644cf4a 100644
 --- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/StemBlock.java
 @@ -70,12 +70,19 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
@@ -520,7 +520,7 @@ index 121a872cd750a87b779895687ae1abf5bb77b088..8b3d8552bee06d884383d0f46dcbbefd
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (world.getRawBrightness(pos, 0) >= 9) {
              float f = CropBlock.getGrowthSpeed(this, world, pos);
  
@@ -530,7 +530,7 @@ index 121a872cd750a87b779895687ae1abf5bb77b088..8b3d8552bee06d884383d0f46dcbbefd
  
                  if (i < 7) {
 diff --git a/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java b/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
-index 04957d461d0e968d443737068aaeec1d0bce78b2..b8a25ad733e7d112614978bdc47d5eaf240b5af3 100644
+index c48c622e92cedeaa46b929c7adfedec98dd5a3fb..91d7268a35666ff1df995e37086f9c1f2707d322 100644
 --- a/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
 @@ -50,6 +50,13 @@ public class SugarCaneBlock extends Block {
@@ -545,7 +545,7 @@ index 04957d461d0e968d443737068aaeec1d0bce78b2..b8a25ad733e7d112614978bdc47d5eaf
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (world.isEmptyBlock(pos.above())) {
 @@ -63,7 +70,7 @@ public class SugarCaneBlock extends Block {
                  int j = (Integer) state.getValue(SugarCaneBlock.AGE);
@@ -557,10 +557,10 @@ index 04957d461d0e968d443737068aaeec1d0bce78b2..b8a25ad733e7d112614978bdc47d5eaf
                      world.setBlock(pos, (BlockState) state.setValue(SugarCaneBlock.AGE, 0), 4);
                  } else if (modifier == 100 || random.nextFloat() < (modifier / (100.0f * 16))) { // Spigot - SPIGOT-7159: Better modifier resolution
 diff --git a/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java b/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
-index 62ed86114c1a6e724ccfea119a331356d0a22600..ff140206f2d4e94e3dc8107416528990f457462e 100644
+index 6008c634c408c4eed563815da4d57b2eef69835c..621eaa4c66be74cabbaecc928135b2c7cb7b1650 100644
 --- a/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
-@@ -68,11 +68,18 @@ public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock
+@@ -70,11 +70,18 @@ public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock
          return (Integer) state.getValue(SweetBerryBushBlock.AGE) < 3;
      }
  
@@ -572,7 +572,7 @@ index 62ed86114c1a6e724ccfea119a331356d0a22600..ff140206f2d4e94e3dc8107416528990
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          int i = (Integer) state.getValue(SweetBerryBushBlock.AGE);
  
 -        if (i < 3 && random.nextFloat() < (world.spigotConfig.sweetBerryModifier / (100.0f * 5)) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
@@ -594,7 +594,7 @@ index 3bb1ed8423e7f18eae8967d4bee5bd48720a689e..faca60be26a5b91b59f758d651bb9dec
          }
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/VineBlock.java b/src/main/java/net/minecraft/world/level/block/VineBlock.java
-index 75297e5e006d2009fd7582349e27a4afe3e67e80..33dd6e1e00e88fd57f7e3cfe72675ea84215131a 100644
+index 57e7f275ffd6202ef578d64857cfdace6f1c760d..b9523aa0ad018a8624a9496f3908e9080213381f 100644
 --- a/src/main/java/net/minecraft/world/level/block/VineBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/VineBlock.java
 @@ -182,10 +182,17 @@ public class VineBlock extends Block {
@@ -609,7 +609,7 @@ index 75297e5e006d2009fd7582349e27a4afe3e67e80..33dd6e1e00e88fd57f7e3cfe72675ea8
 +    // KioCG end
 +
      @Override
-     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (world.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
 -            if (random.nextFloat() < (world.spigotConfig.vineModifier / (100.0f * 4))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +            if (true) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
@@ -617,10 +617,10 @@ index 75297e5e006d2009fd7582349e27a4afe3e67e80..33dd6e1e00e88fd57f7e3cfe72675ea8
                  BlockPos blockposition1 = pos.above();
                  BlockPos blockposition2;
 diff --git a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
-index 2892e586146cbc560f0bcf4b9af6d0575cb0a82e..db1bfe890b4e36ec8364866f06c0aa542175313b 100644
+index 2034ca2edd3aff61d94416266e75402babd3e741..3c355552d03cb5ce53ce0ff91783bc7d005f74d7 100644
 --- a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -1387,6 +1387,12 @@ public abstract class BlockBehaviour implements FeatureElement {
+@@ -1326,6 +1326,12 @@ public abstract class BlockBehaviour implements FeatureElement {
              return this.isRandomlyTicking;
          }
  
@@ -634,10 +634,10 @@ index 2892e586146cbc560f0bcf4b9af6d0575cb0a82e..db1bfe890b4e36ec8364866f06c0aa54
              return this.getBlock().getSeed(this.asState(), pos);
          }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
-index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a5341399e5c6c3 100644
+index 1aac95b03a9e2e37c24f2a30bcb259c1424e1c78..25b861b6be3867a8fe596935faa78088155309cc 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -64,6 +64,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+@@ -67,6 +67,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
      private volatile boolean isLightCorrect;
      protected final ChunkPos chunkPos; public final long coordinateKey; public final int locX; public final int locZ; // Paper - cache coordinate key
      private long inhabitedTime;
@@ -645,7 +645,7 @@ index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a53413
      /** @deprecated */
      @Nullable
      @Deprecated
-@@ -128,7 +129,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+@@ -131,7 +132,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
      }
      // Paper end - rewrite light engine
  
@@ -654,7 +654,7 @@ index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a53413
          // Paper start - rewrite light engine
          if (!(this instanceof ImposterProtoChunk)) {
              this.setBlockNibbles(ca.spottedleaf.starlight.common.light.StarLightEngine.getFilledEmptyLight(heightLimitView));
-@@ -141,6 +142,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+@@ -144,6 +145,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
          this.levelHeightAccessor = heightLimitView;
          this.sections = new LevelChunkSection[heightLimitView.getSectionsCount()];
          this.inhabitedTime = inhabitedTime;
@@ -663,10 +663,10 @@ index f7e5e016a7028a9196e689e950805b0d5b31fe38..54157268f3a5ca2e52e3a758d7a53413
          this.blendingData = blendingData;
          // Paper - starlight - remove skyLightSources
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 465458e8a7dbaf9afb32709a71c7b2620d1e1fd2..d5813f7e6bd90e2071c5c24246bde66bc459f08d 100644
+index 2a8609e33716949ff1877b6d10f64a9d7a7c81e9..d5c98232e63abe66a28fd08b69a4b935f614afe7 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -87,11 +87,11 @@ public class LevelChunk extends ChunkAccess {
+@@ -89,11 +89,11 @@ public class LevelChunk extends ChunkAccess {
      public volatile FullChunkStatus chunkStatus = FullChunkStatus.INACCESSIBLE; // Paper - rewrite chunk system
  
      public LevelChunk(Level world, ChunkPos pos) {
@@ -681,7 +681,7 @@ index 465458e8a7dbaf9afb32709a71c7b2620d1e1fd2..d5813f7e6bd90e2071c5c24246bde66b
          this.tickersInLevel = Maps.newHashMap();
          this.level = (ServerLevel) world; // CraftBukkit - type
          this.gameEventListenerRegistrySections = new Int2ObjectOpenHashMap();
-@@ -220,7 +220,7 @@ public class LevelChunk extends ChunkAccess {
+@@ -222,7 +222,7 @@ public class LevelChunk extends ChunkAccess {
      // Paper end
  
      public LevelChunk(ServerLevel world, ProtoChunk protoChunk, @Nullable LevelChunk.PostLoadProcessor entityLoader) {
@@ -691,7 +691,7 @@ index 465458e8a7dbaf9afb32709a71c7b2620d1e1fd2..d5813f7e6bd90e2071c5c24246bde66b
          this.setBlockNibbles(protoChunk.getBlockNibbles());
          this.setSkyNibbles(protoChunk.getSkyNibbles());
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
-index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..92caf0b5a60b213aeae01f5f7841b9a3fa6d308f 100644
+index a2a5aef769ee8bb638a5a9f3da9812fa4a85dda5..c74f4a3e83c0153ec3def3b7c46ca0a35cc4be5a 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 @@ -26,6 +26,7 @@ public class LevelChunkSection {
@@ -748,10 +748,10 @@ index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..92caf0b5a60b213aeae01f5f7841b9a3
                  }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java b/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
-index a1f6274c9b1ab02ee55f1ae6011fc2dbb6e4824f..a4615913c5bacdfaa2ef3d4b461626cdfdd9e446 100644
+index bfdee41d3095a869408abc89a6085556ff188d8d..bf349ff6858042943bdbc2a9ea5fccd774875580 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/ProtoChunk.java
-@@ -61,7 +61,7 @@ public class ProtoChunk extends ChunkAccess {
+@@ -63,7 +63,7 @@ public class ProtoChunk extends ChunkAccess {
          Registry<Biome> biomeRegistry,
          @Nullable BlendingData blendingData
      ) {
@@ -761,18 +761,18 @@ index a1f6274c9b1ab02ee55f1ae6011fc2dbb6e4824f..a4615913c5bacdfaa2ef3d4b461626cd
          this.fluidTicks = fluidTickScheduler;
      }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-index d312ce27364f84d32dec8d58a2b37a8a6ad756af..d38ad38c2504f8ef138576de8a28f1f5dea473d7 100644
+index db932f8e9d48e1e47a89526d1d76947e91b55eea..5da45ae93d81bc3441cfbd776a2c3fce92bbdbf8 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -262,6 +262,7 @@ public class ChunkSerializer {
+@@ -254,6 +254,7 @@ public class ChunkSerializer {
          }
  
          long l = nbt.getLong("InhabitedTime");
 +        int cropDays = nbt.getInt("KioCG.CropDays"); // KioCG
-         ChunkStatus.ChunkType chunkstatus_type = ChunkSerializer.getChunkTypeFromTag(nbt);
-         Logger logger1;
-         BlendingData blendingdata;
-@@ -285,7 +286,7 @@ public class ChunkSerializer {
+         ChunkType chunktype = ChunkSerializer.getChunkTypeFromTag(nbt);
+         DataResult dataresult;
+         Logger logger;
+@@ -278,7 +279,7 @@ public class ChunkSerializer {
                  return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(s));
              }, chunkPos);
  
@@ -781,15 +781,15 @@ index d312ce27364f84d32dec8d58a2b37a8a6ad756af..d38ad38c2504f8ef138576de8a28f1f5
              ((LevelChunk)object1).setBlockNibbles(blockNibbles); // Paper - replace light impl
              ((LevelChunk)object1).setSkyNibbles(skyNibbles); // Paper - replace light impl
          } else {
-@@ -301,6 +302,7 @@ public class ChunkSerializer {
+@@ -294,6 +295,7 @@ public class ChunkSerializer {
  
              object1 = protochunk;
              protochunk.setInhabitedTime(l);
 +            protochunk.cropDays = cropDays; // KioCG
              if (nbt.contains("below_zero_retrogen", 10)) {
                  dataresult = BelowZeroRetrogen.CODEC.parse(new Dynamic(NbtOps.INSTANCE, nbt.getCompound("below_zero_retrogen")));
-                 logger1 = ChunkSerializer.LOGGER;
-@@ -470,6 +472,7 @@ public class ChunkSerializer {
+                 logger = ChunkSerializer.LOGGER;
+@@ -463,6 +465,7 @@ public class ChunkSerializer {
          nbttagcompound.putInt("zPos", chunkcoordintpair.z);
          nbttagcompound.putLong("LastUpdate", asyncsavedata != null ? asyncsavedata.worldTime : world.getGameTime()); // Paper - async chunk unloading // Paper - diff on change
          nbttagcompound.putLong("InhabitedTime", chunk.getInhabitedTime());

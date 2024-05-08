@@ -5,7 +5,7 @@ Subject: [PATCH] Override upstream patches
 
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index 1d78e8beacbc93ef2cd6beb418edca843f8a5429..a62d02a54985136c2151de31ca10a4e71bdc8af7 100644
+index e83f9517b31c5171b8dc75ab63a5bfe654221c84..110f8ac28f9d7c46cadffa5e1c353e0cb45355d2 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 +++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 @@ -317,7 +317,7 @@ public final class ChatProcessor {
@@ -31,10 +31,10 @@ index e3a5f1ec376319bdfda87fa27ae217bff3914292..26c6a95966a7751cc22e25092bd6cced
  
      @Override
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 30fe1c0645a07d663b08c0f988a1ab3a750bf7c4..8d63fb0fefe77ee9119165a70c12d2c6870f7422 100644
+index 2874bc3001c4e7d9191e47ba512c5a68369c21f1..d5da41ce225bea87b47dfda4d2a8698a6045134d 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -346,4 +346,12 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -344,4 +344,12 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
@@ -48,10 +48,10 @@ index 30fe1c0645a07d663b08c0f988a1ab3a750bf7c4..8d63fb0fefe77ee9119165a70c12d2c6
 +    // KioCG end
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index d3fdf62912d190f8b468b77230a927023c361074..33aed0712856d4e583ab109cfdaddbf73e944194 100644
+index efc91ff91827872c62b8bd060282549ccdcf67dd..278a2f999a6e4d564582a4b2e103c24f5036774f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -551,4 +551,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -547,4 +547,12 @@ public class WorldConfiguration extends ConfigurationPart {
              VANILLA, EIGENCRAFT, ALTERNATE_CURRENT
          }
      }
@@ -65,10 +65,10 @@ index d3fdf62912d190f8b468b77230a927023c361074..33aed0712856d4e583ab109cfdaddbf7
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 68d268b6fff126e8645b6deec3fb549ea2286b77..ee62397f5d789a3d9b91f64a6f2fa8ac2a370065 100644
+index eb4fc900164d1fb3a78653ae8bc42ea30323f5b7..0646cef3e596b7faaa9169840b44ebdfea4ce532 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -180,7 +180,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -193,7 +193,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          }
  
          // Paper start - detect running as root
@@ -77,7 +77,7 @@ index 68d268b6fff126e8645b6deec3fb549ea2286b77..ee62397f5d789a3d9b91f64a6f2fa8ac
              DedicatedServer.LOGGER.warn("****************************");
              DedicatedServer.LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
              DedicatedServer.LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
-@@ -280,7 +280,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -293,7 +293,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support
@@ -87,10 +87,10 @@ index 68d268b6fff126e8645b6deec3fb549ea2286b77..ee62397f5d789a3d9b91f64a6f2fa8ac
              DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 1e5f709115007ff19901c0a6c3cf884d9e4d3a6c..d2c303dc951e90863171dd20283ac00daf8023db 100644
+index a2142930b4d4b05987c90496fb9d733d99040aa0..cf05728941da2c3080c6b5c0b6e3461844feee19 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1431,7 +1431,7 @@ public abstract class PlayerList {
+@@ -1430,7 +1430,7 @@ public abstract class PlayerList {
          // Paper end
          boolean flag = this.verifyChatTrusted(message);
  

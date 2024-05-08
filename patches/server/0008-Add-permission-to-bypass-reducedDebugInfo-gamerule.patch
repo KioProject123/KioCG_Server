@@ -5,11 +5,11 @@ Subject: [PATCH] Add permission to bypass reducedDebugInfo gamerule
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index d2c303dc951e90863171dd20283ac00daf8023db..51902e741f27e9e09d940cf465293a455ad2566a 100644
+index cf05728941da2c3080c6b5c0b6e3461844feee19..4f37358bcdd8d668b751e78ba506efbe7a4461d5 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -290,7 +290,7 @@ public abstract class PlayerList {
-         ServerGamePacketListenerImpl playerconnection = new ServerGamePacketListenerImpl(this.server, connection, player, clientData);
+@@ -292,7 +292,7 @@ public abstract class PlayerList {
+         connection.setupInboundProtocol(GameProtocols.SERVERBOUND.bind(RegistryFriendlyByteBuf.decorator(this.server.registryAccess())), playerconnection);
          GameRules gamerules = worldserver1.getGameRules();
          boolean flag = gamerules.getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN);
 -        boolean flag1 = gamerules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO);
@@ -17,8 +17,8 @@ index d2c303dc951e90863171dd20283ac00daf8023db..51902e741f27e9e09d940cf465293a45
          boolean flag2 = gamerules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
  
          // Spigot - view distance
-@@ -1296,7 +1296,7 @@ public abstract class PlayerList {
-         player.getEntityData().refresh(player); // CraftBukkkit - SPIGOT-7218: sync metadata
+@@ -1295,7 +1295,7 @@ public abstract class PlayerList {
+         player.refreshEntityData(player); // CraftBukkkit - SPIGOT-7218: sync metadata
          player.connection.send(new ClientboundSetCarriedItemPacket(player.getInventory().selected));
          // CraftBukkit start - from GameRules
 -        int i = player.level().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) ? 22 : 23;

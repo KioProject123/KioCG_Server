@@ -5,36 +5,40 @@ Subject: [PATCH] Allow potions to stack
 
 
 diff --git a/src/main/java/net/minecraft/world/item/Items.java b/src/main/java/net/minecraft/world/item/Items.java
-index b43598ee4035d9c53a40629dd4021b58c04132c8..bbe2c3815bff34f4b3143d7df0cb490c6f9db6dc 100644
+index d00b59efb754594cf532f8598f4b6d3b29693232..41972cbefaf52c18ccc0d313f3c2c10f940d6326 100644
 --- a/src/main/java/net/minecraft/world/item/Items.java
 +++ b/src/main/java/net/minecraft/world/item/Items.java
-@@ -1152,7 +1152,7 @@ public class Items {
-     public static final Item GHAST_TEAR = registerItem("ghast_tear", new Item(new Item.Properties()));
+@@ -1364,7 +1364,7 @@ public class Items {
      public static final Item GOLD_NUGGET = registerItem("gold_nugget", new Item(new Item.Properties()));
      public static final Item NETHER_WART = registerItem("nether_wart", new ItemNameBlockItem(Blocks.NETHER_WART, new Item.Properties()));
--    public static final Item POTION = registerItem("potion", new PotionItem(new Item.Properties().stacksTo(1)));
-+    public static final Item POTION = registerItem("potion", new PotionItem(new Item.Properties().stacksTo(16))); // KioCG
+     public static final Item POTION = registerItem(
+-        "potion", new PotionItem(new Item.Properties().stacksTo(1).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY))
++        "potion", new PotionItem(new Item.Properties().stacksTo(16).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)) // KioCG
+     );
      public static final Item GLASS_BOTTLE = registerItem("glass_bottle", new BottleItem(new Item.Properties()));
      public static final Item SPIDER_EYE = registerItem("spider_eye", new Item(new Item.Properties().food(Foods.SPIDER_EYE)));
-     public static final Item FERMENTED_SPIDER_EYE = registerItem("fermented_spider_eye", new Item(new Item.Properties()));
-@@ -1432,10 +1432,10 @@ public class Items {
-     public static final Item BEETROOT_SEEDS = registerItem("beetroot_seeds", new ItemNameBlockItem(Blocks.BEETROOTS, new Item.Properties()));
+@@ -1768,14 +1768,14 @@ public class Items {
      public static final Item BEETROOT_SOUP = registerItem("beetroot_soup", new BowlFoodItem(new Item.Properties().stacksTo(1).food(Foods.BEETROOT_SOUP)));
      public static final Item DRAGON_BREATH = registerItem("dragon_breath", new Item(new Item.Properties().craftRemainder(GLASS_BOTTLE).rarity(Rarity.UNCOMMON)));
--    public static final Item SPLASH_POTION = registerItem("splash_potion", new SplashPotionItem(new Item.Properties().stacksTo(1)));
-+    public static final Item SPLASH_POTION = registerItem("splash_potion", new SplashPotionItem(new Item.Properties().stacksTo(16))); // KioCG
+     public static final Item SPLASH_POTION = registerItem(
+-        "splash_potion", new SplashPotionItem(new Item.Properties().stacksTo(1).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY))
++        "splash_potion", new SplashPotionItem(new Item.Properties().stacksTo(16).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)) // KioCG
+     );
      public static final Item SPECTRAL_ARROW = registerItem("spectral_arrow", new SpectralArrowItem(new Item.Properties()));
-     public static final Item TIPPED_ARROW = registerItem("tipped_arrow", new TippedArrowItem(new Item.Properties()));
--    public static final Item LINGERING_POTION = registerItem("lingering_potion", new LingeringPotionItem(new Item.Properties().stacksTo(1)));
-+    public static final Item LINGERING_POTION = registerItem("lingering_potion", new LingeringPotionItem(new Item.Properties().stacksTo(16))); // KioCG
-     public static final Item SHIELD = registerItem("shield", new ShieldItem(new Item.Properties().durability(336)));
-     public static final Item TOTEM_OF_UNDYING = registerItem("totem_of_undying", new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-     public static final Item SHULKER_SHELL = registerItem("shulker_shell", new Item(new Item.Properties()));
+     public static final Item TIPPED_ARROW = registerItem(
+         "tipped_arrow", new TippedArrowItem(new Item.Properties().component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY))
+     );
+     public static final Item LINGERING_POTION = registerItem(
+-        "lingering_potion", new LingeringPotionItem(new Item.Properties().stacksTo(1).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY))
++        "lingering_potion", new LingeringPotionItem(new Item.Properties().stacksTo(16).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)) // KioCG
+     );
+     public static final Item SHIELD = registerItem(
+         "shield", new ShieldItem(new Item.Properties().durability(336).component(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY))
 diff --git a/src/main/java/net/minecraft/world/item/PotionItem.java b/src/main/java/net/minecraft/world/item/PotionItem.java
-index b93ed2896ebeb8ec75eb3cfb717a740c97dd9622..69167b5e773e0c1ab56d1d04e319e6b86b92f5e6 100644
+index db038cb423c3b951890c81d833aa77ebcea3304f..e920c5fc2c83952d4e090b3816ad86b70e12af8c 100644
 --- a/src/main/java/net/minecraft/world/item/PotionItem.java
 +++ b/src/main/java/net/minecraft/world/item/PotionItem.java
-@@ -90,7 +90,9 @@ public class PotionItem extends Item {
+@@ -91,7 +91,9 @@ public class PotionItem extends Item {
              }
  
              if (entityhuman != null) {

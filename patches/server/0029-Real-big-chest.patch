@@ -5,10 +5,10 @@ Subject: [PATCH] Real big chest
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/ChestBlock.java b/src/main/java/net/minecraft/world/level/block/ChestBlock.java
-index 305bce4d833116cc21e64fdcdfe13f03e94ff4ba..901d06dff432dd259fe6802a0135f69786181eb2 100644
+index 8fbfd18b3caeed769396b3ffb1b1778b2f38edc0..303f50597d205f7ccf7f9ec316fdd2767dc125d9 100644
 --- a/src/main/java/net/minecraft/world/level/block/ChestBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/ChestBlock.java
-@@ -228,6 +228,7 @@ public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements
+@@ -225,6 +225,7 @@ public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements
              }
          }
  
@@ -17,7 +17,7 @@ index 305bce4d833116cc21e64fdcdfe13f03e94ff4ba..901d06dff432dd259fe6802a0135f697
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
-index e5a2343f9281371fd7665c1146959e09a18a50b7..71c415023f57006c931f06dcb509056056150d92 100644
+index 17f0f170d68bb55efc61771e9a32ce62924bab2b..035ecad765ad8c0149f335c84f7ab09d8aeb3765 100644
 --- a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
 @@ -37,6 +37,8 @@ public class TrappedChestBlock extends ChestBlock {
@@ -27,20 +27,20 @@ index e5a2343f9281371fd7665c1146959e09a18a50b7..71c415023f57006c931f06dcb5090560
 +    // KioCG start
 +    /*
      @Override
-     public boolean isSignalSource(BlockState state) {
+     protected boolean isSignalSource(BlockState state) {
          return true;
 @@ -51,4 +53,6 @@ public class TrappedChestBlock extends ChestBlock {
-     public int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
+     protected int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
          return direction == Direction.UP ? state.getSignal(world, pos, direction) : 0;
      }
 +     */
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-index 9b1243d96e0694c62fc9e82e9be540bce0d2b3ad..b2c1858f444ea808c8461f5a665ff986200e3d73 100644
+index b88aa184cd06a0485146f58a5b61a56a50911209..4f3d36721fbc021df3d21476f8019ab05da9fe44 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -67,7 +67,7 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
+@@ -68,7 +68,7 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
  
      protected ChestBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
          super(type, pos, state);

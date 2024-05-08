@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 2570bd4230aa4ac081202006c28df462ba324df6..6d9054003c80c17c33eb3420ed027364cd1958c0 100644
+index e386b41931f3d1f0d8c6429d05e9b2684519e38b..8558e7e869e7afd1a438d5f2eddf507c3d339e30 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -594,6 +594,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -590,6 +590,8 @@ public class WorldConfiguration extends ConfigurationPart {
  
          public boolean betterMobGriefingSetting = true;
          public double dirtPathSpeedBoost = 0.02;
@@ -18,10 +18,10 @@ index 2570bd4230aa4ac081202006c28df462ba324df6..6d9054003c80c17c33eb3420ed027364
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 63af67101363522e55a9e473bfd893e70c38a0d8..7c49f1a9dd0e50e2638501e7a248e7e67c84bc0b 100644
+index cfa5499df1e50563d7cb8605fa56c9a28db1a9c0..51bad1d177a65c74372c04e93c5c06053258fabe 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -819,6 +819,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -825,6 +825,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
@@ -29,7 +29,7 @@ index 63af67101363522e55a9e473bfd893e70c38a0d8..7c49f1a9dd0e50e2638501e7a248e7e6
          if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
              // CraftBukkit start
              j = this.levelData.getDayTime() + 24000L;
-@@ -838,6 +839,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -844,6 +845,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  this.resetWeatherCycle();
              }
          }
@@ -37,7 +37,7 @@ index 63af67101363522e55a9e473bfd893e70c38a0d8..7c49f1a9dd0e50e2638501e7a248e7e6
  
          this.updateSkyBrightness();
          if (flag) {
-@@ -1172,6 +1174,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1178,6 +1180,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
  
      private void announceSleepStatus() {
@@ -46,10 +46,10 @@ index 63af67101363522e55a9e473bfd893e70c38a0d8..7c49f1a9dd0e50e2638501e7a248e7e6
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index f704e377094f170a05c809d9e83d82a2631f665e..e5f6119d09418907eee77d4bd8d08ed0a3b15b50 100644
+index d58f7a30342125a7938d4c34d9e9a1aa3950aeb1..7d2d1e174902dbfd774beb6c4128d294b78a0835 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1411,7 +1411,7 @@ public class ServerPlayer extends Player {
+@@ -1488,7 +1488,7 @@ public class ServerPlayer extends Player {
                  return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
              } else {
                  this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -58,7 +58,7 @@ index f704e377094f170a05c809d9e83d82a2631f665e..e5f6119d09418907eee77d4bd8d08ed0
                      return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
                  } else {
                      if (!this.isCreative()) {
-@@ -1461,7 +1461,7 @@ public class ServerPlayer extends Player {
+@@ -1538,7 +1538,7 @@ public class ServerPlayer extends Player {
                          CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                      });
  
@@ -67,7 +67,7 @@ index f704e377094f170a05c809d9e83d82a2631f665e..e5f6119d09418907eee77d4bd8d08ed0
                          this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                      }
  
-@@ -2447,7 +2447,7 @@ public class ServerPlayer extends Player {
+@@ -2539,7 +2539,7 @@ public class ServerPlayer extends Player {
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent
@@ -77,10 +77,10 @@ index f704e377094f170a05c809d9e83d82a2631f665e..e5f6119d09418907eee77d4bd8d08ed0
  
              this.respawnPosition = pos;
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 77edeb58633d83832567980e0e7482a04f3fed3b..7739157ce334221e450a80755173c73a4b6cf8e7 100644
+index b0e53c572bf318b3eb51f55c8d821b287c961f71..4cf17228d53c0ddb6a21f4a191980019e665ca68 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -262,7 +262,7 @@ public abstract class Player extends LivingEntity {
+@@ -274,7 +274,7 @@ public abstract class Player extends LivingEntity {
                  this.sleepCounter = 100;
              }
  
@@ -90,10 +90,10 @@ index 77edeb58633d83832567980e0e7482a04f3fed3b..7739157ce334221e450a80755173c73a
              }
          } else if (this.sleepCounter > 0) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index 3990fad7ee4d218e182fa322613ec991468de69b..84be9cf5f65fb9d9988061f83a7ff3805fec7018 100644
+index cdc2690b81dc938ae559cf98d34a0b467e1ebb5d..8086e9795b0cd5b6a93a9d3dc7dcc1e6f4b66337 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
-@@ -79,6 +79,30 @@ public class FoodData {
+@@ -84,6 +84,30 @@ public class FoodData {
  
          boolean flag = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
  

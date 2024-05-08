@@ -5,10 +5,10 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 33aed0712856d4e583ab109cfdaddbf73e944194..f75cdcc228c4c30074905298aaa88fb6576307e6 100644
+index 278a2f999a6e4d564582a4b2e103c24f5036774f..d84f248cb0ac053fe31c6f78c741f9e9f74d6c22 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -556,7 +556,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -552,7 +552,7 @@ public class WorldConfiguration extends ConfigurationPart {
      public KiocgConfig kiocgConfig;
  
      public class KiocgConfig extends ConfigurationPart {
@@ -18,10 +18,10 @@ index 33aed0712856d4e583ab109cfdaddbf73e944194..f75cdcc228c4c30074905298aaa88fb6
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 514efef6d4b99889c42c184b13aeb79f4386a174..7ce8fbafd46fa1f0c8fc4332d5cd1a382a58c3ea 100644
+index ad1fd0c01526cce26e4898279f915a0c4ee21723..a1e9ff0d1fca859cd34f01e3b62e59a1faba3fa3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -960,7 +960,15 @@ public class ServerPlayer extends Player {
+@@ -1037,7 +1037,15 @@ public class ServerPlayer extends Player {
          if (!keepInventory) {
              for (ItemStack item : this.getInventory().getContents()) {
                  if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item)) {

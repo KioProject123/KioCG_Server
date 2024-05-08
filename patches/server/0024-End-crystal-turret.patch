@@ -5,10 +5,10 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 6d9054003c80c17c33eb3420ed027364cd1958c0..062689d2070d64e35763b7791fe5a72026a699ec 100644
+index 8558e7e869e7afd1a438d5f2eddf507c3d339e30..7d672be62ba4238a6cfcb137aaa812d25f74c31d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -590,6 +590,11 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -586,6 +586,11 @@ public class WorldConfiguration extends ConfigurationPart {
              public int darkEnoughToSprint = 7;
              public boolean babyZombieJockey = true;
              public boolean zombiesSkinnedIntoSkeletons = true;
@@ -21,7 +21,7 @@ index 6d9054003c80c17c33eb3420ed027364cd1958c0..062689d2070d64e35763b7791fe5a720
  
          public boolean betterMobGriefingSetting = true;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..7b27c1030934370ce95dd5cab56efc1cd97c54fe 100644
+index d8e440e14b72dc48ae97244f1bed2c06abd997ab..ddd284e2d47bcbe1e258c6daf3a239112ba451f6 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
@@ -112,7 +112,7 @@ index 036640d49a5e891e9a0f767abe33f1f51d6d4cde..7b27c1030934370ce95dd5cab56efc1c
      }
  
      @Override
-@@ -103,6 +170,17 @@ public class EndCrystal extends Entity {
+@@ -100,6 +167,17 @@ public class EndCrystal extends Entity {
          }
          if (nbt.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = nbt.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
  

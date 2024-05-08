@@ -5,10 +5,10 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 16687f6047ff1c83b4b98d2305f9a9edc71d0833..f920ef816240e385cd22394202fe0ba2911b08e6 100644
+index ac062748d01010cb723eaaf2b0b87b68ea24b1fe..574da5bef98512fcb30144eeef84cc2239ce0025 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -591,6 +591,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -587,6 +587,8 @@ public class WorldConfiguration extends ConfigurationPart {
              public boolean babyZombieJockey = true;
              public boolean zombiesSkinnedIntoSkeletons = true;
          }
@@ -39,10 +39,10 @@ index a85885ee51df585fa11ae9f8fcd67ff2a71c5a18..a43b5d48ad26c5471a12da01beaddaaf
              this.mob.level().levelEvent(1021, this.doorPos, 0);
              this.mob.level().levelEvent(2001, this.doorPos, Block.getId(oldState)); // Paper - fix MC-263999
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Fox.java b/src/main/java/net/minecraft/world/entity/animal/Fox.java
-index f7a7810fdc2f74b79fa14470493485e4b74539ab..edb0c640b0e84a241ec7b1bd6f68004f801b3f57 100644
+index e705449496b1a06270ecbc13f4dce5357479845b..5f3d331447ec1945773ce6b335b1544bc0b3d7af 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Fox.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Fox.java
-@@ -1319,7 +1319,7 @@ public class Fox extends Animal implements VariantHolder<Fox.Type> {
+@@ -1303,7 +1303,7 @@ public class Fox extends Animal implements VariantHolder<Fox.Type> {
          }
  
          protected void onReachedTarget() {
@@ -52,10 +52,10 @@ index f7a7810fdc2f74b79fa14470493485e4b74539ab..edb0c640b0e84a241ec7b1bd6f68004f
  
                  if (iblockdata.is(Blocks.SWEET_BERRY_BUSH)) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Rabbit.java b/src/main/java/net/minecraft/world/entity/animal/Rabbit.java
-index cf4859814a60468f683e3afe285b4934d35e9704..4159f4dd8dd2120ce3747d683af483df856f2471 100644
+index b58300e114e2e27ac68d7a9489bc52b127c9bc17..012fac514d212d1508384dc43c60f837bfd6d631 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Rabbit.java
-@@ -549,7 +549,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
+@@ -546,7 +546,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
          @Override
          public boolean canUse() {
              if (this.nextStartTick <= 0) {
@@ -64,7 +64,7 @@ index cf4859814a60468f683e3afe285b4934d35e9704..4159f4dd8dd2120ce3747d683af483df
                      return false;
                  }
  
-@@ -579,6 +579,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
+@@ -576,6 +576,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
                      int i = (Integer) iblockdata.getValue(CarrotBlock.AGE);
  
                      if (i == 0) {
@@ -73,10 +73,10 @@ index cf4859814a60468f683e3afe285b4934d35e9704..4159f4dd8dd2120ce3747d683af483df
                          if (!CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockposition, iblockdata.getFluidState().createLegacyBlock())) { // Paper - fix wrong block state
                              return;
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Silverfish.java b/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
-index fcd5cc3ff8d4b38f4dea08f78723db3dac53ffde..cefeabe7c772fa546476876919fd7161f5b0c9fb 100644
+index 860e385fc83f9787dca92efe35d21fd69c4dd635..022c61ee568ac87d8ea5962d6dba2a21f38c852d 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
-@@ -191,6 +191,7 @@ public class Silverfish extends Monster {
+@@ -171,6 +171,7 @@ public class Silverfish extends Monster {
                                      world.destroyBlock(blockposition1, true, this.silverfish);
                                  } else {
                                      world.setBlock(blockposition1, ((InfestedBlock) block).hostStateByInfested(world.getBlockState(blockposition1)), 3);
@@ -84,7 +84,7 @@ index fcd5cc3ff8d4b38f4dea08f78723db3dac53ffde..cefeabe7c772fa546476876919fd7161
                                  }
  
                                  if (randomsource.nextBoolean()) {
-@@ -225,7 +226,7 @@ public class Silverfish extends Monster {
+@@ -205,7 +206,7 @@ public class Silverfish extends Monster {
              } else {
                  RandomSource randomsource = this.mob.getRandom();
  
@@ -94,10 +94,10 @@ index fcd5cc3ff8d4b38f4dea08f78723db3dac53ffde..cefeabe7c772fa546476876919fd7161
                      BlockPos blockposition = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
                      BlockState iblockdata = this.mob.level().getBlockState(blockposition);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index a9813da7f2b248f98f22e0ad2e7842915025ec12..730fd11f8ec541d16e8edada8b794d80451f6284 100644
+index a8ab486c7e11ec137da48174af6f1030dfd48056..0f5877e275d05301682f8b92199efa4761217c4a 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -400,7 +400,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+@@ -389,7 +389,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
  
      @Override
      public boolean wantsToPickUp(ItemStack stack) {
@@ -107,10 +107,10 @@ index a9813da7f2b248f98f22e0ad2e7842915025ec12..730fd11f8ec541d16e8edada8b794d80
  
      protected boolean canReplaceCurrentItem(ItemStack stack) {
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index 6e4c852c93f2418ea69e485ed3a10cbe3a6e3bd2..7b4122cf9ce5f1c17efa12162880cc285d50af97 100644
+index d59e33e7326489c6d55d316d0130f22235f4c63c..a1df2cc7988e4a20b25c61097e44a627ff58e134 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-@@ -110,7 +110,7 @@ public class FarmBlock extends Block {
+@@ -111,7 +111,7 @@ public class FarmBlock extends Block {
      @Override
      public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
          super.fallOn(world, state, pos, entity, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
@@ -120,10 +120,10 @@ index 6e4c852c93f2418ea69e485ed3a10cbe3a6e3bd2..7b4122cf9ce5f1c17efa12162880cc28
              org.bukkit.event.Cancellable cancellable;
              if (entity instanceof Player) {
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index b2c99ed1c7f6b30939f1daf62e518bb45b45cc20..06cae181414223456491abbef50dc63304131cec 100644
+index 66dabb34eb4dfdd526ee1800d04aeda0cc99fcda..d4f21bd8da235f33e5b5d5fb61637310a80da0d7 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -68,7 +68,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+@@ -69,7 +69,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
          if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(world, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
          if (!world.isClientSide && entity.isOnFire() && this.isEntityInsideContent(state, pos, entity)) {
              // CraftBukkit start
@@ -133,7 +133,7 @@ index b2c99ed1c7f6b30939f1daf62e518bb45b45cc20..06cae181414223456491abbef50dc633
                      return;
                  }
 diff --git a/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java b/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java
-index 0dfcac8cfcbb09fe04486bff60119f7985714454..f506bbb3851b07f082efb988973a9a2757d59a40 100644
+index a6e6545402904141ffc6218a0158b0e9c67217c8..4f34115e3b760d6138a6fef9672ae83af39a95d1 100644
 --- a/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java
 @@ -80,7 +80,7 @@ public class PowderSnowBlock extends Block implements BucketPickup {
@@ -146,10 +146,10 @@ index 0dfcac8cfcbb09fe04486bff60119f7985714454..f506bbb3851b07f082efb988973a9a27
                  }
                  // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java b/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java
-index b4646e26965e0f1f26c5019e7c6a13fdf22bdb47..d9459eb0a799671a17ddaefb23f34fff5519c751 100644
+index a6f408e56fa6c9de82fd93555fe21e1b11ce1022..1f4f7e8a15879da2082bcfa37481833cf54c8dad 100644
 --- a/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java
-@@ -202,6 +202,6 @@ public class TurtleEggBlock extends Block {
+@@ -203,6 +203,6 @@ public class TurtleEggBlock extends Block {
      }
  
      private boolean canDestroyEgg(Level world, Entity entity) {

@@ -5,7 +5,7 @@ Subject: [PATCH] Optimize player data writing
 
 
 diff --git a/src/main/java/net/minecraft/nbt/NbtIo.java b/src/main/java/net/minecraft/nbt/NbtIo.java
-index c2044d2e8ce2d4747aa73ba90e5b975b1b7d2c19..dfebd8274e1b3832d2f8098488e4ffac61a97472 100644
+index 9f659af04a5362ae3645d072caa090682760dc9f..7cba4d42ffa58ad15aca272687afaeaf865f4c90 100644
 --- a/src/main/java/net/minecraft/nbt/NbtIo.java
 +++ b/src/main/java/net/minecraft/nbt/NbtIo.java
 @@ -26,7 +26,7 @@ import net.minecraft.util.FastBufferedInputStream;

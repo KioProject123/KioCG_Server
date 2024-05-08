@@ -5,10 +5,10 @@ Subject: [PATCH] World data synchronization
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 502bdc726b7890b00ee36871d905dea44e8719e3..63af67101363522e55a9e473bfd893e70c38a0d8 100644
+index 0981d440d0dbfe4df668d1f3f1b5706a93bc4434..cfa5499df1e50563d7cb8605fa56c9a28db1a9c0 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1471,6 +1471,13 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1477,6 +1477,13 @@ public class ServerLevel extends Level implements WorldGenLevel {
          }
      }
  
@@ -23,10 +23,10 @@ index 502bdc726b7890b00ee36871d905dea44e8719e3..63af67101363522e55a9e473bfd893e7
      public boolean mayInteract(Player player, BlockPos pos) {
          return !this.server.isUnderSpawnProtection(this, pos, player) && this.getWorldBorder().isWithinBounds(pos);
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index ca89d1593bf1b46c79a882db528cbca1359dc9d4..4f8539b827691cb8cd7a78cd9f24ec7b78c7389f 100644
+index b4ef3ad2c17168085372f1fe46809f02d9dfe74a..ed43bae7d06c816c284cfac82c5ad4dd30492828 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -1583,6 +1583,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1579,6 +1579,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          return this.levelData.getDayTime();
      }
  
@@ -40,10 +40,10 @@ index ca89d1593bf1b46c79a882db528cbca1359dc9d4..4f8539b827691cb8cd7a78cd9f24ec7b
          return true;
      }
 diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
-index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d6706329ae6e 100644
+index efd0bcfebb3b4f63018d4e20a6a89f79192898d1..15fe9e6b34cf9ed4b88547261220104bc6499c3b 100644
 --- a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -70,6 +70,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -68,6 +68,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
      private float spawnAngle;
      private long gameTime;
      private long dayTime;
@@ -51,7 +51,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
      @Nullable
      private final CompoundTag loadedPlayerTag;
      private final int version;
-@@ -115,6 +116,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -111,6 +112,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
          this.spawnAngle = spawnAngle;
          this.gameTime = time;
          this.dayTime = timeOfDay;
@@ -59,7 +59,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
          this.version = version;
          this.clearWeatherTime = clearWeatherTime;
          this.rainTime = rainTime;
-@@ -299,9 +301,23 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -285,9 +287,23 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
  
      @Override
      public long getDayTime() {
@@ -83,7 +83,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
      @Nullable
      @Override
      public CompoundTag getLoadedPlayerTag() {
-@@ -336,6 +352,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -302,6 +318,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
      @Override
      public void setDayTime(long timeOfDay) {
          this.dayTime = timeOfDay;
@@ -91,7 +91,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
      }
  
      @Override
-@@ -358,6 +375,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -322,6 +339,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
  
      @Override
      public int getClearWeatherTime() {
@@ -103,7 +103,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
          return this.clearWeatherTime;
      }
  
-@@ -368,6 +390,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -332,6 +354,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
  
      @Override
      public boolean isThundering() {
@@ -115,7 +115,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
          return this.thundering;
      }
  
-@@ -397,6 +424,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -361,6 +388,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
  
      @Override
      public int getThunderTime() {
@@ -127,7 +127,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
          return this.thunderTime;
      }
  
-@@ -407,6 +439,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -371,6 +403,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
  
      @Override
      public boolean isRaining() {
@@ -139,7 +139,7 @@ index 59ba982dc96ce47e47399514e8f74d2b972dbe1e..3033a78b4ecbad5fd9b14c07f3d7d670
          return this.raining;
      }
  
-@@ -437,6 +474,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -401,6 +438,11 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
  
      @Override
      public int getRainTime() {

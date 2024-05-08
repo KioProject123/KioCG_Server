@@ -5,10 +5,10 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index de976f9491ccb01cb145b409cf470838df6a1cce..f39bc5c132a0a22184be6f7a94b8a4c2ba05d835 100644
+index 7b006a8d6f33d1f1059df35b767b88900cba7e09..0f612bac15fe178bc3b3b0bf4deb91f0010bd3aa 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -415,6 +415,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -417,6 +417,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public int fixedCumulativeCost = 4;
              public boolean anvilRenameInSurvival = false;
          }
@@ -32,10 +32,10 @@ index 658e63ebde81dc14c8ab5850fb246dc0aab25dea..59b1fc323174dcd9c5d3b98724f6eec5
      public static final TicketType<Long> CHUNK_LOAD = create("chunk_load", Long::compareTo);
      public static final TicketType<Long> STATUS_UPGRADE = create("status_upgrade", Long::compareTo);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 9bcdc90664b7c416dd34075993c5c5f823fd1c84..bfa3cf01c2a6b0fd9af9a2dd5b2cbd80155793a1 100644
+index be1670770a5cee27eec9b17c15cef864302c04ea..55079b9fd52760ef8ffd4dc212d97fc7be013cfb 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2322,7 +2322,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2376,7 +2376,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damagesource, f);
@@ -53,10 +53,10 @@ index 9bcdc90664b7c416dd34075993c5c5f823fd1c84..bfa3cf01c2a6b0fd9af9a2dd5b2cbd80
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index cf5cd0e49c4966e7b636a8ad4dec7a12806c6a4d..1828e1f4e46fefb8df79eb5da9af1cfb7895075c 100644
+index 45284bb0f081377bc5913876c6877a424285c0bb..85bc846db2bec56ec1ba44e378bde929a252ee0c 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-@@ -212,11 +212,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -213,11 +213,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
@@ -121,10 +121,10 @@ index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3
                          } else if (entityliving.level() != entityinsentient.level()) {
                              reason = EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..f7db8157ba6c5ab7dcffb126d72de2ac0155976f 100644
+index edd29c2f4d0151d512618115a8fb4b7423171491..7441456106463f18218ccfbd2c61b99461ff4c25 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-@@ -35,6 +35,7 @@ public class FollowOwnerGoal extends Goal {
+@@ -36,6 +36,7 @@ public class FollowOwnerGoal extends Goal {
      private final float startDistance;
      private float oldWaterCost;
      private final boolean canFly;
@@ -132,7 +132,7 @@ index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..f7db8157ba6c5ab7dcffb126d72de2ac
  
      public FollowOwnerGoal(TamableAnimal tameable, double speed, float minDistance, float maxDistance, boolean leavesAllowed) {
          this.tamable = tameable;
-@@ -61,13 +62,25 @@ public class FollowOwnerGoal extends Goal {
+@@ -62,13 +63,25 @@ public class FollowOwnerGoal extends Goal {
          } else if (this.unableToMove()) {
              return false;
          } else if (this.tamable.distanceToSqr((Entity) entityliving) < (double) (this.startDistance * this.startDistance)) {
@@ -158,7 +158,7 @@ index c0da573e3818a1dd2c1ef5a61c7cb34934b0a252..f7db8157ba6c5ab7dcffb126d72de2ac
      @Override
      public boolean canContinueToUse() {
          return this.navigation.isDone() ? false : (this.unableToMove() ? false : this.tamable.distanceToSqr((Entity) this.owner) > (double) (this.stopDistance * this.stopDistance));
-@@ -93,10 +106,11 @@ public class FollowOwnerGoal extends Goal {
+@@ -94,10 +107,11 @@ public class FollowOwnerGoal extends Goal {
  
      @Override
      public void tick() {
@@ -194,10 +194,10 @@ index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c
          } else {
              return !this.followingTargetEvenIfNotSeen
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
-index fee8d45103a12e9213f62ae030073611fe77e0af..acee05e0de568eab0b0b5a2c69ae41691ade5eb9 100644
+index cdd006fef3c94205fe8378bfa712aae4faacad04..b2449c9c03b211b4c367f94b8744400f41a5a827 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
-@@ -44,7 +44,7 @@ public class RangedCrossbowAttackGoal<T extends Monster & RangedAttackMob & Cros
+@@ -46,7 +46,7 @@ public class RangedCrossbowAttackGoal<T extends Monster & RangedAttackMob & Cros
      }
  
      private boolean isValidTarget() {
@@ -207,12 +207,12 @@ index fee8d45103a12e9213f62ae030073611fe77e0af..acee05e0de568eab0b0b5a2c69ae4169
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-index 327f00736ede0c58d6078433235cf798ea59ba79..0c987c5896a9c507bf228c4ba03eb336adde7fdb 100644
+index b102a370f5fc1f80c199a4e4d1f6ab9a9480fab3..4d83352e5c100864bf9e881e14ee35b7b06f8eb2 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-@@ -106,7 +106,14 @@ public class Cat extends TamableAnimal implements VariantHolder<CatVariant> {
-     protected void registerGoals() {
-         this.temptGoal = new Cat.CatTemptGoal(this, 0.6D, Cat.TEMPT_INGREDIENT, true);
+@@ -114,7 +114,14 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+             return itemstack.is(ItemTags.CAT_FOOD);
+         }, true);
          this.goalSelector.addGoal(1, new FloatGoal(this));
 -        this.goalSelector.addGoal(1, new PanicGoal(this, 1.5D));
 +        // KioCG start
@@ -226,7 +226,7 @@ index 327f00736ede0c58d6078433235cf798ea59ba79..0c987c5896a9c507bf228c4ba03eb336
          this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
          this.goalSelector.addGoal(3, new Cat.CatRelaxOnOwnerGoal(this));
          this.goalSelector.addGoal(4, this.temptGoal);
-@@ -270,6 +277,16 @@ public class Cat extends TamableAnimal implements VariantHolder<CatVariant> {
+@@ -279,6 +286,16 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
          }
  
          this.handleLieDown();
@@ -243,28 +243,30 @@ index 327f00736ede0c58d6078433235cf798ea59ba79..0c987c5896a9c507bf228c4ba03eb336
      }
  
      private void handleLieDown() {
-@@ -396,6 +413,16 @@ public class Cat extends TamableAnimal implements VariantHolder<CatVariant> {
-                             this.usePlayerItem(player, hand, itemstack);
-                             this.heal((float) item.getFoodProperties().getNutrition(), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // Paper - Add missing regain reason
-                             return InteractionResult.CONSUME;
-+                        // KioCG start
-+                        } else if (itemstack.is(Items.POISONOUS_POTATO)) {
-+                            this.playSound(SoundEvents.CAT_EAT, 1.0F, 1.0F);
-+                            super.usePlayerItem(player, hand, itemstack);
-+
-+                            this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
-+                            this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
-+
-+                            return InteractionResult.CONSUME;
-+                        // KioCG end
-                         }
+@@ -419,6 +436,18 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+                     }
  
-                         enuminteractionresult = super.mobInteract(player, hand);
+                     return InteractionResult.sidedSuccess(this.level().isClientSide());
++                    // KioCG start
++                } else if (itemstack.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) {
++                    this.playSound(SoundEvents.CAT_EAT, 1.0F, 1.0F);
++                    super.usePlayerItem(player, hand, itemstack);
++
++                    this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++                    if (player.isCreative() || !this.isInvulnerable()) {
++                        this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
++                    }
++
++                    return InteractionResult.sidedSuccess(this.level().isClientSide());
++                    // KioCG end
+                 }
+ 
+                 enuminteractionresult = super.mobInteract(player, hand);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index 0fd04f96ed697ddf0fcf93c7bd258e5e2ebcf659..b147863410813da9469ce5193dea834c5891456a 100644
+index 9207b5830b66d26e6277664dcebc5beb30841fc5..1fde2e7e91ed41356fc93fe0356ce0f9d041f01b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-@@ -155,7 +155,14 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -148,7 +148,14 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
  
      @Override
      protected void registerGoals() {
@@ -280,7 +282,7 @@ index 0fd04f96ed697ddf0fcf93c7bd258e5e2ebcf659..b147863410813da9469ce5193dea834c
          this.goalSelector.addGoal(0, new FloatGoal(this));
          this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
          this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-@@ -213,6 +220,21 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -201,6 +208,21 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
          this.calculateFlapping();
      }
  
@@ -302,20 +304,20 @@ index 0fd04f96ed697ddf0fcf93c7bd258e5e2ebcf659..b147863410813da9469ce5193dea834c
      @Override
      public void setRecordPlayingNearby(BlockPos songPosition, boolean playing) {
          this.jukebox = songPosition;
-@@ -286,7 +308,7 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -271,7 +293,7 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
              }
  
              return InteractionResult.sidedSuccess(this.level().isClientSide);
--        } else if (itemstack.is(Parrot.POISONOUS_FOOD)) {
-+        } else if (itemstack.is(Parrot.POISONOUS_FOOD) || itemstack.is(Items.POISONOUS_POTATO)) { // KioCG
-             if (!player.getAbilities().instabuild) {
-                 itemstack.shrink(1);
-             }
+-        } else if (!itemstack.is(ItemTags.PARROT_POISONOUS_FOOD)) {
++        } else if (!itemstack.is(ItemTags.PARROT_POISONOUS_FOOD) && !itemstack.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) { // KioCG
+             if (!this.isFlying() && this.isTame() && this.isOwnedBy(player)) {
+                 if (!this.level().isClientSide) {
+                     this.setOrderedToSit(!this.isOrderedToSit());
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index efef15fe55ae7126bd01010219cb69d5eaa87469..ffa832c6813299a730e46560467c315c14e37cd1 100644
+index 5dfa2184aaa2955e54456e6f9f78507daae1e385..a422de00d5a2a2d155ee7a0f46cb0d27859bfebc 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-@@ -266,6 +266,18 @@ public class Wolf extends TamableAnimal implements NeutralMob {
+@@ -324,6 +324,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
                  }
              }
  
@@ -334,25 +336,24 @@ index efef15fe55ae7126bd01010219cb69d5eaa87469..ffa832c6813299a730e46560467c315c
          }
      }
  
-@@ -408,6 +420,17 @@ public class Wolf extends TamableAnimal implements NeutralMob {
+@@ -460,6 +472,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
-                         return super.mobInteract(player, hand);
-                     }
+                 this.heal(2.0F * f, EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
+                 return InteractionResult.sidedSuccess(this.level().isClientSide());
 +                // KioCG start
-+                } else if (itemstack.is(Items.POISONOUS_POTATO)) {
-+                    if (!player.getAbilities().instabuild) {
-+                        itemstack.shrink(1);
-+                    }
-+
-+                    this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++            } else if (itemstack.is(Items.POISONOUS_POTATO)) {
++                itemstack.consume(1, player);
++                this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++                if (player.isCreative() || !this.isInvulnerable()) {
 +                    this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
++                }
 +
-+                    return InteractionResult.SUCCESS;
++                return InteractionResult.sidedSuccess(this.level().isClientSide());
 +                // KioCG end
-                 }
- 
-                 InteractionResult enuminteractionresult = super.mobInteract(player, hand);
-@@ -590,6 +613,7 @@ public class Wolf extends TamableAnimal implements NeutralMob {
+             } else {
+                 if (item instanceof DyeItem) {
+                     DyeItem itemdye = (DyeItem) item;
+@@ -740,6 +762,7 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
          @Override
          protected boolean shouldPanic() {

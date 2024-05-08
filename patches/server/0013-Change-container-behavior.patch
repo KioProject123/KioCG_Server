@@ -5,75 +5,76 @@ Subject: [PATCH] Change container behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index ce95216805c62c4be62c6b214127fc147263b898..ec6c450cd889cffccedc14ec29e7b1e568100075 100644
+index 81511fca9b07bfea4e50793701f5c2f7bb3f5af2..724abbd378773226e0ba5863653066819bb6ec70 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-@@ -105,7 +105,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -107,7 +107,7 @@ public class AnvilMenu extends ItemCombinerMenu {
          this.access.execute((world, blockposition) -> {
              BlockState iblockdata = world.getBlockState(blockposition);
  
--            if (!player.getAbilities().instabuild && iblockdata.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) {
-+            if (false && !player.getAbilities().instabuild && iblockdata.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) { // KioCG - 铁砧无法损坏
+-            if (!player.hasInfiniteMaterials() && iblockdata.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) {
++            if (false && !player.hasInfiniteMaterials() && iblockdata.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) { // KioCG - 铁砧无法损坏
                  BlockState iblockdata1 = AnvilBlock.damage(iblockdata);
  
                  // Paper start - AnvilDamageEvent
 diff --git a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
-index 96197185d1cba4a77bd6afd0e57615b45d4dfc85..71b6aa60e9b89e85032792c279ba4a361918c5e5 100644
+index ca01f3344005b295c7ae98f6d5b03f79513b12a4..3032aeed30a75c3330771c9c5732881a42d6edb4 100644
 --- a/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
 +++ b/src/main/java/net/minecraft/world/item/alchemy/PotionBrewing.java
-@@ -66,7 +66,7 @@ public class PotionBrewing {
+@@ -77,7 +77,7 @@ public class PotionBrewing {
              return true;
          }
          // Paper end - Custom Potion Mixes
--        return ALLOWED_CONTAINER.test(input) && (hasContainerMix(input, ingredient) || hasPotionMix(input, ingredient));
-+        return ALLOWED_CONTAINER.test(input) && (true || hasContainerMix(input, ingredient) || hasPotionMix(input, ingredient)); // KioCG - 自定义失败的酿造
+-        return this.isContainer(input) && (this.hasContainerMix(input, ingredient) || this.hasPotionMix(input, ingredient));
++        return this.isContainer(input) && (true || this.hasContainerMix(input, ingredient) || this.hasPotionMix(input, ingredient)); // KioCG - 自定义失败的酿造
      }
  
-     protected static boolean hasContainerMix(ItemStack input, ItemStack ingredient) {
-@@ -116,6 +116,8 @@ public class PotionBrewing {
-                     return PotionUtils.setPotion(new ItemStack(item), mix2.to);
+     public boolean hasContainerMix(ItemStack input, ItemStack ingredient) {
+@@ -132,6 +132,10 @@ public class PotionBrewing {
+                     }
                  }
-             }
-+
-+            return PotionUtils.setPotion(new ItemStack(item), Potions.EMPTY); // KioCG - 自定义失败的酿造
-         }
  
-         return input;
-@@ -199,7 +201,7 @@ public class PotionBrewing {
-         addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
-         addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
-         addMix(Potions.SLOWNESS, Items.GLOWSTONE_DUST, Potions.STRONG_SLOWNESS);
--        addMix(Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
-+        addMix(Potions.AWKWARD, Items.SCUTE, Potions.TURTLE_MASTER); // KioCG - 海龟壳改为鳞甲
-         addMix(Potions.TURTLE_MASTER, Items.REDSTONE, Potions.LONG_TURTLE_MASTER);
-         addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
-         addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
++                // KioCG start - 自定义失败的酿造
++                input = new ItemStack(input.getItem());
++                input.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
++                // KioCG end - 自定义失败的酿造
+                 return input;
+             }
+         }
+@@ -170,7 +174,7 @@ public class PotionBrewing {
+         builder.addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
+         builder.addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
+         builder.addMix(Potions.SLOWNESS, Items.GLOWSTONE_DUST, Potions.STRONG_SLOWNESS);
+-        builder.addMix(Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
++        builder.addMix(Potions.AWKWARD, Items.TURTLE_SCUTE, Potions.TURTLE_MASTER); // KioCG - 海龟壳改为海龟鳞甲
+         builder.addMix(Potions.TURTLE_MASTER, Items.REDSTONE, Potions.LONG_TURTLE_MASTER);
+         builder.addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
+         builder.addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf9e734c2f 100644
+index 9b7763342469e293772fcca2f465978e0cd5f7ca..c663f6b2f0f9bcfe62352c5f1baafeaf35bd01b0 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -143,6 +143,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
-         // Paper end - cache burn durations
-         Map<Item, Integer> map = Maps.newLinkedHashMap();
+@@ -149,6 +149,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+         } else {
+             Map<Item, Integer> map1 = Maps.newLinkedHashMap();
  
-+        // KioCG start
-+        /*
-         AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.LAVA_BUCKET, 20000);
-         AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.COAL_BLOCK, 16000);
-         AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.BLAZE_ROD, 2400);
-@@ -202,6 +204,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
-         AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.AZALEA, 100);
-         AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.FLOWERING_AZALEA, 100);
-         AbstractFurnaceBlockEntity.add(map, (ItemLike) Blocks.MANGROVE_ROOTS, 300);
-+        */
-+        AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.COAL, 200);
-+        AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.CHARCOAL, 200);
-+        // KioCG end
-+
-         // Paper start - cache burn durations
-         cachedBurnDurations = com.google.common.collect.ImmutableMap.copyOf(map);
-         return cachedBurnDurations;
-@@ -366,7 +373,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
++            // KioCG start
++            /*
+             AbstractFurnaceBlockEntity.add(map1, (ItemLike) Items.LAVA_BUCKET, 20000);
+             AbstractFurnaceBlockEntity.add(map1, (ItemLike) Blocks.COAL_BLOCK, 16000);
+             AbstractFurnaceBlockEntity.add(map1, (ItemLike) Items.BLAZE_ROD, 2400);
+@@ -208,6 +210,10 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+             AbstractFurnaceBlockEntity.add(map1, (ItemLike) Blocks.AZALEA, 100);
+             AbstractFurnaceBlockEntity.add(map1, (ItemLike) Blocks.FLOWERING_AZALEA, 100);
+             AbstractFurnaceBlockEntity.add(map1, (ItemLike) Blocks.MANGROVE_ROOTS, 300);
++            */
++            AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.COAL, 200);
++            AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.CHARCOAL, 200);
++            // KioCG end
+             AbstractFurnaceBlockEntity.fuelCache = map1;
+             return map1;
+         }
+@@ -370,7 +376,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
                  blockEntity.litTime = furnaceBurnEvent.getBurnTime();
                  blockEntity.litDuration = blockEntity.litTime;
@@ -82,7 +83,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf
                      // CraftBukkit end
                      flag1 = true;
                      if (flag3 && furnaceBurnEvent.willConsumeFuel()) { // Paper - add consumeFuel to FurnaceBurnEvent
-@@ -399,8 +406,31 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -403,8 +409,31 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
                  if (blockEntity.cookingProgress >= blockEntity.cookingTotalTime) { // Paper - cook speed multiplier API
                      blockEntity.cookingProgress = 0;
                      blockEntity.cookingTotalTime = AbstractFurnaceBlockEntity.getTotalCookTime(world, blockEntity.recipeType, blockEntity, blockEntity.cookSpeedMultiplier); // Paper - cook speed multiplier API
@@ -115,7 +116,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf
                      }
  
                      flag1 = true;
-@@ -466,6 +496,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -470,6 +499,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              itemstack1 = CraftItemStack.asNMSCopy(result);
  
              if (!itemstack1.isEmpty()) {
@@ -127,7 +128,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf
                  if (itemstack2.isEmpty()) {
                      nonnulllist.set(2, itemstack1.copy());
                  } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
-@@ -485,10 +520,13 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -489,10 +523,13 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              // CraftBukkit end
  
              if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !((ItemStack) nonnulllist.get(1)).isEmpty() && ((ItemStack) nonnulllist.get(1)).is(Items.BUCKET)) {
@@ -143,7 +144,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf
              return true;
          } else {
              return false;
-@@ -509,6 +547,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -513,6 +550,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
      public static int getTotalCookTime(@Nullable Level world, RecipeType<? extends AbstractCookingRecipe> recipeType, AbstractFurnaceBlockEntity furnace, double cookSpeedMultiplier) {
          /* Scale the recipe's cooking time to the current cookSpeedMultiplier */
          int cookTime = world != null ? furnace.quickCheck.getRecipeFor(furnace, world).map(holder -> holder.value().getCookingTime()).orElse(200) : (net.minecraft.server.MinecraftServer.getServer().getRecipeManager().getRecipeFor(recipeType, furnace, world /* passing a null level here is safe. world is only used for map extending recipes which won't happen here */).map(holder -> holder.value().getCookingTime()).orElse(200));
@@ -151,7 +152,7 @@ index 80e0b122ebdc7480444f5b84abe2070e2a4b1aba..c580bb7f1a1a9fc0d0b9dc8adcebc0bf
          return (int) Math.ceil (cookTime / cookSpeedMultiplier);
          // Paper end - cook speed multiplier API
      }
-@@ -519,6 +558,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -523,6 +561,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
      @Override
      public int[] getSlotsForFace(Direction side) {
@@ -181,10 +182,10 @@ index fb4f57b2ed17ff9b4853e1ba2aac7a002989e5c8..a394e06d24cd99f672f762f75260c743
      @Override
      protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a5d462312 100644
+index 493886ebd51fa7a79c51dbea08763dfb5b487d02..beb3ba404811b310349be20db6539471c792ee99 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -88,7 +88,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -86,7 +86,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      public BrewingStandBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.BREWING_STAND, pos, state);
@@ -193,7 +194,7 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a
          this.dataAccess = new ContainerData() {
              @Override
              public int get(int index) {
-@@ -153,6 +153,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -150,6 +150,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          if (blockEntity.brewTime <= 0 && !blockEntity.shouldTick) return; else blockEntity.shouldTick = false; // KioCG - 优化未燃烧的tick
          ItemStack itemstack = (ItemStack) blockEntity.items.get(4);
  
@@ -201,7 +202,7 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a
          if (blockEntity.fuel <= 0 && itemstack.is(Items.BLAZE_POWDER)) {
              // CraftBukkit start
              BrewingStandFuelEvent event = new BrewingStandFuelEvent(CraftBlock.at(world, pos), CraftItemStack.asCraftMirror(itemstack), 20);
-@@ -279,9 +280,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -275,9 +276,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          }
          // CraftBukkit end
  
@@ -224,7 +225,7 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a
                  nonnulllist.set(i, CraftItemStack.asNMSCopy(brewResults.get(i)));
              } else {
                  nonnulllist.set(i, ItemStack.EMPTY);
-@@ -289,21 +303,41 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -285,21 +299,41 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
              // CraftBukkit end
          }
  
@@ -267,9 +268,9 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a
 +    // KioCG end
 +
      @Override
-     public void load(CompoundTag nbt) {
-         super.load(nbt);
-@@ -358,6 +392,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+         super.loadAdditional(nbt, registryLookup);
+@@ -338,6 +372,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      @Override
      public int[] getSlotsForFace(Direction side) {
@@ -278,10 +279,10 @@ index 31bbaf4f7f3110695fcae96029495363756c924d..8ce054d9005cabff01c483d04e4be96a
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index 0c70786e8e5ca5c2b6c69914ce350ff06d3ce437..0e8a22684932cc1e181508ea68c48147339e03d4 100644
+index e2fd8a5e729ba3cb25d7e9307d4b112addc963df..17ebbd48feff3fc9201ef76cb75cbf41c11b4005 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -74,6 +74,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -79,6 +79,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                          return ((CampfireCookingRecipe) recipeholder.value()).assemble(inventorysubcontainer, world.registryAccess());
                      }).orElse(itemstack);
  
@@ -294,7 +295,7 @@ index 0c70786e8e5ca5c2b6c69914ce350ff06d3ce437..0e8a22684932cc1e181508ea68c48147
                      if (itemstack1.isItemEnabled(world.enabledFeatures())) {
                          // CraftBukkit start - fire BlockCookEvent
                          CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
-@@ -97,6 +103,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -102,6 +108,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                          result = blockCookEvent.getResult();
                          itemstack1 = CraftItemStack.asNMSCopy(result);
                          // CraftBukkit end
@@ -303,7 +304,7 @@ index 0c70786e8e5ca5c2b6c69914ce350ff06d3ce437..0e8a22684932cc1e181508ea68c48147
                          // Paper start - Fix item locations dropped from campfires
                          double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
                          while (!itemstack1.isEmpty()) {
-@@ -105,7 +113,16 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -110,7 +118,16 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                              world.addFreshEntity(droppedItem);
                          }
                          // Paper end - Fix item locations dropped from campfires
@@ -319,7 +320,7 @@ index 0c70786e8e5ca5c2b6c69914ce350ff06d3ce437..0e8a22684932cc1e181508ea68c48147
 +                        }
 +                        // KioCG end
                          world.sendBlockUpdated(pos, state, state, 3);
-                         world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+                         world.gameEvent((Holder) GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/SmokerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
 index 7d9548f89fda9f4ba203d95d6e64826e9a697013..ceb8f3c4edb7ce331939b31d8d81c4ec4426cdd4 100644

@@ -5,7 +5,7 @@ Subject: [PATCH] Auto discard rider display entity
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Display.java b/src/main/java/net/minecraft/world/entity/Display.java
-index bba45aa7ba4fa578344ec2b9dfa552097770a59f..f93cf7a056f3172720f30de0391920b875c0b9c6 100644
+index a658943669cdfd49f66ba713505d11b33306ed86..0596375a5a4a25982a398f6d6c1d2a3324544fce 100644
 --- a/src/main/java/net/minecraft/world/entity/Display.java
 +++ b/src/main/java/net/minecraft/world/entity/Display.java
 @@ -97,6 +97,7 @@ public abstract class Display extends Entity {
@@ -43,9 +43,9 @@ index bba45aa7ba4fa578344ec2b9dfa552097770a59f..f93cf7a056f3172720f30de0391920b8
      }
  
      public void setTransformation(Transformation transformation) {
-@@ -295,6 +309,8 @@ public abstract class Display extends Entity {
+@@ -291,6 +305,8 @@ public abstract class Display extends Entity {
          if (brightness != null) {
-             Brightness.CODEC.encodeStart(NbtOps.INSTANCE, brightness).result().ifPresent(brightnessx -> nbt.put("brightness", brightnessx));
+             Brightness.CODEC.encodeStart(NbtOps.INSTANCE, brightness).ifSuccess(brightnessx -> nbt.put("brightness", brightnessx));
          }
 +
 +        nbt.putInt("KioCG.RiderPriority", this.riderPriority); // KioCG
@@ -53,10 +53,10 @@ index bba45aa7ba4fa578344ec2b9dfa552097770a59f..f93cf7a056f3172720f30de0391920b8
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index ab187003b71afa0f08e0da2f9cb9b8a42128f4ee..58ce2776d2fd454e91a911c1a2aba6759e209797 100644
+index 47eb0f214b00860ea89f80e675e778e41662c588..e95e9a8ec639b3a75d8ebff706a448d13c76217b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4877,6 +4877,42 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4936,6 +4936,42 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.setRot(f, f1);
      }
  

@@ -5,10 +5,10 @@ Subject: [PATCH] Player in structure API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index b3781efbd3edcf102fe1bda5d6149915dc1127c6..514efef6d4b99889c42c184b13aeb79f4386a174 100644
+index 8437316888c6056060a2780652147590b6fe7443..ad1fd0c01526cce26e4898279f915a0c4ee21723 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -280,6 +280,7 @@ public class ServerPlayer extends Player {
+@@ -297,6 +297,7 @@ public class ServerPlayer extends Player {
      public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
      public com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
      public @Nullable String clientBrandName = null; // Paper - Brand support
@@ -16,7 +16,7 @@ index b3781efbd3edcf102fe1bda5d6149915dc1127c6..514efef6d4b99889c42c184b13aeb79f
      public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
  
      // Paper start - replace player chunk loader
-@@ -832,6 +833,15 @@ public class ServerPlayer extends Player {
+@@ -906,6 +907,15 @@ public class ServerPlayer extends Player {
  
              if (this.tickCount % 20 == 0) {
                  CriteriaTriggers.LOCATION.trigger(this);
@@ -33,10 +33,10 @@ index b3781efbd3edcf102fe1bda5d6149915dc1127c6..514efef6d4b99889c42c184b13aeb79f
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
 diff --git a/src/main/java/net/minecraft/world/level/StructureManager.java b/src/main/java/net/minecraft/world/level/StructureManager.java
-index 07eb481380e8fd4e492f36342ba633579c1b624e..8a5d44ea079111a5fa046db3de21354c3e9bf884 100644
+index 54972cce2314eff774250101df43a9b7074e9604..1189beb9351a12dc0a48fd6b8b66151a20982e77 100644
 --- a/src/main/java/net/minecraft/world/level/StructureManager.java
 +++ b/src/main/java/net/minecraft/world/level/StructureManager.java
-@@ -159,6 +159,41 @@ public class StructureManager {
+@@ -169,6 +169,41 @@ public class StructureManager {
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).hasAnyStructureReferences();
      }
  
@@ -79,10 +79,10 @@ index 07eb481380e8fd4e492f36342ba633579c1b624e..8a5d44ea079111a5fa046db3de21354c
          SectionPos sectionPos = SectionPos.of(pos);
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 44f4665db613c558078df5bb49106e4ca5679dfe..746997056bb124b276853dc5de76e0618f86c9b3 100644
+index 5f896948d158651cd9837364759dbfbcce6b7d21..b55862874ff84f8dcd99159064b93a107ab9104a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3338,6 +3338,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3404,6 +3404,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

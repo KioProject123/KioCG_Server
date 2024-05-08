@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 93abcc1740e9ff05b4cdf4465a3c676b4176a668..16687f6047ff1c83b4b98d2305f9a9edc71d0833 100644
+index f3285458199003aacec61dae0d4eeec6793231a8..ac062748d01010cb723eaaf2b0b87b68ea24b1fe 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -583,6 +583,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -579,6 +579,14 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
@@ -56,10 +56,10 @@ index 759839e912c54598b257ad738481364940f88a18..15ebe8467ba5af964b94e2561a90ae80
              return false;
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Spider.java b/src/main/java/net/minecraft/world/entity/monster/Spider.java
-index 7618364e5373fe17cfe45a5a4ee9ab25e591581c..8ef8e64972fe7361dbf37484c24fc2f9037ad166 100644
+index fa0316e9d2a4cf213982994dc8bf310299cca984..e9f0961558ea4f7a86395376099a4ebef50d8e95 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Spider.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Spider.java
-@@ -207,7 +207,7 @@ public class Spider extends Monster {
+@@ -192,7 +192,7 @@ public class Spider extends Monster {
  
          @Override
          public boolean canUse() {
@@ -69,10 +69,10 @@ index 7618364e5373fe17cfe45a5a4ee9ab25e591581c..8ef8e64972fe7361dbf37484c24fc2f9
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..dd128ed095ecfe6612d284a0d32c1c64fb2284c3 100644
+index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..c3d7525bde4f72f98b0a62fccb0d8bfc215a40f0 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -116,6 +116,16 @@ public class Zombie extends Monster {
+@@ -113,6 +113,16 @@ public class Zombie extends Monster {
      }
  
      protected void addBehaviourGoals() {
@@ -89,7 +89,7 @@ index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..dd128ed095ecfe6612d284a0d32c1c64
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-@@ -304,6 +314,48 @@ public class Zombie extends Monster {
+@@ -301,6 +311,48 @@ public class Zombie extends Monster {
  
      }
  
@@ -138,7 +138,7 @@ index b8dd08a48ed27341b9f6a19341f10aa7ee842a9e..dd128ed095ecfe6612d284a0d32c1c64
      public boolean isSunSensitive() {
          return this.shouldBurnInDay; // Paper - Add more Zombie API
      }
-@@ -603,6 +655,7 @@ public class Zombie extends Monster {
+@@ -582,6 +634,7 @@ public class Zombie extends Monster {
  
      @Override
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
