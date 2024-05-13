@@ -51,7 +51,7 @@ index ca01f3344005b295c7ae98f6d5b03f79513b12a4..3032aeed30a75c3330771c9c5732881a
          builder.addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
          builder.addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 9b7763342469e293772fcca2f465978e0cd5f7ca..c663f6b2f0f9bcfe62352c5f1baafeaf35bd01b0 100644
+index 9b7763342469e293772fcca2f465978e0cd5f7ca..c8ea4ae338f059d32f7c78ff3a3592a51e868428 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -149,6 +149,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -68,8 +68,8 @@ index 9b7763342469e293772fcca2f465978e0cd5f7ca..c663f6b2f0f9bcfe62352c5f1baafeaf
              AbstractFurnaceBlockEntity.add(map1, (ItemLike) Blocks.FLOWERING_AZALEA, 100);
              AbstractFurnaceBlockEntity.add(map1, (ItemLike) Blocks.MANGROVE_ROOTS, 300);
 +            */
-+            AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.COAL, 200);
-+            AbstractFurnaceBlockEntity.add(map, (ItemLike) Items.CHARCOAL, 200);
++            AbstractFurnaceBlockEntity.add(map1, (ItemLike) Items.COAL, 200);
++            AbstractFurnaceBlockEntity.add(map1, (ItemLike) Items.CHARCOAL, 200);
 +            // KioCG end
              AbstractFurnaceBlockEntity.fuelCache = map1;
              return map1;
