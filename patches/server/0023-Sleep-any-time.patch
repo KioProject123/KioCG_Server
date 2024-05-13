@@ -46,7 +46,7 @@ index cfa5499df1e50563d7cb8605fa56c9a28db1a9c0..51bad1d177a65c74372c04e93c5c0605
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index d58f7a30342125a7938d4c34d9e9a1aa3950aeb1..7d2d1e174902dbfd774beb6c4128d294b78a0835 100644
+index 77c6a34e3658b301fd3ecbb969395dc5860fbc19..501010f37f3401b257b2dc3cbd09282a455ee5b6 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1488,7 +1488,7 @@ public class ServerPlayer extends Player {

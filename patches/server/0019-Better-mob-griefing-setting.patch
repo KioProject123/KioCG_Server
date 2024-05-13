@@ -119,6 +119,19 @@ index d59e33e7326489c6d55d316d0130f22235f4c63c..a1df2cc7988e4a20b25c61097e44a627
              // CraftBukkit start - Interact soil
              org.bukkit.event.Cancellable cancellable;
              if (entity instanceof Player) {
+diff --git a/src/main/java/net/minecraft/world/level/block/InfestedBlock.java b/src/main/java/net/minecraft/world/level/block/InfestedBlock.java
+index f1e349f55a7152f507eff62a4d9fe80805b27308..29f5397fa558a91bee3c4e96578de7e5078d2949 100644
+--- a/src/main/java/net/minecraft/world/level/block/InfestedBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/InfestedBlock.java
+@@ -61,7 +61,7 @@ public class InfestedBlock extends Block {
+     }
+ 
+     @Override
+-    protected void spawnAfterBreak(BlockState state, ServerLevel world, BlockPos pos, ItemStack tool, boolean dropExperience) {
++    public void spawnAfterBreak(BlockState state, ServerLevel world, BlockPos pos, ItemStack tool, boolean dropExperience) { // KioCG - protected -> public
+         super.spawnAfterBreak(state, world, pos, tool, dropExperience);
+         if (world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) == 0) {
+             this.spawnInfestation(world, pos);
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 index 66dabb34eb4dfdd526ee1800d04aeda0cc99fcda..d4f21bd8da235f33e5b5d5fb61637310a80da0d7 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java

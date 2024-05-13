@@ -5,7 +5,7 @@ Subject: [PATCH] Entity bossbar API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerBossEvent.java b/src/main/java/net/minecraft/server/level/ServerBossEvent.java
-index 4f91107f9ae42f96c060c310596db9aa869a8dbc..87b37e82886c7e50cd2fab144bc9760089b020e9 100644
+index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc14903f180777 100644
 --- a/src/main/java/net/minecraft/server/level/ServerBossEvent.java
 +++ b/src/main/java/net/minecraft/server/level/ServerBossEvent.java
 @@ -131,4 +131,32 @@ public class ServerBossEvent extends BossEvent {
@@ -14,10 +14,10 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..87b37e82886c7e50cd2fab144bc97600
      }
 +
 +    // KioCG start
-+    public net.minecraft.nbt.CompoundTag save() {
++    public net.minecraft.nbt.CompoundTag save(net.minecraft.core.HolderLookup.Provider provider) {
 +        net.minecraft.nbt.CompoundTag nbttagcompound = new net.minecraft.nbt.CompoundTag();
 +
-+        nbttagcompound.putString("Name", Component.Serializer.toJson(this.name));
++        nbttagcompound.putString("Name", Component.Serializer.toJson(this.name, provider));
 +        nbttagcompound.putBoolean("Visible", this.isVisible());
 +        nbttagcompound.putString("Color", this.getColor().getName());
 +        nbttagcompound.putString("Overlay", this.getOverlay().getName());
@@ -27,8 +27,8 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..87b37e82886c7e50cd2fab144bc97600
 +        return nbttagcompound;
 +    }
 +
-+    public static ServerBossEvent load(net.minecraft.nbt.CompoundTag nbt) {
-+        Component displayName1 = Component.Serializer.fromJson(nbt.getString("Name"));
++    public static ServerBossEvent load(net.minecraft.nbt.CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
++        Component displayName1 = Component.Serializer.fromJson(nbt.getString("Name"), provider);
 +        BossBarColor color1 = BossBarColor.byName(nbt.getString("Color"));
 +        BossBarOverlay overlay1 = BossBarOverlay.byName(nbt.getString("Overlay"));
 +        ServerBossEvent bossbar = new ServerBossEvent(displayName1, color1, overlay1);
@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..87b37e82886c7e50cd2fab144bc97600
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index e89f9c3e887601d8461eb967ae0bf582b672f631..a709bf04daadb052763d13307d66ad1a9a97ed78 100644
+index e89f9c3e887601d8461eb967ae0bf582b672f631..05222914080dc172db58b9ada756a9ca5f985891 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -150,6 +150,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
@@ -66,7 +66,7 @@ index e89f9c3e887601d8461eb967ae0bf582b672f631..a709bf04daadb052763d13307d66ad1a
  
          nbt.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
 +
-+        if (this.bossbar != null) nbt.put("KioCG.Bossbar", this.bossbar.save()); // KioCG
++        if (this.bossbar != null) nbt.put("KioCG.Bossbar", this.bossbar.save(this.registryAccess())); // KioCG
      }
  
      @Override
@@ -75,7 +75,7 @@ index e89f9c3e887601d8461eb967ae0bf582b672f631..a709bf04daadb052763d13307d66ad1a
          }
          // CraftBukkit end
 +
-+        if (nbt.contains("KioCG.Bossbar")) this.bossbar = net.minecraft.server.level.ServerBossEvent.load(nbt.getCompound("KioCG.Bossbar")); // KioCG
++        if (nbt.contains("KioCG.Bossbar")) this.bossbar = net.minecraft.server.level.ServerBossEvent.load(nbt.getCompound("KioCG.Bossbar"), this.registryAccess()); // KioCG
      }
  
      @Override

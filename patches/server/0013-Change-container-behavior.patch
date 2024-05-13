@@ -182,7 +182,7 @@ index fb4f57b2ed17ff9b4853e1ba2aac7a002989e5c8..a394e06d24cd99f672f762f75260c743
      @Override
      protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 493886ebd51fa7a79c51dbea08763dfb5b487d02..beb3ba404811b310349be20db6539471c792ee99 100644
+index 8bce3d2d510654fd7f931639aae06e974e681937..bc0159dd8edc0423e08666e268440660a26e6857 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -86,7 +86,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements

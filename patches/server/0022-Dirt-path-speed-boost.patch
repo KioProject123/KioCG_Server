@@ -17,7 +17,7 @@ index 574da5bef98512fcb30144eeef84cc2239ce0025..e386b41931f3d1f0d8c6429d05e9b268
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 3a3bf8cac430de498d2239f60092621c054925d8..d58f7a30342125a7938d4c34d9e9a1aa3950aeb1 100644
+index 3a3bf8cac430de498d2239f60092621c054925d8..77c6a34e3658b301fd3ecbb969395dc5860fbc19 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1623,6 +1623,34 @@ public class ServerPlayer extends Player {
@@ -47,7 +47,7 @@ index 3a3bf8cac430de498d2239f60092621c054925d8..d58f7a30342125a7938d4c34d9e9a1aa
 +            if (!this.getAbilities().flying && this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).is(Blocks.DIRT_PATH)) {
 +                net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
 +                if (attributemodifiable != null) {
-+                    attributemodifiable.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(SPEED_MODIFIER_DIRT_PATH_SPEED_UUID, "Dirt path speed boost", this.level().paperConfig().kiocgConfig.dirtPathSpeedBoost, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION));
++                    attributemodifiable.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(SPEED_MODIFIER_DIRT_PATH_SPEED_UUID, "Dirt path speed boost", this.level().paperConfig().kiocgConfig.dirtPathSpeedBoost, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE));
 +                }
 +            }
 +        }
