@@ -5,13 +5,13 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f3285458199003aacec61dae0d4eeec6793231a8..ac062748d01010cb723eaaf2b0b87b68ea24b1fe 100644
+index a31ca9a50f3b03fef750794d89c4b7c610944836..c823e031c77efe3ae60ec3045b88d2607a60d9c7 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -579,6 +579,14 @@ public class WorldConfiguration extends ConfigurationPart {
-             public int campfireExtinguishingOne = -1;
-             public int campfireExtinguishingTwo = -1;
-         }
+@@ -584,6 +584,14 @@ public class WorldConfiguration extends ConfigurationPart {
+             map.defaultReturnValue(-0.45D);
+             map.put(EntityType.SKELETON, -0.45D);
+         });
 +
 +        public Monster monster;
 +        public class Monster extends ConfigurationPart {

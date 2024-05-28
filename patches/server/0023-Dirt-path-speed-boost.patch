@@ -5,10 +5,10 @@ Subject: [PATCH] Dirt path speed boost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 574da5bef98512fcb30144eeef84cc2239ce0025..e386b41931f3d1f0d8c6429d05e9b2684519e38b 100644
+index 2dc39973841feff83ac12f546414d1db11140b5c..c1f5aff6040124d88c4fcbbc5d2080f838bffe5a 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -589,6 +589,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -594,6 +594,7 @@ public class WorldConfiguration extends ConfigurationPart {
          }
  
          public boolean betterMobGriefingSetting = true;

@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 28 May 2024 15:02:18 +0800
+Subject: [PATCH] Entity baby API
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index f3285458199003aacec61dae0d4eeec6793231a8..a31ca9a50f3b03fef750794d89c4b7c610944836 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -579,6 +579,11 @@ public class WorldConfiguration extends ConfigurationPart {
+             public int campfireExtinguishingOne = -1;
+             public int campfireExtinguishingTwo = -1;
+         }
++
++        public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> entityBabySizeScaling = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++            map.defaultReturnValue(-0.45D);
++            map.put(EntityType.SKELETON, -0.45D);
++        });
+     }
+     // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 05222914080dc172db58b9ada756a9ca5f985891..9b1450f01356a12227450fe138f5daba194344a4 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -151,6 +151,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+     private BlockPos restrictCenter;
+     private float restrictRadius;
+     @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG
++    // KioCG start
++    private static final UUID SCALE_MODIFIER_BABY_UUID = UUID.fromString("9afe7b53-20e0-5d09-3ed5-a280a496c472");
++    private final AttributeModifier SCALE_MODIFIER_BABY;
++    // KioCG end
+ 
+     public boolean aware = true; // CraftBukkit
+ 
+@@ -179,6 +183,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+             this.registerGoals();
+         }
+ 
++        SCALE_MODIFIER_BABY = new AttributeModifier(Mob.SCALE_MODIFIER_BABY_UUID, "Baby scale modifier", this.level().paperConfig().kiocgConfig.entityBabySizeScaling.getDouble(this.getType()), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL); // KioCG
+     }
+ 
+     // CraftBukkit start
+@@ -1784,7 +1789,23 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+         return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
+     }
+ 
+-    public void setBaby(boolean baby) {}
++    // KioCG start
++    public void setBaby(boolean baby) {
++        net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++
++        if (attributemodifiable != null) {
++            attributemodifiable.removeModifier(Mob.SCALE_MODIFIER_BABY_UUID);
++            if (baby) {
++                attributemodifiable.addPermanentModifier(this.SCALE_MODIFIER_BABY);
++            }
++        }
++    }
++
++    public boolean isBaby() {
++        net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++        return attributemodifiable != null && attributemodifiable.getModifier(Mob.SCALE_MODIFIER_BABY_UUID) != null;
++    }
++    // KioCG end
+ 
+     @Override
+     public HumanoidArm getMainArm() {
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
+index a063dfab31f13979b4c6ae3395874736d4e498ce..5aedad24184b8d75731cfda341b19d7970b7a53e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
+@@ -186,4 +186,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
+         getHandle().setBossBar(((org.bukkit.craftbukkit.boss.CraftBossBar) bossbar).getHandle());
+     }
+     // KioCG end
++
++    // KioCG start
++    @Override
++    public boolean isBaby() {
++        return getHandle().isBaby();
++    }
++
++    @Override
++    public void setBaby(boolean flag) {
++        getHandle().setBaby(flag);
++    }
++    // KioCG end
+ }
