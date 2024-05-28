@@ -1,9 +1,64 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Fri, 29 Mar 2024 23:28:23 +0800
-Subject: [PATCH] Allow potions to stack
+Subject: [PATCH] Default max stack size
 
 
+diff --git a/src/main/java/net/minecraft/core/component/DataComponents.java b/src/main/java/net/minecraft/core/component/DataComponents.java
+index 5632974af9c603d333ffc30a5a1b1e851821a3bb..09e87cf52001660673634fa91094ea8751085c56 100644
+--- a/src/main/java/net/minecraft/core/component/DataComponents.java
++++ b/src/main/java/net/minecraft/core/component/DataComponents.java
+@@ -55,7 +55,7 @@ public class DataComponents {
+     static final EncoderCache ENCODER_CACHE = new EncoderCache(512);
+     public static final DataComponentType<CustomData> CUSTOM_DATA = register("custom_data", builder -> builder.persistent(CustomData.CODEC));
+     public static final DataComponentType<Integer> MAX_STACK_SIZE = register(
+-        "max_stack_size", builder -> builder.persistent(ExtraCodecs.intRange(1, 99)).networkSynchronized(ByteBufCodecs.VAR_INT)
++        "max_stack_size", builder -> builder.persistent(ExtraCodecs.intRange(1, 999)).networkSynchronized(ByteBufCodecs.VAR_INT) // KioCG
+     );
+     public static final DataComponentType<Integer> MAX_DAMAGE = register(
+         "max_damage", builder -> builder.persistent(ExtraCodecs.POSITIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT)
+@@ -222,7 +222,7 @@ public class DataComponents {
+         "container_loot", builder -> builder.persistent(SeededContainerLoot.CODEC)
+     );
+     public static final DataComponentMap COMMON_ITEM_COMPONENTS = DataComponentMap.builder()
+-        .set(MAX_STACK_SIZE, 64)
++        .set(MAX_STACK_SIZE, 999) // KioCG
+         .set(LORE, ItemLore.EMPTY)
+         .set(ENCHANTMENTS, ItemEnchantments.EMPTY)
+         .set(REPAIR_COST, 0)
+diff --git a/src/main/java/net/minecraft/world/Container.java b/src/main/java/net/minecraft/world/Container.java
+index f402dbbfe3a443e6bc51f88b85abe937852b52f0..a8fc0b8ea0d5f742f5d4995c3dd7f40191cc0d16 100644
+--- a/src/main/java/net/minecraft/world/Container.java
++++ b/src/main/java/net/minecraft/world/Container.java
+@@ -116,6 +116,6 @@ public interface Container extends Clearable {
+     default void setCurrentRecipe(RecipeHolder<?> recipe) {
+     }
+ 
+-    int MAX_STACK = 99;
++    int MAX_STACK = 999; // KioCG
+     // CraftBukkit end
+ }
+diff --git a/src/main/java/net/minecraft/world/item/Item.java b/src/main/java/net/minecraft/world/item/Item.java
+index 00d2819494d60b54aa268bbe2ccf57be605ceb30..67d51f6ecd814d324b44a428e8e838bb12aa72b1 100644
+--- a/src/main/java/net/minecraft/world/item/Item.java
++++ b/src/main/java/net/minecraft/world/item/Item.java
+@@ -60,7 +60,7 @@ public class Item implements FeatureElement, ItemLike {
+     public static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+     public static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+     public static final int DEFAULT_MAX_STACK_SIZE = 64;
+-    public static final int ABSOLUTE_MAX_STACK_SIZE = 99;
++    public static final int ABSOLUTE_MAX_STACK_SIZE = 999; // KioCG
+     public static final int MAX_BAR_WIDTH = 13;
+     private final Holder.Reference<Item> builtInRegistryHolder = BuiltInRegistries.ITEM.createIntrusiveHolder(this);
+     private final DataComponentMap components;
+@@ -348,6 +348,7 @@ public class Item implements FeatureElement, ItemLike {
+         }
+ 
+         public Item.Properties stacksTo(int maxCount) {
++            if (maxCount == 16) maxCount = 99; // KioCG
+             return this.component(DataComponents.MAX_STACK_SIZE, maxCount);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/item/Items.java b/src/main/java/net/minecraft/world/item/Items.java
 index d00b59efb754594cf532f8598f4b6d3b29693232..41972cbefaf52c18ccc0d313f3c2c10f940d6326 100644
 --- a/src/main/java/net/minecraft/world/item/Items.java
