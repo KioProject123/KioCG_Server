@@ -251,10 +251,10 @@ index 59220eb9e74877e18b3e015dc0d25c892f45f746..430bcf5473400b48fd947b5ec85b0c5f
                  }
              }
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index 5b3e33807e0e13480e3359c0cf067719e5749237..b42f19dfc410abd8e2b4c674d741a4e84ed6fa74 100644
+index 480d093105073edfd3acdd7b079b4ca5aa5fdc6d..474cf56e7b9d923341c339debbcaaac0f9472e0a 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -88,6 +88,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -89,6 +89,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
          this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) { // CraftBukkit - decompile error
              @Override
              public boolean mayPlace(ItemStack stack) {
@@ -262,7 +262,7 @@ index 5b3e33807e0e13480e3359c0cf067719e5749237..b42f19dfc410abd8e2b4c674d741a4e8
                  return stack.is(Items.LAPIS_LAZULI);
              }
  
-@@ -178,6 +179,13 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -179,6 +180,13 @@ public class EnchantmentMenu extends AbstractContainerMenu {
  
                      PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(this.player, this.getBukkitView(), this.access.getLocation().getBlock(), item, offers, i);
                      event.setCancelled(!itemstack.isEnchantable());
@@ -276,7 +276,7 @@ index 5b3e33807e0e13480e3359c0cf067719e5749237..b42f19dfc410abd8e2b4c674d741a4e8
                      world.getCraftServer().getPluginManager().callEvent(event);
  
                      if (event.isCancelled()) {
-@@ -359,7 +367,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -360,7 +368,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
                  if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                      return ItemStack.EMPTY;
                  }
@@ -310,7 +310,7 @@ index db9444dda248260372d96ce239a590e88a4c1142..77f13e555441b06490e3bc3e70229bbe
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/inventory/LoomMenu.java b/src/main/java/net/minecraft/world/inventory/LoomMenu.java
-index 4f3f6ea43030853bd9df067358a1f4d16c40e6d4..b32f39026c0f0b7e1cde0392e8c29b5ae7df293f 100644
+index 531336c44c46555fef8c001fe8ca00c93624ad42..6469b367b53051df0fefcd2b90c4bc5c54fedab3 100644
 --- a/src/main/java/net/minecraft/world/inventory/LoomMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/LoomMenu.java
 @@ -106,18 +106,21 @@ public class LoomMenu extends AbstractContainerMenu {
@@ -335,7 +335,7 @@ index 4f3f6ea43030853bd9df067358a1f4d16c40e6d4..b32f39026c0f0b7e1cde0392e8c29b5a
                  return stack.getItem() instanceof BannerPatternItem;
              }
          });
-@@ -310,15 +313,15 @@ public class LoomMenu extends AbstractContainerMenu {
+@@ -326,15 +329,15 @@ public class LoomMenu extends AbstractContainerMenu {
  
                  slot1.onQuickCraft(itemstack1, itemstack);
              } else if (slot != this.dyeSlot.index && slot != this.bannerSlot.index && slot != this.patternSlot.index) {

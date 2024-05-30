@@ -5,13 +5,13 @@ Subject: [PATCH] Entity bossbar API
 
 
 diff --git a/src/main/java/org/bukkit/entity/Mob.java b/src/main/java/org/bukkit/entity/Mob.java
-index 30ef0c20df8ff2ed56adb40fea103265dd3e886c..3cd539e265e1c2a10b231ac16bc4ae3415e60356 100644
+index 256e5645bcfa76e7ede58ae365e69b4a4bed6204..db467c74b17d6019b097ea261f633cf2f5937c63 100644
 --- a/src/main/java/org/bukkit/entity/Mob.java
 +++ b/src/main/java/org/bukkit/entity/Mob.java
-@@ -221,4 +221,10 @@ public interface Mob extends LivingEntity, Lootable {
+@@ -229,4 +229,10 @@ public interface Mob extends LivingEntity, Lootable {
       */
      public int getPossibleExperienceReward();
-     // Paper end
+     // Paper end - mob xp reward API
 +
 +    // KioCG start
 +    @Nullable

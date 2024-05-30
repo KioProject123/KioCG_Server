@@ -55,10 +55,10 @@ index ddc880ac0c8378bc1132be5deba746c1484c941c..ad03c942ab086f90609cad6638b5a110
          return damageDealt * (1.0F - f / 25.0F);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
-index a207a31d80a302dbdfe80f8727222542d3a78da2..a2fcabe348c7f4e8aa1cd2e0d2243c1f37a56c96 100644
+index 46d8bcad1545953757659870901cbbdf3340bc15..5f050dca301499650c9305c9a1d67a025249198c 100644
 --- a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
-@@ -342,6 +342,13 @@ public class ExperienceOrb extends Entity {
+@@ -348,6 +348,13 @@ public class ExperienceOrb extends Entity {
  
          if (entry != null) {
              ItemStack itemstack = (ItemStack) entry.getValue();
@@ -72,7 +72,7 @@ index a207a31d80a302dbdfe80f8727222542d3a78da2..a2fcabe348c7f4e8aa1cd2e0d2243c1f
              int j = Math.min(this.xpToDurability(amount), itemstack.getDamageValue());
              // CraftBukkit start
              org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(player, this, itemstack, entry.getKey(), j, this::durabilityToXp); // Paper - Expand PlayerItemMendEvent
-@@ -367,11 +374,11 @@ public class ExperienceOrb extends Entity {
+@@ -373,11 +380,11 @@ public class ExperienceOrb extends Entity {
      }
  
      public int durabilityToXp(int repairAmount) {
@@ -203,18 +203,18 @@ index 31b8a8bf78d52b5f11b68e780ec09bf78e7bda84..e7723c63139a4e677de9863c7ad1a543
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 35299affb699d745804a3b60cb78b9323f3e068e..2d12c0e6cf95e18d5f44323c4a32cf3a04815bfc 100644
+index 7dd5e0b935d98d552c916f8412569ff4aa0e9b04..fdf1773e1680c4ea191dd73fe4d3da2b9f522e15 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -414,7 +414,7 @@ public class FishingHook extends Projectile {
-             } else {
-                 // CraftBukkit start - logic to modify fishing wait time
-                 this.timeUntilLured = Mth.nextInt(this.random, this.minWaitTime, this.maxWaitTime);
--                this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed * 20 * 5 >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed * 20 * 5) : 0; // Paper - Fix Lure infinite loop
-+                this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed * 50 >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed * 50) : 0; // Paper - Fix Lure infinite loop // KioCG
-                 // CraftBukkit end
-             }
-         }
+@@ -431,7 +431,7 @@ public class FishingHook extends Projectile {
+     // Paper start - more projectile api - extract time until lured reset logic
+     public void resetTimeUntilLured() {
+         this.timeUntilLured = Mth.nextInt(this.random, this.minWaitTime, this.maxWaitTime);
+-        this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed * 20 * 5 >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed * 20 * 5) : 0; // Paper - Fix Lure infinite loop
++        this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed * 50 >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed * 50) : 0; // Paper - Fix Lure infinite loop // KioCG
+     }
+     // Paper end - more projectile api - extract time until lured reset logic
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
 index 3ff06cc6ad35567bcb1f29115db63c11a8e79dbb..2c4b0f20d888b2a0f5a01039669ed79cc46df097 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
@@ -276,10 +276,10 @@ index 3ff06cc6ad35567bcb1f29115db63c11a8e79dbb..2c4b0f20d888b2a0f5a01039669ed79c
      protected boolean tryPickup(Player player) {
          return super.tryPickup(player) || this.isNoPhysics() && this.ownedBy(player) && player.getInventory().add(this.getPickupItem());
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index b42f19dfc410abd8e2b4c674d741a4e84ed6fa74..b5a80d5f6e4a28028055abfc943a5b54302c0852 100644
+index 474cf56e7b9d923341c339debbcaaac0f9472e0a..07fdab67efb5e183db6d701a75014cead7eb0333 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -135,6 +135,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -136,6 +136,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
                      int i = 0;
                      Iterator iterator = EnchantingTableBlock.BOOKSHELF_OFFSETS.iterator();
  

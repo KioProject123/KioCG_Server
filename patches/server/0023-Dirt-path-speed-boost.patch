@@ -17,10 +17,10 @@ index 2dc39973841feff83ac12f546414d1db11140b5c..c1f5aff6040124d88c4fcbbc5d2080f8
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 3a3bf8cac430de498d2239f60092621c054925d8..77c6a34e3658b301fd3ecbb969395dc5860fbc19 100644
+index 48c72004744fda1c5d2e3ff0908704f427f55434..26fa9f00cf524b00375851842652fa0d52e60ae6 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1623,6 +1623,34 @@ public class ServerPlayer extends Player {
+@@ -1624,6 +1624,34 @@ public class ServerPlayer extends Player {
              super.onChangedBlock(pos);
          }
  

@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index e89f9c3e887601d8461eb967ae0bf582b672f631..05222914080dc172db58b9ada756a9ca5f985891 100644
+index 9f42563699508fcb3d8a96cfdfc25a7bffd99759..ab74a060cad8ab5c50fe847ac9980c279afe0297 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -150,6 +150,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti

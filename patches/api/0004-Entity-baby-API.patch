@@ -5,10 +5,10 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/org/bukkit/entity/Mob.java b/src/main/java/org/bukkit/entity/Mob.java
-index 3cd539e265e1c2a10b231ac16bc4ae3415e60356..ed1eb876753cc625eaaaab61809494196c0eb9a8 100644
+index db467c74b17d6019b097ea261f633cf2f5937c63..1283bcaec990a4d8fc0c534db38d1acc388a228c 100644
 --- a/src/main/java/org/bukkit/entity/Mob.java
 +++ b/src/main/java/org/bukkit/entity/Mob.java
-@@ -227,4 +227,9 @@ public interface Mob extends LivingEntity, Lootable {
+@@ -235,4 +235,9 @@ public interface Mob extends LivingEntity, Lootable {
      public org.bukkit.boss.BossBar getBossbar();
      public void setBossbar(org.bukkit.boss.BossBar bossbar);
      // KioCG end

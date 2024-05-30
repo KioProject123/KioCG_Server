@@ -5,7 +5,7 @@ Subject: [PATCH] Player in structure API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 8437316888c6056060a2780652147590b6fe7443..ad1fd0c01526cce26e4898279f915a0c4ee21723 100644
+index 6a4637eef14cbd84bbe26ef16f004b8f93367a3d..5d175bdeea689b8b3809dfb276d93c5c7aa341a4 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -297,6 +297,7 @@ public class ServerPlayer extends Player {
@@ -16,7 +16,7 @@ index 8437316888c6056060a2780652147590b6fe7443..ad1fd0c01526cce26e4898279f915a0c
      public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
  
      // Paper start - replace player chunk loader
-@@ -906,6 +907,15 @@ public class ServerPlayer extends Player {
+@@ -907,6 +908,15 @@ public class ServerPlayer extends Player {
  
              if (this.tickCount % 20 == 0) {
                  CriteriaTriggers.LOCATION.trigger(this);
@@ -79,10 +79,10 @@ index 54972cce2314eff774250101df43a9b7074e9604..1189beb9351a12dc0a48fd6b8b66151a
          SectionPos sectionPos = SectionPos.of(pos);
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 5f896948d158651cd9837364759dbfbcce6b7d21..b55862874ff84f8dcd99159064b93a107ab9104a 100644
+index 7e6116963d835d4606ef3d93b69d3e44b61288e1..c4d9cab0cd3872478c96964e00db1318989d707e 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3404,6 +3404,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3401,6 +3401,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

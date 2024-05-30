@@ -65,7 +65,7 @@ index efc91ff91827872c62b8bd060282549ccdcf67dd..278a2f999a6e4d564582a4b2e103c24f
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index eb4fc900164d1fb3a78653ae8bc42ea30323f5b7..0646cef3e596b7faaa9169840b44ebdfea4ce532 100644
+index 2eb9c584cc77237f1c82d880a51a3f8b51008d73..30ea337e45ba296936f8c26428da61c931f89eff 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -193,7 +193,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -77,7 +77,7 @@ index eb4fc900164d1fb3a78653ae8bc42ea30323f5b7..0646cef3e596b7faaa9169840b44ebdf
              DedicatedServer.LOGGER.warn("****************************");
              DedicatedServer.LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
              DedicatedServer.LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
-@@ -293,7 +293,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -292,7 +292,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support

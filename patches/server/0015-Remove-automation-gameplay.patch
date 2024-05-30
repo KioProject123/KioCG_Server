@@ -241,7 +241,7 @@ index 786e4a8700cb84b16dd9b8892a0d1d5803924d81..e63fc0ce56082501f1767933872b4a37
                      idispensebehavior.dispense(pointer, eventStack);
                      return true;
 diff --git a/src/main/java/net/minecraft/world/item/MinecartItem.java b/src/main/java/net/minecraft/world/item/MinecartItem.java
-index 66074445d3908b9bb1c8d70e1e27d057720ec8e5..d2679ba56b335104cf5992ff099fb93d92b032d1 100644
+index d524fcc191cb95d6ec7f12ae7fceeb8077bb08fc..ad66ea7bd76c5ae7b43e63c613b521e88d15e29f 100644
 --- a/src/main/java/net/minecraft/world/item/MinecartItem.java
 +++ b/src/main/java/net/minecraft/world/item/MinecartItem.java
 @@ -85,7 +85,7 @@ public class MinecartItem extends Item {
@@ -326,10 +326,10 @@ index e0c62227b279a5fe0f3868fbf9ce8c78c515a09c..ac75586c33d5064a0710ccde55713ac6
              world.getCraftServer().getPluginManager().callEvent(event);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 547ab158cd0cbf51da06ea97740cfce34bca651b..8c7fa09c8da193a6520132fe8736675ed7cedde5 100644
+index 1a737167757891794b40575a5db48b0667e23a6b..5a9d9c6315c0468299b30bdaf262fe1dafa153e8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -2152,7 +2152,7 @@ public class CraftEventFactory {
+@@ -2149,7 +2149,7 @@ public class CraftEventFactory {
          if (!event.getItem().equals(craftItem)) {
              // Chain to handler for new item
              ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());

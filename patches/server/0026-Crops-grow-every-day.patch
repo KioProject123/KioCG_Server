@@ -5,7 +5,7 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 51bad1d177a65c74372c04e93c5c06053258fabe..86f7b03f18f32e039acaac92cf5f9526a9c33232 100644
+index b26c6c32f30729ecc781d3f5d231c9d6fe02682d..a777141e44483f52b9aeeb60f73f60a5ceee559d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1042,6 +1042,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -663,7 +663,7 @@ index 1aac95b03a9e2e37c24f2a30bcb259c1424e1c78..25b861b6be3867a8fe596935faa78088
          this.blendingData = blendingData;
          // Paper - starlight - remove skyLightSources
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 2a8609e33716949ff1877b6d10f64a9d7a7c81e9..d5c98232e63abe66a28fd08b69a4b935f614afe7 100644
+index 14ee7b5b9b804bebd4e2a846b238547a28a36035..afbd96873c582b16495084a7fab2629325eab5cf 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -89,11 +89,11 @@ public class LevelChunk extends ChunkAccess {
@@ -761,10 +761,10 @@ index bfdee41d3095a869408abc89a6085556ff188d8d..bf349ff6858042943bdbc2a9ea5fccd7
          this.fluidTicks = fluidTickScheduler;
      }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-index db932f8e9d48e1e47a89526d1d76947e91b55eea..5da45ae93d81bc3441cfbd776a2c3fce92bbdbf8 100644
+index 26431a814f6472689484dcc7cd8183fe1676e17e..71268d361921d4bd3ce15f99b06b91e23f35ed8a 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -254,6 +254,7 @@ public class ChunkSerializer {
+@@ -255,6 +255,7 @@ public class ChunkSerializer {
          }
  
          long l = nbt.getLong("InhabitedTime");
@@ -772,7 +772,7 @@ index db932f8e9d48e1e47a89526d1d76947e91b55eea..5da45ae93d81bc3441cfbd776a2c3fce
          ChunkType chunktype = ChunkSerializer.getChunkTypeFromTag(nbt);
          DataResult dataresult;
          Logger logger;
-@@ -278,7 +279,7 @@ public class ChunkSerializer {
+@@ -279,7 +280,7 @@ public class ChunkSerializer {
                  return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(s));
              }, chunkPos);
  
@@ -781,7 +781,7 @@ index db932f8e9d48e1e47a89526d1d76947e91b55eea..5da45ae93d81bc3441cfbd776a2c3fce
              ((LevelChunk)object1).setBlockNibbles(blockNibbles); // Paper - replace light impl
              ((LevelChunk)object1).setSkyNibbles(skyNibbles); // Paper - replace light impl
          } else {
-@@ -294,6 +295,7 @@ public class ChunkSerializer {
+@@ -295,6 +296,7 @@ public class ChunkSerializer {
  
              object1 = protochunk;
              protochunk.setInhabitedTime(l);
@@ -789,7 +789,7 @@ index db932f8e9d48e1e47a89526d1d76947e91b55eea..5da45ae93d81bc3441cfbd776a2c3fce
              if (nbt.contains("below_zero_retrogen", 10)) {
                  dataresult = BelowZeroRetrogen.CODEC.parse(new Dynamic(NbtOps.INSTANCE, nbt.getCompound("below_zero_retrogen")));
                  logger = ChunkSerializer.LOGGER;
-@@ -463,6 +465,7 @@ public class ChunkSerializer {
+@@ -464,6 +466,7 @@ public class ChunkSerializer {
          nbttagcompound.putInt("zPos", chunkcoordintpair.z);
          nbttagcompound.putLong("LastUpdate", asyncsavedata != null ? asyncsavedata.worldTime : world.getGameTime()); // Paper - async chunk unloading // Paper - diff on change
          nbttagcompound.putLong("InhabitedTime", chunk.getInhabitedTime());

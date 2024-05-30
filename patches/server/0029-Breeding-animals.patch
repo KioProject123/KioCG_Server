@@ -226,7 +226,7 @@ index 0a4d4cb4ad7cda7c50c46151c03586865d56c797..55eaad136347e132c55915605c16de29
      protected boolean isFlapping() {
          return this.flyDist > this.nextFlap;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cow.java b/src/main/java/net/minecraft/world/entity/animal/Cow.java
-index 5a7b1be351834a6b8889b1380cede1be025cb302..f7133b0c6c7a111e236a6999fc50a24fa797efcc 100644
+index e336934f37075a827843e4b1bb2b6b660d2c60c9..c6322a84a53b4052f24fda6a755900ec8e45cc32 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cow.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cow.java
 @@ -96,7 +96,7 @@ public class Cow extends Animal {
@@ -238,7 +238,7 @@ index 5a7b1be351834a6b8889b1380cede1be025cb302..f7133b0c6c7a111e236a6999fc50a24f
              // CraftBukkit start - Got milk?
              PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
  
-@@ -108,6 +108,7 @@ public class Cow extends Animal {
+@@ -109,6 +109,7 @@ public class Cow extends Animal {
              player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
              ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, player, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
  
@@ -246,7 +246,7 @@ index 5a7b1be351834a6b8889b1380cede1be025cb302..f7133b0c6c7a111e236a6999fc50a24f
              player.setItemInHand(hand, itemstack1);
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
-@@ -115,6 +116,13 @@ public class Cow extends Animal {
+@@ -116,6 +117,13 @@ public class Cow extends Animal {
          }
      }
  
@@ -434,7 +434,7 @@ index 816977990639ec0559b652fc9666afd5046f0a5d..c1e7cb7924f8ea0e33c487193a0bb2ad
      public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
          if (DATA_POSE.equals(data)) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-index 02e49c7ae5e120302b6479cf3e3934b9217eebf0..166f32b221475615bf66d5cd62601d04f1457885 100644
+index 376bcbc189008464f4d518c1e07643431ba96306..b1af4fab67512662d12008c03b5a4fcddfaf1860 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 @@ -229,7 +229,7 @@ public class Goat extends Animal {
@@ -446,7 +446,7 @@ index 02e49c7ae5e120302b6479cf3e3934b9217eebf0..166f32b221475615bf66d5cd62601d04
              // CraftBukkit start - Got milk?
              PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
  
-@@ -240,6 +240,7 @@ public class Goat extends Animal {
+@@ -241,6 +241,7 @@ public class Goat extends Animal {
              player.playSound(this.getMilkingSound(), 1.0F, 1.0F);
              ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, player, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
  
@@ -454,7 +454,7 @@ index 02e49c7ae5e120302b6479cf3e3934b9217eebf0..166f32b221475615bf66d5cd62601d04
              player.setItemInHand(hand, itemstack1);
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
-@@ -254,6 +255,13 @@ public class Goat extends Animal {
+@@ -255,6 +256,13 @@ public class Goat extends Animal {
          }
      }
  
@@ -491,10 +491,10 @@ index 9357cf0179d19fbdfe76413e909a99b924c85780..b9452549ed342890b9f4d2f4e48bd0ab
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
              }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
-index 1dd4290287725898ace29e46b439b55df8fdd1af..c45e52641fa3be82c4ead1bbeab15d65d192cacd 100644
+index 36d654073ab4058db54830d9447d7d959a0b25f1..66eff5e586b9973e9854012f7a31b2c3a92cc3eb 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -181,7 +181,7 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
+@@ -182,7 +182,7 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
              b0 = 90;
              b1 = 6;
              f = 10.0F;

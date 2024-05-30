@@ -5,7 +5,7 @@ Subject: [PATCH] Default max stack size
 
 
 diff --git a/src/main/java/net/minecraft/core/component/DataComponents.java b/src/main/java/net/minecraft/core/component/DataComponents.java
-index 5632974af9c603d333ffc30a5a1b1e851821a3bb..09e87cf52001660673634fa91094ea8751085c56 100644
+index 9b2a209cda955ef3e5d8ff3ed1b2249888c7d139..7f615fca8614889d71719be795c6d7074749aac1 100644
 --- a/src/main/java/net/minecraft/core/component/DataComponents.java
 +++ b/src/main/java/net/minecraft/core/component/DataComponents.java
 @@ -55,7 +55,7 @@ public class DataComponents {

@@ -32,7 +32,7 @@ index 658e63ebde81dc14c8ab5850fb246dc0aab25dea..59b1fc323174dcd9c5d3b98724f6eec5
      public static final TicketType<Long> CHUNK_LOAD = create("chunk_load", Long::compareTo);
      public static final TicketType<Long> STATUS_UPGRADE = create("status_upgrade", Long::compareTo);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index be1670770a5cee27eec9b17c15cef864302c04ea..55079b9fd52760ef8ffd4dc212d97fc7be013cfb 100644
+index 9a5f63c03cfff839b58fef63fc3a265143bfc7a7..ea576e709f4616d7cbb09695d63e3b6c1a33deb7 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2376,7 +2376,15 @@ public abstract class LivingEntity extends Entity implements Attackable {

@@ -53,10 +53,10 @@ index a658943669cdfd49f66ba713505d11b33306ed86..0596375a5a4a25982a398f6d6c1d2a33
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 47eb0f214b00860ea89f80e675e778e41662c588..e95e9a8ec639b3a75d8ebff706a448d13c76217b 100644
+index fc7d7d9376add08c5575fc9467fe61ded1e615f0..642bc5e4e752ffc957a2d6b53ca904a45538b254 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4936,6 +4936,42 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4941,6 +4941,42 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.setRot(f, f1);
      }
  
