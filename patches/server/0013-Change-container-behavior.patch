@@ -182,7 +182,7 @@ index fb4f57b2ed17ff9b4853e1ba2aac7a002989e5c8..a394e06d24cd99f672f762f75260c743
      @Override
      protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 8bce3d2d510654fd7f931639aae06e974e681937..bc0159dd8edc0423e08666e268440660a26e6857 100644
+index fc53bd7e1c5f73c6adcb96db78ba9892a6950c96..34bf02c084e37921a702ea1c31574148bafaa137 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -86,7 +86,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
@@ -270,7 +270,7 @@ index 8bce3d2d510654fd7f931639aae06e974e681937..bc0159dd8edc0423e08666e268440660
      @Override
      protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
          super.loadAdditional(nbt, registryLookup);
-@@ -338,6 +372,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -339,6 +373,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      @Override
      public int[] getSlotsForFace(Direction side) {

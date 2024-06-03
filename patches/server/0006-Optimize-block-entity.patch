@@ -66,7 +66,7 @@ index 18ed5fb4b5a6f7d6ea2a8c418600282f2691294e..9b7763342469e293772fcca2f465978e
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index eef723032950ea553f09cbfe4fe81af2cff50191..8bce3d2d510654fd7f931639aae06e974e681937 100644
+index eef723032950ea553f09cbfe4fe81af2cff50191..fc53bd7e1c5f73c6adcb96db78ba9892a6950c96 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -145,7 +145,9 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
@@ -87,13 +87,14 @@ index eef723032950ea553f09cbfe4fe81af2cff50191..8bce3d2d510654fd7f931639aae06e97
              boolean flag2 = blockEntity.brewTime <= 0; // == -> <=
              // CraftBukkit end
  
-@@ -314,6 +317,13 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -314,6 +317,14 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          nbt.putByte("Fuel", (byte) this.fuel);
      }
  
 +    // KioCG start
 +    @Override
 +    public void setItem(int slot, ItemStack stack) {
++        super.setItem(slot, stack);
 +        this.shouldTick = true;
 +    }
 +    // KioCG end
