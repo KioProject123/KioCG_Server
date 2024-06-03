@@ -4,13 +4,13 @@ Date: Tue, 5 Mar 2024 10:34:43 +0800
 Subject: [PATCH] The Long Dark
 
 
-diff --git a/src/main/java/com/kiocg/java/player/ColdData.java b/src/main/java/com/kiocg/java/player/ColdData.java
+diff --git a/src/main/java/com/kiocg/player/ColdData.java b/src/main/java/com/kiocg/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0f1885eb204e8fd5d82402a5ee9d3ac13407ed61
+index 0000000000000000000000000000000000000000..e383f96793a8ce69dbc13b8aebb6f36f69de51a7
 --- /dev/null
-+++ b/src/main/java/com/kiocg/java/player/ColdData.java
++++ b/src/main/java/com/kiocg/player/ColdData.java
 @@ -0,0 +1,106 @@
-+package com.kiocg.java.player;
++package com.kiocg.player;
 +
 +import io.papermc.paper.configuration.WorldConfiguration;
 +import net.minecraft.core.BlockPos;
@@ -116,13 +116,13 @@ index 0000000000000000000000000000000000000000..0f1885eb204e8fd5d82402a5ee9d3ac1
 +        nbt.putInt("KioCG.ColdValue", coldValue);
 +    }
 +}
-diff --git a/src/main/java/com/kiocg/java/player/ThirstData.java b/src/main/java/com/kiocg/java/player/ThirstData.java
+diff --git a/src/main/java/com/kiocg/player/ThirstData.java b/src/main/java/com/kiocg/player/ThirstData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..85f630b03cace42f26dce1d14066637e19a00f26
+index 0000000000000000000000000000000000000000..c318b33cfbc15461f9105858011d516c0be3468e
 --- /dev/null
-+++ b/src/main/java/com/kiocg/java/player/ThirstData.java
++++ b/src/main/java/com/kiocg/player/ThirstData.java
 @@ -0,0 +1,95 @@
-+package com.kiocg.java.player;
++package com.kiocg.player;
 +
 +import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
@@ -254,7 +254,7 @@ index a101d8f5e95f6aa573dfdf4233d5677ee6d928de..f3285458199003aacec61dae0d4eeec6
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index f60da95d639f4abfaaad996889bdb98dac887643..48c72004744fda1c5d2e3ff0908704f427f55434 100644
+index f60da95d639f4abfaaad996889bdb98dac887643..0ed25c71b02c9bc85b366c52ada843827058ca8f 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -901,7 +901,7 @@ public class ServerPlayer extends Player {
@@ -270,8 +270,8 @@ index f60da95d639f4abfaaad996889bdb98dac887643..48c72004744fda1c5d2e3ff0908704f4
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new FoodData(this);
-+        this.coldData = new com.kiocg.java.player.ColdData(this); // KioCG
-+        this.thirstData = new com.kiocg.java.player.ThirstData(this); // KioCG
++        this.coldData = new com.kiocg.player.ColdData(this); // KioCG
++        this.thirstData = new com.kiocg.player.ThirstData(this); // KioCG
          this.experienceLevel = this.newLevel;
          this.totalExperience = this.newTotalExp;
          this.experienceProgress = 0;
@@ -409,15 +409,15 @@ index 0ddf2e1a6d2ea836f8a140a435721e0ce96bd8d2..9a5f63c03cfff839b58fef63fc3a2651
  
          this.level().getProfiler().pop();
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 686374e89e41b0917791264f3281f7384835bca8..71f7a0706a01d4779486c7650b569f2a0eca6782 100644
+index 686374e89e41b0917791264f3281f7384835bca8..22fb002def0345aacc0b2c9376721a38bf5c7382 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -161,6 +161,8 @@ public abstract class Player extends LivingEntity {
      public final InventoryMenu inventoryMenu;
      public AbstractContainerMenu containerMenu;
      protected FoodData foodData = new FoodData(this); // CraftBukkit - add "this" to constructor
-+    public com.kiocg.java.player.ColdData coldData = new com.kiocg.java.player.ColdData(this); // KioCG
-+    public com.kiocg.java.player.ThirstData thirstData = new com.kiocg.java.player.ThirstData(this); // KioCG
++    public com.kiocg.player.ColdData coldData = new com.kiocg.player.ColdData(this); // KioCG
++    public com.kiocg.player.ThirstData thirstData = new com.kiocg.player.ThirstData(this); // KioCG
      protected int jumpTriggerTime;
      public float oBob;
      public float bob;

@@ -46,7 +46,7 @@ index 33419767b2dc5e50a438d405fa41afd1516c5720..b26c6c32f30729ecc781d3f5d231c9d6
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 26fa9f00cf524b00375851842652fa0d52e60ae6..ebcb1c941847d12366fc21ded33552dd78bd0bd8 100644
+index 89904aba15acd40a405dead337d54419b518bfc5..4b6a8ba8f3bd53009f1c52145a66d37ea1ab21f4 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1489,7 +1489,7 @@ public class ServerPlayer extends Player {
@@ -77,7 +77,7 @@ index 26fa9f00cf524b00375851842652fa0d52e60ae6..ebcb1c941847d12366fc21ded33552dd
  
              this.respawnPosition = pos;
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 71f7a0706a01d4779486c7650b569f2a0eca6782..5e37d6bec880540921ce93a1e531ea16b9fec875 100644
+index 22fb002def0345aacc0b2c9376721a38bf5c7382..4471d83d38e61d7ee42efcc014ee4e980a8366d4 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -274,7 +274,7 @@ public abstract class Player extends LivingEntity {
