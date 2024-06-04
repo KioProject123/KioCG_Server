@@ -139,14 +139,14 @@ index 0000000000000000000000000000000000000000..18c72bfa84798a866fe4ff3a03f044c1
 +    }
 +}
 diff --git a/src/main/java/com/kiocg/task/TPSBarTask.java b/src/main/java/com/kiocg/task/TPSBarTask.java
-index 9db217ef0351e899e76b768e2f35f563ee843b5a..3953af985d2790b94a8f069de9e00d6046f2f2d1 100644
+index 9db217ef0351e899e76b768e2f35f563ee843b5a..4d86f2fb41140715aa0bb13dcf91b4dc8afd30a6 100644
 --- a/src/main/java/com/kiocg/task/TPSBarTask.java
 +++ b/src/main/java/com/kiocg/task/TPSBarTask.java
 @@ -31,6 +31,7 @@ public class TPSBarTask extends BossBarTask {
          bossbar.progress(getBossBarProgress());
          bossbar.color(getBossBarColor());
          bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTPSBarTitle,
-+                                                           Placeholder.component("chunkhot", getChunkHotColor(((org.bukkit.craftbukkit.entity.CraftPlayer)player).getHandle())),
++                                                           Placeholder.component("chunkhot", getChunkHotColor(((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle())),
                                                             Placeholder.component("tps", getTPSColor()),
                                                             Placeholder.component("mspt", getMSPTColor()),
                                                             Placeholder.component("ping", getPingColor(player.getPing()))

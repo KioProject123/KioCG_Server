@@ -6,19 +6,20 @@ Subject: [PATCH] Implement TPSBar
 
 diff --git a/src/main/java/com/kiocg/command/TPSBarCommand.java b/src/main/java/com/kiocg/command/TPSBarCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a375481c896714cb80e0efe39a2ab8deb677270a
+index 0000000000000000000000000000000000000000..642e3e60c323d40724b950848b36f21427b0e8a5
 --- /dev/null
 +++ b/src/main/java/com/kiocg/command/TPSBarCommand.java
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,26 @@
 +package com.kiocg.command;
 +
 +import com.kiocg.task.TPSBarTask;
 +import com.mojang.brigadier.CommandDispatcher;
-+import java.util.Collection;
-+import java.util.Collections;
 +import net.minecraft.commands.CommandSourceStack;
 +import net.minecraft.commands.Commands;
 +import net.minecraft.server.level.ServerPlayer;
++
++import java.util.Collection;
++import java.util.Collections;
 +
 +public class TPSBarCommand {
 +    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -37,22 +38,19 @@ index 0000000000000000000000000000000000000000..a375481c896714cb80e0efe39a2ab8de
 +}
 diff --git a/src/main/java/com/kiocg/task/BossBarTask.java b/src/main/java/com/kiocg/task/BossBarTask.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c3331f216d372f3c707d4652635b506cf0ec312b
+index 0000000000000000000000000000000000000000..2d5b4181902210a4069bac1c43a718a4efd235cf
 --- /dev/null
 +++ b/src/main/java/com/kiocg/task/BossBarTask.java
-@@ -0,0 +1,100 @@
+@@ -0,0 +1,97 @@
 +package com.kiocg.task;
 +
-+import java.util.HashMap;
-+import java.util.HashSet;
-+import java.util.Iterator;
-+import java.util.Map;
-+import java.util.UUID;
 +import net.kyori.adventure.bossbar.BossBar;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
 +import org.bukkit.entity.Player;
 +import org.bukkit.scheduler.BukkitRunnable;
++
++import java.util.*;
 +
 +public abstract class BossBarTask extends BukkitRunnable {
 +    private final Map<UUID, BossBar> bossbars = new HashMap<>();
