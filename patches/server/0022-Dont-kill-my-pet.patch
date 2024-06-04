@@ -121,7 +121,7 @@ index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3
                          } else if (entityliving.level() != entityinsentient.level()) {
                              reason = EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-index edd29c2f4d0151d512618115a8fb4b7423171491..7441456106463f18218ccfbd2c61b99461ff4c25 100644
+index edd29c2f4d0151d512618115a8fb4b7423171491..88a6311f3ce0b1d30533ad941e7696e1e9309171 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 @@ -36,6 +36,7 @@ public class FollowOwnerGoal extends Goal {
@@ -132,16 +132,20 @@ index edd29c2f4d0151d512618115a8fb4b7423171491..7441456106463f18218ccfbd2c61b994
  
      public FollowOwnerGoal(TamableAnimal tameable, double speed, float minDistance, float maxDistance, boolean leavesAllowed) {
          this.tamable = tameable;
-@@ -62,13 +63,25 @@ public class FollowOwnerGoal extends Goal {
+@@ -58,10 +59,12 @@ public class FollowOwnerGoal extends Goal {
+         if (entityliving == null) {
+             return false;
+         } else if (entityliving.isSpectator()) {
++            if (!this.unableToMove()) keepChunkLoaded(); // KioCG
+             return false;
          } else if (this.unableToMove()) {
              return false;
          } else if (this.tamable.distanceToSqr((Entity) entityliving) < (double) (this.startDistance * this.startDistance)) {
 +            keepChunkLoaded(); // KioCG
              return false;
          } else {
-+            keepChunkLoaded(); // KioCG
              this.owner = entityliving;
-             return true;
+@@ -69,6 +72,16 @@ public class FollowOwnerGoal extends Goal {
          }
      }
  
