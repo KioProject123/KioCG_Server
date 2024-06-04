@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 17 Mar 2024 01:33:14 +0800
+Subject: [PATCH] Fixed cumulative cost
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index 46a759890f058c57a4569cdb7794e370b4f286f0..f5bcc78445ee29132b6947544748eeae16fa0a0f 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -414,6 +414,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+         public Enchant enchant;
+         public class Enchant extends ConfigurationPart {
+             public boolean allowUnsafeCommand = true;
++            public int fixedCumulativeCost = 4;
+         }
+     }
+     // KioCG end
+diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+index ab70c286fb11024ec50b1683442ea7192424c4fe..1d6f298f8aeb78552673b01493ccd35a848c397b 100644
+--- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
+@@ -148,6 +148,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+             ItemStack itemstack2 = this.inputSlots.getItem(1);
+             ItemEnchantments.Mutable itemenchantments_a = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemstack1));
+ 
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) j += io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost * 2L; else // KioCG
+             j += (long) (Integer) itemstack.getOrDefault(DataComponents.REPAIR_COST, 0) + (long) (Integer) itemstack2.getOrDefault(DataComponents.REPAIR_COST, 0);
+             this.repairItemCountCost = 0;
+             int k;

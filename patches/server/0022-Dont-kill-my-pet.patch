@@ -5,12 +5,12 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 7b006a8d6f33d1f1059df35b767b88900cba7e09..0f612bac15fe178bc3b3b0bf4deb91f0010bd3aa 100644
+index f5bcc78445ee29132b6947544748eeae16fa0a0f..5f2e951daf8b74267ebd09c29a44fe12f0fb4200 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -417,6 +417,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -416,6 +416,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+             public boolean allowUnsafeCommand = true;
              public int fixedCumulativeCost = 4;
-             public boolean anvilRenameInSurvival = false;
          }
 +
 +        public boolean dontKillMyPet = true;

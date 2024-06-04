@@ -5,7 +5,7 @@ Subject: [PATCH] Change container behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 81511fca9b07bfea4e50793701f5c2f7bb3f5af2..724abbd378773226e0ba5863653066819bb6ec70 100644
+index 1d6f298f8aeb78552673b01493ccd35a848c397b..8aff5f3fc27fbdc82e2819a1f4e58ebf5985e9f3 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -107,7 +107,7 @@ public class AnvilMenu extends ItemCombinerMenu {
