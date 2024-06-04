@@ -118,24 +118,18 @@ index 0000000000000000000000000000000000000000..e383f96793a8ce69dbc13b8aebb6f36f
 +}
 diff --git a/src/main/java/com/kiocg/player/ThirstData.java b/src/main/java/com/kiocg/player/ThirstData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c318b33cfbc15461f9105858011d516c0be3468e
+index 0000000000000000000000000000000000000000..f5297001730014909d53de7ef7eb66efcde1d144
 --- /dev/null
 +++ b/src/main/java/com/kiocg/player/ThirstData.java
-@@ -0,0 +1,95 @@
+@@ -0,0 +1,89 @@
 +package com.kiocg.player;
 +
 +import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-+import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.level.ServerPlayer;
 +import net.minecraft.util.Mth;
 +import net.minecraft.world.effect.MobEffectInstance;
 +import net.minecraft.world.effect.MobEffects;
 +import net.minecraft.world.entity.Entity;
 +import net.minecraft.world.entity.player.Player;
-+
-+import java.util.ArrayList;
-+import java.util.List;
 +
 +public class ThirstData {
 +    public static final int MAX_VALUE = 10;

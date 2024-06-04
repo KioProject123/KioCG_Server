@@ -363,15 +363,19 @@ index ee972fa1a2bc023ed18eaceae21c8c8244754e6a..0fe6afb51246701309c88febeb61aaf7
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 642bc5e4e752ffc957a2d6b53ca904a45538b254..f5cd2cb3b19f4fa059250f91e824589c3774111d 100644
+index 642bc5e4e752ffc957a2d6b53ca904a45538b254..22224dcae9d9f7bda2f449f68a27b261f14a17bd 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5038,4 +5038,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5038,4 +5038,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return ((net.minecraft.server.level.ServerChunkCache) level.getChunkSource()).isPositionTicking(this);
      }
      // Paper end - Expose entity id counter
 +
-+    public boolean shouldTickHot() { return this.tickCount > 20*10 && this.isAlive(); } // KioCG
++    // KioCG start
++    public boolean shouldTickHot() {
++        return this.tickCount > 20 * 10 && this.isAlive();
++    }
++    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/LightningBolt.java b/src/main/java/net/minecraft/world/entity/LightningBolt.java
 index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf82252c20 100644
