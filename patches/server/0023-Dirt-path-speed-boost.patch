@@ -5,7 +5,7 @@ Subject: [PATCH] Dirt path speed boost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index be1e5b248206035f13a0204152fecdddaaebe2ca..ace02d85f32f0da0dc2f2bca83b1af7f00c69a04 100644
+index 74ab34b7d214888a2c269ad9dd3dfbdfe2f21c47..1e54ee59ff6231ec5b490e4a754019cd2eb95549 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -597,6 +597,8 @@ public class WorldConfiguration extends ConfigurationPart {

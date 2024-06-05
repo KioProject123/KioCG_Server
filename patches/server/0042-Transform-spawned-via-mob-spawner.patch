@@ -5,7 +5,7 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 47ff5e15c837a1be69799d97f991abaad5d2f3f0..320941e5cc8add7b66257aaa873f4a337301a0f1 100644
+index 58dfcdfca235461ce261157c76de06695c165708..1ed9363c272d92ef257f79472c37cd322cc0be9c 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1645,6 +1645,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti

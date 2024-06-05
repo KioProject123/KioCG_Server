@@ -5,7 +5,7 @@ Subject: [PATCH] Configurable persistent when picked up items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 0061012c227ca33e58b0ced05996240769e9fd14..7c96f1530f573e6515d6737f115e81caa76a973d 100644
+index 6e0a8f2d5edb80ca9579e52c0417c007d91b44dc..f1337e42575e8bd448b0a8203df02fd94d393617 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -602,6 +602,8 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -18,7 +18,7 @@ index 0061012c227ca33e58b0ced05996240769e9fd14..7c96f1530f573e6515d6737f115e81ca
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 08acfe68d6d671f56b95f4c60578a8ef84c763a4..47ff5e15c837a1be69799d97f991abaad5d2f3f0 100644
+index f099a842f0a800d62fbaaf593986b0fd2a4c5e83..58dfcdfca235461ce261157c76de06695c165708 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -820,9 +820,32 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
