@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 5 Jun 2024 15:58:27 +0800
+Subject: [PATCH] Configurable persistent when picked up items
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 0061012c227ca33e58b0ced05996240769e9fd14..7c96f1530f573e6515d6737f115e81caa76a973d 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -602,6 +602,8 @@ public class WorldConfiguration extends ConfigurationPart {
+                     public boolean canDropZombieSkull = true;
+                     public boolean canDropPiglinSkull = true;
+                 }
++
++                public boolean persistentWhenPickedUpItems = false;
+             }
+ 
+             public KiocgConfig.Entity.Animal animal;
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 08acfe68d6d671f56b95f4c60578a8ef84c763a4..47ff5e15c837a1be69799d97f991abaad5d2f3f0 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -820,9 +820,32 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+     protected void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
+         this.setItemSlot(slot, stack);
+         this.setGuaranteedDrop(slot);
++        if (!this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) // KioCG
+         this.persistenceRequired = true;
+     }
+ 
++    // KioCG start
++    private void dropPickedUpItems() {
++        if (this.canPickUpLoot()) {
++            EquipmentSlot[] aenumitemslot = EquipmentSlot.values();
++            int j = aenumitemslot.length;
++            for (int k = 0; k < j; ++k) {
++                EquipmentSlot enumitemslot = aenumitemslot[k];
++                if (this.getEquipmentDropChance(enumitemslot) != 2.0f) {
++                    continue;
++                }
++
++                ItemStack itemstack = this.getItemBySlot(enumitemslot);
++                if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
++                    this.forceDrops = true;
++                    this.spawnAtLocation(itemstack);
++                    this.forceDrops = false;
++                }
++            }
++        }
++    }
++    // KioCG end
++
+     public void setGuaranteedDrop(EquipmentSlot slot) {
+         switch (slot.getType()) {
+             case HAND:
+@@ -935,6 +958,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+     public void checkDespawn() {
+         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++            if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
+         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+             Player entityhuman = this.level().findNearbyPlayer(this, -1.0D, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+ 
+@@ -945,6 +969,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+ 
+                 if (d0 > (double) j && this.removeWhenFarAway(d0)) {
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
+                 }
+ 
+                 int k = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory()).soft(); // Paper - Configurable despawn distances
+@@ -952,6 +977,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+ 
+                 if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
+                 } else if (d0 < (double) l) {
+                     this.noActionTime = 0;
+                 }
