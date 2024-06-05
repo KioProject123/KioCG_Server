@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 5 Jun 2024 14:57:19 +0800
+Subject: [PATCH] Optimize getSpawnLimit
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 94a31c8f903eb61eb6d203e8e6fe8fb0beca28b1..e2e7eb2c7ce7d0eb8e51a48cbb0ab2c71a8c93fe 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -287,7 +287,7 @@ public final class CraftServer implements Server {
+     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
+     private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
+     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
+-    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
++    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
+     private File container;
+     private WarningState warningState = WarningState.DEFAULT;
+     public ApiVersion minimumAPI;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index f2b20ed5063a293f0b464548f590d652170cd1d8..65e1cad9e59718c4d67f474c1c61b5ec98285978 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -161,7 +161,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+     private final BiomeProvider biomeProvider;
+     private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
+     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+-    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
++    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
+     private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
+     private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
+ 
