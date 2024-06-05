@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 5 Jun 2024 14:39:48 +0800
+Subject: [PATCH] Prevent fire spreading
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/FireBlock.java b/src/main/java/net/minecraft/world/level/block/FireBlock.java
+index 4d467ecf0dd8006b9fa4fb8fb5aadc0622a1e512..8a2c387bf00aa1febc3a79c0aa52e457ac7de0c3 100644
+--- a/src/main/java/net/minecraft/world/level/block/FireBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/FireBlock.java
+@@ -219,6 +219,9 @@ public class FireBlock extends BaseFireBlock {
+                 this.trySpread(world, pos.north(), 300 + k, random, i, pos);
+                 this.trySpread(world, pos.south(), 300 + k, random, i, pos);
+                 // CraftBukkit end
++
++                if (true) return; // KioCG - 阻止火焰蔓延
++
+                 BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
+ 
+                 for (int l = -1; l <= 1; ++l) {
+diff --git a/src/main/java/net/minecraft/world/level/material/LavaFluid.java b/src/main/java/net/minecraft/world/level/material/LavaFluid.java
+index 3bb4a9a1a6249e8ba2de237f801210e7f4fd5825..d7e8ebf2a7ec4929044097ae10f725f1cce74c8d 100644
+--- a/src/main/java/net/minecraft/world/level/material/LavaFluid.java
++++ b/src/main/java/net/minecraft/world/level/material/LavaFluid.java
+@@ -68,6 +68,7 @@ public abstract class LavaFluid extends FlowingFluid {
+ 
+     @Override
+     public void randomTick(Level world, BlockPos pos, FluidState state, RandomSource random) {
++        if (net.minecraft.server.MinecraftServer.currentTick % 10 != 0) return; // KioCG
+         if (world.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
+             int i = random.nextInt(3);
+ 
