@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 5 Jun 2024 14:37:16 +0800
+Subject: [PATCH] Linear achievement system
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerAdvancements.java b/src/main/java/net/minecraft/server/PlayerAdvancements.java
+index c7e1f2bac3eca9bb72bf1f8c26cccb2905e1ddfc..2a0911d012fbbf0c6534ac938ca4df2b0d0097f4 100644
+--- a/src/main/java/net/minecraft/server/PlayerAdvancements.java
++++ b/src/main/java/net/minecraft/server/PlayerAdvancements.java
+@@ -233,6 +233,14 @@ public class PlayerAdvancements {
+             }
+             // Paper end - Add PlayerAdvancementCriterionGrantEvent
+             this.unregisterListeners(advancement);
++            // KioCG start - 线性的成就系统
++            final AdvancementNode advancementNode = MinecraftServer.getServer().getAdvancements().tree().get(advancement);
++            if (advancementNode != null) {
++                for (final AdvancementNode child : advancementNode.children()) {
++                    this.registerListenersLinear(child.holder());
++                }
++            }
++            // KioCG end
+             this.progressChanged.add(advancement);
+             flag = true;
+             if (!flag1 && advancementprogress.isDone()) {
+@@ -292,6 +300,27 @@ public class PlayerAdvancements {
+     }
+ 
+     private void registerListeners(AdvancementHolder advancement) {
++        // KioCG start - 线性的成就系统
++        if (advancement.value().display().isEmpty()) {
++            this.registerListenersLinear(advancement);
++        } else if (advancement.value().isRoot()) {
++            this.registerListenersLinear(advancement);
++        } else {
++            AdvancementHolder parent = advancement.value().parent().map(MinecraftServer.getServer().getAdvancements()::get).orElseThrow();
++            if (this.getOrStartProgress(parent).isDone()) {
++                this.registerListenersLinear(advancement);
++            } else if (parent.value().display().isPresent() && parent.value().display().get().isHidden()) {
++                this.registerListenersLinear(advancement);
++            } else {
++                String path = advancement.id().getPath();
++                if (path.startsWith("bacap") || path.startsWith("challenges")) {
++                    this.registerListenersLinear(advancement);
++                }
++            }
++        }
++    }
++    private void registerListenersLinear(AdvancementHolder advancement) {
++        // KioCG end - 线性的成就系统
+         AdvancementProgress advancementprogress = this.getOrStartProgress(advancement);
+ 
+         if (!advancementprogress.isDone()) {
