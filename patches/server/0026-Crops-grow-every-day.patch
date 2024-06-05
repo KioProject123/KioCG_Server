@@ -283,7 +283,7 @@ index 112d2feba5f75a2a873b595617780515945c10e4..d60b12582c9ab9d09bb844eddd4f8ba1
          BlockPos blockposition1 = pos.below();
  
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index a1df2cc7988e4a20b25c61097e44a627ff58e134..4358c676490176dd77272550c48a26052c6af957 100644
+index 3cef3bb49175d259ca9fc37d32c585190424e950..9ebb698ea1df6dfabd9ded338e23adac361e7ef1 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 @@ -90,15 +90,33 @@ public class FarmBlock extends Block {

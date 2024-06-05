@@ -5,26 +5,26 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index a31ca9a50f3b03fef750794d89c4b7c610944836..c823e031c77efe3ae60ec3045b88d2607a60d9c7 100644
+index 07f55a48562a2822b254a58966353d8f9060ae35..aa673e8fa23aae8d898ec9bab8be8b37a2c5aa98 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -584,6 +584,14 @@ public class WorldConfiguration extends ConfigurationPart {
-             map.defaultReturnValue(-0.45D);
-             map.put(EntityType.SKELETON, -0.45D);
-         });
+@@ -586,6 +586,14 @@ public class WorldConfiguration extends ConfigurationPart {
+                 map.defaultReturnValue(-0.45D);
+                 map.put(EntityType.SKELETON, -0.45D);
+             });
 +
-+        public Monster monster;
-+        public class Monster extends ConfigurationPart {
-+            public boolean spawnInLightAtNight = true;
-+            public int darkEnoughToSprint = 7;
-+            public boolean babyZombieJockey = true;
-+            public boolean zombiesSkinnedIntoSkeletons = true;
-+        }
++            public KiocgConfig.Entity.Monster monster;
++            public class Monster extends ConfigurationPart {
++                public boolean spawnInLightAtNight = true;
++                public int darkEnoughToSprint = 7;
++                public boolean babyZombieJockey = true;
++                public boolean zombiesSkinnedIntoSkeletons = true;
++            }
+         }
      }
      // KioCG end
- }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index 759839e912c54598b257ad738481364940f88a18..15ebe8467ba5af964b94e2561a90ae807328589f 100644
+index 759839e912c54598b257ad738481364940f88a18..d35feeb8cf509656b92bf43b659b5f931703e314 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
 @@ -43,6 +43,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
@@ -33,7 +33,7 @@ index 759839e912c54598b257ad738481364940f88a18..15ebe8467ba5af964b94e2561a90ae80
          super.aiStep();
 +
 +        // KioCG start
-+        final int darkEnoughToSprint = this.level().paperConfig().kiocgConfig.monster.darkEnoughToSprint;
++        final int darkEnoughToSprint = this.level().paperConfig().kiocgConfig.entity.monster.darkEnoughToSprint;
 +        if (darkEnoughToSprint >= 0 && this.level().getMaxLocalRawBrightness(this.blockPosition()) <= darkEnoughToSprint) {
 +            if (!this.isSprinting()) {
 +                this.setSprinting(true);
@@ -51,7 +51,7 @@ index 759839e912c54598b257ad738481364940f88a18..15ebe8467ba5af964b94e2561a90ae80
      }
  
      public static boolean isDarkEnoughToSpawn(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
-+        if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.monster.spawnInLightAtNight && world.getSkyDarken() >= 5) return true; // KioCG
++        if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.entity.monster.spawnInLightAtNight && world.getSkyDarken() >= 5) return true; // KioCG
          if (world.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
              return false;
          } else {
@@ -69,7 +69,7 @@ index fa0316e9d2a4cf213982994dc8bf310299cca984..e9f0961558ea4f7a86395376099a4ebe
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..c3d7525bde4f72f98b0a62fccb0d8bfc215a40f0 100644
+index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..0a5fbaa96332026b4be7444776a991b4d191ccd0 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -113,6 +113,16 @@ public class Zombie extends Monster {
@@ -77,7 +77,7 @@ index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..c3d7525bde4f72f98b0a62fccb0d8bfc
  
      protected void addBehaviourGoals() {
 +        // KioCG start
-+        if (this.level().paperConfig().kiocgConfig.monster.babyZombieJockey) {
++        if (this.level().paperConfig().kiocgConfig.entity.monster.babyZombieJockey) {
 +            this.goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.LeapAtTargetGoal(this, 0.4F) {
 +                @Override
 +                public boolean canUse() {
@@ -96,7 +96,7 @@ index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..c3d7525bde4f72f98b0a62fccb0d8bfc
 +    // KioCG start
 +    @Override
 +    public void die(DamageSource damageSource) {
-+        if (this.level().paperConfig().kiocgConfig.monster.zombiesSkinnedIntoSkeletons) {
++        if (this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedIntoSkeletons) {
 +            if (!this.isRemoved() && !this.dead) {
 +                Entity entity = damageSource.getEntity();
 +                Level world = this.level();
@@ -142,7 +142,7 @@ index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..c3d7525bde4f72f98b0a62fccb0d8bfc
  
      @Override
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
-+        if (!this.level().paperConfig().kiocgConfig.monster.zombiesSkinnedIntoSkeletons) // KioCG - 僵尸剥皮: 不要掉落护甲
++        if (!this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedIntoSkeletons) // KioCG - 僵尸剥皮: 不要掉落护甲
          super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
          Entity entity = source.getEntity();
  

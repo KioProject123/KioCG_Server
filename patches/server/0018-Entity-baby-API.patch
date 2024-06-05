@@ -5,23 +5,26 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f3285458199003aacec61dae0d4eeec6793231a8..a31ca9a50f3b03fef750794d89c4b7c610944836 100644
+index f3285458199003aacec61dae0d4eeec6793231a8..07f55a48562a2822b254a58966353d8f9060ae35 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -579,6 +579,11 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -579,6 +579,14 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
 +
-+        public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> entityBabySizeScaling = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
-+            map.defaultReturnValue(-0.45D);
-+            map.put(EntityType.SKELETON, -0.45D);
-+        });
++        public Entity entity;
++        public class Entity extends ConfigurationPart {
++            public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> babySizeScaling = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(-0.45D);
++                map.put(EntityType.SKELETON, -0.45D);
++            });
++        }
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ab74a060cad8ab5c50fe847ac9980c279afe0297..6e84cce9b3024f079f6020142fde2c3c7bd706a2 100644
+index ab74a060cad8ab5c50fe847ac9980c279afe0297..efa39d41eadee719d62ccc7b1a43667c652c8308 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -151,6 +151,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
@@ -39,7 +42,7 @@ index ab74a060cad8ab5c50fe847ac9980c279afe0297..6e84cce9b3024f079f6020142fde2c3c
              this.registerGoals();
          }
  
-+        SCALE_MODIFIER_BABY = new AttributeModifier(Mob.SCALE_MODIFIER_BABY_UUID, "Baby scale modifier", this.level().paperConfig().kiocgConfig.entityBabySizeScaling.getDouble(this.getType()), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL); // KioCG
++        SCALE_MODIFIER_BABY = new AttributeModifier(Mob.SCALE_MODIFIER_BABY_UUID, "Baby scale modifier", this.level().paperConfig().kiocgConfig.entity.babySizeScaling.getDouble(this.getType()), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL); // KioCG
      }
  
      // CraftBukkit start

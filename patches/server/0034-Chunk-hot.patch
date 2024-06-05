@@ -171,10 +171,10 @@ index 9db217ef0351e899e76b768e2f35f563ee843b5a..4d86f2fb41140715aa0bb13dcf91b4dc
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index b7d96f62e455d3e299c3bad94b1ddcabddbb0596..8f3711f7a384f043fc06cbb6f7acc31e322da4d4 100644
+index d67529820ad27a96924b64b6346ffdfa4fd4d97c..2520cbcf01958c282010e8da8b6d21a4b56d250f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -610,6 +610,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -613,6 +613,12 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;
@@ -394,7 +394,7 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 6e84cce9b3024f079f6020142fde2c3c7bd706a2..61d447f7643f97c8dbede55e1a823e002109eef4 100644
+index efa39d41eadee719d62ccc7b1a43667c652c8308..08acfe68d6d671f56b95f4c60578a8ef84c763a4 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1977,4 +1977,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti

@@ -5,23 +5,22 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index ce10249020a65e20ac24521ee35dfc5fa37ce798..a02ad44b755e68f72d8fe97f6bfddf15c8e061fd 100644
+index 4a9d351865b04637f91d1f313a590de080c8b36b..817ea078fcb8d61121a8808fb88ed3a3230d40c7 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -591,6 +591,11 @@ public class WorldConfiguration extends ConfigurationPart {
-             public int darkEnoughToSprint = 7;
-             public boolean babyZombieJockey = true;
-             public boolean zombiesSkinnedIntoSkeletons = true;
-+
-+            public boolean enableCrystalTurret = true;
+@@ -596,6 +596,10 @@ public class WorldConfiguration extends ConfigurationPart {
+             }
+ 
+             public boolean betterMobGriefingSetting = true;
++            public boolean turretEnable = true;
 +            public int turretCooldownDefault = 100;
 +            public double turretRangeDefault = 8.0;
 +            public double turretDamageDefault = 1.0;
          }
  
-         public boolean betterMobGriefingSetting = true;
+         public double dirtPathSpeedBoost = 0.02;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index d8e440e14b72dc48ae97244f1bed2c06abd997ab..ddd284e2d47bcbe1e258c6daf3a239112ba451f6 100644
+index d8e440e14b72dc48ae97244f1bed2c06abd997ab..de18a24375b2444545c6d7a22939aa76d8a8cb7a 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
@@ -32,7 +31,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..ddd284e2d47bcbe1e258c6daf3a23911
 +    @Nullable
 +    private Integer turretCooldown = null;
 +    public int getTurretCooldown() {
-+        return java.util.Objects.requireNonNullElse(this.turretCooldown, this.level().paperConfig().kiocgConfig.monster.turretCooldownDefault);
++        return java.util.Objects.requireNonNullElse(this.turretCooldown, this.level().paperConfig().kiocgConfig.entity.turretCooldownDefault);
 +    }
 +    public void setTurretCooldown(@Nullable Integer cooldown) {
 +        this.turretCooldown = cooldown;
@@ -41,7 +40,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..ddd284e2d47bcbe1e258c6daf3a23911
 +    @Nullable
 +    private Double turretRange = null;
 +    public double getTurretRange() {
-+        return java.util.Objects.requireNonNullElse(this.turretRange, this.level().paperConfig().kiocgConfig.monster.turretRangeDefault);
++        return java.util.Objects.requireNonNullElse(this.turretRange, this.level().paperConfig().kiocgConfig.entity.turretRangeDefault);
 +    }
 +    public void setTurretRange(@Nullable Double range) {
 +        this.turretRange = range;
@@ -50,7 +49,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..ddd284e2d47bcbe1e258c6daf3a23911
 +    @Nullable
 +    private Double turretDamage = null;
 +    public double getTurretDamage() {
-+        return java.util.Objects.requireNonNullElse(this.turretDamage, this.level().paperConfig().kiocgConfig.monster.turretDamageDefault);
++        return java.util.Objects.requireNonNullElse(this.turretDamage, this.level().paperConfig().kiocgConfig.entity.turretDamageDefault);
 +    }
 +    public void setTurretDamage(@Nullable Double damage) {
 +        this.turretDamage = damage;
@@ -66,7 +65,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..ddd284e2d47bcbe1e258c6daf3a23911
              }
              // Paper end - Fix invulnerable end crystals
 +            // KioCG start
-+            if (this.level().paperConfig().kiocgConfig.monster.enableCrystalTurret && !this.generatedByDragonFight) {
++            if (this.level().paperConfig().kiocgConfig.entity.turretEnable && !this.generatedByDragonFight) {
 +                if (--beamTicks <= 0) {
 +                    setBeamTarget(null);
 +                }

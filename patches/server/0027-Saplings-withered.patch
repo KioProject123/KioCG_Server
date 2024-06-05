@@ -5,10 +5,10 @@ Subject: [PATCH] Saplings withered
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index a02ad44b755e68f72d8fe97f6bfddf15c8e061fd..d54ab05b22cc4c21f858c6b9960777a3d5935358 100644
+index 817ea078fcb8d61121a8808fb88ed3a3230d40c7..9dc8ecd2cde2c3d7d7aa12ca6cb3e42dbfab0154 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -602,6 +602,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -605,6 +605,7 @@ public class WorldConfiguration extends ConfigurationPart {
          public double dirtPathSpeedBoost = 0.02;
          public boolean sleepAnyTime = true;
          public double sleepHealingRegenRate = 20;
