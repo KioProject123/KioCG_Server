@@ -5,7 +5,7 @@ Subject: [PATCH] Player in structure API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 6a4637eef14cbd84bbe26ef16f004b8f93367a3d..5d175bdeea689b8b3809dfb276d93c5c7aa341a4 100644
+index 6a4637eef14cbd84bbe26ef16f004b8f93367a3d..aee15b4eae791c3dcd406998f3450a1fb5ac6bfa 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -297,6 +297,7 @@ public class ServerPlayer extends Player {
@@ -21,7 +21,7 @@ index 6a4637eef14cbd84bbe26ef16f004b8f93367a3d..5d175bdeea689b8b3809dfb276d93c5c
              if (this.tickCount % 20 == 0) {
                  CriteriaTriggers.LOCATION.trigger(this);
 +                // KioCG start
-+                if (this.tickCount % 20 == 0 && this.serverLevel().isLoaded(this.blockPosition())) {
++                if (this.serverLevel().isLoaded(this.blockPosition())) {
 +                    if (this.serverLevel().structureManager().hasAnyStructureAtExact(this.blockPosition())) {
 +                        inStructure = true;
 +                    } else {

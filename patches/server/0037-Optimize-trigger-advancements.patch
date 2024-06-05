@@ -1,0 +1,90 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Wed, 5 Jun 2024 14:42:45 +0800
+Subject: [PATCH] Optimize trigger advancements
+
+
+diff --git a/src/main/java/net/minecraft/advancements/CriteriaTriggers.java b/src/main/java/net/minecraft/advancements/CriteriaTriggers.java
+index 9a24249fe868e6a574ed365ff31253b490593272..96a9a37c76e26d516b00e87a1bc42245d0b9a42e 100644
+--- a/src/main/java/net/minecraft/advancements/CriteriaTriggers.java
++++ b/src/main/java/net/minecraft/advancements/CriteriaTriggers.java
+@@ -72,6 +72,7 @@ public class CriteriaTriggers {
+     public static final LevitationTrigger LEVITATION = register("levitation", new LevitationTrigger());
+     public static final ChangeDimensionTrigger CHANGED_DIMENSION = register("changed_dimension", new ChangeDimensionTrigger());
+     public static final PlayerTrigger TICK = register("tick", new PlayerTrigger());
++    public static final PlayerTrigger MINUTE = register("minute", new PlayerTrigger()); // KioCG
+     public static final TameAnimalTrigger TAME_ANIMAL = register("tame_animal", new TameAnimalTrigger());
+     public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
+     public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index ae8b6f99b6e51679dfdbe15942a9db11658845ed..0291ba329bb3bad14b0d7650a3fdafe27c6267ad 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -760,6 +760,7 @@ public class ServerPlayer extends Player {
+ 
+     @Override
+     protected void onInsideBlock(BlockState state) {
++        if (!state.isAir()) // KioCG
+         CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
+     }
+ 
+@@ -808,6 +809,7 @@ public class ServerPlayer extends Player {
+         }
+ 
+         CriteriaTriggers.TICK.trigger(this);
++        if (this.tickCount % (20 * 60) == 0) CriteriaTriggers.MINUTE.trigger(this); // KioCG
+         if (this.levitationStartPos != null) {
+             CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
+         }
+@@ -939,6 +941,7 @@ public class ServerPlayer extends Player {
+             }
+ 
+             if (this.tickCount % 20 == 0) {
++                if (this.tickCount % (20 * 3) == 0) // KioCG
+                 CriteriaTriggers.LOCATION.trigger(this);
+                 // KioCG start
+                 if (this.serverLevel().isLoaded(this.blockPosition())) {
+diff --git a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
+index cbcb0e4507a3ef26a73e4118dd6b4ad3a1f7659b..01cd752992af9cfa83da4a3e6be268cf0551487c 100644
+--- a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
++++ b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -231,15 +231,24 @@ public abstract class AbstractContainerMenu {
+         return nonnulllist;
+     }
+ 
++    private int triggerTick = -1; // KioCG
+     public void broadcastChanges() {
+         int i;
+ 
++        // KioCG start - 每刻只触发一次
++        boolean triggerSlotListeners = false;
++        if (net.minecraft.server.MinecraftServer.currentTick != triggerTick) {
++            triggerTick = net.minecraft.server.MinecraftServer.currentTick;
++            triggerSlotListeners = true;
++        }
++        // KioCG end - 每刻只触发一次
+         for (i = 0; i < this.slots.size(); ++i) {
+             ItemStack itemstack = ((Slot) this.slots.get(i)).getItem();
+ 
+             Objects.requireNonNull(itemstack);
+             Supplier<ItemStack> supplier = Suppliers.memoize(itemstack::copy);
+ 
++            if (triggerSlotListeners) // KioCG
+             this.triggerSlotListeners(i, itemstack, supplier);
+             this.synchronizeSlotToRemote(i, itemstack, supplier);
+         }
+@@ -262,6 +271,14 @@ public abstract class AbstractContainerMenu {
+     public void broadcastFullState() {
+         int i;
+ 
++        // KioCG start - 每刻只触发一次
++        boolean triggerSlotListeners = false;
++        if (net.minecraft.server.MinecraftServer.currentTick != triggerTick) {
++            triggerTick = net.minecraft.server.MinecraftServer.currentTick;
++            triggerSlotListeners = true;
++        }
++        if (triggerSlotListeners)
++        // KioCG end - 每刻只触发一次
+         for (i = 0; i < this.slots.size(); ++i) {
+             ItemStack itemstack = ((Slot) this.slots.get(i)).getItem();
+ 
