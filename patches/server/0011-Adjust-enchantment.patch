@@ -153,7 +153,7 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..f3b78df6bdd2f3fd833f63948594d0ee
      public int getBlocksSetOnFire() {
          return this.blocksSetOnFire;
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-index 31b8a8bf78d52b5f11b68e780ec09bf78e7bda84..e7723c63139a4e677de9863c7ad1a543e87a7792 100644
+index 5bc4ba7c055992a32197db96d86a3906c11900d8..9eecb4339799e4300d560e419e983a654a7daca5 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 @@ -77,6 +77,7 @@ public abstract class AbstractArrow extends Projectile {

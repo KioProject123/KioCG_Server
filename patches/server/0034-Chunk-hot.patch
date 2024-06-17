@@ -200,7 +200,7 @@ index fba5a36892363f3fe99484c45bbb210dd4efbfdd..1768ddbf8f616020a99d48c57decf610
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 1186f6e46e92d5d950023509137400be0a2175d7..c15e56949638045d9b3998489c9ab297faa8eae0 100644
+index e8a07b95e015ff5e47768c2a4d517aa153b2c47a..db3c3d3ea5c519d43c29e9c027d01f514ba8e420 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1568,6 +1568,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -363,7 +363,7 @@ index ee972fa1a2bc023ed18eaceae21c8c8244754e6a..0fe6afb51246701309c88febeb61aaf7
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 642bc5e4e752ffc957a2d6b53ca904a45538b254..22224dcae9d9f7bda2f449f68a27b261f14a17bd 100644
+index b0a2f77aa5ffb5663bfc72379698019353eaeeb7..472c5e312199851d6b2c05c5f300dfc673213f13 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5038,4 +5038,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -394,7 +394,7 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 81f7991835c1e4c5868c72d928c57c3fd2c3b035..f099a842f0a800d62fbaaf593986b0fd2a4c5e83 100644
+index d8f65fefbbe852062772504dbde419bf6a236c83..f9f34b76f545fa078d0dad3b0b21d41c6ba7d437 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1977,4 +1977,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
@@ -442,7 +442,7 @@ index 0b55f67de646568afd1e3954e6f084a851388783..a860b8eaec9d923a54e08106620ae0df
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 4471d83d38e61d7ee42efcc014ee4e980a8366d4..e25d1515484583bac615202585323ba1e27f5143 100644
+index a5b3918a4919e82ee380bfbba43c4a8a20665c4e..d501b83604175ea304fa98c321e93cdff2b357a5 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -2476,4 +2476,11 @@ public abstract class Player extends LivingEntity {

@@ -317,7 +317,7 @@ index 0126906e2afc8dd525f27a0c5e82116075c9d352..fba5a36892363f3fe99484c45bbb210d
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 0ed42fa899721f83b598db05be1b5f321af3614a..1186f6e46e92d5d950023509137400be0a2175d7 100644
+index 3751c2a077bd13bac330b93c6efc2a640a17f4f2..e8a07b95e015ff5e47768c2a4d517aa153b2c47a 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1055,6 +1055,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -329,7 +329,7 @@ index 0ed42fa899721f83b598db05be1b5f321af3614a..1186f6e46e92d5d950023509137400be
          this.hasLoggedStop = true; // Paper - Debugging
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 30ea337e45ba296936f8c26428da61c931f89eff..b2549438c139abc9a0e8189a42bdb8b013df9931 100644
+index b3d1dab6a4619144f2a1a6a8a8c7fbbc01e7b8df..a09eb5e02d0144061555c73ae9dad243c5b6a2fc 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -353,6 +353,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface

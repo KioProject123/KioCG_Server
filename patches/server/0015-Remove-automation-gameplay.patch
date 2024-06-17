@@ -326,10 +326,10 @@ index e0c62227b279a5fe0f3868fbf9ce8c78c515a09c..ac75586c33d5064a0710ccde55713ac6
              world.getCraftServer().getPluginManager().callEvent(event);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 1a737167757891794b40575a5db48b0667e23a6b..5a9d9c6315c0468299b30bdaf262fe1dafa153e8 100644
+index dfbe0914ab2771ac632fd064719878ac47559e9f..5bc819cfb86f7ba692439d6df18bb31418517162 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -2149,7 +2149,7 @@ public class CraftEventFactory {
+@@ -2163,7 +2163,7 @@ public class CraftEventFactory {
          if (!event.getItem().equals(craftItem)) {
              // Chain to handler for new item
              ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());

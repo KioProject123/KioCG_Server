@@ -308,7 +308,7 @@ index 7b415dca88f50dc472fe4be96e5ef0996f117913..742177e7d9246c259065216ca0483ddd
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
              org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 4ee843dfd826772c9157ca421d8fe1f36f814b51..fc7d7d9376add08c5575fc9467fe61ded1e615f0 100644
+index 7ef9f67d27cc240191dd5d07e8dcf5fbdebe1049..bf461063d5e0f93a34f330a44802e3cfd397d120 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -358,7 +358,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -342,7 +342,7 @@ index 4ee843dfd826772c9157ca421d8fe1f36f814b51..fc7d7d9376add08c5575fc9467fe61de
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 0ddf2e1a6d2ea836f8a140a435721e0ce96bd8d2..9a5f63c03cfff839b58fef63fc3a265143bfc7a7 100644
+index 21e61bb75ac7ce468bc757633ce678b21bcb9deb..fd357a3ad69d717641dac725d0bb34dcf24735b9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -459,6 +459,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -374,7 +374,7 @@ index 0ddf2e1a6d2ea836f8a140a435721e0ce96bd8d2..9a5f63c03cfff839b58fef63fc3a2651
      }
  
      public float getHealth() {
-@@ -3471,17 +3474,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3455,17 +3458,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int i = this.getTicksFrozen();
  
@@ -403,7 +403,7 @@ index 0ddf2e1a6d2ea836f8a140a435721e0ce96bd8d2..9a5f63c03cfff839b58fef63fc3a2651
  
          this.level().getProfiler().pop();
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 686374e89e41b0917791264f3281f7384835bca8..22fb002def0345aacc0b2c9376721a38bf5c7382 100644
+index 25595bef64199c4ddbe69c65fd149eec33e778ad..0590a14f0d2f1bf422f9bef1b3f8531da8fdbda0 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -161,6 +161,8 @@ public abstract class Player extends LivingEntity {
@@ -549,7 +549,7 @@ index 17ebbd48feff3fc9201ef76cb75cbf41c11b4005..d162544b2e9776a1a80fd7e2fc6e4e41
  
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index c4d9cab0cd3872478c96964e00db1318989d707e..240be6eb471f7e0e8ac6007d7dcef4ce2dcb8b14 100644
+index f979c394fdf45c1313cb466415874f1d3c93f886..99d1cd480576e8954f4d6c619a0003b3601de9a5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -205,6 +205,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -569,7 +569,7 @@ index c4d9cab0cd3872478c96964e00db1318989d707e..240be6eb471f7e0e8ac6007d7dcef4ce
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
-@@ -3491,6 +3492,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3500,6 +3501,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

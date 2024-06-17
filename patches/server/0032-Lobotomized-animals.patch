@@ -76,10 +76,10 @@ index 41b53c4c9ad8538d996c54a5da381b24b05d6f50..407d5eea94392dba14b6cdde13cea5aa
  
              public boolean betterMobGriefingSetting = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index ea576e709f4616d7cbb09695d63e3b6c1a33deb7..a49cf57d231918bda34bde7c76d715e37edfb2f4 100644
+index 8071d519aa3f840d77913bbdbed8b6dda6dbeaba..f1db56a770843dc0a9e7c2217b487df6d1ccc7dc 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -4576,6 +4576,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -4560,6 +4560,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return false;
      }
  

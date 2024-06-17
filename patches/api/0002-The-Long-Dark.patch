@@ -5,10 +5,10 @@ Subject: [PATCH] The Long Dark
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index ea44f1548ef1156e0e2b2f622d234c2d2f73b538..5aaaf36b7ab0be05e4e3dd7b87dbdc63ec98c292 100644
+index 4da235dc7dd409bf07760c0b988987eaedc7ca21..bb0db2cbe14403d1acb51c3ed9f40bdbf7eea0e1 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3804,6 +3804,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -3852,6 +3852,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      boolean isChunkSent(long chunkKey);
      // Paper end
  

@@ -77,7 +77,7 @@ index 2b4595855214a47052fdd840c666591377e26944..bd13df6041fb7f084c92e29b24b7ac5c
  
              this.respawnPosition = pos;
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 22fb002def0345aacc0b2c9376721a38bf5c7382..4471d83d38e61d7ee42efcc014ee4e980a8366d4 100644
+index 0590a14f0d2f1bf422f9bef1b3f8531da8fdbda0..a5b3918a4919e82ee380bfbba43c4a8a20665c4e 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -274,7 +274,7 @@ public abstract class Player extends LivingEntity {
