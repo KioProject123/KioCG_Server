@@ -5,10 +5,10 @@ Subject: [PATCH] Vanilla recipe excludes model items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index d5da41ce225bea87b47dfda4d2a8698a6045134d..35e0cd94aa373cba9b88fe44f94c3a58c7311e25 100644
+index 10397048d0127f1e8af5279140013fee67e20ca3..972be070f0cbfc0e13dc4ad2527eb92170fc1e15 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -350,6 +350,66 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -352,6 +352,66 @@ public class GlobalConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public String feedbackForwardingSenderName = "MOSS";

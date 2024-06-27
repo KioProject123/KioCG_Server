@@ -5,10 +5,10 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index f5bcc78445ee29132b6947544748eeae16fa0a0f..5f2e951daf8b74267ebd09c29a44fe12f0fb4200 100644
+index b3d4d1117ae73c428aed8e1005ed110fa0a9a712..de7a4f2254f71e36fa2921179be3bd49e8456a3a 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -416,6 +416,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -418,6 +418,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
              public int fixedCumulativeCost = 4;
          }
@@ -32,7 +32,7 @@ index 658e63ebde81dc14c8ab5850fb246dc0aab25dea..59b1fc323174dcd9c5d3b98724f6eec5
      public static final TicketType<Long> CHUNK_LOAD = create("chunk_load", Long::compareTo);
      public static final TicketType<Long> STATUS_UPGRADE = create("status_upgrade", Long::compareTo);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index fd357a3ad69d717641dac725d0bb34dcf24735b9..8071d519aa3f840d77913bbdbed8b6dda6dbeaba 100644
+index 93b5684582495884a86af7d0cd373674d10247e3..d84f9c079c7ca7735070adc1a7b412c9df7e4469 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2360,7 +2360,15 @@ public abstract class LivingEntity extends Entity implements Attackable {

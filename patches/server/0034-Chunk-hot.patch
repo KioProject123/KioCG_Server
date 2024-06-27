@@ -188,7 +188,7 @@ index 407d5eea94392dba14b6cdde13cea5aadc5803cd..0c63ee49f6447646047a4410cac84bc3
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index fba5a36892363f3fe99484c45bbb210dd4efbfdd..1768ddbf8f616020a99d48c57decf6100d7140b3 100644
+index fff12262436a32a5225dc8fefd2f6dd85243871c..146e5213821a619466cb6f72ef5ff7cd60017857 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -253,6 +253,7 @@ public class Commands {

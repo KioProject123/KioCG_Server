@@ -284,10 +284,10 @@ index 0000000000000000000000000000000000000000..9db217ef0351e899e76b768e2f35f563
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 5f2e951daf8b74267ebd09c29a44fe12f0fb4200..a1a0dc77daabd1d01952c5dd6fef50dc07966336 100644
+index de7a4f2254f71e36fa2921179be3bd49e8456a3a..8d1bf2b826d341d65439eb274455afd9a8f926ec 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -420,6 +420,16 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -422,6 +422,16 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean dontKillMyPet = true;
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
@@ -305,7 +305,7 @@ index 5f2e951daf8b74267ebd09c29a44fe12f0fb4200..a1a0dc77daabd1d01952c5dd6fef50dc
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 0126906e2afc8dd525f27a0c5e82116075c9d352..fba5a36892363f3fe99484c45bbb210dd4efbfdd 100644
+index 134befa037177b47dbda1ba033251d901bdbcd3f..fff12262436a32a5225dc8fefd2f6dd85243871c 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -252,6 +252,7 @@ public class Commands {

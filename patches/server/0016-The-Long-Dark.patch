@@ -342,7 +342,7 @@ index 7ef9f67d27cc240191dd5d07e8dcf5fbdebe1049..bf461063d5e0f93a34f330a44802e3cf
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 21e61bb75ac7ce468bc757633ce678b21bcb9deb..fd357a3ad69d717641dac725d0bb34dcf24735b9 100644
+index 015134a614a44b610aac1a4c6a1eb6b7b5bb96b5..93b5684582495884a86af7d0cd373674d10247e3 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -459,6 +459,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -549,7 +549,7 @@ index 17ebbd48feff3fc9201ef76cb75cbf41c11b4005..d162544b2e9776a1a80fd7e2fc6e4e41
  
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index f979c394fdf45c1313cb466415874f1d3c93f886..99d1cd480576e8954f4d6c619a0003b3601de9a5 100644
+index b69b1b638b552e35b8662665ff1f2286a5be727f..f6e2d7a6353dc41c30d849f759ab555cd880ab5e 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -205,6 +205,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -560,7 +560,7 @@ index f979c394fdf45c1313cb466415874f1d3c93f886..99d1cd480576e8954f4d6c619a0003b3
      private CraftWorldBorder clientWorldBorder = null;
      private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
      public org.bukkit.event.player.PlayerResourcePackStatusEvent.Status resourcePackStatus; // Paper - more resource pack API
-@@ -2210,7 +2211,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2211,7 +2212,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it
@@ -569,7 +569,7 @@ index f979c394fdf45c1313cb466415874f1d3c93f886..99d1cd480576e8954f4d6c619a0003b3
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
-@@ -3500,6 +3501,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3501,6 +3502,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

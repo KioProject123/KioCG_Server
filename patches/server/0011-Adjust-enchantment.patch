@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 35e0cd94aa373cba9b88fe44f94c3a58c7311e25..46a759890f058c57a4569cdb7794e370b4f286f0 100644
+index 972be070f0cbfc0e13dc4ad2527eb92170fc1e15..8efe4cfcff55b70bd44fbeb1f8e747e7e74d7ec4 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -410,6 +410,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -412,6 +412,11 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }
@@ -153,7 +153,7 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..f3b78df6bdd2f3fd833f63948594d0ee
      public int getBlocksSetOnFire() {
          return this.blocksSetOnFire;
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-index 5bc4ba7c055992a32197db96d86a3906c11900d8..9eecb4339799e4300d560e419e983a654a7daca5 100644
+index 72c48bf33a0b882e4c94f1a7c343a170b1db0f53..6a799cefd6187b99348f64c7d82eff4a6548beb8 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 @@ -77,6 +77,7 @@ public abstract class AbstractArrow extends Projectile {

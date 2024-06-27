@@ -31,10 +31,10 @@ index e3a5f1ec376319bdfda87fa27ae217bff3914292..26c6a95966a7751cc22e25092bd6cced
  
      @Override
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 2874bc3001c4e7d9191e47ba512c5a68369c21f1..d5da41ce225bea87b47dfda4d2a8698a6045134d 100644
+index 0467ad99b144aa81a04baa45d4c8bbb2b70185a2..10397048d0127f1e8af5279140013fee67e20ca3 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -344,4 +344,12 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -346,4 +346,12 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
