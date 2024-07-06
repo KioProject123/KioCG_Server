@@ -5,10 +5,10 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f3285458199003aacec61dae0d4eeec6793231a8..604c82a001afe2670f1b50e754cb048b7be4ab96 100644
+index 629b9c3dee73dfbddad96187f83e7f4568a1a2d7..d5df5ccada65071b5e8ed985e87865c23c46909e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -579,6 +579,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -580,6 +580,14 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
@@ -24,10 +24,10 @@ index f3285458199003aacec61dae0d4eeec6793231a8..604c82a001afe2670f1b50e754cb048b
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 3a595fcdb2c1b2948a3be1b1faf76bef6dcc3103..d8f65fefbbe852062772504dbde419bf6a236c83 100644
+index 53b5aba77a4f84ce0cc62a3b02a46726503dae42..6da0922e221b4b7afe8265c842a78ae155e843ed 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -151,6 +151,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -146,6 +146,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      private BlockPos restrictCenter;
      private float restrictRadius;
      @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG
@@ -38,7 +38,7 @@ index 3a595fcdb2c1b2948a3be1b1faf76bef6dcc3103..d8f65fefbbe852062772504dbde419bf
  
      public boolean aware = true; // CraftBukkit
  
-@@ -179,6 +183,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -174,6 +178,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
              this.registerGoals();
          }
  
@@ -46,7 +46,7 @@ index 3a595fcdb2c1b2948a3be1b1faf76bef6dcc3103..d8f65fefbbe852062772504dbde419bf
      }
  
      // CraftBukkit start
-@@ -1784,7 +1789,23 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -1690,7 +1695,23 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
      }
  
@@ -72,10 +72,10 @@ index 3a595fcdb2c1b2948a3be1b1faf76bef6dcc3103..d8f65fefbbe852062772504dbde419bf
      @Override
      public HumanoidArm getMainArm() {
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-index a063dfab31f13979b4c6ae3395874736d4e498ce..5aedad24184b8d75731cfda341b19d7970b7a53e 100644
+index 6476349ef9759a9b471472f69d3545376d1dd17f..445a9f6a9a8d6099649d96374c40ba95030826f4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-@@ -186,4 +186,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
+@@ -187,4 +187,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
          getHandle().setBossBar(((org.bukkit.craftbukkit.boss.CraftBossBar) bossbar).getHandle());
      }
      // KioCG end

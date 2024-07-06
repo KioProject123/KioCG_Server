@@ -5,7 +5,7 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
-index 4065432c884324b107d04f4ccd486085b0c440e7..e83c50e20707157ccdae977a5ef03db05580505d 100644
+index 394ea92c1021d04e1687b8c12854356265e3d5de..2dd589537d8828ff351564bb50cffab4e1b5d208 100644
 --- a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
 @@ -194,6 +194,12 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {

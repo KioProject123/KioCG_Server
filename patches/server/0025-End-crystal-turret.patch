@@ -5,10 +5,10 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index d3198a8481787bb3d3ffcc5cb012397dc15e79b9..a3d09a693a8f3f8742fc2b5b52e8006ce32c8936 100644
+index 3de72ff655614408b82a5d0e496e28068e64313c..ee81824bac2a56e251536b29a2abfb8f3e58e645 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -596,6 +596,10 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -597,6 +597,10 @@ public class WorldConfiguration extends ConfigurationPart {
              }
  
              public boolean betterMobGriefingSetting = true;
@@ -20,7 +20,7 @@ index d3198a8481787bb3d3ffcc5cb012397dc15e79b9..a3d09a693a8f3f8742fc2b5b52e8006c
  
          public double dirtPathSpeedBoost = 0.02;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index d8e440e14b72dc48ae97244f1bed2c06abd997ab..de18a24375b2444545c6d7a22939aa76d8a8cb7a 100644
+index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..8d65f911c4c15bfc1dcb7a913f338076c3e959e9 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
@@ -60,7 +60,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..de18a24375b2444545c6d7a22939aa76
  
      public EndCrystal(EntityType<? extends EndCrystal> type, Level world) {
          super(type, world);
-@@ -78,6 +108,31 @@ public class EndCrystal extends Entity {
+@@ -80,6 +110,31 @@ public class EndCrystal extends Entity {
                  }
              }
              // Paper end - Fix invulnerable end crystals
@@ -92,7 +92,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..de18a24375b2444545c6d7a22939aa76
          }
  
      }
-@@ -90,6 +145,18 @@ public class EndCrystal extends Entity {
+@@ -92,6 +147,18 @@ public class EndCrystal extends Entity {
  
          nbt.putBoolean("ShowBottom", this.showsBottom());
          if (this.generatedByDragonFight) nbt.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
@@ -111,7 +111,7 @@ index d8e440e14b72dc48ae97244f1bed2c06abd997ab..de18a24375b2444545c6d7a22939aa76
      }
  
      @Override
-@@ -100,6 +167,17 @@ public class EndCrystal extends Entity {
+@@ -102,6 +169,17 @@ public class EndCrystal extends Entity {
          }
          if (nbt.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = nbt.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
  

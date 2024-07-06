@@ -5,10 +5,10 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index a59da40c920b8e7214ce004e6484307aa3b25a15..41b53c4c9ad8538d996c54a5da381b24b05d6f50 100644
+index 976e2e7dfc19673f4f0adbf3bbee4ac507775af2..b35689942d4bb1701cf89f5d9ca0781e75c2ed2f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -595,6 +595,11 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -596,6 +596,11 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean zombiesSkinnedIntoSkeletons = true;
              }
  
@@ -163,7 +163,7 @@ index 262653d72d1452b6f17582dbebbcad0c0a49ef63..7ec9025c07f5e07e541c68302582f86c
              return false;
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index 5193cf1d3c922d750a11e492b7636215e23ad0d6..5a1d8a0d10afce84987dbd42cafd418ef0328f86 100644
+index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..7dbc9c42d2f458ea6b8b6871bfe2dea24280e9f5 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
 @@ -146,7 +146,7 @@ public abstract class Animal extends AgeableMob {
@@ -184,7 +184,7 @@ index 5193cf1d3c922d750a11e492b7636215e23ad0d6..5a1d8a0d10afce84987dbd42cafd418e
          this.level().broadcastEntityEvent(this, (byte) 18);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Chicken.java b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
-index 0a4d4cb4ad7cda7c50c46151c03586865d56c797..55eaad136347e132c55915605c16de29ac7d194f 100644
+index 8e347718f72297398b5e6d34a893264bc10efe18..b912cb2ceb3f3cd3af1ef03565ed64ce866a4c56 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 @@ -50,7 +50,7 @@ public class Chicken extends Animal {
@@ -282,10 +282,10 @@ index 0c21959f57ae88fcd0a4d6dc911c1ce347c96528..760cdd726d3c242a5214d9995cddb04e
              SoundEvent soundeffect;
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Panda.java b/src/main/java/net/minecraft/world/entity/animal/Panda.java
-index db60b91c2b26ca8cdb66e05deab7742ffe212767..56dc5f05ad20101f2d74b8042e3a6332a0f5c6ef 100644
+index e108f876d3f129c6287f13d68427aed2a6f0c5b1..e4d014eb54c94ebca54a598d08f1bfeae792a636 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Panda.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Panda.java
-@@ -667,7 +667,7 @@ public class Panda extends Animal {
+@@ -672,7 +672,7 @@ public class Panda extends Animal {
              if (this.isBaby()) {
                  this.usePlayerItem(player, hand, itemstack);
                  this.ageUp((int) ((float) (-this.getAge() / 20) * 0.1F), true);
@@ -295,10 +295,10 @@ index db60b91c2b26ca8cdb66e05deab7742ffe212767..56dc5f05ad20101f2d74b8042e3a6332
                  this.usePlayerItem(player, hand, itemstack);
                  this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Sheep.java b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005fe8d823cb 100644
+index 38ac2759894660be1ee7ba59b0bd1270158e9232..9d1eb4726d9cee834589b38af4d1b4f2971252bb 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Sheep.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-@@ -153,6 +153,16 @@ public class Sheep extends Animal implements Shearable {
+@@ -151,6 +151,16 @@ public class Sheep extends Animal implements Shearable {
          super.aiStep();
      }
  
@@ -315,7 +315,7 @@ index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005f
      public static AttributeSupplier.Builder createAttributes() {
          return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D);
      }
-@@ -256,7 +266,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -254,7 +264,7 @@ public class Sheep extends Animal implements Shearable {
          ItemStack itemstack = player.getItemInHand(hand);
  
          if (itemstack.is(Items.SHEARS)) {
@@ -324,7 +324,7 @@ index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005f
                  // CraftBukkit start
                  // Paper start - custom shear drops
                  java.util.List<ItemStack> drops = this.generateDefaultDrops();
-@@ -269,6 +279,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -267,6 +277,7 @@ public class Sheep extends Animal implements Shearable {
                  }
                  // Paper end - custom shear drops
                  // CraftBukkit end
@@ -332,7 +332,7 @@ index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005f
                  this.shear(SoundSource.PLAYERS, drops); // Paper
                  this.gameEvent(GameEvent.SHEAR, player);
                  itemstack.hurtAndBreak(1, player, getSlotForHand(hand));
-@@ -281,6 +292,13 @@ public class Sheep extends Animal implements Shearable {
+@@ -279,6 +290,13 @@ public class Sheep extends Animal implements Shearable {
          }
      }
  
@@ -346,7 +346,7 @@ index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005f
      @Override
      public void shear(SoundSource shearedSoundCategory) {
          // Paper start - custom shear drops
-@@ -301,6 +319,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -299,6 +317,7 @@ public class Sheep extends Animal implements Shearable {
      public void shear(SoundSource shearedSoundCategory, java.util.List<ItemStack> drops) {
          // Paper end - custom shear drops
          this.level().playSound((Player) null, (Entity) this, SoundEvents.SHEEP_SHEAR, shearedSoundCategory, 1.0F, 1.0F);
@@ -354,7 +354,7 @@ index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005f
          this.setSheared(true);
          int i = 1 + this.random.nextInt(3);
  
-@@ -407,6 +426,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -405,6 +424,7 @@ public class Sheep extends Animal implements Shearable {
          if (event.isCancelled()) return;
          // CraftBukkit end
          super.ate();
@@ -363,7 +363,7 @@ index 3ce86f952a18cae7fda1903916903b31a63a40b4..f9a18c6876e6fc8a06519e7c724a005f
          if (this.isBaby()) {
              this.ageUp(60);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Turtle.java b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
-index 30b87b5cb18c25cdd04eab64cfbe5acd6c1b6d84..c3573f0f69101273d1d2660aefa0f606f6f83b32 100644
+index caf4120721be8f2f7e2d737abbf73296cbe170b5..37367262bff1749d9e2c94522abeff7b2883dcc7 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 @@ -187,10 +187,12 @@ public class Turtle extends Animal {
@@ -399,10 +399,10 @@ index 30b87b5cb18c25cdd04eab64cfbe5acd6c1b6d84..c3573f0f69101273d1d2660aefa0f606
      protected void ageBoundaryReached() {
          super.ageBoundaryReached();
 diff --git a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
-index 4eb26874f21726bbc6e6ad78bfaf4ecd268c7246..cf8964ff47ef086202a35bdfecfaa35b04062393 100644
+index 147974651d37e81d81ca97bfa31c9df9867492be..abfb6242a57dd689e9cc94f67e3782fcfd6d44a7 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -386,7 +386,7 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
+@@ -387,7 +387,7 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
                  this.heal(2.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // Paper - Add missing regain reason
              }
  
@@ -469,10 +469,10 @@ index 376bcbc189008464f4d518c1e07643431ba96306..b1af4fab67512662d12008c03b5a4fcd
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
          RandomSource randomsource = world.getRandom();
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-index 9357cf0179d19fbdfe76413e909a99b924c85780..b9452549ed342890b9f4d2f4e48bd0ab2658720a 100644
+index 1f5ed236fb7c0c1b0181675747d25d233f534284..5fe110e258f371066b36b0f2efd11256af5036ff 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -569,7 +569,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+@@ -570,7 +570,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
              f = 4.0F;
              short0 = 60;
              b0 = 5;
@@ -481,7 +481,7 @@ index 9357cf0179d19fbdfe76413e909a99b924c85780..b9452549ed342890b9f4d2f4e48bd0ab
                  flag = true;
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
              }
-@@ -577,7 +577,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+@@ -578,7 +578,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
              f = 10.0F;
              short0 = 240;
              b0 = 10;
@@ -491,10 +491,10 @@ index 9357cf0179d19fbdfe76413e909a99b924c85780..b9452549ed342890b9f4d2f4e48bd0ab
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
              }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
-index 36d654073ab4058db54830d9447d7d959a0b25f1..66eff5e586b9973e9854012f7a31b2c3a92cc3eb 100644
+index cf6a3a63b6f2b96943c0f399e8c82d293fee31ba..5a1733b3b6e3f7e5a3fdbb31e678e94e6dbc6c0c 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -182,7 +182,7 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
+@@ -177,7 +177,7 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
              b0 = 90;
              b1 = 6;
              f = 10.0F;
@@ -504,7 +504,7 @@ index 36d654073ab4058db54830d9447d7d959a0b25f1..66eff5e586b9973e9854012f7a31b2c3
                  this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
              }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-index dc035bf94c5f6574ed8ad369b327b7f7a145e1d6..57eeca8b8bbd1ef0827cd27b7f88b442ea8f6ee0 100644
+index fadd341ff398886a4da102eefa1beb95a63bbd6d..54aab0e38ef072253fbbc3dd47b337b86b35f159 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 @@ -485,6 +485,17 @@ public class Sniffer extends Animal {
@@ -526,10 +526,10 @@ index dc035bf94c5f6574ed8ad369b327b7f7a145e1d6..57eeca8b8bbd1ef0827cd27b7f88b442
      protected void sendDebugPackets() {
          super.sendDebugPackets();
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index a7930f9875aa4aca997caaead46ecdc21e5e11d7..6ff000741f2454aa0005a0fe0d442255b6f5ae5c 100644
+index 7e1871401ec5e3e9a85232053490259f132aec0a..b032632f68eda8a7c4045d2640f8e32c45ddcd3d 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -738,6 +738,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -740,6 +740,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
  
      @Override
      public boolean canBreed() {
@@ -537,41 +537,3 @@ index a7930f9875aa4aca997caaead46ecdc21e5e11d7..6ff000741f2454aa0005a0fe0d442255
          return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
      }
  
-diff --git a/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java b/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
-index cfe953bc924f46b570e37395ac0f05ebcb82eb39..b06b5ccbcc412801e0942342752707628ab772a5 100644
---- a/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
-+++ b/src/main/java/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
-@@ -54,6 +54,7 @@ public class LootingEnchantFunction extends LootItemConditionalFunction {
-     @Override
-     public ItemStack run(ItemStack stack, LootContext context) {
-         Entity entity = (Entity) context.getParamOrNull(LootContextParams.KILLER_ENTITY);
-+        int i0 = 0; // KioCG
- 
-         if (entity instanceof LivingEntity) {
-             int i = EnchantmentHelper.getMobLooting((LivingEntity) entity);
-@@ -62,6 +63,13 @@ public class LootingEnchantFunction extends LootItemConditionalFunction {
-                 i = context.getParamOrNull(LootContextParams.LOOTING_MOD);
-             }
-             // CraftBukkit end
-+            // KioCG start
-+            i0 = i;
-+        }
-+        {
-+            int i = i0;
-+            if (context.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.getTotalFeedingDays() * 4;
-+            // KioCG end
- 
-             if (i <= 0) { // CraftBukkit - account for possible negative looting values from Bukkit
-                 return stack;
-diff --git a/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java b/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-index e2603e5ec9134e293bd6cdf6bde549285eda496b..2add849aed08c81e753f82c2c0a96e7c2a843829 100644
---- a/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-+++ b/src/main/java/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-@@ -35,6 +35,7 @@ public record LootItemRandomChanceWithLootingCondition(float percent, float loot
-         if (entity instanceof LivingEntity) {
-             i = EnchantmentHelper.getMobLooting((LivingEntity) entity);
-         }
-+        if (loottableinfo.getParamOrNull(LootContextParams.THIS_ENTITY) instanceof net.minecraft.world.entity.AgeableMob ageableMob) i += ageableMob.getTotalFeedingDays() * 4; // KioCG
-         // CraftBukkit start - only use lootingModifier if set by Bukkit
-         if (loottableinfo.hasParam(LootContextParams.LOOTING_MOD)) {
-             i = loottableinfo.getParamOrNull(LootContextParams.LOOTING_MOD);

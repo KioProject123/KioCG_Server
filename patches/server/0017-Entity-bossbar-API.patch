@@ -42,26 +42,26 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 8b612b772ca87c852d0b108c2afd6785c261c9b9..3a595fcdb2c1b2948a3be1b1faf76bef6dcc3103 100644
+index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..53b5aba77a4f84ce0cc62a3b02a46726503dae42 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -150,6 +150,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
-     private Either<UUID, BlockPos> delayedLeashInfo;
+@@ -145,6 +145,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+     private Leashable.LeashData leashData;
      private BlockPos restrictCenter;
      private float restrictRadius;
 +    @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG
  
      public boolean aware = true; // CraftBukkit
  
-@@ -457,6 +458,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
-             }
+@@ -449,6 +450,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+             this.updateControlFlags();
          }
  
 +        updateBossbar(); // KioCG
      }
  
      protected void updateControlFlags() {
-@@ -584,6 +586,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -551,6 +553,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          }
  
          nbt.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
@@ -70,7 +70,7 @@ index 8b612b772ca87c852d0b108c2afd6785c261c9b9..3a595fcdb2c1b2948a3be1b1faf76bef
      }
  
      @Override
-@@ -668,6 +672,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -628,6 +632,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
              this.aware = nbt.getBoolean("Bukkit.Aware");
          }
          // CraftBukkit end
@@ -79,7 +79,7 @@ index 8b612b772ca87c852d0b108c2afd6785c261c9b9..3a595fcdb2c1b2948a3be1b1faf76bef
      }
  
      @Override
-@@ -1902,4 +1908,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -1804,4 +1810,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
@@ -133,11 +133,11 @@ index 8b612b772ca87c852d0b108c2afd6785c261c9b9..3a595fcdb2c1b2948a3be1b1faf76bef
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-index e155501fb3a88edf3ddac3aa0aae1b6a5a84962e..a063dfab31f13979b4c6ae3395874736d4e498ce 100644
+index deb66c04abefb4a88521483db1612e494bd27164..6476349ef9759a9b471472f69d3545376d1dd17f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-@@ -174,4 +174,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
-         return getHandle().getExperienceReward();
+@@ -175,4 +175,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
+         return getHandle().getExperienceReward((ServerLevel) this.getHandle().level(), null);
      }
      // Paper end
 +

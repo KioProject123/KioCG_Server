@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 604c82a001afe2670f1b50e754cb048b7be4ab96..c5928de28703c6330bade1055aa938fb39bda885 100644
+index d5df5ccada65071b5e8ed985e87865c23c46909e..2235ed3810cc9be863b34a32cde7e325cc9cf200 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -586,6 +586,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -587,6 +587,14 @@ public class WorldConfiguration extends ConfigurationPart {
                  map.defaultReturnValue(-45);
                  map.put(EntityType.SKELETON, -45);
              });
@@ -56,7 +56,7 @@ index 759839e912c54598b257ad738481364940f88a18..d35feeb8cf509656b92bf43b659b5f93
              return false;
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Spider.java b/src/main/java/net/minecraft/world/entity/monster/Spider.java
-index fa0316e9d2a4cf213982994dc8bf310299cca984..e9f0961558ea4f7a86395376099a4ebef50d8e95 100644
+index e675f1e3e5b6f9e1aa0d928ebb9abe76458edb38..7bfdbb389f8ca72b1d5bc1de7d86b48145b121b2 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Spider.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Spider.java
 @@ -192,7 +192,7 @@ public class Spider extends Monster {
@@ -69,10 +69,10 @@ index fa0316e9d2a4cf213982994dc8bf310299cca984..e9f0961558ea4f7a86395376099a4ebe
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..0a5fbaa96332026b4be7444776a991b4d191ccd0 100644
+index 892f02475976203abdd472aa02b80a9bfe48f752..e9c3e85bbc8802b300a743dad4807ffbbebb6a7c 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -113,6 +113,16 @@ public class Zombie extends Monster {
+@@ -117,6 +117,16 @@ public class Zombie extends Monster {
      }
  
      protected void addBehaviourGoals() {
@@ -89,7 +89,7 @@ index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..0a5fbaa96332026b4be7444776a991b4
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-@@ -301,6 +311,48 @@ public class Zombie extends Monster {
+@@ -307,6 +317,48 @@ public class Zombie extends Monster {
  
      }
  
@@ -138,11 +138,11 @@ index 6ea7a24f11bdef871be3d71e08ca491045ebeda2..0a5fbaa96332026b4be7444776a991b4
      public boolean isSunSensitive() {
          return this.shouldBurnInDay; // Paper - Add more Zombie API
      }
-@@ -582,6 +634,7 @@ public class Zombie extends Monster {
+@@ -593,6 +645,7 @@ public class Zombie extends Monster {
  
      @Override
-     protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
+     protected void dropCustomDeathLoot(ServerLevel world, DamageSource source, boolean causedByPlayer) {
 +        if (!this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedIntoSkeletons) // KioCG - 僵尸剥皮: 不要掉落护甲
-         super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
+         super.dropCustomDeathLoot(world, source, causedByPlayer);
          Entity entity = source.getEntity();
  

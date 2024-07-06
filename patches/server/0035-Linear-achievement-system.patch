@@ -5,7 +5,7 @@ Subject: [PATCH] Linear achievement system
 
 
 diff --git a/src/main/java/net/minecraft/server/PlayerAdvancements.java b/src/main/java/net/minecraft/server/PlayerAdvancements.java
-index c7e1f2bac3eca9bb72bf1f8c26cccb2905e1ddfc..2a0911d012fbbf0c6534ac938ca4df2b0d0097f4 100644
+index 9fabf9322acd663c4452b562494e74aa42eb19da..d75d42c90391ebeb1d830da246d31b85bdca79f0 100644
 --- a/src/main/java/net/minecraft/server/PlayerAdvancements.java
 +++ b/src/main/java/net/minecraft/server/PlayerAdvancements.java
 @@ -233,6 +233,14 @@ public class PlayerAdvancements {

@@ -5,10 +5,10 @@ Subject: [PATCH] Default max stack size
 
 
 diff --git a/src/main/java/net/minecraft/core/component/DataComponents.java b/src/main/java/net/minecraft/core/component/DataComponents.java
-index 9b2a209cda955ef3e5d8ff3ed1b2249888c7d139..7f615fca8614889d71719be795c6d7074749aac1 100644
+index 60757f8df706cba92350d73503b73913cff3bcfc..194dc9b7831d2cfaf054bc4a40d8192715f78b5f 100644
 --- a/src/main/java/net/minecraft/core/component/DataComponents.java
 +++ b/src/main/java/net/minecraft/core/component/DataComponents.java
-@@ -55,7 +55,7 @@ public class DataComponents {
+@@ -56,7 +56,7 @@ public class DataComponents {
      static final EncoderCache ENCODER_CACHE = new EncoderCache(512);
      public static final DataComponentType<CustomData> CUSTOM_DATA = register("custom_data", builder -> builder.persistent(CustomData.CODEC));
      public static final DataComponentType<Integer> MAX_STACK_SIZE = register(
@@ -17,7 +17,7 @@ index 9b2a209cda955ef3e5d8ff3ed1b2249888c7d139..7f615fca8614889d71719be795c6d707
      );
      public static final DataComponentType<Integer> MAX_DAMAGE = register(
          "max_damage", builder -> builder.persistent(ExtraCodecs.POSITIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT)
-@@ -222,7 +222,7 @@ public class DataComponents {
+@@ -224,7 +224,7 @@ public class DataComponents {
          "container_loot", builder -> builder.persistent(SeededContainerLoot.CODEC)
      );
      public static final DataComponentMap COMMON_ITEM_COMPONENTS = DataComponentMap.builder()
@@ -27,31 +27,31 @@ index 9b2a209cda955ef3e5d8ff3ed1b2249888c7d139..7f615fca8614889d71719be795c6d707
          .set(ENCHANTMENTS, ItemEnchantments.EMPTY)
          .set(REPAIR_COST, 0)
 diff --git a/src/main/java/net/minecraft/world/Container.java b/src/main/java/net/minecraft/world/Container.java
-index f402dbbfe3a443e6bc51f88b85abe937852b52f0..a8fc0b8ea0d5f742f5d4995c3dd7f40191cc0d16 100644
+index 5db5ba026462ca642dcee718af732f80fadabef5..c53a99e9c06b07c595086d0571c41050efe87bd7 100644
 --- a/src/main/java/net/minecraft/world/Container.java
 +++ b/src/main/java/net/minecraft/world/Container.java
-@@ -116,6 +116,6 @@ public interface Container extends Clearable {
-     default void setCurrentRecipe(RecipeHolder<?> recipe) {
-     }
+@@ -109,6 +109,6 @@ public interface Container extends Clearable {
+ 
+     org.bukkit.Location getLocation();
  
 -    int MAX_STACK = 99;
 +    int MAX_STACK = 999; // KioCG
      // CraftBukkit end
  }
 diff --git a/src/main/java/net/minecraft/world/item/Item.java b/src/main/java/net/minecraft/world/item/Item.java
-index 00d2819494d60b54aa268bbe2ccf57be605ceb30..67d51f6ecd814d324b44a428e8e838bb12aa72b1 100644
+index 8fd54bccb7af59da9113d8a289d12d8fad1fb467..a09b7fbcdcb0f1f321c625d112a0d9b3a451d066 100644
 --- a/src/main/java/net/minecraft/world/item/Item.java
 +++ b/src/main/java/net/minecraft/world/item/Item.java
-@@ -60,7 +60,7 @@ public class Item implements FeatureElement, ItemLike {
-     public static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-     public static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+@@ -62,7 +62,7 @@ public class Item implements FeatureElement, ItemLike {
+     public static final ResourceLocation BASE_ATTACK_DAMAGE_ID = ResourceLocation.withDefaultNamespace("base_attack_damage");
+     public static final ResourceLocation BASE_ATTACK_SPEED_ID = ResourceLocation.withDefaultNamespace("base_attack_speed");
      public static final int DEFAULT_MAX_STACK_SIZE = 64;
 -    public static final int ABSOLUTE_MAX_STACK_SIZE = 99;
 +    public static final int ABSOLUTE_MAX_STACK_SIZE = 999; // KioCG
      public static final int MAX_BAR_WIDTH = 13;
      private final Holder.Reference<Item> builtInRegistryHolder = BuiltInRegistries.ITEM.createIntrusiveHolder(this);
      private final DataComponentMap components;
-@@ -348,6 +348,7 @@ public class Item implements FeatureElement, ItemLike {
+@@ -354,6 +354,7 @@ public class Item implements FeatureElement, ItemLike {
          }
  
          public Item.Properties stacksTo(int maxCount) {
@@ -60,10 +60,10 @@ index 00d2819494d60b54aa268bbe2ccf57be605ceb30..67d51f6ecd814d324b44a428e8e838bb
          }
  
 diff --git a/src/main/java/net/minecraft/world/item/Items.java b/src/main/java/net/minecraft/world/item/Items.java
-index d00b59efb754594cf532f8598f4b6d3b29693232..41972cbefaf52c18ccc0d313f3c2c10f940d6326 100644
+index 07315232192f6e09910a028c4643d7f0544c62e3..6cef99bc8ff178f86b0e0ea6c66b70efe30e75f1 100644
 --- a/src/main/java/net/minecraft/world/item/Items.java
 +++ b/src/main/java/net/minecraft/world/item/Items.java
-@@ -1364,7 +1364,7 @@ public class Items {
+@@ -1363,7 +1363,7 @@ public class Items {
      public static final Item GOLD_NUGGET = registerItem("gold_nugget", new Item(new Item.Properties()));
      public static final Item NETHER_WART = registerItem("nether_wart", new ItemNameBlockItem(Blocks.NETHER_WART, new Item.Properties()));
      public static final Item POTION = registerItem(
@@ -72,8 +72,8 @@ index d00b59efb754594cf532f8598f4b6d3b29693232..41972cbefaf52c18ccc0d313f3c2c10f
      );
      public static final Item GLASS_BOTTLE = registerItem("glass_bottle", new BottleItem(new Item.Properties()));
      public static final Item SPIDER_EYE = registerItem("spider_eye", new Item(new Item.Properties().food(Foods.SPIDER_EYE)));
-@@ -1768,14 +1768,14 @@ public class Items {
-     public static final Item BEETROOT_SOUP = registerItem("beetroot_soup", new BowlFoodItem(new Item.Properties().stacksTo(1).food(Foods.BEETROOT_SOUP)));
+@@ -1767,14 +1767,14 @@ public class Items {
+     public static final Item BEETROOT_SOUP = registerItem("beetroot_soup", new Item(new Item.Properties().stacksTo(1).food(Foods.BEETROOT_SOUP)));
      public static final Item DRAGON_BREATH = registerItem("dragon_breath", new Item(new Item.Properties().craftRemainder(GLASS_BOTTLE).rarity(Rarity.UNCOMMON)));
      public static final Item SPLASH_POTION = registerItem(
 -        "splash_potion", new SplashPotionItem(new Item.Properties().stacksTo(1).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY))
@@ -90,7 +90,7 @@ index d00b59efb754594cf532f8598f4b6d3b29693232..41972cbefaf52c18ccc0d313f3c2c10f
      public static final Item SHIELD = registerItem(
          "shield", new ShieldItem(new Item.Properties().durability(336).component(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY))
 diff --git a/src/main/java/net/minecraft/world/item/PotionItem.java b/src/main/java/net/minecraft/world/item/PotionItem.java
-index db038cb423c3b951890c81d833aa77ebcea3304f..e920c5fc2c83952d4e090b3816ad86b70e12af8c 100644
+index d147b24bb57b322d3f5f4a9eb8cfef2acdd9e0f5..eb93202f1087ec06055918e78132892e0ab3e4f7 100644
 --- a/src/main/java/net/minecraft/world/item/PotionItem.java
 +++ b/src/main/java/net/minecraft/world/item/PotionItem.java
 @@ -91,7 +91,9 @@ public class PotionItem extends Item {

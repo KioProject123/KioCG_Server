@@ -5,18 +5,18 @@ Subject: [PATCH] Optimize entity behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/PathfinderMob.java b/src/main/java/net/minecraft/world/entity/PathfinderMob.java
-index 645414720db0231a19c88f681608eb08200b8782..65080c10504b5e6bad56fcbb91ccb85215d74138 100644
+index 9c995085357eff3c3b6c9c23129c2be6ea51e371..c5f6ab5b040db2815829a602fc8e199363af187b 100644
 --- a/src/main/java/net/minecraft/world/entity/PathfinderMob.java
 +++ b/src/main/java/net/minecraft/world/entity/PathfinderMob.java
-@@ -98,7 +98,7 @@ public abstract class PathfinderMob extends Mob {
- 
-                 this.setDeltaMovement(this.getDeltaMovement().add(Math.copySign(d0 * d0 * 0.4D, d0), Math.copySign(d1 * d1 * 0.4D, d1), Math.copySign(d2 * d2 * 0.4D, d2)));
-                 this.checkSlowFallDistance();
--            } else if (this.shouldStayCloseToLeashHolder() && !this.isPanicking()) {
-+            } else if (this.shouldStayCloseToLeashHolder() && !this.isPanicking() && !(entity instanceof net.minecraft.world.entity.decoration.LeashFenceKnotEntity)) { // KioCG - TODO 临时修复https://github.com/PaperMC/Paper/issues/8587
-                 this.goalSelector.enableControlFlag(Goal.Flag.MOVE);
-                 float f1 = 2.0F;
-                 Vec3 vec3d = (new Vec3(entity.getX() - this.getX(), entity.getY() - this.getY(), entity.getZ() - this.getZ())).normalize().scale((double) Math.max(f - 2.0F, 0.0F));
+@@ -69,7 +69,7 @@ public abstract class PathfinderMob extends Mob {
+     @Override
+     public void closeRangeLeashBehaviour(Entity entity) {
+         super.closeRangeLeashBehaviour(entity);
+-        if (this.shouldStayCloseToLeashHolder() && !this.isPanicking()) {
++        if (this.shouldStayCloseToLeashHolder() && !this.isPanicking() && !(entity instanceof net.minecraft.world.entity.decoration.LeashFenceKnotEntity)) { // KioCG - TODO 临时修复https://github.com/PaperMC/Paper/issues/8587
+             this.goalSelector.enableControlFlag(Goal.Flag.MOVE);
+             float f = 2.0F;
+             float f1 = this.distanceTo(entity);
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 index 676e1580849e8942eb41c7a3a80f464138b22764..9c57a2e4b1a80711efbf2a756458c0250a43f880 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
@@ -31,10 +31,10 @@ index 676e1580849e8942eb41c7a3a80f464138b22764..9c57a2e4b1a80711efbf2a756458c025
          this.setFlags(EnumSet.of(Goal.Flag.MOVE));
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-index 07559b9629d4ecb40b511256f400a781e39820e0..b102a370f5fc1f80c199a4e4d1f6ab9a9480fab3 100644
+index 23d4dcc82115fd1a0a77565a0472304042d5f12d..797ae2cf1978e224ae5b07ffb889b1786327bf75 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-@@ -124,7 +124,14 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+@@ -123,7 +123,14 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
          this.goalSelector.addGoal(8, new LeapAtTargetGoal(this, 0.3F));
          this.goalSelector.addGoal(9, new OcelotAttackGoal(this));
          this.goalSelector.addGoal(10, new BreedGoal(this, 0.8D));
@@ -50,7 +50,7 @@ index 07559b9629d4ecb40b511256f400a781e39820e0..b102a370f5fc1f80c199a4e4d1f6ab9a
          this.goalSelector.addGoal(12, new LookAtPlayerGoal(this, Player.class, 10.0F));
          this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Rabbit.class, false, (Predicate) null));
          this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
-@@ -513,7 +520,7 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+@@ -503,7 +510,7 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
  
          @Override
          public boolean canUse() {
@@ -60,13 +60,13 @@ index 07559b9629d4ecb40b511256f400a781e39820e0..b102a370f5fc1f80c199a4e4d1f6ab9a
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index 5ca96541abbb754f4d9fbe01f37ebaf19c532bbb..9207b5830b66d26e6277664dcebc5beb30841fc5 100644
+index 97931bfd360725945ab9606ff698b518ae101076..b87dfc9e103e78a3a576c8ef2d8bc455c75278d7 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 @@ -153,9 +153,23 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
          this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
          this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.0D, 5.0F, 1.0F, true));
+         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.0D, 5.0F, 1.0F));
 -        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0D));
 +        // KioCG start
 +        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0D) {
@@ -90,12 +90,12 @@ index 5ca96541abbb754f4d9fbe01f37ebaf19c532bbb..9207b5830b66d26e6277664dcebc5beb
  
      public static AttributeSupplier.Builder createAttributes() {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index cebbb7341f86b13dcbfc3a41cbe264e9d4b68d60..5dfa2184aaa2955e54456e6f9f78507daae1e385 100644
+index c382a8f95f612db881b9cdbd07316d1ca1cd9c4b..7ee0be0742f5d214026026a3b95b69cfd90a4968 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-@@ -134,17 +134,38 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -136,17 +136,38 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
          this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-         this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
+         this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F));
          this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
 -        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 +        // KioCG start
@@ -135,7 +135,7 @@ index cebbb7341f86b13dcbfc3a41cbe264e9d4b68d60..5dfa2184aaa2955e54456e6f9f78507d
          this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
      }
  
-@@ -734,7 +755,7 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -726,7 +747,7 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
          @Override
          public boolean canUse() {
@@ -167,10 +167,10 @@ index cb995cc13ba7a083bab9035b0d31701f2ff9c5aa..ec468530e059ed820606e2fcdd8c4add
                  }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java b/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java
-index 0c5fe46d2da113beff3e220843593d616e37d4ca..cefa53fa4d53e7085f1c0a96637fc25d463ca136 100644
+index 3b5cf6ffb74d11bea5eb21bd66d679734ff5000c..0fcd68447356c0d9be1ac433c9614adfbf804beb 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java
-@@ -78,7 +78,7 @@ public abstract class AbstractSkeleton extends Monster implements RangedAttackMo
+@@ -79,7 +79,7 @@ public abstract class AbstractSkeleton extends Monster implements RangedAttackMo
          this.targetSelector.addGoal(1, new HurtByTargetGoal(this, new Class[0]));
          this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
          this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
@@ -193,10 +193,10 @@ index cff1b5e0e3fd32d82157d5f13d83d4abdfad7378..35501b3cca40dbe40ce4eed0edaf4a58
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index e42dfc62bb179be1ab01b0096c05c6549d38abbc..6ea7a24f11bdef871be3d71e08ca491045ebeda2 100644
+index 2280004638fd19ed018cb3e77d53a018b34ec516..892f02475976203abdd472aa02b80a9bfe48f752 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -114,13 +114,13 @@ public class Zombie extends Monster {
+@@ -118,13 +118,13 @@ public class Zombie extends Monster {
  
      protected void addBehaviourGoals() {
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
@@ -213,7 +213,7 @@ index e42dfc62bb179be1ab01b0096c05c6549d38abbc..6ea7a24f11bdef871be3d71e08ca4910
  
      public static AttributeSupplier.Builder createAttributes() {
 diff --git a/src/main/java/net/minecraft/world/entity/npc/WanderingTrader.java b/src/main/java/net/minecraft/world/entity/npc/WanderingTrader.java
-index 0854e9b7ee2e6b23b6c1ee6a324a5a253c9d4679..0b55f67de646568afd1e3954e6f084a851388783 100644
+index 0af34e0f9c9696fbcb11b12fb27472ef17ad532a..9323e2c92f4fe1268352121c960e2507de8c7aed 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/WanderingTrader.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/WanderingTrader.java
 @@ -81,6 +81,8 @@ public class WanderingTrader extends net.minecraft.world.entity.npc.AbstractVill
@@ -235,7 +235,7 @@ index 0854e9b7ee2e6b23b6c1ee6a324a5a253c9d4679..0b55f67de646568afd1e3954e6f084a8
          this.goalSelector.addGoal(1, new LookAtTradingPlayerGoal(this));
          this.goalSelector.addGoal(2, new WanderingTrader.WanderToPositionGoal(this, 2.0D, 0.35D));
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index 3283ed99c35ffed6805567705e0518d9f84feedc..ed70ce322c5daa7f94917ae4650796068009e05c 100644
+index bf2d18f74b0f0da7c3c30310c74224a1c0853564..82f1667ae2a868c36c3a6edb51268d79ae0692ce 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
 @@ -279,6 +279,7 @@ public class ActivationRange

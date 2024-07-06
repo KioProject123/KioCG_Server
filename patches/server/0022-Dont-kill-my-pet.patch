@@ -5,7 +5,7 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index b3d4d1117ae73c428aed8e1005ed110fa0a9a712..de7a4f2254f71e36fa2921179be3bd49e8456a3a 100644
+index 9baf940db57c2980d0c68f8141396ad8836f8c46..593022f294774d3d4babf611f3f28e4e0c0d462f 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -418,6 +418,10 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -20,22 +20,22 @@ index b3d4d1117ae73c428aed8e1005ed110fa0a9a712..de7a4f2254f71e36fa2921179be3bd49
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/TicketType.java b/src/main/java/net/minecraft/server/level/TicketType.java
-index 658e63ebde81dc14c8ab5850fb246dc0aab25dea..59b1fc323174dcd9c5d3b98724f6eec575635b8c 100644
+index f56e5c0f53f9b52a9247b9be9265b949494fc924..b622a82986efd7a6d7cd5491f3ba2569b37f8dbe 100644
 --- a/src/main/java/net/minecraft/server/level/TicketType.java
 +++ b/src/main/java/net/minecraft/server/level/TicketType.java
-@@ -28,6 +28,7 @@ public class TicketType<T> {
+@@ -25,6 +25,7 @@ public class TicketType<T> {
+     public static final TicketType<ChunkPos> UNKNOWN = TicketType.create("unknown", Comparator.comparingLong(ChunkPos::toLong), 1);
      public static final TicketType<Unit> PLUGIN = TicketType.create("plugin", (a, b) -> 0); // CraftBukkit
      public static final TicketType<org.bukkit.plugin.Plugin> PLUGIN_TICKET = TicketType.create("plugin_ticket", (plugin1, plugin2) -> plugin1.getClass().getName().compareTo(plugin2.getClass().getName())); // CraftBukkit
-     public static final TicketType<Long> CHUNK_RELIGHT = create("light_update", Long::compareTo); // Paper - ensure chunks stay loaded for lighting
 +    public static final TicketType<Integer> PET_FOLLOW = TicketType.create("pet_follow", Integer::compareTo, 20 * 3); // KioCG
-     // Paper start - rewrite chunk system
-     public static final TicketType<Long> CHUNK_LOAD = create("chunk_load", Long::compareTo);
-     public static final TicketType<Long> STATUS_UPGRADE = create("status_upgrade", Long::compareTo);
+ 
+     public static <T> TicketType<T> create(String name, Comparator<T> argumentComparator) {
+         return new TicketType<>(name, argumentComparator, 0L);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 93b5684582495884a86af7d0cd373674d10247e3..d84f9c079c7ca7735070adc1a7b412c9df7e4469 100644
+index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..e075644952df6a116b4d3958afa6bf4c510a1e9c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2360,7 +2360,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2365,7 +2365,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damagesource, f);
@@ -53,10 +53,10 @@ index 93b5684582495884a86af7d0cd373674d10247e3..d84f9c079c7ca7735070adc1a7b412c9
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 45284bb0f081377bc5913876c6877a424285c0bb..85bc846db2bec56ec1ba44e378bde929a252ee0c 100644
+index 45224dc3867892b298b006c17f7f85741fcc96d6..a715f6eba2d7d5e5149821767b51783248f9c3b7 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-@@ -213,11 +213,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -254,11 +254,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
@@ -106,7 +106,30 @@ index 45284bb0f081377bc5913876c6877a424285c0bb..85bc846db2bec56ec1ba44e378bde929
 +        if (!sitting && onTheVergeOfDeath()) return; // KioCG
          this.orderedToSit = sitting;
      }
- }
+ 
+@@ -274,7 +313,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+     public boolean shouldTryTeleportToOwner() {
+         LivingEntity entityliving = this.getOwner();
+ 
+-        return entityliving != null && this.distanceToSqr((Entity) this.getOwner()) >= 144.0D;
++        return entityliving != null && this.distanceToSqr((Entity) this.getOwner()) >= io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petTeleportDistanceSqr; // KioCG
+     }
+ 
+     private void teleportToAroundBlockPos(BlockPos pos) {
+@@ -346,6 +385,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+             super(TamableAnimal.this, d0);
+         }
+ 
++        // KioCG start
++        @Override
++        public boolean shouldPanic() {
++            return !((TamableAnimal) this.mob).onTheVergeOfDeath() && super.shouldPanic();
++        }
++        // KioCG end
++
+         @Override
+         public void tick() {
+             if (!TamableAnimal.this.unableToMoveToOwner() && TamableAnimal.this.shouldTryTeleportToOwner()) {
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
 index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3587ec637 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
@@ -121,31 +144,26 @@ index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3
                          } else if (entityliving.level() != entityinsentient.level()) {
                              reason = EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-index edd29c2f4d0151d512618115a8fb4b7423171491..88a6311f3ce0b1d30533ad941e7696e1e9309171 100644
+index 15d7be9ed4a973044dd4399db46aaa244730b836..066761bd2a38126e272af9bdad65be570e0a3d19 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-@@ -36,6 +36,7 @@ public class FollowOwnerGoal extends Goal {
+@@ -19,6 +19,7 @@ public class FollowOwnerGoal extends Goal {
+     private final float stopDistance;
      private final float startDistance;
      private float oldWaterCost;
-     private final boolean canFly;
 +    private int ticketTicks; // KioCG
  
-     public FollowOwnerGoal(TamableAnimal tameable, double speed, float minDistance, float maxDistance, boolean leavesAllowed) {
+     public FollowOwnerGoal(TamableAnimal tameable, double speed, float minDistance, float maxDistance) {
          this.tamable = tameable;
-@@ -58,10 +59,12 @@ public class FollowOwnerGoal extends Goal {
-         if (entityliving == null) {
+@@ -40,6 +41,7 @@ public class FollowOwnerGoal extends Goal {
+         } else if (this.tamable.unableToMoveToOwner()) {
              return false;
-         } else if (entityliving.isSpectator()) {
-+            if (!this.unableToMove()) keepChunkLoaded(); // KioCG
-             return false;
-         } else if (this.unableToMove()) {
-             return false;
-         } else if (this.tamable.distanceToSqr((Entity) entityliving) < (double) (this.startDistance * this.startDistance)) {
+         } else if (this.tamable.distanceToSqr(livingEntity) < (double)(this.startDistance * this.startDistance)) {
 +            keepChunkLoaded(); // KioCG
              return false;
          } else {
-             this.owner = entityliving;
-@@ -69,6 +72,16 @@ public class FollowOwnerGoal extends Goal {
+             this.owner = livingEntity;
+@@ -47,6 +49,16 @@ public class FollowOwnerGoal extends Goal {
          }
      }
  
@@ -161,20 +179,15 @@ index edd29c2f4d0151d512618115a8fb4b7423171491..88a6311f3ce0b1d30533ad941e7696e1
 +
      @Override
      public boolean canContinueToUse() {
-         return this.navigation.isDone() ? false : (this.unableToMove() ? false : this.tamable.distanceToSqr((Entity) this.owner) > (double) (this.stopDistance * this.stopDistance));
-@@ -94,10 +107,11 @@ public class FollowOwnerGoal extends Goal {
+         return !this.navigation.isDone()
+@@ -70,6 +82,7 @@ public class FollowOwnerGoal extends Goal {
  
      @Override
      public void tick() {
 +        keepChunkLoaded(); // KioCG
-         if (this.tamable.distanceToSqr(this.owner) <= 16 * 16) this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float) this.tamable.getMaxHeadXRot()); // Paper - Limit pet look distance
-         if (--this.timeToRecalcPath <= 0) {
-             this.timeToRecalcPath = this.adjustedTickDelay(10);
--            if (this.tamable.distanceToSqr((Entity) this.owner) >= 144.0D) {
-+            if (this.tamable.distanceToSqr((Entity) this.owner) >= io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petTeleportDistanceSqr) { // KioCG
-                 this.teleportToOwner();
-             } else {
-                 this.navigation.moveTo((Entity) this.owner, this.speedModifier);
+         boolean bl = this.tamable.shouldTryTeleportToOwner();
+         if (!bl) {
+             if (this.tamable.distanceToSqr(this.owner) <= 16 * 16) this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float)this.tamable.getMaxHeadXRot()); // Paper - Limit pet look distance
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c2e784b73 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
@@ -198,7 +211,7 @@ index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c
          } else {
              return !this.followingTargetEvenIfNotSeen
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
-index cdd006fef3c94205fe8378bfa712aae4faacad04..b2449c9c03b211b4c367f94b8744400f41a5a827 100644
+index 5633c5ee29938c0b61121c921cb82342d01329e3..199f939bb6f01370fc8466b12f6c73cc821b2699 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
 @@ -46,7 +46,7 @@ public class RangedCrossbowAttackGoal<T extends Monster & RangedAttackMob & Cros
@@ -211,26 +224,10 @@ index cdd006fef3c94205fe8378bfa712aae4faacad04..b2449c9c03b211b4c367f94b8744400f
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-index b102a370f5fc1f80c199a4e4d1f6ab9a9480fab3..4d83352e5c100864bf9e881e14ee35b7b06f8eb2 100644
+index 797ae2cf1978e224ae5b07ffb889b1786327bf75..dce74d2eb31d62015347248d30974af3bbd216f4 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-@@ -114,7 +114,14 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
-             return itemstack.is(ItemTags.CAT_FOOD);
-         }, true);
-         this.goalSelector.addGoal(1, new FloatGoal(this));
--        this.goalSelector.addGoal(1, new PanicGoal(this, 1.5D));
-+        // KioCG start
-+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.5D) {
-+            @Override
-+            public boolean shouldPanic() {
-+                return !((TamableAnimal) this.mob).onTheVergeOfDeath() && super.shouldPanic();
-+            }
-+        });
-+        // KioCG end
-         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-         this.goalSelector.addGoal(3, new Cat.CatRelaxOnOwnerGoal(this));
-         this.goalSelector.addGoal(4, this.temptGoal);
-@@ -279,6 +286,16 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+@@ -269,6 +269,16 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
          }
  
          this.handleLieDown();
@@ -247,7 +244,7 @@ index b102a370f5fc1f80c199a4e4d1f6ab9a9480fab3..4d83352e5c100864bf9e881e14ee35b7
      }
  
      private void handleLieDown() {
-@@ -419,6 +436,18 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+@@ -409,6 +419,18 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
                      }
  
                      return InteractionResult.sidedSuccess(this.level().isClientSide());
@@ -267,26 +264,10 @@ index b102a370f5fc1f80c199a4e4d1f6ab9a9480fab3..4d83352e5c100864bf9e881e14ee35b7
  
                  enuminteractionresult = super.mobInteract(player, hand);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index 9207b5830b66d26e6277664dcebc5beb30841fc5..1fde2e7e91ed41356fc93fe0356ce0f9d041f01b 100644
+index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..c52f123a4721cc3dccb605a043a67f2b3282fdfb 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-@@ -148,7 +148,14 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
- 
-     @Override
-     protected void registerGoals() {
--        this.goalSelector.addGoal(0, new PanicGoal(this, 1.25D));
-+        // KioCG start
-+        this.goalSelector.addGoal(0, new PanicGoal(this, 1.25D) {
-+            @Override
-+            public boolean shouldPanic() {
-+                return !((net.minecraft.world.entity.TamableAnimal) this.mob).onTheVergeOfDeath() && super.shouldPanic();
-+            }
-+        });
-+        // KioCG end
-         this.goalSelector.addGoal(0, new FloatGoal(this));
-         this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
-         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-@@ -201,6 +208,21 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -201,6 +201,21 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
          this.calculateFlapping();
      }
  
@@ -308,7 +289,7 @@ index 9207b5830b66d26e6277664dcebc5beb30841fc5..1fde2e7e91ed41356fc93fe0356ce0f9
      @Override
      public void setRecordPlayingNearby(BlockPos songPosition, boolean playing) {
          this.jukebox = songPosition;
-@@ -271,7 +293,7 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -271,7 +286,7 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
              }
  
              return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -318,10 +299,10 @@ index 9207b5830b66d26e6277664dcebc5beb30841fc5..1fde2e7e91ed41356fc93fe0356ce0f9
                  if (!this.level().isClientSide) {
                      this.setOrderedToSit(!this.isOrderedToSit());
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index 5dfa2184aaa2955e54456e6f9f78507daae1e385..a422de00d5a2a2d155ee7a0f46cb0d27859bfebc 100644
+index 7ee0be0742f5d214026026a3b95b69cfd90a4968..8c3efa411903376aa8ff39235a0e0f7801c25ea7 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-@@ -324,6 +324,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -334,6 +334,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
                  }
              }
  
@@ -340,7 +321,7 @@ index 5dfa2184aaa2955e54456e6f9f78507daae1e385..a422de00d5a2a2d155ee7a0f46cb0d27
          }
      }
  
-@@ -460,6 +472,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -464,6 +476,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
                  this.heal(2.0F * f, EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
                  return InteractionResult.sidedSuccess(this.level().isClientSide());
@@ -357,11 +338,3 @@ index 5dfa2184aaa2955e54456e6f9f78507daae1e385..a422de00d5a2a2d155ee7a0f46cb0d27
              } else {
                  if (item instanceof DyeItem) {
                      DyeItem itemdye = (DyeItem) item;
-@@ -740,6 +762,7 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
- 
-         @Override
-         protected boolean shouldPanic() {
-+            if (((TamableAnimal) this.mob).onTheVergeOfDeath()) return false; // KioCG
-             return this.mob.isFreezing() || this.mob.isOnFire();
-         }
-     }

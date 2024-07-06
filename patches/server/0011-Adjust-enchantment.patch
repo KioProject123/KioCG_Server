@@ -5,7 +5,7 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 972be070f0cbfc0e13dc4ad2527eb92170fc1e15..8efe4cfcff55b70bd44fbeb1f8e747e7e74d7ec4 100644
+index 58f468833502541bd518576c8084c637aa32929b..a5c638e14d83fa1a9ec9a8ae6732dc4769a72e27 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -412,6 +412,11 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -21,7 +21,7 @@ index 972be070f0cbfc0e13dc4ad2527eb92170fc1e15..8efe4cfcff55b70bd44fbeb1f8e747e7
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/commands/EnchantCommand.java b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
-index 84f1ba6275f04624f46ccd772924b5e075e7b205..2c7222051404f2f4aefa2b3b4ed07f23dccdbacd 100644
+index 99695e38b6a10c3cffda6e453f9f0619c7406cc0..ee029a664540609fb11f941552f4f6d928da294d 100644
 --- a/src/main/java/net/minecraft/server/commands/EnchantCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/EnchantCommand.java
 @@ -70,7 +70,7 @@ public class EnchantCommand {
@@ -39,14 +39,14 @@ index 84f1ba6275f04624f46ccd772924b5e075e7b205..2c7222051404f2f4aefa2b3b4ed07f23
                      if (!itemStack.isEmpty()) {
 -                        if (enchantment2.canEnchant(itemStack)
 +                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand || enchantment2.canEnchant(itemStack) // KioCG
-                             && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantmentsForCrafting(itemStack).keySet(), enchantment2)) {
-                             itemStack.enchant(enchantment2, level);
+                             && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantmentsForCrafting(itemStack).keySet(), enchantment)) {
+                             itemStack.enchant(enchantment, level);
                              i++;
 diff --git a/src/main/java/net/minecraft/world/damagesource/CombatRules.java b/src/main/java/net/minecraft/world/damagesource/CombatRules.java
-index ddc880ac0c8378bc1132be5deba746c1484c941c..ad03c942ab086f90609cad6638b5a1104627bd95 100644
+index 064c1e33f3feee77837bb57887877ae1ca39548d..5e43c364644039ad5aa231c7b489611e0296b2f0 100644
 --- a/src/main/java/net/minecraft/world/damagesource/CombatRules.java
 +++ b/src/main/java/net/minecraft/world/damagesource/CombatRules.java
-@@ -20,6 +20,7 @@ public class CombatRules {
+@@ -30,6 +30,7 @@ public class CombatRules {
      }
  
      public static float getDamageAfterMagicAbsorb(float damageDealt, float protection) {
@@ -55,37 +55,23 @@ index ddc880ac0c8378bc1132be5deba746c1484c941c..ad03c942ab086f90609cad6638b5a110
          return damageDealt * (1.0F - f / 25.0F);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
-index 46d8bcad1545953757659870901cbbdf3340bc15..5f050dca301499650c9305c9a1d67a025249198c 100644
+index a58ff67052fb5f33782f8b5c83465ec03ef1d073..f33a6813383e0c24ac52445c5a87bdd95406d36e 100644
 --- a/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/src/main/java/net/minecraft/world/entity/ExperienceOrb.java
-@@ -348,6 +348,13 @@ public class ExperienceOrb extends Entity {
+@@ -351,6 +351,13 @@ public class ExperienceOrb extends Entity {
  
-         if (entry != null) {
-             ItemStack itemstack = (ItemStack) entry.getValue();
+         if (optional.isPresent()) {
+             ItemStack itemstack = ((EnchantedItemInUse) optional.get()).itemStack();
 +            // KioCG start
-+            int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, itemstack);
++            int level = EnchantmentHelper.getItemEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.MENDING, itemstack);
 +            if (player.random.nextInt(10) >= level) {
 +                return amount;
 +            }
 +            // KioCG end
 +
-             int j = Math.min(this.xpToDurability(amount), itemstack.getDamageValue());
+             int j = EnchantmentHelper.modifyDurabilityToRepairFromXp(player.serverLevel(), itemstack, amount);
+             int k = Math.min(j, itemstack.getDamageValue());
              // CraftBukkit start
-             org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(player, this, itemstack, entry.getKey(), j, this::durabilityToXp); // Paper - Expand PlayerItemMendEvent
-@@ -373,11 +380,11 @@ public class ExperienceOrb extends Entity {
-     }
- 
-     public int durabilityToXp(int repairAmount) {
--        return repairAmount / 2;
-+        return repairAmount; // KioCG
-     }
- 
-     public int xpToDurability(int experienceAmount) {
--        return experienceAmount * 2;
-+        return experienceAmount; // KioCG
-     }
- 
-     public int getValue() {
 diff --git a/src/main/java/net/minecraft/world/entity/LightningBolt.java b/src/main/java/net/minecraft/world/entity/LightningBolt.java
 index 4f701788bd21b61cad251a3a88f9bc416fb99051..f3b78df6bdd2f3fd833f63948594d0eebc9f717d 100644
 --- a/src/main/java/net/minecraft/world/entity/LightningBolt.java
@@ -153,79 +139,35 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..f3b78df6bdd2f3fd833f63948594d0ee
      public int getBlocksSetOnFire() {
          return this.blocksSetOnFire;
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-index 72c48bf33a0b882e4c94f1a7c343a170b1db0f53..6a799cefd6187b99348f64c7d82eff4a6548beb8 100644
+index ddf47dab1ab92c45e3eea09239d418a9798ed59e..a5558f85a47953bf5abe2d170729910268057372 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -77,6 +77,7 @@ public abstract class AbstractArrow extends Projectile {
-     @Nullable
-     private List<Entity> piercedAndKilledEntities;
-     public ItemStack pickupItemStack;
-+    public int flameLevel = 0; // KioCG
- 
-     // Spigot Start
-     @Override
-@@ -411,7 +412,7 @@ public abstract class AbstractArrow extends Projectile {
- 
+@@ -442,6 +442,14 @@ public abstract class AbstractArrow extends Projectile {
          if (this.isOnFire() && !flag) {
              // CraftBukkit start
--            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
-+            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5 * Math.max(1, this.flameLevel)); // KioCG
+             EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5.0F);
++            // KioCG start
++            if (this.getWeaponItem() != null) {
++                final int flameLevel = EnchantmentHelper.getItemEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.FLAME, this.getWeaponItem());
++                if (flameLevel > 1) {
++                    combustEvent.setDuration(combustEvent.getDuration() * flameLevel);
++                }
++            }
++            // KioCG end
              org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
              if (!combustEvent.isCancelled()) {
                  entity.igniteForSeconds(combustEvent.getDuration(), false);
-@@ -541,6 +542,7 @@ public abstract class AbstractArrow extends Projectile {
-         nbt.putString("SoundEvent", BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent).toString());
-         nbt.putBoolean("ShotFromCrossbow", this.shotFromCrossbow());
-         nbt.put("item", this.pickupItemStack.save(this.registryAccess()));
-+        if (this.flameLevel > 0) nbt.putInt("KioCG.FlameLevel", this.flameLevel); // KioCG
-     }
- 
-     @Override
-@@ -571,6 +573,7 @@ public abstract class AbstractArrow extends Projectile {
-             this.setPickupItemStack(this.getDefaultPickupItem());
-         }
- 
-+        if (nbt.contains("KioCG.FlameLevel", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) this.flameLevel = nbt.getInt("KioCG.FlameLevel"); // KioCG
-     }
- 
-     @Override
-@@ -721,7 +724,11 @@ public abstract class AbstractArrow extends Projectile {
-             this.setKnockback(j);
-         }
- 
--        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, entity) > 0) {
-+        // KioCG start
-+        int flameLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, entity);
-+        if (flameLevel > 0) {
-+            this.flameLevel = flameLevel;
-+        // KioCG end
-             this.igniteForSeconds(100);
-         }
- 
-diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 7dd5e0b935d98d552c916f8412569ff4aa0e9b04..fdf1773e1680c4ea191dd73fe4d3da2b9f522e15 100644
---- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-+++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -431,7 +431,7 @@ public class FishingHook extends Projectile {
-     // Paper start - more projectile api - extract time until lured reset logic
-     public void resetTimeUntilLured() {
-         this.timeUntilLured = Mth.nextInt(this.random, this.minWaitTime, this.maxWaitTime);
--        this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed * 20 * 5 >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed * 20 * 5) : 0; // Paper - Fix Lure infinite loop
-+        this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed * 50 >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed * 50) : 0; // Paper - Fix Lure infinite loop // KioCG
-     }
-     // Paper end - more projectile api - extract time until lured reset logic
- 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
-index 3ff06cc6ad35567bcb1f29115db63c11a8e79dbb..2c4b0f20d888b2a0f5a01039669ed79cc46df097 100644
+index 44c733c5b2c3e9942f28e882ad72306a24459c2c..3ccc7a2959e45cc02d05dedd22e4dcb1d034d0eb 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
-@@ -67,6 +67,16 @@ public class ThrownTrident extends AbstractArrow {
+@@ -69,6 +69,16 @@ public class ThrownTrident extends AbstractArrow {
          Entity entity = this.getOwner();
          byte b0 = (Byte) this.entityData.get(ThrownTrident.ID_LOYALTY);
  
 +        // KioCG start
 +        if (b0 > 0 && !this.dealtDamage && !this.isNoPhysics() && entity != null) {
-+            final int horizontalRange = ((ServerLevel) this.level()).playerChunkLoader.getAPITickDistance() * 16 - 4;
++            final int horizontalRange = ((ServerLevel) this.level()).moonrise$getPlayerChunkLoader().getAPITickDistance() * 16 - 4;
 +            if (entity.position().distanceToSqr(this.position().x(), entity.position().y(), this.position().z()) > horizontalRange * horizontalRange) {
 +                this.setNoPhysics(true);
 +                this.setDeltaMovement(Vec3.ZERO);
@@ -236,7 +178,7 @@ index 3ff06cc6ad35567bcb1f29115db63c11a8e79dbb..2c4b0f20d888b2a0f5a01039669ed79c
          if (b0 > 0 && (this.dealtDamage || this.isNoPhysics()) && entity != null) {
              if (!this.isAcceptibleReturnOwner()) {
                  if (!this.level().isClientSide && this.pickup == AbstractArrow.Pickup.ALLOWED) {
-@@ -97,6 +107,17 @@ public class ThrownTrident extends AbstractArrow {
+@@ -99,6 +109,17 @@ public class ThrownTrident extends AbstractArrow {
          super.tick();
      }
  
@@ -254,32 +196,43 @@ index 3ff06cc6ad35567bcb1f29115db63c11a8e79dbb..2c4b0f20d888b2a0f5a01039669ed79c
      private boolean isAcceptibleReturnOwner() {
          Entity entity = this.getOwner();
  
-@@ -171,6 +192,7 @@ public class ThrownTrident extends AbstractArrow {
-                 if (entitylightning != null) {
-                     entitylightning.moveTo(Vec3.atBottomCenterOf(blockposition));
-                     entitylightning.setCause(entity1 instanceof ServerPlayer ? (ServerPlayer) entity1 : null);
-+                    entitylightning.setTimes(this.getChanneling()); // KioCG
-                     ((ServerLevel) this.level()).strikeLightning(entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRIDENT); // CraftBukkit
-                     soundeffect = SoundEvents.TRIDENT_THUNDER;
-                     f1 = 5.0F;
-@@ -185,6 +207,12 @@ public class ThrownTrident extends AbstractArrow {
-         return EnchantmentHelper.hasChanneling(this.getPickupItemStackOrigin());
+@@ -151,6 +172,16 @@ public class ThrownTrident extends AbstractArrow {
+             if (world instanceof ServerLevel) {
+                 ServerLevel worldserver = (ServerLevel) world; // CraftBukkit - decompile error
+                 EnchantmentHelper.doPostAttackEffectsWithItemSource(worldserver, entity, damagesource, this.getWeaponItem());
++                // KioCG start
++                if (this.getWeaponItem() != null) {
++                    final java.util.List<Entity> entities = this.level().getEntities((Entity) this, new net.minecraft.world.phys.AABB(entity.getX(), entity.getY(), entity.getZ(), entity.getX(), entity.getY(), entity.getZ()), entityLightningBolt -> {
++                        return entityLightningBolt.getType() == EntityType.LIGHTNING_BOLT && entityLightningBolt.tickCount == 0 && ((net.minecraft.world.entity.LightningBolt) entityLightningBolt).times == 1;
++                    });
++                    if (!entities.isEmpty()) {
++                        ((net.minecraft.world.entity.LightningBolt) entities.getFirst()).setTimes(EnchantmentHelper.getItemEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.CHANNELING, this.getWeaponItem()));
++                    }
++                }
++                // KioCG end
+             }
+ 
+             if (entity instanceof LivingEntity) {
+@@ -180,6 +211,14 @@ public class ThrownTrident extends AbstractArrow {
+         EnchantmentHelper.onHitBlock(world, weaponStack, entityliving, this, (EquipmentSlot) null, vec3d, world.getBlockState(blockHitResult.getBlockPos()), (item) -> {
+             this.kill();
+         });
++        // KioCG start
++        final java.util.List<Entity> entities = this.level().getEntities((Entity) this, new net.minecraft.world.phys.AABB(vec3d.x, vec3d.y, vec3d.z, vec3d.x, vec3d.y, vec3d.z), entityLightningBolt -> {
++            return entityLightningBolt.getType() == EntityType.LIGHTNING_BOLT && entityLightningBolt.tickCount == 0 && ((net.minecraft.world.entity.LightningBolt) entityLightningBolt).times == 1;
++        });
++        if (!entities.isEmpty()) {
++            ((net.minecraft.world.entity.LightningBolt) entities.getFirst()).setTimes(EnchantmentHelper.getItemEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.CHANNELING, weaponStack));
++        }
++        // KioCG end
      }
  
-+    // KioCG start
-+    public int getChanneling() {
-+        return EnchantmentHelper.getChanneling(this.getPickupItemStackOrigin());
-+    }
-+    // KioCG end
-+
      @Override
-     protected boolean tryPickup(Player player) {
-         return super.tryPickup(player) || this.isNoPhysics() && this.ownedBy(player) && player.getInventory().add(this.getPickupItem());
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index 474cf56e7b9d923341c339debbcaaac0f9472e0a..07fdab67efb5e183db6d701a75014cead7eb0333 100644
+index ae64e05a72b4fc6c898c0fbb47cff7eeadeb1f44..96edb8830f76accec8d9b72de98bb8e3f41ba1c0 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -136,6 +136,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -143,6 +143,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
                      int i = 0;
                      Iterator iterator = EnchantingTableBlock.BOOKSHELF_OFFSETS.iterator();
  
@@ -287,114 +240,21 @@ index 474cf56e7b9d923341c339debbcaaac0f9472e0a..07fdab67efb5e183db6d701a75014cea
                      while (iterator.hasNext()) {
                          BlockPos blockposition1 = (BlockPos) iterator.next();
  
-diff --git a/src/main/java/net/minecraft/world/item/CrossbowItem.java b/src/main/java/net/minecraft/world/item/CrossbowItem.java
-index 1f52feb5684ee1bab710e1557cf69b43b4d4dfd4..06488954fc09370734ab0d2d09e781e976a6bbf1 100644
---- a/src/main/java/net/minecraft/world/item/CrossbowItem.java
-+++ b/src/main/java/net/minecraft/world/item/CrossbowItem.java
-@@ -236,6 +236,7 @@ public class CrossbowItem extends ProjectileWeaponItem {
- 
-     public static int getChargeDuration(ItemStack stack) {
-         int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
-+        if (i > 5) i = 5; // KioCG
-         return i == 0 ? 25 : 25 - 5 * i;
-     }
- 
-diff --git a/src/main/java/net/minecraft/world/item/ProjectileWeaponItem.java b/src/main/java/net/minecraft/world/item/ProjectileWeaponItem.java
-index d27e83c08c45b8514207f26e48ceb1a91ded94be..e5ce0c84d6f7dbc4e67bb78f8a11e26252efbd5a 100644
---- a/src/main/java/net/minecraft/world/item/ProjectileWeaponItem.java
-+++ b/src/main/java/net/minecraft/world/item/ProjectileWeaponItem.java
-@@ -121,7 +121,11 @@ public abstract class ProjectileWeaponItem extends Item {
-             entityarrow.setKnockback(j);
-         }
- 
--        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAME, weaponStack) > 0) {
-+        // KioCG start
-+        int flameLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAME, weaponStack);
-+        if (flameLevel > 0) {
-+            entityarrow.flameLevel = flameLevel;
-+        // KioCG end
-             entityarrow.igniteForSeconds(100);
-         }
- 
-@@ -134,8 +138,8 @@ public abstract class ProjectileWeaponItem extends Item {
-         return entityarrow;
-     }
- 
--    protected static boolean hasInfiniteArrows(ItemStack weaponStack, ItemStack projectileStack, boolean creative) {
--        return creative || projectileStack.is(Items.ARROW) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY, weaponStack) > 0;
-+    protected static boolean hasInfiniteArrows(ItemStack weaponStack, ItemStack projectileStack, boolean creative, net.minecraft.util.RandomSource random) { // KioCG - add RandomSource
-+        return creative || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY, weaponStack) > random.nextInt(10); // KioCG
-     }
- 
-     protected static List<ItemStack> draw(ItemStack weaponStack, ItemStack projectileStack, LivingEntity shooter) {
-@@ -148,7 +152,7 @@ public abstract class ProjectileWeaponItem extends Item {
-             return List.of();
-         } else {
-             int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, weaponStack);
--            int j = i == 0 ? 1 : 3;
-+            int j = i + 1; // KioCG
-             List<ItemStack> list = new ArrayList(j);
-             ItemStack itemstack2 = projectileStack.copy();
- 
-@@ -161,7 +165,7 @@ public abstract class ProjectileWeaponItem extends Item {
-     }
- 
-     protected static ItemStack useAmmo(ItemStack weaponStack, ItemStack projectileStack, LivingEntity shooter, boolean multishot) {
--        boolean flag1 = !multishot && !ProjectileWeaponItem.hasInfiniteArrows(weaponStack, projectileStack, shooter.hasInfiniteMaterials());
-+        boolean flag1 = !multishot && !ProjectileWeaponItem.hasInfiniteArrows(weaponStack, projectileStack, shooter.hasInfiniteMaterials(), shooter.random); // KioCG - add RandomSource
-         ItemStack itemstack2;
- 
-         if (!flag1) {
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-index d2f0463b0e74983eb2e3dfca9a268e9502b86257..50eaf5c77e447a2d9463ec48a67e66d2ee457672 100644
+index fce49b17905ab97e691aa8499a5dfed67adf0c40..7c7443ed19ebcb2abac470d6b10329a296cf892f 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-@@ -237,6 +237,36 @@ public class EnchantmentHelper {
-         return getItemEnchantmentLevel(Enchantments.CHANNELING, stack) > 0;
+@@ -51,6 +51,13 @@ public class EnchantmentHelper {
+         return itemEnchantments.getLevel(enchantment);
      }
  
 +    // KioCG start
-+    public static int getAquaAffinity(LivingEntity entity) {
-+        return getEnchantmentLevel(Enchantments.AQUA_AFFINITY, entity);
-+    }
-+
-+    public static int getFrostWalker(LivingEntity entity) {
-+        return getEnchantmentLevel(Enchantments.FROST_WALKER, entity);
-+    }
-+
-+    public static int getSoulSpeed(LivingEntity entity) {
-+        return getEnchantmentLevel(Enchantments.SOUL_SPEED, entity);
-+    }
-+
-+    public static int getBindingCurse(ItemStack stack) {
-+        return getItemEnchantmentLevel(Enchantments.BINDING_CURSE, stack);
-+    }
-+
-+    public static int getVanishingCurse(ItemStack stack) {
-+        return getItemEnchantmentLevel(Enchantments.VANISHING_CURSE, stack);
-+    }
-+
-+    public static int getSilkTouch(ItemStack stack) {
-+        return getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack);
-+    }
-+
-+    public static int getChanneling(ItemStack stack) {
-+        return getItemEnchantmentLevel(Enchantments.CHANNELING, stack);
++    public static int getItemEnchantmentLevel(RegistryAccess registryManager, ResourceKey<Enchantment> enchantmentkey, ItemStack stack) {
++        final Optional<Holder.Reference<Enchantment>> holder = registryManager.registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantmentkey);
++        return holder.map(enchantmentReference -> getItemEnchantmentLevel(enchantmentReference, stack)).orElse(0);
 +    }
 +    // KioCG end
 +
-     @Nullable
-     public static java.util.Map.Entry<EquipmentSlot, ItemStack> getRandomItemWith(Enchantment enchantment, LivingEntity entity) {
-         return getRandomItemWith(enchantment, entity, stack -> true);
-diff --git a/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java b/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
-index d230ead6042239178bd5c3345aa5366e3082637f..401e8c94fda1f5db87f7f63c4d4ae1756c2f307f 100644
---- a/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
-+++ b/src/main/java/net/minecraft/world/level/block/LightningRodBlock.java
-@@ -158,6 +158,7 @@ public class LightningRodBlock extends RodBlock implements SimpleWaterloggedBloc
-                     Entity entity = projectile.getOwner();
- 
-                     entitylightning.setCause(entity instanceof ServerPlayer ? (ServerPlayer) entity : null);
-+                    entitylightning.setTimes(((ThrownTrident) projectile).getChanneling()); // KioCG
-                     ((ServerLevel) world).strikeLightning(entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRIDENT); // CraftBukkit
-                 }
- 
+     public static ItemEnchantments updateEnchantments(ItemStack stack, Consumer<ItemEnchantments.Mutable> applier) {
+         DataComponentType<ItemEnchantments> dataComponentType = getComponentType(stack);
+         ItemEnchantments itemEnchantments = stack.get(dataComponentType);

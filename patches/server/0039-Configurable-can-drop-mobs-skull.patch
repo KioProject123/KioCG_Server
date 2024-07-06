@@ -5,10 +5,10 @@ Subject: [PATCH] Configurable can drop mobs skull
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 0c63ee49f6447646047a4410cac84bc3b423847b..6e0a8f2d5edb80ca9579e52c0417c007d91b44dc 100644
+index e36dfa38204a3b28c0236c108adc0ed6357c7ed7..39703f1cf2bd79ba79674e3f4ccb8d4855797116 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -593,6 +593,15 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -594,6 +594,15 @@ public class WorldConfiguration extends ConfigurationPart {
                  public int darkEnoughToSprint = 7;
                  public boolean babyZombieJockey = true;
                  public boolean zombiesSkinnedIntoSkeletons = true;
@@ -25,7 +25,7 @@ index 0c63ee49f6447646047a4410cac84bc3b423847b..6e0a8f2d5edb80ca9579e52c0417c007
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Creeper.java b/src/main/java/net/minecraft/world/entity/monster/Creeper.java
-index 0ae4ba060b2ce2c79e1235c939f3c1926eb6e33e..ad9758b5e7dee6a99e713da235a427a69036ccca 100644
+index cb1b19e2e0d8f0744b2355b8f4da0206b196b19c..5c32b2c473e5e56d6bd30218d3fea64ce5809b12 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Creeper.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Creeper.java
 @@ -191,7 +191,7 @@ public class Creeper extends Monster implements PowerableMob {
@@ -38,10 +38,10 @@ index 0ae4ba060b2ce2c79e1235c939f3c1926eb6e33e..ad9758b5e7dee6a99e713da235a427a6
                  this.spawnAtLocation((ItemLike) Items.CREEPER_HEAD);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Skeleton.java b/src/main/java/net/minecraft/world/entity/monster/Skeleton.java
-index 5642bddc8268d70e5bb5446b65be1d8ce34feb9b..f0e33976fc386b54f67b7c5506f0d133829f7b4e 100644
+index cee42ae2b75c29c89e7fc5b1c77d3b45ce40e9ba..2edba3d770fd577f331174b6fe75e8e7410f8e95 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Skeleton.java
-@@ -133,7 +133,7 @@ public class Skeleton extends AbstractSkeleton {
+@@ -134,7 +134,7 @@ public class Skeleton extends AbstractSkeleton {
          Entity entity = source.getEntity();
  
          if (entity instanceof Creeper entitycreeper) {
@@ -51,10 +51,10 @@ index 5642bddc8268d70e5bb5446b65be1d8ce34feb9b..f0e33976fc386b54f67b7c5506f0d133
                  this.spawnAtLocation((ItemLike) Items.SKELETON_SKULL);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/WitherSkeleton.java b/src/main/java/net/minecraft/world/entity/monster/WitherSkeleton.java
-index 3f1191795e58f31b7e2fe34ef2774df13b9a789f..99d561086e6c1397a38f3a9b8fe96016c1c7653c 100644
+index bb2e7cee612dc1fafa042674a0b0d07d7165b54c..98b60652732fcaf3b13a3c093b90a6fa2dfa32d9 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/WitherSkeleton.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/WitherSkeleton.java
-@@ -64,7 +64,7 @@ public class WitherSkeleton extends AbstractSkeleton {
+@@ -65,7 +65,7 @@ public class WitherSkeleton extends AbstractSkeleton {
          Entity entity = source.getEntity();
  
          if (entity instanceof Creeper entitycreeper) {
@@ -64,10 +64,10 @@ index 3f1191795e58f31b7e2fe34ef2774df13b9a789f..99d561086e6c1397a38f3a9b8fe96016
                  this.spawnAtLocation((ItemLike) Items.WITHER_SKELETON_SKULL);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 0a5fbaa96332026b4be7444776a991b4d191ccd0..d288aa2eb47006c97f20e758b4af65a4db56c8f3 100644
+index e9c3e85bbc8802b300a743dad4807ffbbebb6a7c..752cd457ed8a5eace5ced48030efcb2e7916b0d9 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -639,7 +639,7 @@ public class Zombie extends Monster {
+@@ -650,7 +650,7 @@ public class Zombie extends Monster {
          Entity entity = source.getEntity();
  
          if (entity instanceof Creeper entitycreeper) {
@@ -77,10 +77,10 @@ index 0a5fbaa96332026b4be7444776a991b4d191ccd0..d288aa2eb47006c97f20e758b4af65a4
  
                  if (!itemstack.isEmpty()) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index 156c4f7f85b61e0c274315425c58286e4337237b..dd242fbbe09c1e677a88ccac263644ed20bac57f 100644
+index d62b59a16fcc317cb9d1ea9e4d89d128e6fbf2a7..88f6663a39604005a831a741d5b816c19730b8f2 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -140,7 +140,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+@@ -139,7 +139,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
          Entity entity = source.getEntity();
  
          if (entity instanceof Creeper entitycreeper) {

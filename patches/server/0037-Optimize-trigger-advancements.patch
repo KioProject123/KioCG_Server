@@ -17,18 +17,18 @@ index 9a24249fe868e6a574ed365ff31253b490593272..96a9a37c76e26d516b00e87a1bc42245
      public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
      public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index ae8b6f99b6e51679dfdbe15942a9db11658845ed..0291ba329bb3bad14b0d7650a3fdafe27c6267ad 100644
+index fde2b7656038f5f09f5b07b8b6d163ae892ae958..7d1e46e7af61bd6bc46a741436c4d89eed080d6a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -760,6 +760,7 @@ public class ServerPlayer extends Player {
+@@ -751,6 +751,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
  
      @Override
-     protected void onInsideBlock(BlockState state) {
+     public void onInsideBlock(BlockState state) {
 +        if (!state.isAir()) // KioCG
          CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
      }
  
-@@ -808,6 +809,7 @@ public class ServerPlayer extends Player {
+@@ -799,6 +800,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          }
  
          CriteriaTriggers.TICK.trigger(this);
@@ -36,7 +36,7 @@ index ae8b6f99b6e51679dfdbe15942a9db11658845ed..0291ba329bb3bad14b0d7650a3fdafe2
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -939,6 +941,7 @@ public class ServerPlayer extends Player {
+@@ -930,6 +932,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              }
  
              if (this.tickCount % 20 == 0) {

@@ -5,10 +5,10 @@ Subject: [PATCH] Villager restock every day
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 4f93a6ff75cf4e1cb20d87c08e98ad0ba083e2fb..e62e2ad5cddc27f155506548d6d64ea24dfebc82 100644
+index 5785ebc45463f9d270bf20ea6f66579098fe446c..20fae10bd8a518204d4fa32f23168124963a33b9 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -470,23 +470,24 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -472,23 +472,24 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      public boolean shouldRestock() {
          long i = this.lastRestockGameTime + 12000L;
          long j = this.level().getGameTime();

@@ -5,7 +5,7 @@ Subject: [PATCH] Fixed cumulative cost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 8efe4cfcff55b70bd44fbeb1f8e747e7e74d7ec4..b3d4d1117ae73c428aed8e1005ed110fa0a9a712 100644
+index a5c638e14d83fa1a9ec9a8ae6732dc4769a72e27..9baf940db57c2980d0c68f8141396ad8836f8c46 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -416,6 +416,7 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -17,7 +17,7 @@ index 8efe4cfcff55b70bd44fbeb1f8e747e7e74d7ec4..b3d4d1117ae73c428aed8e1005ed110f
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index ab70c286fb11024ec50b1683442ea7192424c4fe..1d6f298f8aeb78552673b01493ccd35a848c397b 100644
+index 03ce932a285a4183c4023a84618a4b8460815dbf..af76c89a3d84a806268107f3cf19dd3b2dba6f4f 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -148,6 +148,7 @@ public class AnvilMenu extends ItemCombinerMenu {

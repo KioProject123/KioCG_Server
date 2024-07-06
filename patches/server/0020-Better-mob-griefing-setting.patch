@@ -5,10 +5,10 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index c5928de28703c6330bade1055aa938fb39bda885..74ab34b7d214888a2c269ad9dd3dfbdfe2f21c47 100644
+index 2235ed3810cc9be863b34a32cde7e325cc9cf200..dbbfd1c5bd45ee5a1ece4af8ead4f51c9fc36261 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -594,6 +594,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -595,6 +595,8 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean babyZombieJockey = true;
                  public boolean zombiesSkinnedIntoSkeletons = true;
              }
@@ -39,7 +39,7 @@ index a85885ee51df585fa11ae9f8fcd67ff2a71c5a18..643d890f3ed37d49d4299592bec863fa
              this.mob.level().levelEvent(1021, this.doorPos, 0);
              this.mob.level().levelEvent(2001, this.doorPos, Block.getId(oldState)); // Paper - fix MC-263999
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Fox.java b/src/main/java/net/minecraft/world/entity/animal/Fox.java
-index e705449496b1a06270ecbc13f4dce5357479845b..c2d4c0b94153f98c4de7537d243fe7b31199eb33 100644
+index 9a0adf65d4d54852301a91b6fe444e4c5a139f5d..95582624bf759a716199d7351544655360ea2cfe 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Fox.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Fox.java
 @@ -1303,7 +1303,7 @@ public class Fox extends Animal implements VariantHolder<Fox.Type> {
@@ -52,10 +52,10 @@ index e705449496b1a06270ecbc13f4dce5357479845b..c2d4c0b94153f98c4de7537d243fe7b3
  
                  if (iblockdata.is(Blocks.SWEET_BERRY_BUSH)) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Rabbit.java b/src/main/java/net/minecraft/world/entity/animal/Rabbit.java
-index b58300e114e2e27ac68d7a9489bc52b127c9bc17..11bf95ad7930450add2a3b85d9c0b2f28ec7b413 100644
+index 0109c8ed8bf6a053674456fa4473934e028ca418..81da9aedc28ba5421f050e89d45a0fa246a44944 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Rabbit.java
-@@ -546,7 +546,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
+@@ -550,7 +550,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
          @Override
          public boolean canUse() {
              if (this.nextStartTick <= 0) {
@@ -64,7 +64,7 @@ index b58300e114e2e27ac68d7a9489bc52b127c9bc17..11bf95ad7930450add2a3b85d9c0b2f2
                      return false;
                  }
  
-@@ -576,6 +576,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
+@@ -580,6 +580,7 @@ public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
                      int i = (Integer) iblockdata.getValue(CarrotBlock.AGE);
  
                      if (i == 0) {
@@ -94,10 +94,10 @@ index 860e385fc83f9787dca92efe35d21fd69c4dd635..aad175c87a7151f2076871bc03d08835
                      BlockPos blockposition = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
                      BlockState iblockdata = this.mob.level().getBlockState(blockposition);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index a8ab486c7e11ec137da48174af6f1030dfd48056..156c4f7f85b61e0c274315425c58286e4337237b 100644
+index bc58323801ee16fe9b63c21332144ec002a902f2..d62b59a16fcc317cb9d1ea9e4d89d128e6fbf2a7 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -389,7 +389,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+@@ -388,7 +388,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
  
      @Override
      public boolean wantsToPickUp(ItemStack stack) {
@@ -120,7 +120,7 @@ index d59e33e7326489c6d55d316d0130f22235f4c63c..3cef3bb49175d259ca9fc37d32c58519
              org.bukkit.event.Cancellable cancellable;
              if (entity instanceof Player) {
 diff --git a/src/main/java/net/minecraft/world/level/block/InfestedBlock.java b/src/main/java/net/minecraft/world/level/block/InfestedBlock.java
-index f1e349f55a7152f507eff62a4d9fe80805b27308..29f5397fa558a91bee3c4e96578de7e5078d2949 100644
+index 265b4d670f64ccff59acb6eb18ce1e9089fb1cd3..f417cb37268828e421fa63da758e4c1989bbf5ef 100644
 --- a/src/main/java/net/minecraft/world/level/block/InfestedBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/InfestedBlock.java
 @@ -61,7 +61,7 @@ public class InfestedBlock extends Block {
@@ -130,7 +130,7 @@ index f1e349f55a7152f507eff62a4d9fe80805b27308..29f5397fa558a91bee3c4e96578de7e5
 -    protected void spawnAfterBreak(BlockState state, ServerLevel world, BlockPos pos, ItemStack tool, boolean dropExperience) {
 +    public void spawnAfterBreak(BlockState state, ServerLevel world, BlockPos pos, ItemStack tool, boolean dropExperience) { // KioCG - protected -> public
          super.spawnAfterBreak(state, world, pos, tool, dropExperience);
-         if (world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) == 0) {
+         if (world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !EnchantmentHelper.hasTag(tool, EnchantmentTags.PREVENTS_INFESTED_SPAWNS)) {
              this.spawnInfestation(world, pos);
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 index 66dabb34eb4dfdd526ee1800d04aeda0cc99fcda..9065720b4aae3f00eb65ed62853b8cc716b5e32f 100644

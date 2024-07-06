@@ -5,10 +5,10 @@ Subject: [PATCH] Remove automation gameplay
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index d84f248cb0ac053fe31c6f78c741f9e9f74d6c22..a101d8f5e95f6aa573dfdf4233d5677ee6d928de 100644
+index 8d41e88a206710bb302542488959579c76372dc8..89ceed996d77d63b7e27ad06ac434b4f6a1b47f9 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -553,6 +553,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -554,6 +554,7 @@ public class WorldConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
@@ -30,10 +30,10 @@ index 6df0db8b4cdab23494ea34236949ece4989110a3..58d35628aff16b7d9d86c4231776e3e0
                  idispensebehavior.dispense(pointer, eventStack);
                  return stack;
 diff --git a/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-index f28705547a62da790f5df071400986aacba39367..0a08d4706d23a3b85c326a114391c1aa251acea2 100644
+index 39c96f5db6e90a470404c6387fa0c1d5531822e5..621e1fb09b969b9ee81be45d116a5195485aaa94 100644
 --- a/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/src/main/java/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -99,7 +99,7 @@ public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
+@@ -101,7 +101,7 @@ public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
          if (!dropper && !event.getItem().getType().equals(craftItem.getType())) {
              // Chain to handler for new item
              ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -43,10 +43,10 @@ index f28705547a62da790f5df071400986aacba39367..0a08d4706d23a3b85c326a114391c1aa
                  idispensebehavior.dispense(sourceblock, eventStack);
              } else {
 diff --git a/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
-index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec6dee1b77 100644
+index 60d3319016beb4f60cbc26dde165f64cf7577602..2f835798fe9bf133cbd1148b4917ae37c11ec9d0 100644
 --- a/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -128,7 +128,7 @@ public interface DispenseItemBehavior {
+@@ -129,7 +129,7 @@ public interface DispenseItemBehavior {
                      shrink = false; // Paper - shrink below
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -55,7 +55,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -187,7 +187,7 @@ public interface DispenseItemBehavior {
+@@ -188,7 +188,7 @@ public interface DispenseItemBehavior {
                      shrink = false; // Paper - shrink below
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -64,7 +64,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -242,7 +242,7 @@ public interface DispenseItemBehavior {
+@@ -243,7 +243,7 @@ public interface DispenseItemBehavior {
                          shrink = false; // Paper - shrink below
                          // Chain to handler for new item
                          ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -73,7 +73,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                          if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
                              idispensebehavior.dispense(pointer, eventStack);
                              return stack;
-@@ -298,7 +298,7 @@ public interface DispenseItemBehavior {
+@@ -299,7 +299,7 @@ public interface DispenseItemBehavior {
                      shrink = false; // Paper - shrink below
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -82,7 +82,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -372,7 +372,7 @@ public interface DispenseItemBehavior {
+@@ -373,7 +373,7 @@ public interface DispenseItemBehavior {
                      shrink = false; // Paper - shrink below
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -91,7 +91,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -441,7 +441,7 @@ public interface DispenseItemBehavior {
+@@ -442,7 +442,7 @@ public interface DispenseItemBehavior {
                      if (!event.getItem().equals(craftItem)) {
                          // Chain to handler for new item
                          ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -100,7 +100,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                          if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                              idispensebehavior.dispense(pointer, eventStack);
                              return stack;
-@@ -517,7 +517,7 @@ public interface DispenseItemBehavior {
+@@ -507,7 +507,7 @@ public interface DispenseItemBehavior {
                          if (!event.getItem().equals(craftItem)) {
                              // Chain to handler for new item
                              ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -109,7 +109,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                              if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                                  idispensebehavior.dispense(pointer, eventStack);
                                  return stack;
-@@ -564,7 +564,7 @@ public interface DispenseItemBehavior {
+@@ -545,7 +545,7 @@ public interface DispenseItemBehavior {
                  if (!event.getItem().equals(craftItem)) {
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -118,7 +118,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -627,7 +627,7 @@ public interface DispenseItemBehavior {
+@@ -607,7 +607,7 @@ public interface DispenseItemBehavior {
                  if (!event.getItem().equals(craftItem)) {
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -127,7 +127,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -699,7 +699,7 @@ public interface DispenseItemBehavior {
+@@ -679,7 +679,7 @@ public interface DispenseItemBehavior {
                      shrink = false; // Paper - shrink below
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -136,7 +136,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -753,7 +753,7 @@ public interface DispenseItemBehavior {
+@@ -733,7 +733,7 @@ public interface DispenseItemBehavior {
                  if (!event.getItem().equals(craftItem)) {
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -145,7 +145,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -802,7 +802,7 @@ public interface DispenseItemBehavior {
+@@ -782,7 +782,7 @@ public interface DispenseItemBehavior {
                  if (!event.getItem().equals(craftItem)) {
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -154,7 +154,7 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -875,7 +875,7 @@ public interface DispenseItemBehavior {
+@@ -844,7 +844,7 @@ public interface DispenseItemBehavior {
                  if (!event.getItem().equals(craftItem)) {
                      // Chain to handler for new item
                      ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -163,13 +163,13 @@ index 5dab1e10303177e5a4d97a91ee46ede66f30ae35..a0043adf29f469e38849712606facfec
                      if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
                          idispensebehavior.dispense(pointer, eventStack);
                          return stack;
-@@ -957,7 +957,7 @@ public interface DispenseItemBehavior {
+@@ -926,7 +926,7 @@ public interface DispenseItemBehavior {
                      if (!event.getItem().equals(craftItem)) {
                          // Chain to handler for new item
                          ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
 -                        DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +                        DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) ((DispenserBlock) pointer.state().getBlock()).getDispenseMethod(pointer.level(), eventStack); // KioCG
-                         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != ArmorItem.DISPENSE_ITEM_BEHAVIOR) {
+                         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) { // Paper - fix possible StackOverflowError
                              idispensebehavior.dispense(pointer, eventStack);
                              return stack;
 diff --git a/src/main/java/net/minecraft/core/dispenser/ProjectileDispenseBehavior.java b/src/main/java/net/minecraft/core/dispenser/ProjectileDispenseBehavior.java
@@ -186,7 +186,7 @@ index e37d2d29f3ba67cfe28abe4847a3dca07121f0be..a16040fe624b53c713f55c5f302d6e5d
                  idispensebehavior.dispense(pointer, eventStack);
                  return stack;
 diff --git a/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
-index a024c697a65bbab27408da1d6a75e531d9719b47..c6f6ad961dfad4fe802bc6de922f00691aa0b283 100644
+index 44b79a7c2f8b95a484d1999fa2167ce588f7985b..9263d9291f659bcabae06cf6290008b568ae761f 100644
 --- a/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
 +++ b/src/main/java/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
 @@ -52,7 +52,7 @@ public class ShearsDispenseItemBehavior extends OptionalDispenseItemBehavior {
@@ -228,10 +228,10 @@ index 8bc841e4958011edc5a0e4ad55a6eff4d39d4cb3..ede8088d1058848d234a97a39f1e2d4a
  
      public boolean suckInItems() {
 diff --git a/src/main/java/net/minecraft/world/item/ArmorItem.java b/src/main/java/net/minecraft/world/item/ArmorItem.java
-index 786e4a8700cb84b16dd9b8892a0d1d5803924d81..e63fc0ce56082501f1767933872b4a3793ce4c0c 100644
+index 647a4601deace52f8d855f512a73671f82b4762a..f9a2574194946c7cb95a2c23ab42cb24c49a8e30 100644
 --- a/src/main/java/net/minecraft/world/item/ArmorItem.java
 +++ b/src/main/java/net/minecraft/world/item/ArmorItem.java
-@@ -91,7 +91,7 @@ public class ArmorItem extends Item implements Equipable {
+@@ -82,7 +82,7 @@ public class ArmorItem extends Item implements Equipable {
                  shrink = false; // Paper - shrink below
                  // Chain to handler for new item
                  ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
@@ -277,7 +277,7 @@ index f6edfea463b3725d3a79aca38825e86dbf82175c..7001fe6db48c819ca9f831af14f5dee6
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/DropperBlock.java b/src/main/java/net/minecraft/world/level/block/DropperBlock.java
-index b4a742e8c513e458b34c216d1e907b47e3aac292..93f7076c81354cd97154d300d7b8a7e90306bc80 100644
+index 45fafee2cf1893dccf477939dad05e9e1938ec8c..63e120324254d7fa2bb8e5a2db63ffb7445c7b26 100644
 --- a/src/main/java/net/minecraft/world/level/block/DropperBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/DropperBlock.java
 @@ -40,7 +40,7 @@ public class DropperBlock extends DispenserBlock {
@@ -326,10 +326,10 @@ index e0c62227b279a5fe0f3868fbf9ce8c78c515a09c..ac75586c33d5064a0710ccde55713ac6
              world.getCraftServer().getPluginManager().callEvent(event);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index dfbe0914ab2771ac632fd064719878ac47559e9f..5bc819cfb86f7ba692439d6df18bb31418517162 100644
+index bd6fee3e3ad9116802ff8bb57bfa741b881c4057..7cfec96bddb2731baac6a8b7909c4a13d94d8794 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -2163,7 +2163,7 @@ public class CraftEventFactory {
+@@ -2171,7 +2171,7 @@ public class CraftEventFactory {
          if (!event.getItem().equals(craftItem)) {
              // Chain to handler for new item
              ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());

@@ -5,10 +5,10 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 278a2f999a6e4d564582a4b2e103c24f5036774f..d84f248cb0ac053fe31c6f78c741f9e9f74d6c22 100644
+index 5251de7f1c475fcbb279e0c9161dbc1b54b92f99..8d41e88a206710bb302542488959579c76372dc8 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -552,7 +552,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -553,7 +553,7 @@ public class WorldConfiguration extends ConfigurationPart {
      public KiocgConfig kiocgConfig;
  
      public class KiocgConfig extends ConfigurationPart {
@@ -18,13 +18,13 @@ index 278a2f999a6e4d564582a4b2e103c24f5036774f..d84f248cb0ac053fe31c6f78c741f9e9
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index aee15b4eae791c3dcd406998f3450a1fb5ac6bfa..0c0d398f2396cc86063a6efd84f971eb61e9d5e7 100644
+index cbeb1425c3252cd2ec7b6256f9d5bf625f9ca104..593e06708f8bf9320c5f8835afbf0dbfd1c2141b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1038,7 +1038,15 @@ public class ServerPlayer extends Player {
+@@ -1029,7 +1029,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          if (!keepInventory) {
              for (ItemStack item : this.getInventory().getContents()) {
-                 if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item)) {
+                 if (!item.isEmpty() && !EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
 -                    loot.add(new DefaultDrop(item, stack -> this.drop(stack, true, false, false))); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
 +                    // KioCG start
 +                    loot.add(new DefaultDrop(item, stack -> {

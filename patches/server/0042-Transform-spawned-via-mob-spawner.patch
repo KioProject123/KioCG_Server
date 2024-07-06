@@ -5,10 +5,10 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 0a6d0c5b1e4a71262880651d2ec19a71ae9532d2..23588880456ac09553fe25fe77feb858302deef3 100644
+index 22117ef536082bb1090ad686109ce183299fe1ed..1d8a281ea1d84c56dec41feff40e786673ae8f45 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1645,6 +1645,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+@@ -1626,6 +1626,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
                      return null;
                  }
                  this.level().addFreshEntity(t0, spawnReason);
@@ -29,7 +29,7 @@ index 760cdd726d3c242a5214d9995cddb04e587fb0a1..e28bfd3420654addf19c569fed9f5135
                  this.discard(EntityRemoveEvent.Cause.TRANSFORMATION); // CraftBukkit - from above and add Bukkit remove cause
                  // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Pig.java b/src/main/java/net/minecraft/world/entity/animal/Pig.java
-index dc67b0e8c4020c3f8a632efc82a6cd93b9bffe9f..973ad46827335b6b2a5218b53237e96b96b6aa59 100644
+index 03d29d5114237f5700c188510a12f26507844c3d..403819ed37a948a0483b1b0797622c86ac57f364 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Pig.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Pig.java
 @@ -263,6 +263,7 @@ public class Pig extends Animal implements ItemSteerable, Saddleable {
@@ -41,11 +41,11 @@ index dc67b0e8c4020c3f8a632efc82a6cd93b9bffe9f..973ad46827335b6b2a5218b53237e96b
                  this.discard(EntityRemoveEvent.Cause.TRANSFORMATION); // CraftBukkit - add Bukkit remove cause
              } else {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java b/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java
-index 290d41136f5ec7671bc4990dfe50da0a770c124d..e3c16bb593f96861457fe762469ff103e13131ed 100644
+index 43046f4a0cff620834ac4647efdcde227185b2ff..e60cbd654c62d52e07763793e45191a71e573112 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java
-@@ -249,6 +249,7 @@ public class Tadpole extends AbstractFish {
-                 // CraftBukkit end
+@@ -250,6 +250,7 @@ public class Tadpole extends AbstractFish {
+                 frog.fudgePositionAfterSizeChange(this.getDimensions(this.getPose()));
                  this.playSound(SoundEvents.TADPOLE_GROW_UP, 0.15F, 1.0F);
                  worldserver.addFreshEntityWithPassengers(frog, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.METAMORPHOSIS); // CraftBukkit - add SpawnReason
 +                frog.spawnedViaMobSpawner = this.spawnedViaMobSpawner; // KioCG
@@ -53,10 +53,10 @@ index 290d41136f5ec7671bc4990dfe50da0a770c124d..e3c16bb593f96861457fe762469ff103
              }
          }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Slime.java b/src/main/java/net/minecraft/world/entity/monster/Slime.java
-index f223e78eb1204bbf5f2de38a7ce5b663800f7dc4..dba839cf1e6126b2b8f933e0953d863d1d82cf43 100644
+index adebb66e550f805f444bec22e9a4dd575a642b43..9b83f8f2e1d38e85aea6dc749a0c1b07724460d3 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Slime.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Slime.java
-@@ -268,6 +268,7 @@ public class Slime extends Mob implements Enemy {
+@@ -270,6 +270,7 @@ public class Slime extends Mob implements Enemy {
              }
              for (LivingEntity living : slimes) {
                  this.level().addFreshEntity(living, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
@@ -65,10 +65,10 @@ index f223e78eb1204bbf5f2de38a7ce5b663800f7dc4..dba839cf1e6126b2b8f933e0953d863d
              // CraftBukkit end
          }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index e62e2ad5cddc27f155506548d6d64ea24dfebc82..b17b40769d232a0e1c0415fc643e4fcd7de7dd94 100644
+index 20fae10bd8a518204d4fa32f23168124963a33b9..8e98505ae02ef22d144d64d3db8b510b7351d2a6 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -923,6 +923,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -925,6 +925,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
                      return;
                  }
                  world.addFreshEntityWithPassengers(entitywitch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);

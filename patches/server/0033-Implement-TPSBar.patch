@@ -284,7 +284,7 @@ index 0000000000000000000000000000000000000000..9db217ef0351e899e76b768e2f35f563
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index de7a4f2254f71e36fa2921179be3bd49e8456a3a..8d1bf2b826d341d65439eb274455afd9a8f926ec 100644
+index 593022f294774d3d4babf611f3f28e4e0c0d462f..1d0ffded5f67118406d64411f64e59ada46e1003 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -422,6 +422,16 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -305,10 +305,10 @@ index de7a4f2254f71e36fa2921179be3bd49e8456a3a..8d1bf2b826d341d65439eb274455afd9
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 134befa037177b47dbda1ba033251d901bdbcd3f..fff12262436a32a5225dc8fefd2f6dd85243871c 100644
+index 1d1e76de60e40224f5cb81893f9ee50fe987badb..d26aecbfbd1930e2c6938d049e45b700b3197230 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
-@@ -252,6 +252,7 @@ public class Commands {
+@@ -250,6 +250,7 @@ public class Commands {
              StopCommand.register(this.dispatcher);
              TransferCommand.register(this.dispatcher);
              WhitelistCommand.register(this.dispatcher);
@@ -317,10 +317,10 @@ index 134befa037177b47dbda1ba033251d901bdbcd3f..fff12262436a32a5225dc8fefd2f6dd8
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3751c2a077bd13bac330b93c6efc2a640a17f4f2..e8a07b95e015ff5e47768c2a4d517aa153b2c47a 100644
+index 330bee331335454a61cf8350a6654217c8124445..ed313384080ce4eb452880b40eef2a252e2e7dc9 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1055,6 +1055,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1140,6 +1140,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.safeShutdown(waitForShutdown, false);
      }
      public void safeShutdown(boolean waitForShutdown, boolean isRestarting) {
@@ -329,10 +329,10 @@ index 3751c2a077bd13bac330b93c6efc2a640a17f4f2..e8a07b95e015ff5e47768c2a4d517aa1
          this.hasLoggedStop = true; // Paper - Debugging
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index b3d1dab6a4619144f2a1a6a8a8c7fbbc01e7b8df..a09eb5e02d0144061555c73ae9dad243c5b6a2fc 100644
+index ff74e69ddc1423bec03937b61b3be04b2be4529d..48f3a21b79f00541f3c976f48b900d4f57d7443c 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -353,6 +353,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -357,6 +357,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
                  DedicatedServer.LOGGER.info("JMX monitoring enabled");
              }
  
@@ -341,10 +341,10 @@ index b3d1dab6a4619144f2a1a6a8a8c7fbbc01e7b8df..a09eb5e02d0144061555c73ae9dad243
          }
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 5d870574328baec62da718f001aacb39ae796a2b..239679a48ed4b7f64f6d5259e06dd586b23da2cb 100644
+index 1092d7acd21c8842375f20943cd3304186e34314..9e5202bb9ee1bc16282fba1b24d5f9ff4956954e 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -597,6 +597,7 @@ public abstract class PlayerList {
+@@ -590,6 +590,7 @@ public abstract class PlayerList {
      }
      public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
          // Paper end - Fix kick event leave message not being sent

@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 1e54ee59ff6231ec5b490e4a754019cd2eb95549..d3198a8481787bb3d3ffcc5cb012397dc15e79b9 100644
+index 7eec344a92ea0050967527fcc07c311e1d495cf1..3de72ff655614408b82a5d0e496e28068e64313c 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -599,6 +599,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -600,6 +600,8 @@ public class WorldConfiguration extends ConfigurationPart {
          }
  
          public double dirtPathSpeedBoost = 0.02;
@@ -18,10 +18,10 @@ index 1e54ee59ff6231ec5b490e4a754019cd2eb95549..d3198a8481787bb3d3ffcc5cb012397d
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 33419767b2dc5e50a438d405fa41afd1516c5720..b26c6c32f30729ecc781d3f5d231c9d6fe02682d 100644
+index f6a3b1d2aea563ede5b6a1362ba65888f35ff7ef..b678658df01ac84fed1067e9fcdb7bf834a814e9 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -825,6 +825,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -656,6 +656,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
@@ -29,7 +29,7 @@ index 33419767b2dc5e50a438d405fa41afd1516c5720..b26c6c32f30729ecc781d3f5d231c9d6
          if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
              // CraftBukkit start
              j = this.levelData.getDayTime() + 24000L;
-@@ -844,6 +845,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -675,6 +676,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  this.resetWeatherCycle();
              }
          }
@@ -37,7 +37,7 @@ index 33419767b2dc5e50a438d405fa41afd1516c5720..b26c6c32f30729ecc781d3f5d231c9d6
  
          this.updateSkyBrightness();
          if (flag) {
-@@ -1178,6 +1180,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1009,6 +1011,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
      }
  
      private void announceSleepStatus() {
@@ -46,19 +46,19 @@ index 33419767b2dc5e50a438d405fa41afd1516c5720..b26c6c32f30729ecc781d3f5d231c9d6
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 2b4595855214a47052fdd840c666591377e26944..bd13df6041fb7f084c92e29b24b7ac5c2e69df91 100644
+index 34587abaa9d326225a628317caf1db5e8bfdee62..a75e3b43fdeb9539d729287051d2880308df4c3c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1489,7 +1489,7 @@ public class ServerPlayer extends Player {
-                 return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
+@@ -1512,7 +1512,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+                 return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.OBSTRUCTED);
              } else {
                  this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
 -                if (this.level().isDay()) {
 +                if (this.level().isDay() && !this.level().paperConfig().kiocgConfig.sleepAnyTime) { // KioCG
-                     return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+                     return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
                  } else {
                      if (!this.isCreative()) {
-@@ -1539,7 +1539,7 @@ public class ServerPlayer extends Player {
+@@ -1562,7 +1562,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                          CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                      });
  
@@ -67,7 +67,7 @@ index 2b4595855214a47052fdd840c666591377e26944..bd13df6041fb7f084c92e29b24b7ac5c
                          this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                      }
  
-@@ -2540,7 +2540,7 @@ public class ServerPlayer extends Player {
+@@ -2570,7 +2570,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent
@@ -77,10 +77,10 @@ index 2b4595855214a47052fdd840c666591377e26944..bd13df6041fb7f084c92e29b24b7ac5c
  
              this.respawnPosition = pos;
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 0590a14f0d2f1bf422f9bef1b3f8531da8fdbda0..a5b3918a4919e82ee380bfbba43c4a8a20665c4e 100644
+index 4a29117cedb2b0ab02c2e1b13c07feceadc1ee48..07cd4ebd9420d8aca34aebd92a15040deb995059 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -274,7 +274,7 @@ public abstract class Player extends LivingEntity {
+@@ -275,7 +275,7 @@ public abstract class Player extends LivingEntity {
                  this.sleepCounter = 100;
              }
  
@@ -90,7 +90,7 @@ index 0590a14f0d2f1bf422f9bef1b3f8531da8fdbda0..a5b3918a4919e82ee380bfbba43c4a8a
              }
          } else if (this.sleepCounter > 0) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index cdc2690b81dc938ae559cf98d34a0b467e1ebb5d..8086e9795b0cd5b6a93a9d3dc7dcc1e6f4b66337 100644
+index ee7f4f06ff023d372611e704d5da58a37e80c388..2f254c7a5b60c21e0b4a69a5c7b6f5bb543da0de 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
 @@ -84,6 +84,30 @@ public class FoodData {

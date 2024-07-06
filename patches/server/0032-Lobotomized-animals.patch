@@ -64,10 +64,10 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 41b53c4c9ad8538d996c54a5da381b24b05d6f50..407d5eea94392dba14b6cdde13cea5aadc5803cd 100644
+index b35689942d4bb1701cf89f5d9ca0781e75c2ed2f..eff54cbda952edeb0505cd5765bcfbcf771bdb38 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -598,6 +598,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -599,6 +599,7 @@ public class WorldConfiguration extends ConfigurationPart {
              public KiocgConfig.Entity.Animal animal;
              public class Animal extends ConfigurationPart {
                  public boolean animalCanBreed = false;
@@ -76,11 +76,11 @@ index 41b53c4c9ad8538d996c54a5da381b24b05d6f50..407d5eea94392dba14b6cdde13cea5aa
  
              public boolean betterMobGriefingSetting = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index d84f9c079c7ca7735070adc1a7b412c9df7e4469..2ae311daced888f33e9ec6ca65f711cdd96e4edb 100644
+index e075644952df6a116b4d3958afa6bf4c510a1e9c..d787f19e0bc9a46e12eb855b5c4e7849892e810f 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -4560,6 +4560,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
-         return false;
+@@ -4609,6 +4609,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         return flag;
      }
  
 +    public boolean isLobotomized() { return false; } // KioCG
@@ -141,10 +141,10 @@ index 115fbee54d2ea4874878355305d124dbb0326cdf..76a4e658b7bf1409b9eb4931e66bea5f
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java
-index 7d1df6fbb8ef0f51df06a50cad9a0df366c76dea..0f83a6f600798bd26c1a75ce7fabadca3d49b6ee 100644
+index 20d4e3fb00a9eaac8484e95329bd64a368872b59..a2fa532ad2136b70cb4c9373c011115b77212e5f 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java
-@@ -27,6 +27,7 @@ public class PanicGoal extends Goal {
+@@ -41,6 +41,7 @@ public class PanicGoal extends Goal {
  
      @Override
      public boolean canUse() {
@@ -152,7 +152,7 @@ index 7d1df6fbb8ef0f51df06a50cad9a0df366c76dea..0f83a6f600798bd26c1a75ce7fabadca
          if (!this.shouldPanic()) {
              return false;
          } else {
-@@ -77,6 +78,7 @@ public class PanicGoal extends Goal {
+@@ -91,6 +92,7 @@ public class PanicGoal extends Goal {
  
      @Override
      public boolean canContinueToUse() {
@@ -221,7 +221,7 @@ index 2e9991e6b3c05584002744a2ee2579b1dba218b2..6a29d40c63ac550a7898176b1e10f589
              this.path = null;
              return false;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index 5a1d8a0d10afce84987dbd42cafd418ef0328f86..e86de9f5076b5edfcbf781163f1f5c94eb25d88a 100644
+index 7dbc9c42d2f458ea6b8b6871bfe2dea24280e9f5..b48cfbfe7b43df088e21b67d220b846337a21b64 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
 @@ -42,6 +42,7 @@ public abstract class Animal extends AgeableMob {
@@ -288,10 +288,10 @@ index 5a1d8a0d10afce84987dbd42cafd418ef0328f86..e86de9f5076b5edfcbf781163f1f5c94
  
      public static boolean checkAnimalSpawnRules(EntityType<? extends Animal> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Bee.java b/src/main/java/net/minecraft/world/entity/animal/Bee.java
-index 0dfb8109fd8c022b079da00f6a0e3fc85b57bf7a..f479546d4e34e9ca86486f17f8f998858b73add8 100644
+index 1b3978f4ea7e8491e0c0cb6de23c141f44fab414..66178f293fe3676a8e23b31bf075857e75285da2 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Bee.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Bee.java
-@@ -1025,6 +1025,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1036,6 +1036,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
  
          @Override
          public boolean canBeeUse() {
@@ -299,7 +299,7 @@ index 0dfb8109fd8c022b079da00f6a0e3fc85b57bf7a..f479546d4e34e9ca86486f17f8f99885
              return Bee.this.hivePos != null && !Bee.this.hasRestriction() && Bee.this.wantsToEnterHive() && !this.hasReachedTarget(Bee.this.hivePos) && Bee.this.level().getBlockState(Bee.this.hivePos).is(BlockTags.BEEHIVES);
          }
  
-@@ -1141,6 +1142,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1152,6 +1153,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
  
          @Override
          public boolean canBeeUse() {
@@ -307,7 +307,7 @@ index 0dfb8109fd8c022b079da00f6a0e3fc85b57bf7a..f479546d4e34e9ca86486f17f8f99885
              return Bee.this.savedFlowerPos != null && !Bee.this.hasRestriction() && this.wantsToGoToKnownFlower() && Bee.this.isFlowerValid(Bee.this.savedFlowerPos) && !Bee.this.closerThan(Bee.this.savedFlowerPos, 2);
          }
  
-@@ -1193,6 +1195,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1204,6 +1206,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
  
          @Override
          public boolean canBeeUse() {
@@ -315,7 +315,7 @@ index 0dfb8109fd8c022b079da00f6a0e3fc85b57bf7a..f479546d4e34e9ca86486f17f8f99885
              return Bee.this.getCropsGrownSincePollination() >= 10 ? false : (Bee.this.random.nextFloat() < 0.3F ? false : Bee.this.hasNectar() && Bee.this.isHiveValid());
          }
  
-@@ -1257,6 +1260,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1268,6 +1271,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
  
          @Override
          public boolean canUse() {
@@ -324,7 +324,7 @@ index 0dfb8109fd8c022b079da00f6a0e3fc85b57bf7a..f479546d4e34e9ca86486f17f8f99885
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 6ff000741f2454aa0005a0fe0d442255b6f5ae5c..4f93a6ff75cf4e1cb20d87c08e98ad0ba083e2fb 100644
+index b032632f68eda8a7c4045d2640f8e32c45ddcd3d..5785ebc45463f9d270bf20ea6f66579098fe446c 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -142,6 +142,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
@@ -378,7 +378,7 @@ index 6ff000741f2454aa0005a0fe0d442255b6f5ae5c..4f93a6ff75cf4e1cb20d87c08e98ad0b
      @Override
      public void tick() {
          super.tick();
-@@ -557,7 +582,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -559,7 +584,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (this.assignProfessionWhenSpawned) {
              nbt.putBoolean("AssignProfessionWhenSpawned", true);
          }
@@ -387,7 +387,7 @@ index 6ff000741f2454aa0005a0fe0d442255b6f5ae5c..4f93a6ff75cf4e1cb20d87c08e98ad0b
      }
  
      @Override
-@@ -596,6 +621,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -598,6 +623,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
              this.assignProfessionWhenSpawned = nbt.getBoolean("AssignProfessionWhenSpawned");
          }
  

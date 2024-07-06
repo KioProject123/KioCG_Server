@@ -5,10 +5,10 @@ Subject: [PATCH] World data synchronization
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index ca56a0b596976448da6bb2a0e82b3d5cd4133e12..33419767b2dc5e50a438d405fa41afd1516c5720 100644
+index e079f4db4e4738f60a6fdbdbf5e4d1baf593a62f..f6a3b1d2aea563ede5b6a1362ba65888f35ff7ef 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1477,6 +1477,13 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1291,6 +1291,13 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          }
      }
  
@@ -23,10 +23,10 @@ index ca56a0b596976448da6bb2a0e82b3d5cd4133e12..33419767b2dc5e50a438d405fa41afd1
      public boolean mayInteract(Player player, BlockPos pos) {
          return !this.server.isUnderSpawnProtection(this, pos, player) && this.getWorldBorder().isWithinBounds(pos);
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 14281a4e72f49dc4eb2ca3da8479c1f81a3a175d..d11181c25c116c14e7127a88af481f576c144370 100644
+index 0d202ce8eb88bfdb8ca3306593d758fa483d8612..b48c781cd5e411d9b5acfb66a401f5e5b63c92ff 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -1571,6 +1571,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1310,6 +1310,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable, ca.spottedl
          return this.levelData.getDayTime();
      }
  

@@ -5,10 +5,10 @@ Subject: [PATCH] Dirt path speed boost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 74ab34b7d214888a2c269ad9dd3dfbdfe2f21c47..1e54ee59ff6231ec5b490e4a754019cd2eb95549 100644
+index dbbfd1c5bd45ee5a1ece4af8ead4f51c9fc36261..7eec344a92ea0050967527fcc07c311e1d495cf1 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -597,6 +597,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -598,6 +598,8 @@ public class WorldConfiguration extends ConfigurationPart {
  
              public boolean betterMobGriefingSetting = true;
          }
@@ -18,11 +18,11 @@ index 74ab34b7d214888a2c269ad9dd3dfbdfe2f21c47..1e54ee59ff6231ec5b490e4a754019cd
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 01f09d50333df16d7f2e76ca7fed964dd6a0f38a..2b4595855214a47052fdd840c666591377e26944 100644
+index 3fa64d67b00a7864810403968602d2bf0619f382..34587abaa9d326225a628317caf1db5e8bfdee62 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1624,6 +1624,34 @@ public class ServerPlayer extends Player {
-             super.onChangedBlock(pos);
+@@ -1647,6 +1647,34 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+             super.onChangedBlock(world, pos);
          }
  
 +        // KioCG start
