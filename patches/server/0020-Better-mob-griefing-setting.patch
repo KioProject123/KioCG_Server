@@ -17,6 +17,19 @@ index 2235ed3810cc9be863b34a32cde7e325cc9cf200..dbbfd1c5bd45ee5a1ece4af8ead4f51c
          }
      }
      // KioCG end
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index cdcf44804e6ed42aaf4acc3688dbd8b24f927b30..47c1f9859fb4f95ac0ec5657ee34890313e67d3d 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -688,7 +688,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+     public void aiStep() {
+         super.aiStep();
+         this.level().getProfiler().push("looting");
+-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || this.level().paperConfig().kiocgConfig.entity.betterMobGriefingSetting)) { // KioCG
+             Vec3i baseblockposition = this.getPickupReach();
+             List<ItemEntity> list = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double) baseblockposition.getX(), (double) baseblockposition.getY(), (double) baseblockposition.getZ()));
+             Iterator iterator = list.iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
 index a85885ee51df585fa11ae9f8fcd67ff2a71c5a18..643d890f3ed37d49d4299592bec863fa5b5fdfd1 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
@@ -72,6 +85,19 @@ index 0109c8ed8bf6a053674456fa4473934e028ca418..81da9aedc28ba5421f050e89d45a0fa2
                          // CraftBukkit start
                          if (!CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockposition, iblockdata.getFluidState().createLegacyBlock())) { // Paper - fix wrong block state
                              return;
+diff --git a/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java b/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
+index 69986f75d3cf729204cca0c7e5428536af31f695..688bb42cceddf4b6e079cc3160058e5adf12bafc 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
++++ b/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
+@@ -367,7 +367,7 @@ public class Allay extends PathfinderMob implements InventoryCarrier, VibrationS
+     public boolean wantsToPickUp(ItemStack stack) {
+         ItemStack itemstack1 = this.getItemInHand(InteractionHand.MAIN_HAND);
+ 
+-        return !itemstack1.isEmpty() && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && this.inventory.canAddItem(stack) && this.allayConsidersItemEqual(itemstack1, stack);
++        return !itemstack1.isEmpty() && (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || this.level().paperConfig().kiocgConfig.entity.betterMobGriefingSetting) && this.inventory.canAddItem(stack) && this.allayConsidersItemEqual(itemstack1, stack); // KioCG
+     }
+ 
+     private boolean allayConsidersItemEqual(ItemStack stack, ItemStack stack2) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Silverfish.java b/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
 index 860e385fc83f9787dca92efe35d21fd69c4dd635..aad175c87a7151f2076871bc03d08835edc28a4a 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
@@ -106,6 +132,19 @@ index bc58323801ee16fe9b63c21332144ec002a902f2..d62b59a16fcc317cb9d1ea9e4d89d128
      }
  
      protected boolean canReplaceCurrentItem(ItemStack stack) {
+diff --git a/src/main/java/net/minecraft/world/entity/raid/Raider.java b/src/main/java/net/minecraft/world/entity/raid/Raider.java
+index bbf21ea433f9e3963aac0ede597ed8d3c8e50ed8..63605555650169c8fc12b36ec51d8179c0dd4869 100644
+--- a/src/main/java/net/minecraft/world/entity/raid/Raider.java
++++ b/src/main/java/net/minecraft/world/entity/raid/Raider.java
+@@ -299,7 +299,7 @@ public abstract class Raider extends PatrollingMonster {
+ 
+         @Override
+         public boolean canUse() {
+-            if (!this.mob.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING) || !this.mob.canPickUpLoot()) return false; // Paper - respect game and entity rules for picking up items
++            if (!this.mob.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING) && !this.mob.level().paperConfig().kiocgConfig.entity.betterMobGriefingSetting || !this.mob.canPickUpLoot()) return false; // Paper - respect game and entity rules for picking up items // KioCG
+             Raid raid = this.mob.getCurrentRaid();
+ 
+             if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.getLeaderBannerInstance(this.mob.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)))) {
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 index d59e33e7326489c6d55d316d0130f22235f4c63c..3cef3bb49175d259ca9fc37d32c585190424e950 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java

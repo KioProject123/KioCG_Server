@@ -233,7 +233,7 @@ index a90e2c56c54797b2fec40eb3865835c5f640a544..3b8c71d56497dde62bef0440d3b376f6
                          if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
                              return ItemStack.EMPTY;
 diff --git a/src/main/java/net/minecraft/world/inventory/CraftingMenu.java b/src/main/java/net/minecraft/world/inventory/CraftingMenu.java
-index f9e4714cb0ee74505ed72200abed7756aa68dc90..7e6d7e1bc136560190fc4eeee1e6c65aa90db43c 100644
+index f9e4714cb0ee74505ed72200abed7756aa68dc90..8d17bc931a2b0f63661b485d1db93f218cc9d495 100644
 --- a/src/main/java/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/CraftingMenu.java
 @@ -92,6 +92,13 @@ public class CraftingMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe>
@@ -241,7 +241,7 @@ index f9e4714cb0ee74505ed72200abed7756aa68dc90..7e6d7e1bc136560190fc4eeee1e6c65a
                      if (itemstack1.isItemEnabled(world.enabledFeatures())) {
                          itemstack = itemstack1;
 +                        // KioCG start
-+                        if (recipeholder.id().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
++                        if (recipeholder1.id().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
 +                            if (craftingInventory.hasAnyMatching(itemStack -> !itemStack.isEmpty() && !handler.allowModelItem(itemStack))) {
 +                                itemstack = ItemStack.EMPTY;
 +                            }

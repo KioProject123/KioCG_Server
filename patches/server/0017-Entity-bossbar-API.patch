@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..53b5aba77a4f84ce0cc62a3b02a46726503dae42 100644
+index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..1824d2b10bc0ea64234ab42896ce8fd1d3001ef7 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -145,6 +145,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -106,11 +106,11 @@ index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..53b5aba77a4f84ce0cc62a3b02a46726
 +        if (this.bossbar != null) {
 +            this.bossbar.setProgress(this.getHealth() / this.getMaxHealth());
 +
-+            java.util.Set<ServerPlayer> set = com.google.common.collect.Sets.newHashSet();
++            java.util.Set<net.minecraft.server.level.ServerPlayer> set = com.google.common.collect.Sets.newHashSet();
 +            Iterator iterator = this.tracker.seenBy.iterator();
 +
 +            while (iterator.hasNext()) {
-+                ServerPlayer entityplayer = (ServerPlayer) iterator.next();
++                net.minecraft.server.level.ServerPlayer entityplayer = (net.minecraft.server.level.ServerPlayer) iterator.next();
 +
 +                if (this.position().distanceToSqr(entityplayer.position()) <= 16 * 16) {
 +                    this.bossbar.addPlayer(entityplayer);
@@ -118,13 +118,13 @@ index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..53b5aba77a4f84ce0cc62a3b02a46726
 +                }
 +            }
 +
-+            java.util.Set<ServerPlayer> set1 = com.google.common.collect.Sets.newHashSet(this.bossbar.getPlayers());
++            java.util.Set<net.minecraft.server.level.ServerPlayer> set1 = com.google.common.collect.Sets.newHashSet(this.bossbar.getPlayers());
 +
 +            set1.removeAll(set);
 +            Iterator iterator1 = set1.iterator();
 +
 +            while (iterator1.hasNext()) {
-+                ServerPlayer entityplayer1 = (ServerPlayer) iterator1.next();
++                net.minecraft.server.level.ServerPlayer entityplayer1 = (net.minecraft.server.level.ServerPlayer) iterator1.next();
 +
 +                this.bossbar.removePlayer(entityplayer1);
 +            }

@@ -69,7 +69,7 @@ index e675f1e3e5b6f9e1aa0d928ebb9abe76458edb38..7bfdbb389f8ca72b1d5bc1de7d86b481
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 892f02475976203abdd472aa02b80a9bfe48f752..e9c3e85bbc8802b300a743dad4807ffbbebb6a7c 100644
+index 892f02475976203abdd472aa02b80a9bfe48f752..5bc70b00b9d48f99f75af14426cca66a650b4061 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -117,6 +117,16 @@ public class Zombie extends Monster {
@@ -89,7 +89,7 @@ index 892f02475976203abdd472aa02b80a9bfe48f752..e9c3e85bbc8802b300a743dad4807ffb
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-@@ -307,6 +317,48 @@ public class Zombie extends Monster {
+@@ -307,6 +317,50 @@ public class Zombie extends Monster {
  
      }
  
@@ -102,7 +102,9 @@ index 892f02475976203abdd472aa02b80a9bfe48f752..e9c3e85bbc8802b300a743dad4807ffb
 +                Level world = this.level();
 +
 +                if (world instanceof ServerLevel) {
-+                    org.bukkit.event.entity.EntityDeathEvent deathEvent = this.dropAllDeathLoot(damageSource);
++                    ServerLevel worldserver = (ServerLevel) world;
++
++                    org.bukkit.event.entity.EntityDeathEvent deathEvent = this.dropAllDeathLoot(worldserver, damageSource);
 +                    if (deathEvent == null || !deathEvent.isCancelled()) {
 +                        if (this.isSleeping()) {
 +                            this.stopSleeping();
@@ -138,7 +140,7 @@ index 892f02475976203abdd472aa02b80a9bfe48f752..e9c3e85bbc8802b300a743dad4807ffb
      public boolean isSunSensitive() {
          return this.shouldBurnInDay; // Paper - Add more Zombie API
      }
-@@ -593,6 +645,7 @@ public class Zombie extends Monster {
+@@ -593,6 +647,7 @@ public class Zombie extends Monster {
  
      @Override
      protected void dropCustomDeathLoot(ServerLevel world, DamageSource source, boolean causedByPlayer) {

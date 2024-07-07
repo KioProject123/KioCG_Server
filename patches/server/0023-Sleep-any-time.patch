@@ -5,13 +5,14 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 7eec344a92ea0050967527fcc07c311e1d495cf1..3de72ff655614408b82a5d0e496e28068e64313c 100644
+index dbbfd1c5bd45ee5a1ece4af8ead4f51c9fc36261..36b0cc9e415f5d386c96ea79a2dfaef8d85e537b 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -600,6 +600,8 @@ public class WorldConfiguration extends ConfigurationPart {
-         }
+@@ -598,6 +598,9 @@ public class WorldConfiguration extends ConfigurationPart {
  
-         public double dirtPathSpeedBoost = 0.02;
+             public boolean betterMobGriefingSetting = true;
+         }
++
 +        public boolean sleepAnyTime = true;
 +        public double sleepHealingRegenRate = 20;
      }
@@ -46,7 +47,7 @@ index f6a3b1d2aea563ede5b6a1362ba65888f35ff7ef..b678658df01ac84fed1067e9fcdb7bf8
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 34587abaa9d326225a628317caf1db5e8bfdee62..a75e3b43fdeb9539d729287051d2880308df4c3c 100644
+index 3fa64d67b00a7864810403968602d2bf0619f382..fa72d34522e51a179ba3d044e2cf309c0498dcd2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1512,7 +1512,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -67,7 +68,7 @@ index 34587abaa9d326225a628317caf1db5e8bfdee62..a75e3b43fdeb9539d729287051d28803
                          this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                      }
  
-@@ -2570,7 +2570,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -2542,7 +2542,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent

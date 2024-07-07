@@ -483,7 +483,7 @@ index a5c7c2d24498c66159316a4f92677625975ce5ca..66dabb34eb4dfdd526ee1800d04aeda0
  
      @io.papermc.paper.annotation.DoNotUse @Deprecated // Paper - fix powdered snow cauldron extinguishing entities; use #handleEntityOnFireInsideWithEvent
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index 281ce1e77e5abc89729afed2c2ded0527a6d6c1f..a0fea28daab2b098cdafb699ed83b4b50cf79968 100644
+index 20d4cda6396601621b684f6048afffba650598bf..4d29c609c44fe2100c132cbac8abfdef4d0b201f 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 @@ -47,6 +47,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {

@@ -5,10 +5,10 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 22117ef536082bb1090ad686109ce183299fe1ed..1d8a281ea1d84c56dec41feff40e786673ae8f45 100644
+index 7605c3e68bfed8ede4abd5423b9ab487e14a4014..915f8e766023c13ba541254c05be0baa301279d1 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1626,6 +1626,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1625,6 +1625,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
                      return null;
                  }
                  this.level().addFreshEntity(t0, spawnReason);

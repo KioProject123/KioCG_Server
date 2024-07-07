@@ -183,10 +183,10 @@ index 9db217ef0351e899e76b768e2f35f563ee843b5a..4d86f2fb41140715aa0bb13dcf91b4dc
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index eff54cbda952edeb0505cd5765bcfbcf771bdb38..e36dfa38204a3b28c0236c108adc0ed6357c7ed7 100644
+index 43b5b282d68b216298340876d512a50780e6616f..931fb51a4b54891383b07f0c01925d2e55ced253 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -614,6 +614,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -613,6 +613,12 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;
@@ -297,7 +297,7 @@ index d5f5637c0d8f7b9d2fdab6d2e25dc45790bee0d0..a03c187c990ad712557fa743a8d25afc
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index a75e3b43fdeb9539d729287051d2880308df4c3c..fde2b7656038f5f09f5b07b8b6d163ae892ae958 100644
+index fa72d34522e51a179ba3d044e2cf309c0498dcd2..5cd9d060a5fa7d20e56f4533fba2fbea1048ad5c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -302,6 +302,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -406,10 +406,10 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 6da0922e221b4b7afe8265c842a78ae155e843ed..41f36499774589982977dda68fcb8bfb3578efd2 100644
+index 47c1f9859fb4f95ac0ec5657ee34890313e67d3d..83dc78c736015b43c1d1c0693f99c99eb481a9b7 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1879,4 +1879,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1877,4 +1877,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          }
      }
      // KioCG end

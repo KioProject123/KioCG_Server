@@ -64,7 +64,7 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index b35689942d4bb1701cf89f5d9ca0781e75c2ed2f..eff54cbda952edeb0505cd5765bcfbcf771bdb38 100644
+index 95f0900cc96eba11b382ab023a3ea2dde3203866..43b5b282d68b216298340876d512a50780e6616f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -599,6 +599,7 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -288,7 +288,7 @@ index 7dbc9c42d2f458ea6b8b6871bfe2dea24280e9f5..b48cfbfe7b43df088e21b67d220b8463
  
      public static boolean checkAnimalSpawnRules(EntityType<? extends Animal> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Bee.java b/src/main/java/net/minecraft/world/entity/animal/Bee.java
-index 1b3978f4ea7e8491e0c0cb6de23c141f44fab414..66178f293fe3676a8e23b31bf075857e75285da2 100644
+index 1b3978f4ea7e8491e0c0cb6de23c141f44fab414..f86beb18e7af55800ffd76f3938c9ab972e8803c 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Bee.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Bee.java
 @@ -1036,6 +1036,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
@@ -315,12 +315,18 @@ index 1b3978f4ea7e8491e0c0cb6de23c141f44fab414..66178f293fe3676a8e23b31bf075857e
              return Bee.this.getCropsGrownSincePollination() >= 10 ? false : (Bee.this.random.nextFloat() < 0.3F ? false : Bee.this.hasNectar() && Bee.this.isHiveValid());
          }
  
-@@ -1268,6 +1271,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1268,11 +1271,13 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
  
          @Override
          public boolean canUse() {
 +            if (Bee.this.isLobotomized()) return false; // KioCG
              return Bee.this.navigation.isDone() && Bee.this.random.nextInt(10) == 0;
+         }
+ 
+         @Override
+         public boolean canContinueToUse() {
++            if (Bee.this.isLobotomized()) return false; // KioCG
+             return Bee.this.navigation.isInProgress();
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java

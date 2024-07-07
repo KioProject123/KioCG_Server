@@ -279,7 +279,7 @@ index 0063bb973e77248bdfc541336e11b0d0f25cb7d2..5dc07c3d434858b997341102c19522c7
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index 5c6bdd5b26e37449b76cf61d51fd09cd4fb3a015..281ce1e77e5abc89729afed2c2ded0527a6d6c1f 100644
+index 5c6bdd5b26e37449b76cf61d51fd09cd4fb3a015..20d4cda6396601621b684f6048afffba650598bf 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 @@ -78,6 +78,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
@@ -311,7 +311,7 @@ index 5c6bdd5b26e37449b76cf61d51fd09cd4fb3a015..281ce1e77e5abc89729afed2c2ded052
 -                        campfire.items.set(i, ItemStack.EMPTY);
 +                        */
 +
-+                        Optional<RecipeHolder<CampfireCookingRecipe>> optional = campfire.quickCheck.getRecipeFor(new SimpleContainer(new ItemStack[]{itemstack1}), world);
++                        Optional<RecipeHolder<CampfireCookingRecipe>> optional = campfire.quickCheck.getRecipeFor(new SingleRecipeInput(itemstack1), world);
 +                        if (optional.isPresent()) {
 +                            campfire.placeFood(null, itemstack1, ((CampfireCookingRecipe) ((RecipeHolder) optional.get()).value()).getCookingTime());
 +                        } else {

@@ -5,7 +5,7 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 3de72ff655614408b82a5d0e496e28068e64313c..ee81824bac2a56e251536b29a2abfb8f3e58e645 100644
+index 36b0cc9e415f5d386c96ea79a2dfaef8d85e537b..91a50f569928b8386a96a57d4847363804f42496 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -597,6 +597,10 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -18,9 +18,9 @@ index 3de72ff655614408b82a5d0e496e28068e64313c..ee81824bac2a56e251536b29a2abfb8f
 +            public double turretDamageDefault = 1.0;
          }
  
-         public double dirtPathSpeedBoost = 0.02;
+         public boolean sleepAnyTime = true;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..8d65f911c4c15bfc1dcb7a913f338076c3e959e9 100644
+index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..4848157380072249b7b2b0d6265ced9c1f326502 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
@@ -86,7 +86,7 @@ index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..8d65f911c4c15bfc1dcb7a913f338076
 +            net.minecraft.world.entity.LivingEntity entityliving = list1.get(this.level().random.nextInt(list1.size()));
 +            entityliving.hurt(this.level().damageSources().indirectMagic(this, this), (float) getTurretDamage());
 +            setBeamTarget(entityliving.blockPosition().atY((int) entityliving.getEyeY()).offset(0, -2, 0));
-+            this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
++            this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW.value(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
 +            beamTicks = 4;
 +            // KioCG end
          }

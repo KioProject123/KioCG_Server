@@ -144,7 +144,7 @@ index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3
                          } else if (entityliving.level() != entityinsentient.level()) {
                              reason = EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-index 15d7be9ed4a973044dd4399db46aaa244730b836..066761bd2a38126e272af9bdad65be570e0a3d19 100644
+index 15d7be9ed4a973044dd4399db46aaa244730b836..2f98152fdea3349ffe9e15ff6d40011811c36baa 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 @@ -19,6 +19,7 @@ public class FollowOwnerGoal extends Goal {
@@ -172,7 +172,7 @@ index 15d7be9ed4a973044dd4399db46aaa244730b836..066761bd2a38126e272af9bdad65be57
 +        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petFollowKeepChunkLoaded) return;
 +        if (this.tamable.tickCount >= ticketTicks + 20) {
 +            ticketTicks = this.tamable.tickCount;
-+            ((net.minecraft.server.level.ServerLevel) this.level).getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.PET_FOLLOW, new net.minecraft.world.level.ChunkPos(this.tamable.blockPosition()), 2, this.tamable.getId()); // KioCG
++            ((net.minecraft.server.level.ServerLevel) this.tamable.level()).getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.PET_FOLLOW, new net.minecraft.world.level.ChunkPos(this.tamable.blockPosition()), 2, this.tamable.getId()); // KioCG
 +        }
 +    }
 +    // KioCG end

@@ -24,7 +24,7 @@ index 629b9c3dee73dfbddad96187f83e7f4568a1a2d7..d5df5ccada65071b5e8ed985e87865c2
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 53b5aba77a4f84ce0cc62a3b02a46726503dae42..6da0922e221b4b7afe8265c842a78ae155e843ed 100644
+index 1824d2b10bc0ea64234ab42896ce8fd1d3001ef7..cdcf44804e6ed42aaf4acc3688dbd8b24f927b30 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -146,6 +146,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -32,21 +32,13 @@ index 53b5aba77a4f84ce0cc62a3b02a46726503dae42..6da0922e221b4b7afe8265c842a78ae1
      private float restrictRadius;
      @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG
 +    // KioCG start
-+    private static final UUID SCALE_MODIFIER_BABY_UUID = UUID.fromString("9afe7b53-20e0-5d09-3ed5-a280a496c472");
-+    private final AttributeModifier SCALE_MODIFIER_BABY;
++    private static final ResourceLocation SCALE_MODIFIER_BABY_ID = ResourceLocation.withDefaultNamespace("baby");
++    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(Mob.SCALE_MODIFIER_BABY_ID, this.level().paperConfig().kiocgConfig.entity.babySizeScaling.getInt(this.getType()) / 100, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    // KioCG end
  
      public boolean aware = true; // CraftBukkit
  
-@@ -174,6 +178,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
-             this.registerGoals();
-         }
- 
-+        SCALE_MODIFIER_BABY = new AttributeModifier(Mob.SCALE_MODIFIER_BABY_UUID, "Baby scale modifier", this.level().paperConfig().kiocgConfig.entity.babySizeScaling.getInt(this.getType()) / 100, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL); // KioCG
-     }
- 
-     // CraftBukkit start
-@@ -1690,7 +1695,23 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1690,7 +1693,23 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
      }
  
@@ -56,7 +48,7 @@ index 53b5aba77a4f84ce0cc62a3b02a46726503dae42..6da0922e221b4b7afe8265c842a78ae1
 +        net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
 +
 +        if (attributemodifiable != null) {
-+            attributemodifiable.removeModifier(Mob.SCALE_MODIFIER_BABY_UUID);
++            attributemodifiable.removeModifier(Mob.SCALE_MODIFIER_BABY_ID);
 +            if (baby) {
 +                attributemodifiable.addPermanentModifier(this.SCALE_MODIFIER_BABY);
 +            }
@@ -65,7 +57,7 @@ index 53b5aba77a4f84ce0cc62a3b02a46726503dae42..6da0922e221b4b7afe8265c842a78ae1
 +
 +    public boolean isBaby() {
 +        net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
-+        return attributemodifiable != null && attributemodifiable.getModifier(Mob.SCALE_MODIFIER_BABY_UUID) != null;
++        return attributemodifiable != null && attributemodifiable.getModifier(Mob.SCALE_MODIFIER_BABY_ID) != null;
 +    }
 +    // KioCG end
  

@@ -5,7 +5,7 @@ Subject: [PATCH] Configurable can drop mobs skull
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index e36dfa38204a3b28c0236c108adc0ed6357c7ed7..39703f1cf2bd79ba79674e3f4ccb8d4855797116 100644
+index 931fb51a4b54891383b07f0c01925d2e55ced253..27ec41fa761d311b8041f4bec1060c7656ca262f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -594,6 +594,15 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -64,10 +64,10 @@ index bb2e7cee612dc1fafa042674a0b0d07d7165b54c..98b60652732fcaf3b13a3c093b90a6fa
                  this.spawnAtLocation((ItemLike) Items.WITHER_SKELETON_SKULL);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index e9c3e85bbc8802b300a743dad4807ffbbebb6a7c..752cd457ed8a5eace5ced48030efcb2e7916b0d9 100644
+index 5bc70b00b9d48f99f75af14426cca66a650b4061..bfcd0ed1eee6352a79a2a48f604a74cb14359637 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -650,7 +650,7 @@ public class Zombie extends Monster {
+@@ -652,7 +652,7 @@ public class Zombie extends Monster {
          Entity entity = source.getEntity();
  
          if (entity instanceof Creeper entitycreeper) {
