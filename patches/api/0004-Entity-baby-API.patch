@@ -4,17 +4,19 @@ Date: Tue, 28 May 2024 16:20:26 +0800
 Subject: [PATCH] Entity baby API
 
 
-diff --git a/src/main/java/org/bukkit/entity/Mob.java b/src/main/java/org/bukkit/entity/Mob.java
-index db467c74b17d6019b097ea261f633cf2f5937c63..1283bcaec990a4d8fc0c534db38d1acc388a228c 100644
---- a/src/main/java/org/bukkit/entity/Mob.java
-+++ b/src/main/java/org/bukkit/entity/Mob.java
-@@ -235,4 +235,9 @@ public interface Mob extends LivingEntity, Lootable {
-     public org.bukkit.boss.BossBar getBossbar();
-     public void setBossbar(org.bukkit.boss.BossBar bossbar);
-     // KioCG end
+diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
+index a1e54e9d14393a6c0ea57cca854071c5396d9717..84dc776b3ade7522a1262c78c04ac2aa9eb487ba 100644
+--- a/src/main/java/org/bukkit/entity/LivingEntity.java
++++ b/src/main/java/org/bukkit/entity/LivingEntity.java
+@@ -1458,4 +1458,11 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
+      */
+     boolean canUseEquipmentSlot(org.bukkit.inventory.@NotNull EquipmentSlot slot);
+     // Paper end - Expose canUseSlot
 +
 +    // KioCG start
-+    public boolean isBaby();
-+    public void setBaby(boolean flag);
++    public boolean isBabySimulate();
++    public void setBabySimulate(boolean flag);
++    public boolean isHugeSimulate();
++    public void setHugeSimulate(boolean flag);
 +    // KioCG end
  }

@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index dbbfd1c5bd45ee5a1ece4af8ead4f51c9fc36261..36b0cc9e415f5d386c96ea79a2dfaef8d85e537b 100644
+index ab05fe72beb0ce2b67842fa281169fbc3c5e6494..9bda7a360da9a13f8b6a5b289cafbc97bdf91bb0 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -598,6 +598,9 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -602,6 +602,9 @@ public class WorldConfiguration extends ConfigurationPart {
  
              public boolean betterMobGriefingSetting = true;
          }
@@ -19,7 +19,7 @@ index dbbfd1c5bd45ee5a1ece4af8ead4f51c9fc36261..36b0cc9e415f5d386c96ea79a2dfaef8
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index f6a3b1d2aea563ede5b6a1362ba65888f35ff7ef..b678658df01ac84fed1067e9fcdb7bf834a814e9 100644
+index f72d85b28327a99149d17c9f533f0c4bc3155937..c56346d4c204299df97ea6bce15abf4c131e3f13 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -656,6 +656,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.

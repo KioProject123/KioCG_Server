@@ -5,10 +5,10 @@ Subject: [PATCH] Configurable persistent when picked up items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 27ec41fa761d311b8041f4bec1060c7656ca262f..5f4845adee1cdc408679e375eb9bd7423ffd03fa 100644
+index b8043bf80d6061c2c2d2692bd6d401861ac29228..d4bf89e839307bbaf6bbbc7fd5e845eba420db2b 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -603,6 +603,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -607,6 +607,8 @@ public class WorldConfiguration extends ConfigurationPart {
                      public boolean canDropZombieSkull = true;
                      public boolean canDropPiglinSkull = true;
                  }
@@ -18,10 +18,10 @@ index 27ec41fa761d311b8041f4bec1060c7656ca262f..5f4845adee1cdc408679e375eb9bd742
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 83dc78c736015b43c1d1c0693f99c99eb481a9b7..7605c3e68bfed8ede4abd5423b9ab487e14a4014 100644
+index 4480fd52b14ce6b0f821fb1f2c4aabe76d9952f9..87bf31f61898246dc0f2e792148c39d75dc3f676 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -773,9 +773,33 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -770,9 +770,33 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      protected void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
          this.setItemSlot(slot, stack);
          this.setGuaranteedDrop(slot);
@@ -55,7 +55,7 @@ index 83dc78c736015b43c1d1c0693f99c99eb481a9b7..7605c3e68bfed8ede4abd5423b9ab487
      public void setGuaranteedDrop(EquipmentSlot slot) {
          switch (slot.getType()) {
              case HAND:
-@@ -888,6 +912,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -885,6 +909,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -63,7 +63,7 @@ index 83dc78c736015b43c1d1c0693f99c99eb481a9b7..7605c3e68bfed8ede4abd5423b9ab487
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Player entityhuman = this.level().findNearbyPlayer(this, -1.0D, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
  
-@@ -898,6 +923,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -895,6 +920,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
                  if (d0 > (double) j && this.removeWhenFarAway(d0)) {
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -71,7 +71,7 @@ index 83dc78c736015b43c1d1c0693f99c99eb481a9b7..7605c3e68bfed8ede4abd5423b9ab487
                  }
  
                  int k = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory()).soft(); // Paper - Configurable despawn distances
-@@ -905,6 +931,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -902,6 +928,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
                  if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause

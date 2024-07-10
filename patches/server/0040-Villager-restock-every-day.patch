@@ -5,7 +5,7 @@ Subject: [PATCH] Villager restock every day
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 5785ebc45463f9d270bf20ea6f66579098fe446c..20fae10bd8a518204d4fa32f23168124963a33b9 100644
+index 022242e02e79411ac4eeaab963ddb7de9b13e89e..0da3203ed998dddd6348e50786f7ef5b68585cd4 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -472,23 +472,24 @@ public class Villager extends AbstractVillager implements ReputationEventHandler

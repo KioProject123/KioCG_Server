@@ -5,10 +5,10 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 36b0cc9e415f5d386c96ea79a2dfaef8d85e537b..91a50f569928b8386a96a57d4847363804f42496 100644
+index 9bda7a360da9a13f8b6a5b289cafbc97bdf91bb0..64befd059110d71400cdb28c45c2214ed5a395df 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -597,6 +597,10 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -601,6 +601,10 @@ public class WorldConfiguration extends ConfigurationPart {
              }
  
              public boolean betterMobGriefingSetting = true;

@@ -5,10 +5,10 @@ Subject: [PATCH] Configurable can drop mobs skull
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 931fb51a4b54891383b07f0c01925d2e55ced253..27ec41fa761d311b8041f4bec1060c7656ca262f 100644
+index f5d568d965d661bc781dd01cee5225d440484cbd..b8043bf80d6061c2c2d2692bd6d401861ac29228 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -594,6 +594,15 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -598,6 +598,15 @@ public class WorldConfiguration extends ConfigurationPart {
                  public int darkEnoughToSprint = 7;
                  public boolean babyZombieJockey = true;
                  public boolean zombiesSkinnedIntoSkeletons = true;
@@ -64,10 +64,10 @@ index bb2e7cee612dc1fafa042674a0b0d07d7165b54c..98b60652732fcaf3b13a3c093b90a6fa
                  this.spawnAtLocation((ItemLike) Items.WITHER_SKELETON_SKULL);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 5bc70b00b9d48f99f75af14426cca66a650b4061..bfcd0ed1eee6352a79a2a48f604a74cb14359637 100644
+index cc936e61602eff9595c3f2d605adddbed7a18e48..2a0fd38912c280cf12195a185e2d7447e8fd3641 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -652,7 +652,7 @@ public class Zombie extends Monster {
+@@ -653,7 +653,7 @@ public class Zombie extends Monster {
          Entity entity = source.getEntity();
  
          if (entity instanceof Creeper entitycreeper) {
@@ -77,7 +77,7 @@ index 5bc70b00b9d48f99f75af14426cca66a650b4061..bfcd0ed1eee6352a79a2a48f604a74cb
  
                  if (!itemstack.isEmpty()) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index d62b59a16fcc317cb9d1ea9e4d89d128e6fbf2a7..88f6663a39604005a831a741d5b816c19730b8f2 100644
+index 16f12a0af49e3b116a589e6089b06a065f5c0641..fdd065dc27b65dceb8989b950824b12d1614b4f5 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 @@ -139,7 +139,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento

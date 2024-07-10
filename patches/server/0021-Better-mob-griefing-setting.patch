@@ -5,10 +5,10 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 2235ed3810cc9be863b34a32cde7e325cc9cf200..dbbfd1c5bd45ee5a1ece4af8ead4f51c9fc36261 100644
+index 48d36defbf453e0eb3f9ea2bca85a3169bd33241..ab05fe72beb0ce2b67842fa281169fbc3c5e6494 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -595,6 +595,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -599,6 +599,8 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean babyZombieJockey = true;
                  public boolean zombiesSkinnedIntoSkeletons = true;
              }
@@ -18,10 +18,10 @@ index 2235ed3810cc9be863b34a32cde7e325cc9cf200..dbbfd1c5bd45ee5a1ece4af8ead4f51c
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index cdcf44804e6ed42aaf4acc3688dbd8b24f927b30..47c1f9859fb4f95ac0ec5657ee34890313e67d3d 100644
+index 5be6cf1767b6f019736e75e74fc589d92fdfba00..69c0b9e326874c50ff28043354a72f62e5e70d62 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -688,7 +688,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -685,7 +685,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      public void aiStep() {
          super.aiStep();
          this.level().getProfiler().push("looting");
@@ -120,10 +120,10 @@ index 860e385fc83f9787dca92efe35d21fd69c4dd635..aad175c87a7151f2076871bc03d08835
                      BlockPos blockposition = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
                      BlockState iblockdata = this.mob.level().getBlockState(blockposition);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index bc58323801ee16fe9b63c21332144ec002a902f2..d62b59a16fcc317cb9d1ea9e4d89d128e6fbf2a7 100644
+index 5e9a0f93e4074ea7ad4e2a3394993cc81bc0f831..16f12a0af49e3b116a589e6089b06a065f5c0641 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -388,7 +388,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+@@ -389,7 +389,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
  
      @Override
      public boolean wantsToPickUp(ItemStack stack) {

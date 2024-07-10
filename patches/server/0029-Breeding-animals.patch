@@ -5,186 +5,256 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 404db307758fee29339c6a131f6366aa70720bcf..95f0900cc96eba11b382ab023a3ea2dde3203866 100644
+index 2274b35bc9662f8a3496c193bd670f0ba1025309..c20014fbfedc2ca99945d92bac9d4e9d332b5da2 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -596,6 +596,11 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -600,6 +600,12 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean zombiesSkinnedIntoSkeletons = true;
              }
  
 +            public KiocgConfig.Entity.Animal animal;
 +            public class Animal extends ConfigurationPart {
-+                public boolean animalCanBreed = false;
++                public boolean villagerCanBreed = false;
++                public double feedingHugeChance = 0.001;
 +            }
 +
              public boolean betterMobGriefingSetting = true;
              public boolean turretEnable = true;
              public int turretCooldownDefault = 100;
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-index 3dc3609d13a7b823d15384d1c385b68eeb933d26..c44ee87c9fc365206d9fb3b4345ed39329e984a5 100644
+index 623d9e9b2d57085acfe3fad657bf6b507bc1dc21..0d593b00766b0fc08086701bcdc5a5d20c14622f 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
 +++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-@@ -21,6 +21,19 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -21,6 +21,11 @@ public abstract class AgeableMob extends PathfinderMob {
      protected int forcedAge;
      protected int forcedAgeTimer;
      public boolean ageLocked; // CraftBukkit
 +    // KioCG start
-+    private int feedingDay;
-+    private int produceDay;
-+    private int totalFeedingDays;
-+    private int numberOfProducedToday;
-+
-+    public int getTotalFeedingDays() {
-+        return this.totalFeedingDays;
-+    }
-+    public int getNumberOfProducedToday() {
-+        return this.numberOfProducedToday;
-+    }
++    private int refreshDay;
++    public int feedingToday;
++    public int produceToday;
 +    // KioCG end
  
      protected AgeableMob(EntityType<? extends AgeableMob> type, Level world) {
          super(type, world);
-@@ -131,6 +144,12 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -41,7 +46,7 @@ public abstract class AgeableMob extends PathfinderMob {
+             if ( i < 0 )
+             {
+                 ++i;
+-                this.setAge( i );
++                // this.setAge( i ); // KioCG - 阻止小动物自然生长
+             } else if ( i > 0 )
+             {
+                 --i;
+@@ -114,6 +119,13 @@ public abstract class AgeableMob extends PathfinderMob {
+         this.ageUp(age, false);
+     }
+ 
++    // KioCG start
++    public void ageUp() {
++        ageUp(400);
++        this.feedingFeed();
++    }
++    // KioCG end
++
+     public void setAge(int age) {
+         int j = this.getAge();
+ 
+@@ -131,6 +143,11 @@ public abstract class AgeableMob extends PathfinderMob {
          nbt.putInt("Age", this.getAge());
          nbt.putInt("ForcedAge", this.forcedAge);
          nbt.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
 +        // KioCG start
-+        nbt.putInt("KioCG.FeedingDay", this.feedingDay);
-+        nbt.putInt("KioCG.ProduceDay", this.produceDay);
-+        nbt.putInt("KioCG.TotalFeedingDays", this.totalFeedingDays);
-+        nbt.putInt("KioCG.NumberOfProducedToday", this.numberOfProducedToday);
++        nbt.putInt("KioCG.RefreshDay", this.refreshDay);
++        nbt.putInt("KioCG.FeedingToday", this.feedingToday);
++        nbt.putInt("KioCG.ProduceToday", this.produceToday);
 +        // KioCG end
      }
  
      @Override
-@@ -139,6 +158,20 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -139,6 +156,17 @@ public abstract class AgeableMob extends PathfinderMob {
          this.setAge(nbt.getInt("Age"));
          this.forcedAge = nbt.getInt("ForcedAge");
          this.ageLocked = nbt.getBoolean("AgeLocked"); // CraftBukkit
 +        // KioCG start
-+        if (nbt.contains("KioCG.FeedingDay", net.minecraft.nbt.Tag.TAG_INT)) {
-+            this.feedingDay = nbt.getInt("KioCG.FeedingDay");
++        if (nbt.contains("KioCG.RefreshDay", net.minecraft.nbt.Tag.TAG_INT)) {
++            this.refreshDay = nbt.getInt("KioCG.RefreshDay");
 +        }
-+        if (nbt.contains("KioCG.ProduceDay", net.minecraft.nbt.Tag.TAG_INT)) {
-+            this.produceDay = nbt.getInt("KioCG.ProduceDay");
++        if (nbt.contains("KioCG.FeedingToday", net.minecraft.nbt.Tag.TAG_INT)) {
++            this.feedingToday = nbt.getInt("KioCG.FeedingToday");
 +        }
-+        if (nbt.contains("KioCG.TotalFeedingDays", net.minecraft.nbt.Tag.TAG_INT)) {
-+            this.totalFeedingDays = nbt.getInt("KioCG.TotalFeedingDays");
-+        }
-+        if (nbt.contains("KioCG.NumberOfProducedToday", net.minecraft.nbt.Tag.TAG_INT)) {
-+            this.numberOfProducedToday = nbt.getInt("KioCG.NumberOfProducedToday");
++        if (nbt.contains("KioCG.ProduceToday", net.minecraft.nbt.Tag.TAG_INT)) {
++            this.produceToday = nbt.getInt("KioCG.ProduceToday");
 +        }
 +        // KioCG end
      }
  
      @Override
-@@ -171,6 +204,8 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -166,11 +194,20 @@ public abstract class AgeableMob extends PathfinderMob {
+ 
+             if (i < 0) {
+                 ++i;
+-                this.setAge(i);
++                // this.setAge(i); // KioCG - 阻止小动物自然生长
+             } else if (i > 0) {
                  --i;
                  this.setAge(i);
              }
 +
-+            tickProduce(); // KioCG
++            // KioCG start
++            final int days = this.level().getDays();
++            if (days > this.refreshDay) {
++                this.refreshDay = days;
++                this.feedingToday = 0;
++                this.produceToday = 0;
++            }
++            // KioCG end
          }
  
      }
-@@ -204,6 +239,50 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -205,6 +242,24 @@ public abstract class AgeableMob extends PathfinderMob {
          return (int) ((float) (breedingAge / 20) * 0.1F);
      }
  
 +    // KioCG start
-+    public void tickProduce() {
-+        int days = (int) this.level().getDays();
-+
-+        if (this.produceDay != 0 && days > this.produceDay) {
-+            this.produceDay = 0;
-+            ++this.totalFeedingDays;
-+            this.numberOfProducedToday = getNumberOfProduced();
-+        }
-+
-+        if (days < this.feedingDay) {
-+            this.feedingDay = days;
-+            if (this.produceDay != 0) {
-+                this.produceDay = this.feedingDay;
-+            }
-+        }
-+    }
-+
-+    public int getNumberOfProduced() {
-+        return 1;
-+    }
-+
 +    public boolean canFeed() {
-+        return (int) this.level().getDays() > this.feedingDay;
++        return this.feedingToday < (this.isHugeSimulate() ? 3 : 1);
 +    }
 +
 +    public void feedingFeed() {
-+        this.feedingDay = (int) this.level().getDays();
-+        this.produceDay = this.feedingDay;
++        ++this.feedingToday;
 +    }
 +
 +    public boolean canProduce() {
-+        return this.numberOfProducedToday > 0;
++        return this.produceToday < (this.isHugeSimulate() ? 3 : 1);
 +    }
 +
 +    public void produce() {
-+        produce(1);
-+    }
-+
-+    public void produce(int amount) {
-+        this.numberOfProducedToday -= amount;
++        ++produceToday;
 +    }
 +    // KioCG end
 +
      public static class AgeableMobGroupData implements SpawnGroupData {
  
          private int groupSize;
-diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
-index 2a7373bb87157540d2ccba6321fb4b1e562beb55..63fd814455617d10c3f6a6ec7d5d793546d06d5e 100644
---- a/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
-+++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AnimalMakeLove.java
-@@ -46,6 +46,7 @@ public class AnimalMakeLove extends Behavior<Animal> {
- 
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
+index 4e2c23ccdf4e4a4d65b291dbe20952bae1838bff..8b5a8ae87449257ca322a205899ee2c7fba79ae5 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
+@@ -69,6 +69,7 @@ public class EatBlockGoal extends Goal {
      @Override
-     protected boolean checkExtraStartConditions(ServerLevel world, Animal entity) {
-+        if (!entity.level().paperConfig().kiocgConfig.entity.animal.animalCanBreed) return false; // KioCG
-         return entity.isInLove() && this.findValidBreedPartner(entity).isPresent();
-     }
+     public void tick() {
+         this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
++        if (true) return; // KioCG
+         if (this.eatAnimationTick == this.adjustedTickDelay(4)) {
+             BlockPos blockposition = this.mob.blockPosition();
  
-diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
-index 262653d72d1452b6f17582dbebbcad0c0a49ef63..7ec9025c07f5e07e541c68302582f86cad572444 100644
---- a/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
-+++ b/src/main/java/net/minecraft/world/entity/ai/goal/BreedGoal.java
-@@ -32,6 +32,7 @@ public class BreedGoal extends Goal {
- 
-     @Override
-     public boolean canUse() {
-+        if (!this.animal.level().paperConfig().kiocgConfig.entity.animal.animalCanBreed) return false; // KioCG
-         if (!this.animal.isInLove()) {
-             return false;
-         } else {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..7dbc9c42d2f458ea6b8b6871bfe2dea24280e9f5 100644
+index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..0043946e8dbd0c75c258b293182be6ecc2e39a70 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-@@ -146,7 +146,7 @@ public abstract class Animal extends AgeableMob {
+@@ -146,16 +146,16 @@ public abstract class Animal extends AgeableMob {
          if (this.isFood(itemstack)) {
              int i = this.getAge();
  
 -            if (!this.level().isClientSide && i == 0 && this.canFallInLove()) {
-+            if (!this.level().isClientSide && this.canFeed()) { // KioCG
++            if (!this.level().isClientSide && this.canEatFoodIfIsAdult()) { // KioCG
                  final ItemStack breedCopy = itemstack.copy(); // Paper - Fix EntityBreedEvent copying
                  this.usePlayerItem(player, hand, itemstack);
-                 this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
-@@ -195,6 +195,7 @@ public abstract class Animal extends AgeableMob {
-             this.loveCause = player.getUUID();
-         }
-         // Paper - Fix EntityBreedEvent copying; set breed item in better place
-+        this.feedingFeed(); // KioCG
+-                this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
++                this.eatFood(); // KioCG
+                 return InteractionResult.SUCCESS;
+             }
+ 
+-            if (this.isBaby()) {
++            if (this.isBaby() && this.canFeed()) { // KioCG
+                 this.usePlayerItem(player, hand, itemstack);
+-                this.ageUp(getSpeedUpSecondsWhenFeeding(-i), true);
++                this.ageUp(); // KioCG
+                 return InteractionResult.sidedSuccess(this.level().isClientSide);
+             }
+ 
+@@ -171,33 +171,56 @@ public abstract class Animal extends AgeableMob {
+         stack.consume(1, player);
+     }
+ 
+-    public boolean canFallInLove() {
+-        return this.inLove <= 0;
++    // KioCG start
++    // public boolean canFallInLove() {
++    //     return this.inLove <= 0;
++    // }
++    //
++    // @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper - Fix EntityBreedEvent copying
++    // public void setInLove(@Nullable Player player) {
++    //     // Paper start - Fix EntityBreedEvent copying
++    //     this.setInLove(player, null);
++    // }
++    // public void setInLove(@Nullable Player player, @Nullable ItemStack breedItemCopy) {
++    //     if (breedItemCopy != null) this.breedItem = breedItemCopy;
++    //     // Paper end - Fix EntityBreedEvent copying
++    //     // CraftBukkit start
++    //     EntityEnterLoveModeEvent entityEnterLoveModeEvent = CraftEventFactory.callEntityEnterLoveModeEvent(player, this, 600);
++    //     if (entityEnterLoveModeEvent.isCancelled()) {
++    //         this.breedItem = null; // Paper - Fix EntityBreedEvent copying; clear if cancelled
++    //         return;
++    //     }
++    //     this.inLove = entityEnterLoveModeEvent.getTicksInLove();
++    //     // CraftBukkit end
++    //     if (player != null) {
++    //         this.loveCause = player.getUUID();
++    //     }
++    //     // Paper - Fix EntityBreedEvent copying; set breed item in better place
++    //
++    //     this.level().broadcastEntityEvent(this, (byte) 18);
++    // }
++
++    public boolean canEatFoodIfIsAdult() {
++        return !this.isBaby() && this.canFeed(); // KioCG
+     }
+ 
+-    @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper - Fix EntityBreedEvent copying
+-    public void setInLove(@Nullable Player player) {
+-        // Paper start - Fix EntityBreedEvent copying
+-        this.setInLove(player, null);
+-    }
+-    public void setInLove(@Nullable Player player, @Nullable ItemStack breedItemCopy) {
+-        if (breedItemCopy != null) this.breedItem = breedItemCopy;
+-        // Paper end - Fix EntityBreedEvent copying
+-        // CraftBukkit start
+-        EntityEnterLoveModeEvent entityEnterLoveModeEvent = CraftEventFactory.callEntityEnterLoveModeEvent(player, this, 600);
+-        if (entityEnterLoveModeEvent.isCancelled()) {
+-            this.breedItem = null; // Paper - Fix EntityBreedEvent copying; clear if cancelled
+-            return;
+-        }
+-        this.inLove = entityEnterLoveModeEvent.getTicksInLove();
+-        // CraftBukkit end
+-        if (player != null) {
+-            this.loveCause = player.getUUID();
+-        }
+-        // Paper - Fix EntityBreedEvent copying; set breed item in better place
++    public void eatFood() {
++        this.feedingFeed();
++
++        final net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable> lootTable = this.lootTable;
++        this.lootTable = null;
++        this.forceDrops = true;
++        this.dropFromLootTable(this.damageSources().generic(), false);
++        this.forceDrops = false;
++        this.lootTable = lootTable;
  
          this.level().broadcastEntityEvent(this, (byte) 18);
++
++        if (this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance && !this.isHugeSimulate()) {
++            this.setHugeSimulate(true);
++        }
      }
++    // KioCG end
+ 
+     public void setInLoveTime(int loveTicks) {
+         this.inLove = loveTicks;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Chicken.java b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
-index 8e347718f72297398b5e6d34a893264bc10efe18..b912cb2ceb3f3cd3af1ef03565ed64ce866a4c56 100644
+index 8e347718f72297398b5e6d34a893264bc10efe18..a54680c1201be07efbb769f13ed7dbfbba506ad9 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Chicken.java
 @@ -50,7 +50,7 @@ public class Chicken extends Animal {
@@ -192,41 +262,29 @@ index 8e347718f72297398b5e6d34a893264bc10efe18..b912cb2ceb3f3cd3af1ef03565ed64ce
      public Chicken(EntityType<? extends Chicken> type, Level world) {
          super(type, world);
 -        this.eggTime = this.random.nextInt(6000) + 6000;
-+        this.eggTime = this.random.nextInt(20 * 10); // KioCG
++        this.eggTime = this.random.nextInt(200); // KioCG
          this.setPathfindingMalus(PathType.WATER, 0.0F);
      }
  
-@@ -96,17 +96,25 @@ public class Chicken extends Animal {
+@@ -96,13 +96,14 @@ public class Chicken extends Animal {
          }
  
          this.flap += this.flapping * 2.0F;
 -        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && !this.isChickenJockey() && --this.eggTime <= 0) {
-+        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && this.canProduce() && !this.isChickenJockey() && --this.eggTime <= 0) { // KioCG
++        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && !this.isChickenJockey() && this.canProduce() && --this.eggTime <= 0) { // KioCG
              this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
              this.forceDrops = true; // CraftBukkit
--            this.spawnAtLocation((ItemLike) Items.EGG);
-+            this.spawnAtLocation((ItemLike) Items.EGG, this.getNumberOfProducedToday()); // KioCG
+             this.spawnAtLocation((ItemLike) Items.EGG);
              this.forceDrops = false; // CraftBukkit
              this.gameEvent(GameEvent.ENTITY_PLACE);
 -            this.eggTime = this.random.nextInt(6000) + 6000;
-+            this.eggTime = this.random.nextInt(20 * 10); // KioCG
-+            this.produce(this.getNumberOfProducedToday()); // KioCG
++            this.eggTime = this.random.nextInt(200); // KioCG
++            this.produce(); // KioCG
          }
  
      }
- 
-+    // KioCG start
-+    @Override
-+    public int getNumberOfProduced() {
-+        return Math.min(1 + this.getTotalFeedingDays() / 10, 5);
-+    }
-+    // KioCG end
-+
-     @Override
-     protected boolean isFlapping() {
-         return this.flyDist > this.nextFlap;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cow.java b/src/main/java/net/minecraft/world/entity/animal/Cow.java
-index e336934f37075a827843e4b1bb2b6b660d2c60c9..c6322a84a53b4052f24fda6a755900ec8e45cc32 100644
+index e336934f37075a827843e4b1bb2b6b660d2c60c9..75d4d2e613078d2677b0af2af580e380aca4dd20 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cow.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cow.java
 @@ -96,7 +96,7 @@ public class Cow extends Animal {
@@ -246,20 +304,6 @@ index e336934f37075a827843e4b1bb2b6b660d2c60c9..c6322a84a53b4052f24fda6a755900ec
              player.setItemInHand(hand, itemstack1);
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
-@@ -116,6 +117,13 @@ public class Cow extends Animal {
-         }
-     }
- 
-+    // KioCG start
-+    @Override
-+    public int getNumberOfProduced() {
-+        return Math.min(1 + this.getTotalFeedingDays() / 30, 3);
-+    }
-+    // KioCG end
-+
-     @Nullable
-     @Override
-     public Cow getBreedOffspring(ServerLevel world, AgeableMob entity) {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java b/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
 index 0c21959f57ae88fcd0a4d6dc911c1ce347c96528..760cdd726d3c242a5214d9995cddb04e587fb0a1 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
@@ -282,159 +326,200 @@ index 0c21959f57ae88fcd0a4d6dc911c1ce347c96528..760cdd726d3c242a5214d9995cddb04e
              SoundEvent soundeffect;
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Panda.java b/src/main/java/net/minecraft/world/entity/animal/Panda.java
-index e108f876d3f129c6287f13d68427aed2a6f0c5b1..e4d014eb54c94ebca54a598d08f1bfeae792a636 100644
+index e108f876d3f129c6287f13d68427aed2a6f0c5b1..5f5f6352d65f0e1aa2d3c8bbde1a9ffdda69d1c6 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Panda.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Panda.java
-@@ -672,7 +672,7 @@ public class Panda extends Animal {
-             if (this.isBaby()) {
+@@ -669,13 +669,13 @@ public class Panda extends Animal {
+                 this.gotBamboo = true;
+             }
+ 
+-            if (this.isBaby()) {
++            if (this.isBaby() && this.canFeed()) { // KioCG
                  this.usePlayerItem(player, hand, itemstack);
-                 this.ageUp((int) ((float) (-this.getAge() / 20) * 0.1F), true);
+-                this.ageUp((int) ((float) (-this.getAge() / 20) * 0.1F), true);
 -            } else if (!this.level().isClientSide && this.getAge() == 0 && this.canFallInLove()) {
-+            } else if (!this.level().isClientSide && this.canFeed()) { // KioCG
++                this.ageUp(); // KioCG
++            } else if (!this.level().isClientSide && this.canEatFoodIfIsAdult()) { // KioCG
                  final ItemStack breedCopy = itemstack.copy(); // Paper - Fix EntityBreedEvent copying
                  this.usePlayerItem(player, hand, itemstack);
-                 this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
+-                this.setInLove(player, breedCopy); // Paper - Fix EntityBreedEvent copying
++                this.eatFood(); // KioCG
+             } else {
+                 if (this.level().isClientSide || this.isSitting() || this.isInWater()) {
+                     return InteractionResult.PASS;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Sheep.java b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-index 38ac2759894660be1ee7ba59b0bd1270158e9232..9d1eb4726d9cee834589b38af4d1b4f2971252bb 100644
+index 38ac2759894660be1ee7ba59b0bd1270158e9232..243191f26484ff8ac149672ffa8caa9aaa26a84d 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Sheep.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-@@ -151,6 +151,16 @@ public class Sheep extends Animal implements Shearable {
+@@ -148,6 +148,13 @@ public class Sheep extends Animal implements Shearable {
+             this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
+         }
+ 
++        // KioCG start
++        if (this.produceToday == 0 && this.random.nextInt(200) == 0) {
++            produce();
++            ate();
++        }
++        // KioCG end
++
          super.aiStep();
      }
  
-+    // KioCG start
-+    @Override
-+    public void tickProduce() {
-+        super.tickProduce();
-+        if (this.canProduce() && this.isSheared()) {
-+            this.ate();
-+        }
-+    }
-+    // KioCG end
-+
-     public static AttributeSupplier.Builder createAttributes() {
-         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D);
-     }
-@@ -254,7 +264,7 @@ public class Sheep extends Animal implements Shearable {
-         ItemStack itemstack = player.getItemInHand(hand);
- 
-         if (itemstack.is(Items.SHEARS)) {
--            if (!this.level().isClientSide && this.readyForShearing()) {
-+            if (!this.level().isClientSide && this.readyForShearing() && this.canProduce()) { // KioCG
-                 // CraftBukkit start
-                 // Paper start - custom shear drops
-                 java.util.List<ItemStack> drops = this.generateDefaultDrops();
-@@ -267,6 +277,7 @@ public class Sheep extends Animal implements Shearable {
-                 }
-                 // Paper end - custom shear drops
-                 // CraftBukkit end
-+                this.produce(); // KioCG
-                 this.shear(SoundSource.PLAYERS, drops); // Paper
-                 this.gameEvent(GameEvent.SHEAR, player);
-                 itemstack.hurtAndBreak(1, player, getSlotForHand(hand));
-@@ -279,6 +290,13 @@ public class Sheep extends Animal implements Shearable {
-         }
-     }
- 
-+    // KioCG start
-+    @Override
-+    public int getNumberOfProduced() {
-+        return Math.min(1 + this.getTotalFeedingDays() / 15, 5);
-+    }
-+    // KioCG end
-+
-     @Override
-     public void shear(SoundSource shearedSoundCategory) {
-         // Paper start - custom shear drops
-@@ -299,6 +317,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -299,6 +306,7 @@ public class Sheep extends Animal implements Shearable {
      public void shear(SoundSource shearedSoundCategory, java.util.List<ItemStack> drops) {
          // Paper end - custom shear drops
          this.level().playSound((Player) null, (Entity) this, SoundEvents.SHEEP_SHEAR, shearedSoundCategory, 1.0F, 1.0F);
-+        if (!this.canProduce()) // KioCG
++        if (this.canProduce()) { this.produce(); } else // KioCG
          this.setSheared(true);
          int i = 1 + this.random.nextInt(3);
  
-@@ -405,6 +424,7 @@ public class Sheep extends Animal implements Shearable {
-         if (event.isCancelled()) return;
-         // CraftBukkit end
+@@ -407,7 +415,7 @@ public class Sheep extends Animal implements Shearable {
          super.ate();
-+        if (this.canProduce()) // KioCG
          this.setSheared(false);
          if (this.isBaby()) {
-             this.ageUp(60);
+-            this.ageUp(60);
++            // this.ageUp(60); // KioCG
+         }
+ 
+     }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Turtle.java b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
-index caf4120721be8f2f7e2d737abbf73296cbe170b5..37367262bff1749d9e2c94522abeff7b2883dcc7 100644
+index caf4120721be8f2f7e2d737abbf73296cbe170b5..2dc576b1d95c9dce2a6d44c4ae0c609bb3a7a51a 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
-@@ -187,10 +187,12 @@ public class Turtle extends Animal {
-         return pos.getY() < world.getSeaLevel() + 4 && TurtleEggBlock.onSand(world, pos) && isBrightEnoughToSpawn(world, pos);
+@@ -252,8 +252,10 @@ public class Turtle extends Animal {
      }
  
-+    private Turtle.TurtleBreedGoal turtleBreedGoal; // KioCG
-+
      @Override
-     protected void registerGoals() {
-         this.goalSelector.addGoal(0, new Turtle.TurtlePanicGoal(this, 1.2D));
--        this.goalSelector.addGoal(1, new Turtle.TurtleBreedGoal(this, 1.0D));
-+        this.goalSelector.addGoal(1, turtleBreedGoal = new Turtle.TurtleBreedGoal(this, 1.0D)); // KioCG
-         this.goalSelector.addGoal(1, new Turtle.TurtleLayEggGoal(this, 1.0D));
-         this.goalSelector.addGoal(2, new TemptGoal(this, 1.1D, (itemstack) -> {
-             return itemstack.is(ItemTags.TURTLE_FOOD);
-@@ -301,6 +303,17 @@ public class Turtle extends Animal {
+-    public boolean canFallInLove() {
+-        return super.canFallInLove() && !this.hasEgg();
++    // KioCG start
++    public boolean canEatFoodIfIsAdult() {
++        return super.canEatFoodIfIsAdult() && !this.hasEgg();
++    // KioCG end
+     }
  
+     @Override
+@@ -342,6 +344,34 @@ public class Turtle extends Animal {
+         return this.isBaby() ? Turtle.BABY_DIMENSIONS : super.getDefaultDimensions(pose);
      }
  
 +    // KioCG start
 +    @Override
-+    public void tickProduce() {
-+        super.tickProduce();
-+        if (this.canProduce()) {
-+            this.produce();
-+            turtleBreedGoal.breed();
++    public net.minecraft.world.InteractionResult mobInteract(Player player, net.minecraft.world.InteractionHand hand) {
++        ItemStack itemstack = player.getItemInHand(hand);
++
++        if (itemstack.is(Items.BRUSH) && this.brushOffScute()) {
++            itemstack.hurtAndBreak(16, player, getSlotForHand(hand));
++            return net.minecraft.world.InteractionResult.sidedSuccess(this.level().isClientSide);
++        } else {
++            return super.mobInteract(player, hand);
++        }
++    }
++
++    public boolean brushOffScute() {
++        if (this.isBaby() || !this.canProduce()) { // KioCG
++            return false;
++        } else {
++            this.produce(); // KioCG
++            this.forceDrops = true; // CraftBukkit
++            this.spawnAtLocation(new ItemStack(Items.TURTLE_SCUTE));
++            this.forceDrops = false; // CraftBukkit
++            this.gameEvent(GameEvent.ENTITY_INTERACT);
++            this.playSound(SoundEvents.ARMADILLO_BRUSH);
++            return true;
 +        }
 +    }
 +    // KioCG end
 +
+     private static class TurtleMoveControl extends MoveControl {
+ 
+         private final Turtle turtle;
+diff --git a/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java b/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java
+index 792d9039ac0561464c666977ff8308e4c629e5eb..2e80afd8d52bca3a77d1060480a3f13ac43a974d 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java
++++ b/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java
+@@ -137,7 +137,7 @@ public class Armadillo extends Animal {
+         this.level().getProfiler().push("armadilloActivityUpdate");
+         ArmadilloAi.updateActivity(this);
+         this.level().getProfiler().pop();
+-        if (this.isAlive() && !this.isBaby() && --this.scuteTime <= 0) {
++        if (false && this.isAlive() && !this.isBaby() && --this.scuteTime <= 0) { // KioCG
+             this.playSound(SoundEvents.ARMADILLO_SCUTE_DROP, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+             this.forceDrops = true; // CraftBukkit
+             this.spawnAtLocation((ItemLike) Items.ARMADILLO_SCUTE);
+@@ -323,7 +323,7 @@ public class Armadillo extends Animal {
+ 
      @Override
-     protected void ageBoundaryReached() {
-         super.ageBoundaryReached();
+     public void ageUp(int age, boolean overGrow) {
+-        if (this.isBaby() && overGrow) {
++        if (this.isBaby()) { // KioCG - 不再判断overGrow, 因为玩家喂养现为false
+             this.makeSound(SoundEvents.ARMADILLO_EAT);
+         }
+ 
+@@ -331,9 +331,10 @@ public class Armadillo extends Animal {
+     }
+ 
+     public boolean brushOffScute() {
+-        if (this.isBaby()) {
++        if (this.isBaby() || !this.canProduce()) { // KioCG
+             return false;
+         } else {
++            this.produce(); // KioCG
+             this.forceDrops = true; // CraftBukkit
+             this.spawnAtLocation(new ItemStack(Items.ARMADILLO_SCUTE));
+             this.forceDrops = false; // CraftBukkit
+@@ -348,14 +349,18 @@ public class Armadillo extends Animal {
+     }
+ 
+     @Override
+-    public void setInLove(@Nullable Player player, @Nullable ItemStack breedItemCopy) { // Paper
+-        super.setInLove(player, breedItemCopy); // Paper
++    // KioCG start
++    public void eatFood() {
++        super.eatFood();
++    // KioCG end
+         this.makeSound(SoundEvents.ARMADILLO_EAT);
+     }
+ 
+     @Override
+-    public boolean canFallInLove() {
+-        return super.canFallInLove() && !this.isScared();
++    // KioCG start
++    public boolean canEatFoodIfIsAdult() {
++        return super.canEatFoodIfIsAdult() && !this.isScared();
++    // KioCG end
+     }
+ 
+     @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
-index 147974651d37e81d81ca97bfa31c9df9867492be..abfb6242a57dd689e9cc94f67e3782fcfd6d44a7 100644
+index 147974651d37e81d81ca97bfa31c9df9867492be..0834583d1ebc480cc5976f956ea475cbcf59c8be 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -387,7 +387,7 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
+@@ -387,18 +387,18 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
                  this.heal(2.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // Paper - Add missing regain reason
              }
  
 -            boolean flag1 = this.isTamed() && this.getAge() == 0 && this.canFallInLove();
-+            boolean flag1 = this.isTamed() && this.canFeed(); // KioCG
++            boolean flag1 = this.isTamed() && this.canEatFoodIfIsAdult(); // KioCG
  
              if (flag1) {
-                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
-diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-index 816977990639ec0559b652fc9666afd5046f0a5d..c1e7cb7924f8ea0e33c487193a0bb2ad83fc1f28 100644
---- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-+++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-@@ -201,6 +201,17 @@ public class Frog extends Animal implements VariantHolder<Holder<FrogVariant>> {
-         super.tick();
-     }
+-                this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
++                this.eatFood(); // KioCG
+             }
  
-+    // KioCG start
-+    @Override
-+    public void tickProduce() {
-+        super.tickProduce();
-+        if (this.canProduce()) {
-+            this.produce();
-+            this.spawnChildFromBreeding((ServerLevel) this.level(), this);
-+        }
-+    }
-+    // KioCG end
-+
-     @Override
-     public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
-         if (DATA_POSE.equals(data)) {
+-            boolean flag2 = this.isBaby();
++            boolean flag2 = this.isBaby() && this.canFeed(); // KioCG
+ 
+             if (flag2) {
+                 this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
+                 if (!this.level().isClientSide) {
+-                    this.ageUp(10);
++                    this.ageUp(); // KioCG
+                 }
+             }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-index 376bcbc189008464f4d518c1e07643431ba96306..b1af4fab67512662d12008c03b5a4fcddfaf1860 100644
+index 376bcbc189008464f4d518c1e07643431ba96306..3b37046ede330a09ceb44f784fbc1a3934885fd9 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 @@ -229,7 +229,7 @@ public class Goat extends Animal {
@@ -454,86 +539,113 @@ index 376bcbc189008464f4d518c1e07643431ba96306..b1af4fab67512662d12008c03b5a4fcd
              player.setItemInHand(hand, itemstack1);
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
-@@ -255,6 +256,13 @@ public class Goat extends Animal {
-         }
-     }
- 
-+    // KioCG start
-+    @Override
-+    public int getNumberOfProduced() {
-+        return Math.min(1 + this.getTotalFeedingDays() / 25, 3);
-+    }
-+    // KioCG end
-+
-     @Override
-     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
-         RandomSource randomsource = world.getRandom();
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-index 1f5ed236fb7c0c1b0181675747d25d233f534284..5fe110e258f371066b36b0f2efd11256af5036ff 100644
+index 1f5ed236fb7c0c1b0181675747d25d233f534284..25d9a9996fb9cc978987af515422910723c94c00 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -570,7 +570,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+@@ -570,17 +570,17 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
              f = 4.0F;
              short0 = 60;
              b0 = 5;
 -            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
-+            if (!this.level().isClientSide && this.isTamed() && this.canFeed()) { // KioCG
++            if (!this.level().isClientSide && this.isTamed() && this.canEatFoodIfIsAdult()) { // KioCG
                  flag = true;
-                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+-                this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
++                this.eatFood(); // KioCG
              }
-@@ -578,7 +578,7 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+         } else if (item.is(Items.GOLDEN_APPLE) || item.is(Items.ENCHANTED_GOLDEN_APPLE)) {
              f = 10.0F;
              short0 = 240;
              b0 = 10;
 -            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
-+            if (!this.level().isClientSide && this.isTamed() && this.canFeed()) { // KioCG
++            if (!this.level().isClientSide && this.isTamed() && this.canEatFoodIfIsAdult()) { // KioCG
                  flag = true;
-                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+-                this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
++                this.eatFood(); // KioCG
              }
+         }
+ 
+@@ -589,10 +589,10 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
+             flag = true;
+         }
+ 
+-        if (this.isBaby() && short0 > 0) {
++        if (this.isBaby() && short0 > 0 && this.canFeed()) { // KioCG
+             this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
+             if (!this.level().isClientSide) {
+-                this.ageUp(short0);
++                this.ageUp(); // KioCG
+                 flag = true;
+             }
+         }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
-index cf6a3a63b6f2b96943c0f399e8c82d293fee31ba..5a1733b3b6e3f7e5a3fdbb31e678e94e6dbc6c0c 100644
+index cf6a3a63b6f2b96943c0f399e8c82d293fee31ba..65f700dde0554ce8e38cd873a42e8d1902ec9c9d 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -177,7 +177,7 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
+@@ -177,9 +177,9 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
              b0 = 90;
              b1 = 6;
              f = 10.0F;
 -            if (this.isTamed() && this.getAge() == 0 && this.canFallInLove()) {
-+            if (this.isTamed() && this.canFeed()) { // KioCG
++            if (this.isTamed() && this.canEatFoodIfIsAdult()) { // KioCG
                  flag = true;
-                 this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
+-                this.setInLove(player, item.copy()); // Paper - Fix EntityBreedEvent copying
++                this.eatFood(); // KioCG
              }
-diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-index fadd341ff398886a4da102eefa1beb95a63bbd6d..54aab0e38ef072253fbbc3dd47b337b86b35f159 100644
---- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-+++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-@@ -485,6 +485,17 @@ public class Sniffer extends Animal {
-         super.customServerAiStep();
+         }
+ 
+@@ -188,10 +188,10 @@ public class Llama extends AbstractChestedHorse implements VariantHolder<Llama.V
+             flag = true;
+         }
+ 
+-        if (this.isBaby() && b0 > 0) {
++        if (this.isBaby() && b0 > 0 && this.canFeed()) { // KioCG
+             this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
+             if (!this.level().isClientSide) {
+-                this.ageUp(b0);
++                this.ageUp(); // KioCG
+             }
+ 
+             flag = true;
+diff --git a/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java b/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java
+index d5e0c493f4c348724958193795ceb987765a465f..29f8ee30379397ecd0216f090054b48fc227a6b6 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java
++++ b/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java
+@@ -333,8 +333,10 @@ public class Hoglin extends Animal implements Enemy, HoglinBase {
      }
  
-+    // KioCG start
-+    @Override
-+    public void tickProduce() {
-+        super.tickProduce();
-+        if (this.canProduce()) {
-+            this.produce();
-+            this.spawnChildFromBreeding((ServerLevel) this.level(), this);
-+        }
-+    }
-+    // KioCG end
-+
      @Override
-     protected void sendDebugPackets() {
-         super.sendDebugPackets();
+-    public boolean canFallInLove() {
+-        return !HoglinAi.isPacified(this) && super.canFallInLove();
++    // KioCG start
++    public boolean canEatFoodIfIsAdult() {
++        return !HoglinAi.isPacified(this) && super.canEatFoodIfIsAdult();
++    // KioCG end
+     }
+ 
+     @Override
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 7e1871401ec5e3e9a85232053490259f132aec0a..b032632f68eda8a7c4045d2640f8e32c45ddcd3d 100644
+index 7e1871401ec5e3e9a85232053490259f132aec0a..b976d4c8dc578b834c88392af4baa58807de2983 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -740,6 +740,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
  
      @Override
      public boolean canBreed() {
-+        if (!this.level().paperConfig().kiocgConfig.entity.animal.animalCanBreed) return false; // KioCG
++        if (!this.level().paperConfig().kiocgConfig.entity.animal.villagerCanBreed) return false; // KioCG
          return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
      }
  
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 82f1667ae2a868c36c3a6edb51268d79ae0692ce..4e688a132596de73e9e23793271f41917675db18 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -348,7 +348,7 @@ public class ActivationRange
+             if ( entity instanceof Animal )
+             {
+                 Animal animal = (Animal) entity;
+-                if ( animal.isBaby() || animal.isInLove() )
++                if ( animal.isInLove() ) // KioCG - 不再需要豁免baby
+                 {
+                     return 5; // Paper
+                 }

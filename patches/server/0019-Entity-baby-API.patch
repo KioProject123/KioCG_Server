@@ -5,82 +5,319 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 629b9c3dee73dfbddad96187f83e7f4568a1a2d7..d5df5ccada65071b5e8ed985e87865c23c46909e 100644
+index 629b9c3dee73dfbddad96187f83e7f4568a1a2d7..1aa6f1afe6249ce616a3470b53ae0fccffa27979 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -580,6 +580,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -580,6 +580,18 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
 +
 +        public Entity entity;
 +        public class Entity extends ConfigurationPart {
-+            public Reference2IntMap<EntityType<?>> babySizeScaling = Util.make(new Reference2IntOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
-+                map.defaultReturnValue(-45);
-+                map.put(EntityType.SKELETON, -45);
++            public Reference2IntMap<EntityType<?>> sizeScalingBaby = Util.make(new Reference2IntOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(50);
++                map.put(EntityType.SKELETON, 65);
++            });
++            public Reference2IntMap<EntityType<?>> sizeScalingHuge = Util.make(new Reference2IntOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(200);
++                map.put(EntityType.SKELETON, 200);
 +            });
 +        }
      }
      // KioCG end
  }
-diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 1824d2b10bc0ea64234ab42896ce8fd1d3001ef7..cdcf44804e6ed42aaf4acc3688dbd8b24f927b30 100644
---- a/src/main/java/net/minecraft/world/entity/Mob.java
-+++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -146,6 +146,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
-     private BlockPos restrictCenter;
-     private float restrictRadius;
-     @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG
+diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
+index 3dc3609d13a7b823d15384d1c385b68eeb933d26..623d9e9b2d57085acfe3fad657bf6b507bc1dc21 100644
+--- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
++++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
+@@ -197,6 +197,7 @@ public abstract class AgeableMob extends PathfinderMob {
+ 
+     @Override
+     public void setBaby(boolean baby) {
++        removeBabyOrHugeAttributes(); // KioCG
+         this.setAge(baby ? -24000 : 0);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..aded31d47d3da87a9298602bd4b718d64895061b 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -286,6 +286,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
+     public org.bukkit.craftbukkit.entity.CraftLivingEntity getBukkitLivingEntity() { return (org.bukkit.craftbukkit.entity.CraftLivingEntity) super.getBukkitEntity(); } // Paper
+     public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
+     public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
 +    // KioCG start
-+    private static final ResourceLocation SCALE_MODIFIER_BABY_ID = ResourceLocation.withDefaultNamespace("baby");
-+    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(Mob.SCALE_MODIFIER_BABY_ID, this.level().paperConfig().kiocgConfig.entity.babySizeScaling.getInt(this.getType()) / 100, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    private boolean isBabySimulate;
++    private boolean isHugeSimulate;
++    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(ResourceLocation.withDefaultNamespace("baby_simulate"), (this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 50) - 100) / 100.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(ResourceLocation.withDefaultNamespace("huge_simulate"), (this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 200) - 100) / 100.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    // KioCG end
  
-     public boolean aware = true; // CraftBukkit
+     @Override
+     public float getBukkitYaw() {
+@@ -592,6 +598,78 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         return false;
+     }
  
-@@ -1690,7 +1693,23 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
++    // KioCG start
++    public void setBabySimulate(boolean baby) {
++        if (baby) {
++            if (isHugeSimulate()) throw new IllegalArgumentException("Entity is huge simulate!");
++            if (isBaby()) throw new IllegalArgumentException("Entity is vanilla baby!");
++        }
++
++        this.isBabySimulate = baby;
++
++        AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++        attributemodifiable.removeModifier(this.SCALE_MODIFIER_BABY.id());
++        if (baby) {
++            attributemodifiable.addTransientModifier(this.SCALE_MODIFIER_BABY);
++        }
++    }
++
++    public void setBabySimulateOrVanilla(boolean baby) {
++        if (this instanceof Mob mob) {
++            mob.setBaby(baby);
++        }
++
++        if (baby) {
++            if (isBaby()) {
++                return;
++            }
++
++            setHugeSimulate(false);
++        }
++
++        setBabySimulate(baby);
++    }
++
++    public boolean isBabySimulate() {
++        return this.isBabySimulate;
++    }
++
++    public void setHugeSimulate(boolean huge) {
++        if (huge) {
++            if (isBabySimulate()) throw new IllegalArgumentException("Entity is baby simulate!");
++            if (isBaby()) throw new IllegalArgumentException("Entity is vanilla baby!");
++        }
++
++        this.isHugeSimulate = huge;
++
++        AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++        attributemodifiable.removeModifier(this.SCALE_MODIFIER_HUGE.id());
++        if (huge) {
++            attributemodifiable.addTransientModifier(this.SCALE_MODIFIER_HUGE);
++        }
++    }
++
++    public void setHugeSimulateForce(boolean huge) {
++        if (huge) {
++            if (this instanceof Mob mob) {
++                mob.setBaby(false);
++            }
++            setBabySimulate(false);
++        }
++
++        setHugeSimulate(huge);
++    }
++
++    public boolean isHugeSimulate() {
++        return this.isHugeSimulate;
++    }
++
++    public void removeBabyOrHugeAttributes() {
++        setBabySimulate(false);
++        setHugeSimulate(false);
++    }
++    // KioCG end
++
+     public float getAgeScale() {
+         return this.isBaby() ? 0.5F : 1.0F;
+     }
+@@ -812,6 +890,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         dataresult.resultOrPartial(logger::error).ifPresent((nbtbase) -> {
+             nbt.put("Brain", nbtbase);
+         });
++
++        // KioCG start
++        nbt.putBoolean("KioCG.BabySimulate", this.isBabySimulate());
++        nbt.putBoolean("KioCG.HugeSimulate", this.isHugeSimulate());
++        // KioCG end
+     }
+ 
+     @Override
+@@ -900,6 +983,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             this.brain = this.makeBrain(new Dynamic(NbtOps.INSTANCE, nbt.get("Brain")));
+         }
+ 
++        // KioCG start
++        if (nbt.contains("KioCG.BabySimulate")) {
++            this.setBabySimulate(nbt.getBoolean("KioCG.BabySimulate"));
++            this.setHugeSimulate(nbt.getBoolean("KioCG.HugeSimulate"));
++        }
++        // KioCG end
+     }
+ 
+     // CraftBukkit start
+@@ -2730,7 +2819,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+     }
+ 
+     public float getVoicePitch() {
+-        return this.isBaby() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
++        return this.isBaby() || this.isBabySimulate() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F; // KioCG
+     }
+ 
+     protected boolean isImmobile() {
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 1824d2b10bc0ea64234ab42896ce8fd1d3001ef7..5be6cf1767b6f019736e75e74fc589d92fdfba00 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -1563,6 +1563,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+             } else {
+                 t0.copyPosition(this);
+                 t0.setBaby(this.isBaby());
++                t0.setBabySimulate(this.isBabySimulate()); // KioCG
++                t0.setHugeSimulate(this.isHugeSimulate()); // KioCG
+                 t0.setNoAi(this.isNoAi());
+                 if (this.hasCustomName()) {
+                     t0.setCustomName(this.getCustomName());
+@@ -1690,7 +1692,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
      }
  
 -    public void setBaby(boolean baby) {}
-+    // KioCG start
-+    public void setBaby(boolean baby) {
-+        net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
-+
-+        if (attributemodifiable != null) {
-+            attributemodifiable.removeModifier(Mob.SCALE_MODIFIER_BABY_ID);
-+            if (baby) {
-+                attributemodifiable.addPermanentModifier(this.SCALE_MODIFIER_BABY);
-+            }
-+        }
-+    }
-+
-+    public boolean isBaby() {
-+        net.minecraft.world.entity.ai.attributes.AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
-+        return attributemodifiable != null && attributemodifiable.getModifier(Mob.SCALE_MODIFIER_BABY_ID) != null;
-+    }
-+    // KioCG end
++    public void setBaby(boolean baby) { removeBabyOrHugeAttributes(); } // KioCG - add removeBabyOrHugeAttributes()
  
      @Override
      public HumanoidArm getMainArm() {
-diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-index 6476349ef9759a9b471472f69d3545376d1dd17f..445a9f6a9a8d6099649d96374c40ba95030826f4 100644
---- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-+++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-@@ -187,4 +187,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
-         getHandle().setBossBar(((org.bukkit.craftbukkit.boss.CraftBossBar) bossbar).getHandle());
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Pig.java b/src/main/java/net/minecraft/world/entity/animal/Pig.java
+index 03d29d5114237f5700c188510a12f26507844c3d..25cb56db335a3938959166e6bf4d8479f4b61c19 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Pig.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Pig.java
+@@ -251,6 +251,8 @@ public class Pig extends Animal implements ItemSteerable, Saddleable {
+                 entitypigzombie.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+                 entitypigzombie.setNoAi(this.isNoAi());
+                 entitypigzombie.setBaby(this.isBaby());
++                entitypigzombie.setBabySimulate(this.isBabySimulate()); // KioCG
++                entitypigzombie.setHugeSimulate(this.isHugeSimulate()); // KioCG
+                 if (this.hasCustomName()) {
+                     entitypigzombie.setCustomName(this.getCustomName());
+                     entitypigzombie.setCustomNameVisible(this.isCustomNameVisible());
+diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
+index 816977990639ec0559b652fc9666afd5046f0a5d..02ae72f8c657b0fa656b85acb7d4b947e440d3d2 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
++++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
+@@ -257,6 +257,7 @@ public class Frog extends Animal implements VariantHolder<Holder<FrogVariant>> {
+ 
+     @Override
+     public void setBaby(boolean baby) {
++        removeBabyOrHugeAttributes(); // KioCG
      }
-     // KioCG end
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+index fadd341ff398886a4da102eefa1beb95a63bbd6d..cc52c43a41c740b324836e6f3aee2546834aa24a 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -431,6 +431,7 @@ public class Sniffer extends Animal {
+ 
+     @Override
+     public void setBaby(boolean baby) {
++        removeBabyOrHugeAttributes(); // KioCG
+         this.setAge(baby ? -48000 : 0);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
+index aa458ede5bd645ebf524238179edb33f41bd683f..5555c4f6b2d2d62e8b9995d6ef118e545eaff22b 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
+@@ -241,10 +241,16 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
+ 
+     @Override
+     public void setBaby(boolean baby) {
++        removeBabyOrHugeAttributes(); // KioCG
+         this.getEntityData().set(DATA_BABY_ID, baby);
+         if (!this.level().isClientSide && baby) {
+             this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.5);
+         }
++        // KioCG start
++        if (!this.level().isClientSide && !baby) {
++            this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
++        }
++        // KioCG end
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
+index 892f02475976203abdd472aa02b80a9bfe48f752..a0fc3393cb0795c0d9297eb52866e245c7394829 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
+@@ -190,6 +190,7 @@ public class Zombie extends Monster {
+ 
+     @Override
+     public void setBaby(boolean baby) {
++        removeBabyOrHugeAttributes(); // KioCG
+         this.getEntityData().set(Zombie.DATA_BABY_ID, baby);
+         if (this.level() != null && !this.level().isClientSide) {
+             AttributeInstance attributemodifiable = this.getAttribute(Attributes.MOVEMENT_SPEED);
+diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
+index bc58323801ee16fe9b63c21332144ec002a902f2..5e9a0f93e4074ea7ad4e2a3394993cc81bc0f831 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
++++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
+@@ -267,6 +267,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+ 
+     @Override
+     public void setBaby(boolean baby) {
++        removeBabyOrHugeAttributes(); // KioCG
+         this.getEntityData().set(Piglin.DATA_BABY_ID, baby);
+         if (!this.level().isClientSide) {
+             AttributeInstance attributemodifiable = this.getAttribute(Attributes.MOVEMENT_SPEED);
+diff --git a/src/main/java/net/minecraft/world/item/SpawnEggItem.java b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
+index 9cea8da84f39bb3f687139ef213ccea358724dee..db7ebd615bf99af5a27a30be3f92c69f1a77cdca 100644
+--- a/src/main/java/net/minecraft/world/item/SpawnEggItem.java
++++ b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
+@@ -174,8 +174,10 @@ public class SpawnEggItem extends Item {
+             if (object == null) {
+                 return Optional.empty();
+             } else {
+-                ((Mob) object).setBaby(true);
+-                if (!((Mob) object).isBaby()) {
++                // KioCG start
++                ((Mob) object).setBabySimulateOrVanilla(true);
++                if (false && !((Mob) object).isBaby()) {
++                // KioCG end
+                     return Optional.empty();
+                 } else {
+                     ((Mob) object).moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+index d2bb0831394c03b620b2cbd8306cb82b621f34f7..24d402db14ee5f4b7145be2f871dd352a9886a4c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+@@ -1189,4 +1189,26 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+         return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
+     }
+     // Paper end - Expose canUseSlot
 +
 +    // KioCG start
 +    @Override
-+    public boolean isBaby() {
-+        return getHandle().isBaby();
++    public boolean isBabySimulate() {
++        return getHandle().isBabySimulate();
 +    }
 +
 +    @Override
-+    public void setBaby(boolean flag) {
-+        getHandle().setBaby(flag);
++    public void setBabySimulate(boolean flag) {
++        getHandle().setBabySimulate(flag);
++    }
++
++    @Override
++    public boolean isHugeSimulate() {
++        return getHandle().isHugeSimulate();
++    }
++
++    @Override
++    public void setHugeSimulate(boolean huge) {
++        getHandle().setHugeSimulate(huge);
 +    }
 +    // KioCG end
  }

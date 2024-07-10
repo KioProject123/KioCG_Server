@@ -5,10 +5,10 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 7605c3e68bfed8ede4abd5423b9ab487e14a4014..915f8e766023c13ba541254c05be0baa301279d1 100644
+index 87bf31f61898246dc0f2e792148c39d75dc3f676..0fd0366ec91f77e16706d54431002dfec434bdf7 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1625,6 +1625,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1624,6 +1624,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
                      return null;
                  }
                  this.level().addFreshEntity(t0, spawnReason);
@@ -29,10 +29,10 @@ index 760cdd726d3c242a5214d9995cddb04e587fb0a1..e28bfd3420654addf19c569fed9f5135
                  this.discard(EntityRemoveEvent.Cause.TRANSFORMATION); // CraftBukkit - from above and add Bukkit remove cause
                  // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Pig.java b/src/main/java/net/minecraft/world/entity/animal/Pig.java
-index 03d29d5114237f5700c188510a12f26507844c3d..403819ed37a948a0483b1b0797622c86ac57f364 100644
+index 25cb56db335a3938959166e6bf4d8479f4b61c19..252c6a8cfeb9afbc9d0d5f5435b68a151a1d2b1b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Pig.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Pig.java
-@@ -263,6 +263,7 @@ public class Pig extends Animal implements ItemSteerable, Saddleable {
+@@ -265,6 +265,7 @@ public class Pig extends Animal implements ItemSteerable, Saddleable {
                  }
                  // CraftBukkit - added a reason for spawning this creature
                  world.addFreshEntity(entitypigzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
@@ -65,7 +65,7 @@ index adebb66e550f805f444bec22e9a4dd575a642b43..9b83f8f2e1d38e85aea6dc749a0c1b07
              // CraftBukkit end
          }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 20fae10bd8a518204d4fa32f23168124963a33b9..8e98505ae02ef22d144d64d3db8b510b7351d2a6 100644
+index 0da3203ed998dddd6348e50786f7ef5b68585cd4..846d01df32a5b57dc631169c5124da15e222c4d9 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -925,6 +925,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler

@@ -5,12 +5,12 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index d5df5ccada65071b5e8ed985e87865c23c46909e..2235ed3810cc9be863b34a32cde7e325cc9cf200 100644
+index 1aa6f1afe6249ce616a3470b53ae0fccffa27979..48d36defbf453e0eb3f9ea2bca85a3169bd33241 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,6 +587,14 @@ public class WorldConfiguration extends ConfigurationPart {
-                 map.defaultReturnValue(-45);
-                 map.put(EntityType.SKELETON, -45);
+@@ -591,6 +591,14 @@ public class WorldConfiguration extends ConfigurationPart {
+                 map.defaultReturnValue(200);
+                 map.put(EntityType.SKELETON, 200);
              });
 +
 +            public KiocgConfig.Entity.Monster monster;
@@ -69,7 +69,7 @@ index e675f1e3e5b6f9e1aa0d928ebb9abe76458edb38..7bfdbb389f8ca72b1d5bc1de7d86b481
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 892f02475976203abdd472aa02b80a9bfe48f752..5bc70b00b9d48f99f75af14426cca66a650b4061 100644
+index a0fc3393cb0795c0d9297eb52866e245c7394829..cc936e61602eff9595c3f2d605adddbed7a18e48 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -117,6 +117,16 @@ public class Zombie extends Monster {
@@ -89,7 +89,7 @@ index 892f02475976203abdd472aa02b80a9bfe48f752..5bc70b00b9d48f99f75af14426cca66a
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-@@ -307,6 +317,50 @@ public class Zombie extends Monster {
+@@ -308,6 +318,50 @@ public class Zombie extends Monster {
  
      }
  
@@ -140,7 +140,7 @@ index 892f02475976203abdd472aa02b80a9bfe48f752..5bc70b00b9d48f99f75af14426cca66a
      public boolean isSunSensitive() {
          return this.shouldBurnInDay; // Paper - Add more Zombie API
      }
-@@ -593,6 +647,7 @@ public class Zombie extends Monster {
+@@ -594,6 +648,7 @@ public class Zombie extends Monster {
  
      @Override
      protected void dropCustomDeathLoot(ServerLevel world, DamageSource source, boolean causedByPlayer) {
