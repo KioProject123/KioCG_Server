@@ -45,24 +45,29 @@ index 5cd9d060a5fa7d20e56f4533fba2fbea1048ad5c..13dd4dd106565d7d0a837387ab9c8521
                  // KioCG start
                  if (this.serverLevel().isLoaded(this.blockPosition())) {
 diff --git a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
-index cbcb0e4507a3ef26a73e4118dd6b4ad3a1f7659b..01cd752992af9cfa83da4a3e6be268cf0551487c 100644
+index cbcb0e4507a3ef26a73e4118dd6b4ad3a1f7659b..18516069b693c6c38776dda2d8e43e121ca0a424 100644
 --- a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -231,15 +231,24 @@ public abstract class AbstractContainerMenu {
+@@ -231,15 +231,29 @@ public abstract class AbstractContainerMenu {
          return nonnulllist;
      }
  
-+    private int triggerTick = -1; // KioCG
++    // KioCG start - 每刻只触发一次
++    private int triggerTick = -1;
++    private boolean shouldTriggerSlotListeners() {
++        if (net.minecraft.server.MinecraftServer.currentTick == triggerTick) {
++            return false;
++        }
++
++        triggerTick = net.minecraft.server.MinecraftServer.currentTick;
++        return true;
++    }
++    // KioCG end - 每刻只触发一次
++
      public void broadcastChanges() {
          int i;
  
-+        // KioCG start - 每刻只触发一次
-+        boolean triggerSlotListeners = false;
-+        if (net.minecraft.server.MinecraftServer.currentTick != triggerTick) {
-+            triggerTick = net.minecraft.server.MinecraftServer.currentTick;
-+            triggerSlotListeners = true;
-+        }
-+        // KioCG end - 每刻只触发一次
++        boolean triggerSlotListeners = shouldTriggerSlotListeners(); // KioCG
          for (i = 0; i < this.slots.size(); ++i) {
              ItemStack itemstack = ((Slot) this.slots.get(i)).getItem();
  
@@ -73,18 +78,11 @@ index cbcb0e4507a3ef26a73e4118dd6b4ad3a1f7659b..01cd752992af9cfa83da4a3e6be268cf
              this.triggerSlotListeners(i, itemstack, supplier);
              this.synchronizeSlotToRemote(i, itemstack, supplier);
          }
-@@ -262,6 +271,14 @@ public abstract class AbstractContainerMenu {
+@@ -262,6 +276,7 @@ public abstract class AbstractContainerMenu {
      public void broadcastFullState() {
          int i;
  
-+        // KioCG start - 每刻只触发一次
-+        boolean triggerSlotListeners = false;
-+        if (net.minecraft.server.MinecraftServer.currentTick != triggerTick) {
-+            triggerTick = net.minecraft.server.MinecraftServer.currentTick;
-+            triggerSlotListeners = true;
-+        }
-+        if (triggerSlotListeners)
-+        // KioCG end - 每刻只触发一次
++        if (shouldTriggerSlotListeners()) // KioCG
          for (i = 0; i < this.slots.size(); ++i) {
              ItemStack itemstack = ((Slot) this.slots.get(i)).getItem();
  
