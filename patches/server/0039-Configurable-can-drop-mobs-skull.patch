@@ -5,7 +5,7 @@ Subject: [PATCH] Configurable can drop mobs skull
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f5d568d965d661bc781dd01cee5225d440484cbd..b8043bf80d6061c2c2d2692bd6d401861ac29228 100644
+index f5d568d965d661bc781dd01cee5225d440484cbd..dd084c971bd268e879914fec64d14773de91bee6 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -598,6 +598,15 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -17,7 +17,7 @@ index f5d568d965d661bc781dd01cee5225d440484cbd..b8043bf80d6061c2c2d2692bd6d40186
 +                public class Creeper extends ConfigurationPart {
 +                    public boolean canDropCreeperSkull = true;
 +                    public boolean canDropSkeletonSkull = true;
-+                    public boolean canDropWitherSkeletonSkull = true;
++                    public boolean canDropWitherSkeletonSkull = false;
 +                    public boolean canDropZombieSkull = true;
 +                    public boolean canDropPiglinSkull = true;
 +                }
