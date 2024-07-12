@@ -6,16 +6,17 @@ Subject: [PATCH] Implement TPSBar
 
 diff --git a/src/main/java/com/kiocg/command/TPSBarCommand.java b/src/main/java/com/kiocg/command/TPSBarCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..642e3e60c323d40724b950848b36f21427b0e8a5
+index 0000000000000000000000000000000000000000..ff3fa06944b0c616a5a8ba9e5839f5cbc6085d7e
 --- /dev/null
 +++ b/src/main/java/com/kiocg/command/TPSBarCommand.java
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,32 @@
 +package com.kiocg.command;
 +
 +import com.kiocg.task.TPSBarTask;
 +import com.mojang.brigadier.CommandDispatcher;
 +import net.minecraft.commands.CommandSourceStack;
 +import net.minecraft.commands.Commands;
++import net.minecraft.commands.arguments.EntityArgument;
 +import net.minecraft.server.level.ServerPlayer;
 +
 +import java.util.Collection;
@@ -26,6 +27,11 @@ index 0000000000000000000000000000000000000000..642e3e60c323d40724b950848b36f214
 +        dispatcher.register(Commands.literal("tpsbar")
 +                                    .requires(listener -> listener.hasPermission(2, "bukkit.command.tpsbar"))
 +                                    .executes(context -> execute(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException())))
++                                    .then(Commands.argument("targets", EntityArgument.players())
++                                                  .requires(listener -> listener.hasPermission(2, "bukkit.command.tpsbar.other"))
++                                                  .executes((context) -> execute(context.getSource(), EntityArgument.getPlayers(context, "targets")))
++                                         )
++
 +                           );
 +    }
 +
@@ -141,7 +147,7 @@ index 0000000000000000000000000000000000000000..2d5b4181902210a4069bac1c43a718a4
 +}
 diff --git a/src/main/java/com/kiocg/task/TPSBarTask.java b/src/main/java/com/kiocg/task/TPSBarTask.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9db217ef0351e899e76b768e2f35f563ee843b5a
+index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d21569bde10e0
 --- /dev/null
 +++ b/src/main/java/com/kiocg/task/TPSBarTask.java
 @@ -0,0 +1,138 @@
@@ -170,13 +176,13 @@ index 0000000000000000000000000000000000000000..9db217ef0351e899e76b768e2f35f563
 +
 +    @Override
 +    BossBar createBossBar() {
-+        return BossBar.bossBar(Component.text(""), 0.0F, instance().getBossBarColor(), GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressOverlay);
++        return BossBar.bossBar(Component.text(""), 0.0F, GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorGood, GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressOverlay);
 +    }
 +
 +    @Override
 +    void updateBossBar(BossBar bossbar, Player player) {
-+        bossbar.progress(getBossBarProgress());
-+        bossbar.color(getBossBarColor());
++        bossbar.progress(getBossBarProgress((float) mspt, 50.0F));
++        bossbar.color(getBossBarColor(FillMode.MSPT));
 +        bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTPSBarTitle,
 +                                                           Placeholder.component("tps", getTPSColor()),
 +                                                           Placeholder.component("mspt", getMSPTColor()),
@@ -197,14 +203,14 @@ index 0000000000000000000000000000000000000000..9db217ef0351e899e76b768e2f35f563
 +        super.run();
 +    }
 +
-+    private float getBossBarProgress() {
-+        return Math.max(Math.min((float) mspt / 50.0F, 1.0F), 0.0F);
++    private float getBossBarProgress(float dividend, float divisor) {
++        return Math.max(Math.min(dividend / divisor, 1.0F), 0.0F);
 +    }
 +
-+    private BossBar.Color getBossBarColor() {
-+        if (isGood(FillMode.MSPT)) {
++    private BossBar.Color getBossBarColor(FillMode fillMode) {
++        if (isGood(fillMode)) {
 +            return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorGood;
-+        } else if (isMedium(FillMode.MSPT)) {
++        } else if (isMedium(fillMode)) {
 +            return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorMedium;
 +        } else {
 +            return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorLow;

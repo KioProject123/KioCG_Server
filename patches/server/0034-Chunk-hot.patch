@@ -18,7 +18,7 @@ index c2ff037e180393de6576f12c32c665ef640d6f50..83c6c53c165490eef98105e7e6db357f
      }
 diff --git a/src/main/java/com/kiocg/ChunkHot.java b/src/main/java/com/kiocg/ChunkHot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..80ccbe11768b3da176987c31be13bc35b9d85200
+index 0000000000000000000000000000000000000000..bdb263f682c4bb047cdb8ed52d8df7ee0dc875ad
 --- /dev/null
 +++ b/src/main/java/com/kiocg/ChunkHot.java
 @@ -0,0 +1,86 @@
@@ -87,7 +87,7 @@ index 0000000000000000000000000000000000000000..80ccbe11768b3da176987c31be13bc35
 +        if (!started) return;
 +        // 定义一个具体统计的最大值为 1,000,000
 +        // 有时候某个具体统计的计算值会在某1刻飙升，可能是由于保存数据到磁盘？
-+        times[index] += Math.min(System.nanoTime() - nanos, 1000000L);
++        times[index] += Math.min(System.nanoTime() - nanos, 1_000_000L);
 +    }
 +
 +    /**
@@ -110,21 +110,23 @@ index 0000000000000000000000000000000000000000..80ccbe11768b3da176987c31be13bc35
 +}
 diff --git a/src/main/java/com/kiocg/command/ChunkHotCommand.java b/src/main/java/com/kiocg/command/ChunkHotCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..18c72bfa84798a866fe4ff3a03f044c1bf419a1a
+index 0000000000000000000000000000000000000000..9e2da03a2c841e04f191dbcbd3792cd726a3e720
 --- /dev/null
 +++ b/src/main/java/com/kiocg/command/ChunkHotCommand.java
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,43 @@
 +package com.kiocg.command;
 +
 +import com.kiocg.task.TPSBarTask;
 +import com.mojang.brigadier.CommandDispatcher;
 +import io.papermc.paper.adventure.PaperAdventure;
++import net.kyori.adventure.text.Component;
 +import net.kyori.adventure.text.minimessage.MiniMessage;
 +import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 +import net.minecraft.commands.CommandSourceStack;
 +import net.minecraft.commands.Commands;
 +import net.minecraft.commands.arguments.EntityArgument;
 +import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.level.chunk.LevelChunk;
 +
 +import java.util.Collection;
 +import java.util.Collections;
@@ -143,30 +145,60 @@ index 0000000000000000000000000000000000000000..18c72bfa84798a866fe4ff3a03f044c1
 +
 +    private static int execute(CommandSourceStack sender, Collection<ServerPlayer> targets) {
 +        for (ServerPlayer player : targets) {
-+            sender.sendSuccess(() -> PaperAdventure.asVanilla(MiniMessage.miniMessage().deserialize("<green>[<aqua>豆渣子<green>] <gold>玩家<target>的区域热度: <chunkhot>",
-+                                                                                                    Placeholder.parsed("target", player.getGameProfile().getName()),
-+                                                                                                    Placeholder.component("chunkhot", TPSBarTask.getChunkHotColor(player)))), false);
++            LevelChunk chunk = player.level().getChunkIfLoaded(player.blockPosition());
++            long chunkhot = chunk != null ? chunk.getChunkHot().getAverage() : 0L;
++
++            Component component = MiniMessage.miniMessage().deserialize("<green>[<aqua>豆渣子<green>] <gold>玩家<target>的区域热度: <totalhot>/<gray><chunkhot>",
++                                                                        Placeholder.parsed("target", player.getGameProfile().getName()),
++                                                                        Placeholder.component("totalhot", TPSBarTask.instance().getChunkHotColor(player)),
++                                                                        Placeholder.parsed("chunkhot", String.valueOf(chunkhot)));
++            sender.sendSuccess(() -> PaperAdventure.asVanilla(component), false);
 +        }
 +        return targets.size();
 +    }
 +}
 diff --git a/src/main/java/com/kiocg/task/TPSBarTask.java b/src/main/java/com/kiocg/task/TPSBarTask.java
-index 9db217ef0351e899e76b768e2f35f563ee843b5a..4d86f2fb41140715aa0bb13dcf91b4dc8afd30a6 100644
+index 751c7b02564be5f79d293223612d21569bde10e0..ed28fbcdbd896a9c152a9385cef7f631c8a5303f 100644
 --- a/src/main/java/com/kiocg/task/TPSBarTask.java
 +++ b/src/main/java/com/kiocg/task/TPSBarTask.java
-@@ -31,6 +31,7 @@ public class TPSBarTask extends BossBarTask {
-         bossbar.progress(getBossBarProgress());
-         bossbar.color(getBossBarColor());
+@@ -28,9 +28,15 @@ public class TPSBarTask extends BossBarTask {
+ 
+     @Override
+     void updateBossBar(BossBar bossbar, Player player) {
+-        bossbar.progress(getBossBarProgress((float) mspt, 50.0F));
+-        bossbar.color(getBossBarColor(FillMode.MSPT));
++        net.minecraft.server.level.ServerPlayer serverPlayer = ((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle();
++        net.minecraft.world.level.chunk.LevelChunk chunk = serverPlayer.level().getChunkIfLoaded(serverPlayer.blockPosition());
++        long chunkhot = chunk != null ? chunk.getChunkHot().getAverage() : 0L;
++
++        bossbar.progress(getBossBarProgress((float) serverPlayer.getNearbyChunkHot(), (float) serverPlayer.level().paperConfig().kiocgConfig.chunkHot.phaseOne));
++        bossbar.color(getBossBarColor(serverPlayer));
          bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTPSBarTitle,
-+                                                           Placeholder.component("chunkhot", getChunkHotColor(((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle())),
++                                                           Placeholder.component("totalhot", getChunkHotColor(serverPlayer)),
++                                                           Placeholder.parsed("chunkhot", String.valueOf(chunkhot)),
                                                             Placeholder.component("tps", getTPSColor()),
                                                             Placeholder.component("mspt", getMSPTColor()),
                                                             Placeholder.component("ping", getPingColor(player.getPing()))
-@@ -132,6 +133,19 @@ public class TPSBarTask extends BossBarTask {
+@@ -54,10 +60,11 @@ public class TPSBarTask extends BossBarTask {
+         return Math.max(Math.min(dividend / divisor, 1.0F), 0.0F);
+     }
+ 
+-    private BossBar.Color getBossBarColor(FillMode fillMode) {
+-        if (isGood(fillMode)) {
++    private BossBar.Color getBossBarColor(net.minecraft.server.level.ServerPlayer player) {
++        long hot = player.getNearbyChunkHot();
++        if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseOne) {
+             return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorGood;
+-        } else if (isMedium(fillMode)) {
++        } else if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseTwo) {
+             return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorMedium;
+         } else {
+             return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorLow;
+@@ -132,6 +139,19 @@ public class TPSBarTask extends BossBarTask {
          return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", ping)));
      }
  
-+    public static Component getChunkHotColor(net.minecraft.server.level.ServerPlayer player) {
++    public Component getChunkHotColor(net.minecraft.server.level.ServerPlayer player) {
 +        long hot = player.getNearbyChunkHot();
 +        String color;
 +        if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseOne) {
@@ -182,6 +214,19 @@ index 9db217ef0351e899e76b768e2f35f563ee843b5a..4d86f2fb41140715aa0bb13dcf91b4dc
      public enum FillMode {
          TPS, MSPT, PING
      }
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index 1d0ffded5f67118406d64411f64e59ada46e1003..748a6daa04bae2b2d3bfd7aebefdf429a9ee3d79 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -423,7 +423,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+         public double petTeleportDistanceSqr = 256.0;
+         public boolean petFollowKeepChunkLoaded = true;
+ 
+-        public String commandTPSBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
++        public String commandTPSBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms Hot<yellow>:</yellow> <totalhot>/<gray><chunkhot>";
+         public net.kyori.adventure.bossbar.BossBar.Overlay commandTPSBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
+         public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
+         public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 index 00d65e0ab479bb96ef7f8d01e4af5d9ca3875d2e..f5d568d965d661bc781dd01cee5225d440484cbd 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
@@ -259,7 +304,7 @@ index ed313384080ce4eb452880b40eef2a252e2e7dc9..36d3c8a2912001cdb1e33f80c7db7465
          if (this.isTickTimeLoggingEnabled()) {
              this.getTickTimeLogger().logPartialSample(Util.getNanos() - tickStartTime, TpsDebugDimensions.TICK_SERVER_METHOD.ordinal());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index fc05936de50e2c8a0e0a462aea9ed6968226661a..e0b3416454caf72844ad806185dc42f4c33c0f5c 100644
+index fc05936de50e2c8a0e0a462aea9ed6968226661a..dd7ca3613087ca40d832004ebbe9650b19dd118e 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1263,6 +1263,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
@@ -296,8 +341,25 @@ index fc05936de50e2c8a0e0a462aea9ed6968226661a..e0b3416454caf72844ad806185dc42f4
              }
          } else {
              passenger.stopRiding();
+@@ -1827,7 +1833,15 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+     private boolean doBlockEvent(BlockEventData event) {
+         BlockState iblockdata = this.getBlockState(event.pos());
+ 
+-        return iblockdata.is(event.block()) ? iblockdata.triggerEvent(this, event.pos(), event.paramA(), event.paramB()) : false;
++        // KioCG start
++        final boolean triggerEvent;
++        LevelChunk levelChunk = this.getChunkIfLoaded(event.pos());
++        if (levelChunk != null) levelChunk.getChunkHot().startTicking(); try {
++            triggerEvent = iblockdata.triggerEvent(this, event.pos(), event.paramA(), event.paramB());
++        } finally { if (levelChunk != null) levelChunk.getChunkHot().stopTickingAndCount(); }
++
++        return iblockdata.is(event.block()) ? triggerEvent : false;
++        // KioCG end
+     }
+ 
+     @Override
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index fa72d34522e51a179ba3d044e2cf309c0498dcd2..5cd9d060a5fa7d20e56f4533fba2fbea1048ad5c 100644
+index fa72d34522e51a179ba3d044e2cf309c0498dcd2..b04133aa05fce15e6ff6cd84501106a59d62f0ba 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -302,6 +302,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -308,7 +370,7 @@ index fa72d34522e51a179ba3d044e2cf309c0498dcd2..5cd9d060a5fa7d20e56f4533fba2fbea
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -806,6 +807,37 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -806,6 +807,36 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this);
@@ -328,10 +390,9 @@ index fa72d34522e51a179ba3d044e2cf309c0498dcd2..5cd9d060a5fa7d20e56f4533fba2fbea
 +    }
 +
 +    private long refreshNearbyChunkHot() {
-+        net.minecraft.world.level.chunk.LevelChunk chunk = this.level().getChunkAt(this.blockPosition());
-+        int x = chunk.locX;
-+        int z = chunk.locZ;
-+        net.minecraft.world.level.Level world = chunk.getLevel();
++        int x = SectionPos.blockToSectionCoord(this.getBlockX());
++        int z = SectionPos.blockToSectionCoord(this.getBlockZ());
++        net.minecraft.world.level.Level world = this.level();
 +        long total = 0L;
 +        for (int i = x - 4; i <= x + 4; ++i) {
 +            for (int j = z - 4; j <= z + 4; ++j) {
