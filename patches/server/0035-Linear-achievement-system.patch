@@ -5,7 +5,7 @@ Subject: [PATCH] Linear achievement system
 
 
 diff --git a/src/main/java/net/minecraft/server/PlayerAdvancements.java b/src/main/java/net/minecraft/server/PlayerAdvancements.java
-index 9fabf9322acd663c4452b562494e74aa42eb19da..d75d42c90391ebeb1d830da246d31b85bdca79f0 100644
+index 9fabf9322acd663c4452b562494e74aa42eb19da..39eeb4438d1a78b431f992abab080ec9e0d9725c 100644
 --- a/src/main/java/net/minecraft/server/PlayerAdvancements.java
 +++ b/src/main/java/net/minecraft/server/PlayerAdvancements.java
 @@ -233,6 +233,14 @@ public class PlayerAdvancements {
@@ -13,13 +13,13 @@ index 9fabf9322acd663c4452b562494e74aa42eb19da..d75d42c90391ebeb1d830da246d31b85
              // Paper end - Add PlayerAdvancementCriterionGrantEvent
              this.unregisterListeners(advancement);
 +            // KioCG start - 线性的成就系统
-+            final AdvancementNode advancementNode = MinecraftServer.getServer().getAdvancements().tree().get(advancement);
++            AdvancementNode advancementNode = this.tree.get(advancement);
 +            if (advancementNode != null) {
 +                for (final AdvancementNode child : advancementNode.children()) {
 +                    this.registerListenersLinear(child.holder());
 +                }
 +            }
-+            // KioCG end
++            // KioCG end - 线性的成就系统
              this.progressChanged.add(advancement);
              flag = true;
              if (!flag1 && advancementprogress.isDone()) {
@@ -33,7 +33,7 @@ index 9fabf9322acd663c4452b562494e74aa42eb19da..d75d42c90391ebeb1d830da246d31b85
 +        } else if (advancement.value().isRoot()) {
 +            this.registerListenersLinear(advancement);
 +        } else {
-+            AdvancementHolder parent = advancement.value().parent().map(MinecraftServer.getServer().getAdvancements()::get).orElseThrow();
++            AdvancementHolder parent = this.tree.get(advancement).parent().holder();
 +            if (this.getOrStartProgress(parent).isDone()) {
 +                this.registerListenersLinear(advancement);
 +            } else if (parent.value().display().isPresent() && parent.value().display().get().isHidden()) {
