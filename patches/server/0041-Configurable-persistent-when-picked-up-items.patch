@@ -18,64 +18,55 @@ index b8043bf80d6061c2c2d2692bd6d401861ac29228..d4bf89e839307bbaf6bbbc7fd5e845eb
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 4480fd52b14ce6b0f821fb1f2c4aabe76d9952f9..87bf31f61898246dc0f2e792148c39d75dc3f676 100644
+index 4480fd52b14ce6b0f821fb1f2c4aabe76d9952f9..40dd11f9ca0a3e87c1c1256e0facd2790fe155dc 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -770,9 +770,33 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -770,6 +770,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      protected void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
          this.setItemSlot(slot, stack);
          this.setGuaranteedDrop(slot);
-+        if (!this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) // KioCG
++        if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) // KioCG
          this.persistenceRequired = true;
+     }
+ 
+@@ -885,6 +886,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+     public void checkDespawn() {
+         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++            if (!this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
+         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+             Player entityhuman = this.level().findNearbyPlayer(this, -1.0D, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+ 
+@@ -895,6 +897,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+ 
+                 if (d0 > (double) j && this.removeWhenFarAway(d0)) {
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    if (!this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
+                 }
+ 
+                 int k = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory()).soft(); // Paper - Configurable despawn distances
+@@ -902,6 +905,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+ 
+                 if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    if (!this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
+                 } else if (d0 < (double) l) {
+                     this.noActionTime = 0;
+                 }
+@@ -912,6 +916,16 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+         }
      }
  
 +    // KioCG start
 +    private void dropPickedUpItems() {
-+        if (this.canPickUpLoot()) {
-+            EquipmentSlot[] aenumitemslot = EquipmentSlot.values();
-+            int i = aenumitemslot.length;
-+
-+            for (int j = 0; j < i; ++j) {
-+                EquipmentSlot enumitemslot = aenumitemslot[j];
-+                if (this.getEquipmentDropChance(enumitemslot) != 2.0f) {
-+                    continue;
-+                }
-+
-+                ItemStack itemstack = this.getItemBySlot(enumitemslot);
-+                if (!itemstack.isEmpty() && !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
-+                    this.forceDrops = true;
-+                    this.spawnAtLocation(itemstack);
-+                    this.forceDrops = false;
-+                }
-+            }
-+        }
++        this.forceDrops = true; // CraftBukkit
++        this.dropPreservedEquipment((itemstack) -> {
++            return !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP);
++        }).iterator();
++        this.forceDrops = false; // CraftBukkit
 +    }
 +    // KioCG end
 +
-     public void setGuaranteedDrop(EquipmentSlot slot) {
-         switch (slot.getType()) {
-             case HAND:
-@@ -885,6 +909,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
-     public void checkDespawn() {
-         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
-             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
-+            if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
-         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
-             Player entityhuman = this.level().findNearbyPlayer(this, -1.0D, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
- 
-@@ -895,6 +920,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
- 
-                 if (d0 > (double) j && this.removeWhenFarAway(d0)) {
-                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
-+                    if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
-                 }
- 
-                 int k = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory()).soft(); // Paper - Configurable despawn distances
-@@ -902,6 +928,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
- 
-                 if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
-                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
-+                    if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) this.dropPickedUpItems(); // KioCG
-                 } else if (d0 < (double) l) {
-                     this.noActionTime = 0;
-                 }
+     @Override
+     protected final void serverAiStep() {
+         ++this.noActionTime;
