@@ -140,6 +140,26 @@ index 115fbee54d2ea4874878355305d124dbb0326cdf..76a4e658b7bf1409b9eb4931e66bea5f
          return this.lookAt.isAlive() && !(this.mob.distanceToSqr(this.lookAt) > (double)(this.lookDistance * this.lookDistance)) && this.lookTime > 0;
      }
  
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/MoveToBlockGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/MoveToBlockGoal.java
+index aee0147649d458b87d92496eda0c1723ebe570d2..9652c727c49edccbd047433b53bb5502dd649b4e 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/MoveToBlockGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/MoveToBlockGoal.java
+@@ -43,6 +43,7 @@ public abstract class MoveToBlockGoal extends Goal {
+ 
+     @Override
+     public boolean canUse() {
++        if (this.mob.isLobotomized()) return false; // KioCG
+         if (this.nextStartTick > 0) {
+             this.nextStartTick--;
+             return false;
+@@ -58,6 +59,7 @@ public abstract class MoveToBlockGoal extends Goal {
+ 
+     @Override
+     public boolean canContinueToUse() {
++        if (this.mob.isLobotomized()) return false; // KioCG
+         return this.tryTicks >= -this.maxStayTicks && this.tryTicks <= 1200 && this.isValidTarget(this.mob.level(), this.blockPos);
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java
 index 20d4e3fb00a9eaac8484e95329bd64a368872b59..a2fa532ad2136b70cb4c9373c011115b77212e5f 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/PanicGoal.java
