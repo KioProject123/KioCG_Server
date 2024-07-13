@@ -5,10 +5,23 @@ Subject: [PATCH] Anti auto fishing
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..bc5007a04d2edb6c67dce80e656ff91f4c4f289c 100644
+index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..e73cd019e552e5384c549085c41af07a389d073d 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -146,7 +146,7 @@ public class FishingHook extends Projectile {
+@@ -86,6 +86,12 @@ public class FishingHook extends Projectile {
+     public boolean skyInfluenced = true;
+     // CraftBukkit end
+ 
++    // KioCG start
++    int timeUntilSink;
++    int deepSinkCooldown;
++    double fishWeight;
++    // KioCG end
++
+     private FishingHook(EntityType<? extends FishingHook> type, Level world, int luckBonus, int waitTimeReductionTicks) {
+         super(type, world);
+         this.syncronizedRandom = RandomSource.create();
+@@ -146,7 +152,7 @@ public class FishingHook extends Projectile {
          if (FishingHook.DATA_BITING.equals(data)) {
              this.biting = (Boolean) this.getEntityData().get(FishingHook.DATA_BITING);
              if (this.biting) {
@@ -17,7 +30,36 @@ index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..bc5007a04d2edb6c67dce80e656ff91f
              }
          }
  
-@@ -330,7 +330,10 @@ public class FishingHook extends Projectile {
+@@ -200,6 +206,7 @@ public class FishingHook extends Projectile {
+                 }
+ 
+                 if (flag) {
++                    this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.75F + (this.random.nextFloat() - this.random.nextFloat()) * 0.25F); // KioCG - 鱼钩落水音效, 防止监测声音的自动钓鱼
+                     this.setDeltaMovement(this.getDeltaMovement().multiply(0.3D, 0.2D, 0.3D));
+                     this.currentState = FishingHook.FishHookState.BOBBING;
+                     return;
+@@ -232,17 +239,19 @@ public class FishingHook extends Projectile {
+                     if (this.nibble <= 0 && this.timeUntilHooked <= 0) {
+                         this.openWater = true;
+                     } else {
++                        if (this.nibble <= 0) // KioCG - 防止拉近鱼钩时始终处于非开阔水域
+                         this.openWater = this.openWater && this.outOfWaterTime < 10 && this.calculateOpenWater(blockposition);
+                     }
+ 
+                     if (flag) {
+                         this.outOfWaterTime = Math.max(0, this.outOfWaterTime - 1);
+                         if (this.biting) {
+-                            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.1D * (double) this.syncronizedRandom.nextFloat() * (double) this.syncronizedRandom.nextFloat(), 0.0D));
++                            this.setDeltaMovementSync(this.getDeltaMovement().add(0.0D, -0.1D * (double) this.random.nextFloat() * (double) this.random.nextFloat(), 0.0D)); // KioCG - 不使用this.syncronizedRandom, 客户端不接收DATA_BITING更新
+                         }
+ 
+                         if (!this.level().isClientSide) {
+                             this.catchingFish(blockposition);
++                            if (this.tickCount % 20 == 0) this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.001F, 1.0F); // KioCG - 虚拟鱼上钩音效, 防止监测声音的自动钓鱼
+                         }
+                     } else {
+                         this.outOfWaterTime = Math.min(10, this.outOfWaterTime + 1);
+@@ -330,13 +339,34 @@ public class FishingHook extends Projectile {
              if (this.nibble <= 0) {
                  this.timeUntilLured = 0;
                  this.timeUntilHooked = 0;
@@ -29,16 +71,105 @@ index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..bc5007a04d2edb6c67dce80e656ff91f
                  // CraftBukkit start
                  PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.getPlayerOwner().getBukkitEntity(), null, (FishHook) this.getBukkitEntity(), PlayerFishEvent.State.FAILED_ATTEMPT);
                  this.level().getCraftServer().getPluginManager().callEvent(playerFishEvent);
-@@ -381,7 +384,11 @@ public class FishingHook extends Projectile {
+                 // CraftBukkit end
+             }
+         } else {
++            // KioCG start
++            if ((this.timeUntilLured > 0 || this.timeUntilHooked > 0) && --this.timeUntilSink < 0) {
++                this.timeUntilSink = 20 + this.random.nextInt(5 * 20);
++                if (this.calculateOpenWater(this.blockPosition())) {
++                    boolean deepSink = this.timeUntilLured > 0 && --this.deepSinkCooldown < 0;
++                    if (deepSink) {
++                        this.deepSinkCooldown = 3 + this.random.nextInt(3);
++                    }
++
++                    float x = Mth.nextFloat(this.random, -0.125F, 0.125F);
++                    float y = deepSink ? -0.4F * Mth.nextFloat(this.random, 0.6F, 1.0F) : -0.4F * Math.max(0, Mth.nextFloat(this.random, -0.3F, 0.3F));
++                    float z = Mth.nextFloat(this.random, -0.125F, 0.125F);
++                    this.setDeltaMovementSync(this.getDeltaMovement().add(x, y, z));
++                    this.playSound(SoundEvents.FISH_SWIM, 0.25F, (deepSink ? 0.5F : 1.5F) + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
++                }
++            }
++            // KioCG end
++
+             float f;
+             float f1;
+             float f2;
+@@ -370,6 +400,7 @@ public class FishingHook extends Projectile {
+                 } else {
+                     // CraftBukkit start
+                     PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.getPlayerOwner().getBukkitEntity(), null, (FishHook) this.getBukkitEntity(), PlayerFishEvent.State.BITE);
++                    if (this.closerThanOwnerHorizontal(6.0) && !isInFishingMachine()) playerFishEvent.setCancelled(true); // KioCG
+                     this.level().getCraftServer().getPluginManager().callEvent(playerFishEvent);
+                     if (playerFishEvent.isCancelled()) {
+                         return;
+@@ -381,7 +412,12 @@ public class FishingHook extends Projectile {
                      worldserver.sendParticles(ParticleTypes.BUBBLE, this.getX(), d3, this.getZ(), (int) (1.0F + this.getBbWidth() * 20.0F), (double) this.getBbWidth(), 0.0D, (double) this.getBbWidth(), 0.20000000298023224D);
                      worldserver.sendParticles(ParticleTypes.FISHING, this.getX(), d3, this.getZ(), (int) (1.0F + this.getBbWidth() * 20.0F), (double) this.getBbWidth(), 0.0D, (double) this.getBbWidth(), 0.20000000298023224D);
                      this.nibble = Mth.nextInt(this.random, 20, 40);
 -                    this.getEntityData().set(FishingHook.DATA_BITING, true);
++                    this.fishWeight = Mth.nextDouble(this.random, 0.5F, 1.0F); // KioCG
 +                    // KioCG start - 防止自动钓鱼
 +                    // this.getEntityData().set(FishingHook.DATA_BITING, true);
 +                    this.biting = true;
-+                    this.setDeltaMovement(this.getDeltaMovement().x, (double) (-0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F)), this.getDeltaMovement().z);
++                    this.setDeltaMovementSync(this.getDeltaMovement().x, (double) (-0.4F * Mth.nextFloat(this.random, 0.6F, 1.0F)), this.getDeltaMovement().z); // 不使用this.syncronizedRandom, 客户端不接收DATA_BITING更新
 +                    // KioCG end - 防止自动钓鱼
                  }
              } else if (this.timeUntilLured > 0) {
                  this.timeUntilLured -= i;
+@@ -433,9 +469,39 @@ public class FishingHook extends Projectile {
+     public void resetTimeUntilLured() {
+         this.timeUntilLured = Mth.nextInt(this.random, this.minWaitTime, this.maxWaitTime);
+         this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed ) : 0; // Paper - Fix Lure infinite loop
++        // KioCG
++        this.timeUntilSink = 20 + this.random.nextInt(5 * 20);
++        this.deepSinkCooldown = this.random.nextInt(3);
++        // KioCG
+     }
+     // Paper end - more projectile api - extract time until lured reset logic
+ 
++    // KioCG start
++    public void setDeltaMovementSync(Vec3 velocity) {
++        super.setDeltaMovement(velocity);
++        markHurt();
++    }
++
++    public void setDeltaMovementSync(double x, double y, double z) {
++        super.setDeltaMovement(x, y, z);
++        markHurt();
++    }
++
++    private boolean isInFishingMachine() {
++        return this.level().getBlockState(this.blockPosition().above()).is(Blocks.TRIPWIRE);
++    }
++
++    private boolean closerThanOwnerHorizontal(double radius) {
++        net.minecraft.world.entity.player.Player entityhuman = this.getPlayerOwner();
++        if (entityhuman != null) {
++            final Vec3 v1 = entityhuman.position();
++            final Vec3 v2 = this.position();
++            return Mth.lengthSquared(v1.x() - v2.x(), v1.z() - v2.z()) < Mth.square(radius);
++        }
++        return false;
++    }
++    // KioCG end
++
+     public boolean calculateOpenWater(BlockPos pos) {
+         FishingHook.OpenWaterType entityfishinghook_waterposition = FishingHook.OpenWaterType.INVALID;
+ 
+@@ -521,6 +587,15 @@ public class FishingHook extends Projectile {
+                 i = this.hookedIn instanceof ItemEntity ? 3 : 5;
+                 } // Paper - re-check to see if there is a hooked entity
+             } else if (this.nibble > 0) {
++                // KioCG start
++                if (!this.closerThanOwnerHorizontal(2.5) && !isInFishingMachine()) {
++                    double x = entityhuman.position().x - this.position().x;
++                    double z = entityhuman.position().z - this.position().z;
++                    this.setDeltaMovementSync(this.getDeltaMovement().add(x * 0.1 * this.fishWeight, 0, z * 0.1 * this.fishWeight));
++                    return 0;
++                }
++                // KioCG end
++
+                 LootParams lootparams = (new LootParams.Builder((ServerLevel) this.level())).withParameter(LootContextParams.ORIGIN, this.position()).withParameter(LootContextParams.TOOL, usedItem).withParameter(LootContextParams.THIS_ENTITY, this).withLuck((float) this.luck + entityhuman.getLuck()).create(LootContextParamSets.FISHING);
+                 LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
+                 List<ItemStack> list = loottable.getRandomItems(lootparams);
