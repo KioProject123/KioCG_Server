@@ -275,3 +275,47 @@ index cc7bf4d39b834fba472bc163226a01a0cd4b6010..dca1d737d9311a9b52dc530dc2e06af1
 +    }
 +    // KioCG end
  }
+diff --git a/src/main/resources/data/minecraft/loot_table/blocks/barrel.json b/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
+index b1b80b266b13f1de0cb33c62a5a5f4033e42f6fe..66fe913e2beac9b131652932d546548f83a8c417 100644
+--- a/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
++++ b/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
+@@ -18,6 +18,17 @@
+                 "minecraft:custom_name"
+               ],
+               "source": "block_entity"
++            },
++            {
++              "function": "minecraft:copy_custom_data",
++              "ops": [
++                {
++                  "source": "'KioCG.Rows'",
++                  "target": "'KioCG.Rows'",
++                  "op": "replace"
++                }
++              ],
++              "source": "block_entity"
+             }
+           ],
+           "name": "minecraft:barrel"
+diff --git a/src/main/resources/data/minecraft/loot_table/blocks/chest.json b/src/main/resources/data/minecraft/loot_table/blocks/chest.json
+index 7faaf3b2f3ea2f092a32b06344d3947ba55ffc4e..f73d13671773fa65e312dfa3be1446ea14c59800 100644
+--- a/src/main/resources/data/minecraft/loot_table/blocks/chest.json
++++ b/src/main/resources/data/minecraft/loot_table/blocks/chest.json
+@@ -18,6 +18,17 @@
+                 "minecraft:custom_name"
+               ],
+               "source": "block_entity"
++            },
++            {
++              "function": "minecraft:copy_custom_data",
++              "ops": [
++                {
++                  "source": "'KioCG.Rows'",
++                  "target": "'KioCG.Rows'",
++                  "op": "replace"
++                }
++              ],
++              "source": "block_entity"
+             }
+           ],
+           "name": "minecraft:chest"
