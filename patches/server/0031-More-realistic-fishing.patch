@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Thu, 18 Apr 2024 04:53:43 +0800
-Subject: [PATCH] Anti auto fishing
+Subject: [PATCH] More realistic fishing
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..e73cd019e552e5384c549085c41af07a389d073d 100644
+index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..2d7dfb522bb04c3d5aa31fe4f7f066d7389b78de 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 @@ -86,6 +86,12 @@ public class FishingHook extends Projectile {
@@ -13,9 +13,9 @@ index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..e73cd019e552e5384c549085c41af07a
      // CraftBukkit end
  
 +    // KioCG start
-+    int timeUntilSink;
-+    int deepSinkCooldown;
-+    double fishWeight;
++    private int timeUntilSink;
++    private int deepSinkCooldown;
++    private double fishWeight;
 +    // KioCG end
 +
      private FishingHook(EntityType<? extends FishingHook> type, Level world, int luckBonus, int waitTimeReductionTicks) {

@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 14 Jul 2024 17:16:50 +0800
+Subject: [PATCH] Expand container rows
+
+
+diff --git a/src/main/java/org/bukkit/block/Chest.java b/src/main/java/org/bukkit/block/Chest.java
+index 5d02f9c938d0d7d0f4e491ccfaf6beb0a7a61aa4..8ab118e939c2faefccc7ff9f9cf45d9563018379 100644
+--- a/src/main/java/org/bukkit/block/Chest.java
++++ b/src/main/java/org/bukkit/block/Chest.java
+@@ -37,4 +37,14 @@ public interface Chest extends Container, LootableBlockInventory, Lidded { // Pa
+      */
+     boolean isBlocked();
+     // Paper end - More Chest Block API
++
++    // KioCG start
++    int getRows();
++
++    /**
++     * @return 如果缩小行数，返回多出的物品
++     */
++    @NotNull
++    org.bukkit.inventory.ItemStack[] setRows(int rows);
++    // KioCG end
+ }
