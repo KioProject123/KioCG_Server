@@ -22,7 +22,7 @@ index 2274b35bc9662f8a3496c193bd670f0ba1025309..c20014fbfedc2ca99945d92bac9d4e9d
              public boolean turretEnable = true;
              public int turretCooldownDefault = 100;
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-index 623d9e9b2d57085acfe3fad657bf6b507bc1dc21..0d593b00766b0fc08086701bcdc5a5d20c14622f 100644
+index 623d9e9b2d57085acfe3fad657bf6b507bc1dc21..a424084c6b425c5e96cdeffa75c5a09143611ed9 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
 +++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
 @@ -21,6 +21,11 @@ public abstract class AgeableMob extends PathfinderMob {
@@ -90,7 +90,7 @@ index 623d9e9b2d57085acfe3fad657bf6b507bc1dc21..0d593b00766b0fc08086701bcdc5a5d2
      }
  
      @Override
-@@ -166,11 +194,20 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -166,11 +194,22 @@ public abstract class AgeableMob extends PathfinderMob {
  
              if (i < 0) {
                  ++i;
@@ -102,17 +102,19 @@ index 623d9e9b2d57085acfe3fad657bf6b507bc1dc21..0d593b00766b0fc08086701bcdc5a5d2
              }
 +
 +            // KioCG start
-+            final int days = this.level().getDays();
-+            if (days > this.refreshDay) {
-+                this.refreshDay = days;
-+                this.feedingToday = 0;
-+                this.produceToday = 0;
++            if (this.level().isDay()) {
++                final int days = this.level().getDays();
++                if (days > this.refreshDay) {
++                    this.refreshDay = days;
++                    this.feedingToday = 0;
++                    this.produceToday = 0;
++                }
 +            }
 +            // KioCG end
          }
  
      }
-@@ -205,6 +242,24 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -205,6 +244,24 @@ public abstract class AgeableMob extends PathfinderMob {
          return (int) ((float) (breedingAge / 20) * 0.1F);
      }
  

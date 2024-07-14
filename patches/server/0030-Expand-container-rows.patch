@@ -4,6 +4,18 @@ Date: Fri, 5 Apr 2024 19:22:58 +0800
 Subject: [PATCH] Expand container rows
 
 
+diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
+index 07cd4ebd9420d8aca34aebd92a15040deb995059..c249577dc53f37d960132178468e512262bdd1c2 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Player.java
++++ b/src/main/java/net/minecraft/world/entity/player/Player.java
+@@ -198,6 +198,7 @@ public abstract class Player extends LivingEntity {
+     private int currentImpulseContextResetGraceTime;
+     public boolean affectsSpawning = true; // Paper - Affects Spawning API
+     public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
++    public int enderchestRows; // KioCG
+ 
+     // CraftBukkit start
+     public boolean fauxSleeping;
 diff --git a/src/main/java/net/minecraft/world/inventory/ChestMenu.java b/src/main/java/net/minecraft/world/inventory/ChestMenu.java
 index 0dbfd23bbfc6ad203f048142f8c90ef741849fe1..962522590aa10bde17652d9b2d5c86476bbfbab3 100644
 --- a/src/main/java/net/minecraft/world/inventory/ChestMenu.java
@@ -30,6 +42,30 @@ index 0dbfd23bbfc6ad203f048142f8c90ef741849fe1..962522590aa10bde17652d9b2d5c8647
      public ChestMenu(MenuType<?> type, int syncId, Inventory playerInventory, Container inventory, int rows) {
          super(type, syncId);
          checkContainerSize(inventory, rows * 9);
+diff --git a/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java b/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java
+index a15d5ff872dbd77f3c3145e0328f3d02e431ff8c..39ede269cdf5f096a79c3b4cf19c641224c8f061 100644
+--- a/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java
++++ b/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java
+@@ -31,11 +31,18 @@ public class PlayerEnderChestContainer extends SimpleContainer {
+     }
+ 
+     public PlayerEnderChestContainer(Player owner) {
+-        super(27);
++        super(6 * 9); // KioCG
+         this.owner = owner;
+         // CraftBukkit end
+     }
+ 
++    // KioCG start
++    @Override
++    public int getContainerSize() {
++        return this.owner.enderchestRows * 9;
++    }
++    // KioCG end
++
+     public void setActiveChest(EnderChestBlockEntity blockEntity) {
+         this.activeChest = blockEntity;
+     }
 diff --git a/src/main/java/net/minecraft/world/level/block/ChestBlock.java b/src/main/java/net/minecraft/world/level/block/ChestBlock.java
 index 8fbfd18b3caeed769396b3ffb1b1778b2f38edc0..303f50597d205f7ccf7f9ec316fdd2767dc125d9 100644
 --- a/src/main/java/net/minecraft/world/level/block/ChestBlock.java
@@ -42,6 +78,54 @@ index 8fbfd18b3caeed769396b3ffb1b1778b2f38edc0..303f50597d205f7ccf7f9ec316fdd276
          return (BlockState) ((BlockState) ((BlockState) this.defaultBlockState().setValue(ChestBlock.FACING, enumdirection)).setValue(ChestBlock.TYPE, blockpropertychesttype)).setValue(ChestBlock.WATERLOGGED, fluid.getType() == Fluids.WATER);
      }
  
+diff --git a/src/main/java/net/minecraft/world/level/block/EnderChestBlock.java b/src/main/java/net/minecraft/world/level/block/EnderChestBlock.java
+index ca92d49ef2010ba00c623491671dcde8ebe697c1..4461e60bde4f45e06c49923d540842a17ccc0406 100644
+--- a/src/main/java/net/minecraft/world/level/block/EnderChestBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/EnderChestBlock.java
+@@ -91,7 +91,7 @@ public class EnderChestBlock extends AbstractChestBlock<EnderChestBlockEntity> i
+                 EnderChestBlockEntity enderChestBlockEntity = (EnderChestBlockEntity)blockEntity;
+                 playerEnderChestContainer.setActiveChest(enderChestBlockEntity);
+                 player.openMenu(
+-                    new SimpleMenuProvider((i, inventory, playerx) -> ChestMenu.threeRows(i, inventory, playerEnderChestContainer), CONTAINER_TITLE)
++                    new SimpleMenuProvider((i, inventory, playerx) -> this.getEnderChestRows(i, inventory, playerEnderChestContainer, player), CONTAINER_TITLE)
+                 );
+                 player.awardStat(Stats.OPEN_ENDERCHEST);
+                 PiglinAi.angerNearbyPiglins(player, true);
+@@ -102,6 +102,34 @@ public class EnderChestBlock extends AbstractChestBlock<EnderChestBlockEntity> i
+         }
+     }
+ 
++    // KioCG start
++    private ChestMenu getEnderChestRows(int syncId, net.minecraft.world.entity.player.Inventory inventory, PlayerEnderChestContainer playerEnderChestContainer, Player player) {
++        org.bukkit.craftbukkit.entity.CraftHumanEntity bukkitPlayer = player.getBukkitEntity();
++        if (bukkitPlayer.hasPermission("kiocg.enderchestrows.6")) {
++            player.enderchestRows = 6;
++            return ChestMenu.sixRows(syncId, inventory, playerEnderChestContainer);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.5")) {
++            player.enderchestRows = 5;
++            return ChestMenu.fiveRows(syncId, inventory, playerEnderChestContainer);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.4")) {
++            player.enderchestRows = 4;
++            return ChestMenu.fourRows(syncId, inventory, playerEnderChestContainer);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.3")) {
++            player.enderchestRows = 3;
++            return ChestMenu.threeRows(syncId, inventory, playerEnderChestContainer);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.2")) {
++            player.enderchestRows = 2;
++            return ChestMenu.twoRows(syncId, inventory, playerEnderChestContainer);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.1")) {
++            player.enderchestRows = 1;
++            return ChestMenu.oneRow(syncId, inventory, playerEnderChestContainer);
++        } else {
++            player.enderchestRows = 3;
++            return ChestMenu.threeRows(syncId, inventory, playerEnderChestContainer);
++        }
++    }
++    // KioCG end
++
+     @Override
+     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+         return new EnderChestBlockEntity(pos, state);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
 index 6186e55014bbb9d5bedaa0e9d196879c55339d42..1c3daf6486364974ddc603d95a9ebd0abfeb50d9 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
@@ -275,6 +359,64 @@ index cc7bf4d39b834fba472bc163226a01a0cd4b6010..dca1d737d9311a9b52dc530dc2e06af1
 +    }
 +    // KioCG end
  }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index be79dbfd006a403abe157d74b4a050196bea4a4e..9eb83019c602b239a6dff51205faf8fec3bceff5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -234,6 +234,29 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public void recalculatePermissions() {
++        super.recalculatePermissions();
++
++        if (this.hasPermission("kiocg.enderchestrows.6")) {
++            this.getHandle().enderchestRows = 6;
++        } else if (this.hasPermission("kiocg.enderchestrows.5")) {
++            this.getHandle().enderchestRows = 5;
++        } else if (this.hasPermission("kiocg.enderchestrows.4")) {
++            this.getHandle().enderchestRows = 4;
++        } else if (this.hasPermission("kiocg.enderchestrows.3")) {
++            this.getHandle().enderchestRows = 3;
++        } else if (this.hasPermission("kiocg.enderchestrows.2")) {
++            this.getHandle().enderchestRows = 2;
++        } else if (this.hasPermission("kiocg.enderchestrows.1")) {
++            this.getHandle().enderchestRows = 1;
++        } else {
++            this.getHandle().enderchestRows = 3;
++        }
++    }
++    // KioCG end
++
+     @Override
+     public boolean isOp() {
+         return this.server.getHandle().isOp(this.getProfile());
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
+index 10a5b1853d3984427209c87bdec1d471dddb1244..3c3426314c94e689299e32cbf71d2a7c2e468fb9 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
+@@ -184,7 +184,18 @@ public class CraftContainer extends AbstractContainerMenu {
+             case CHEST:
+             case ENDER_CHEST:
+             case BARREL:
+-                this.delegate = new ChestMenu(MenuType.GENERIC_9x3, windowId, bottom, top, top.getContainerSize() / 9);
++                // KioCG start
++                MenuType menuType = switch (top.getContainerSize()) {
++                    case 9 -> MenuType.GENERIC_9x1;
++                    case 18 -> MenuType.GENERIC_9x2;
++                    case 27, 41 /*player*/ -> MenuType.GENERIC_9x3;
++                    case 36 -> MenuType.GENERIC_9x4;
++                    case 45 -> MenuType.GENERIC_9x5;
++                    case 54 -> MenuType.GENERIC_9x6;
++                    default -> throw new IllegalArgumentException("Unsupported custom inventory size " + top.getContainerSize());
++                };
++                this.delegate = new ChestMenu(menuType, windowId, bottom, top, top.getContainerSize() / 9);
++                // KioCG end
+                 break;
+             case DISPENSER:
+             case DROPPER:
 diff --git a/src/main/resources/data/minecraft/loot_table/blocks/barrel.json b/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
 index b1b80b266b13f1de0cb33c62a5a5f4033e42f6fe..66fe913e2beac9b131652932d546548f83a8c417 100644
 --- a/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
