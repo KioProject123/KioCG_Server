@@ -152,7 +152,7 @@ index 4e2c23ccdf4e4a4d65b291dbe20952bae1838bff..8b5a8ae87449257ca322a205899ee2c7
              BlockPos blockposition = this.mob.blockPosition();
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..0043946e8dbd0c75c258b293182be6ecc2e39a70 100644
+index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..94d336897141f239630c6c6d81a774677c2a0e28 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
 @@ -146,16 +146,16 @@ public abstract class Animal extends AgeableMob {
@@ -247,7 +247,7 @@ index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..0043946e8dbd0c75c258b293182be6ec
  
          this.level().broadcastEntityEvent(this, (byte) 18);
 +
-+        if (this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance && !this.isHugeSimulate()) {
++        if (!this.isHugeSimulate() && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
 +            this.setHugeSimulate(true);
 +        }
      }
@@ -350,24 +350,41 @@ index e108f876d3f129c6287f13d68427aed2a6f0c5b1..5f5f6352d65f0e1aa2d3c8bbde1a9ffd
                  if (this.level().isClientSide || this.isSitting() || this.isInWater()) {
                      return InteractionResult.PASS;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Sheep.java b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-index 38ac2759894660be1ee7ba59b0bd1270158e9232..243191f26484ff8ac149672ffa8caa9aaa26a84d 100644
+index 38ac2759894660be1ee7ba59b0bd1270158e9232..888f96021de87e6f57c36e9809f74e1942f69c3b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Sheep.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Sheep.java
-@@ -148,6 +148,13 @@ public class Sheep extends Animal implements Shearable {
+@@ -95,6 +95,7 @@ public class Sheep extends Animal implements Shearable {
+     }, Sheep::createSheepColor)));
+     private int eatAnimationTick;
+     private EatBlockGoal eatBlockGoal;
++    public int woolTime; // KioCG
+ 
+     private static int createSheepColor(DyeColor color) {
+         if (color == DyeColor.WHITE) {
+@@ -113,6 +114,7 @@ public class Sheep extends Animal implements Shearable {
+ 
+     public Sheep(EntityType<? extends Sheep> type, Level world) {
+         super(type, world);
++        this.woolTime = this.random.nextInt(200); // KioCG
+     }
+ 
+     @Override
+@@ -148,6 +150,14 @@ public class Sheep extends Animal implements Shearable {
              this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
          }
  
 +        // KioCG start
-+        if (this.produceToday == 0 && this.random.nextInt(200) == 0) {
++        if (this.produceToday == 0 && --this.woolTime <= 0) {
 +            produce();
 +            ate();
++            this.woolTime = this.random.nextInt(200); // KioCG
 +        }
 +        // KioCG end
 +
          super.aiStep();
      }
  
-@@ -299,6 +306,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -299,6 +309,7 @@ public class Sheep extends Animal implements Shearable {
      public void shear(SoundSource shearedSoundCategory, java.util.List<ItemStack> drops) {
          // Paper end - custom shear drops
          this.level().playSound((Player) null, (Entity) this, SoundEvents.SHEEP_SHEAR, shearedSoundCategory, 1.0F, 1.0F);
@@ -375,7 +392,7 @@ index 38ac2759894660be1ee7ba59b0bd1270158e9232..243191f26484ff8ac149672ffa8caa9a
          this.setSheared(true);
          int i = 1 + this.random.nextInt(3);
  
-@@ -407,7 +415,7 @@ public class Sheep extends Animal implements Shearable {
+@@ -407,7 +418,7 @@ public class Sheep extends Animal implements Shearable {
          super.ate();
          this.setSheared(false);
          if (this.isBaby()) {
@@ -385,7 +402,7 @@ index 38ac2759894660be1ee7ba59b0bd1270158e9232..243191f26484ff8ac149672ffa8caa9a
  
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Turtle.java b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
-index caf4120721be8f2f7e2d737abbf73296cbe170b5..2dc576b1d95c9dce2a6d44c4ae0c609bb3a7a51a 100644
+index caf4120721be8f2f7e2d737abbf73296cbe170b5..0c4a187b002eab149fb2d14c231a3965d69c3649 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 @@ -252,8 +252,10 @@ public class Turtle extends Animal {
@@ -405,7 +422,7 @@ index caf4120721be8f2f7e2d737abbf73296cbe170b5..2dc576b1d95c9dce2a6d44c4ae0c609b
          return this.isBaby() ? Turtle.BABY_DIMENSIONS : super.getDefaultDimensions(pose);
      }
  
-+    // KioCG start
++    // KioCG start - copy from Armadillo.java
 +    @Override
 +    public net.minecraft.world.InteractionResult mobInteract(Player player, net.minecraft.world.InteractionHand hand) {
 +        ItemStack itemstack = player.getItemInHand(hand);
@@ -431,7 +448,7 @@ index caf4120721be8f2f7e2d737abbf73296cbe170b5..2dc576b1d95c9dce2a6d44c4ae0c609b
 +            return true;
 +        }
 +    }
-+    // KioCG end
++    // KioCG end - copy from Armadillo.java
 +
      private static class TurtleMoveControl extends MoveControl {
  
