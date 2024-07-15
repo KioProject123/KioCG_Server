@@ -35,10 +35,10 @@ index f270e5aa7dfd722a44fd717c9a7186b6f1fe695e..76c32cc91e1308f3d5d908e4ec6732c7
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-index f9a94734c87cdda19f283f6a25a6a016fb354be9..dcf4d8544e048166bd70faef30d79699d994e9af 100644
+index f9a94734c87cdda19f283f6a25a6a016fb354be9..e6232a5ab135576b3f3919908c47587329de2161 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-@@ -62,6 +62,12 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
+@@ -62,6 +62,13 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
  
      @Override
      protected void randomTick(net.minecraft.world.level.block.state.BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
@@ -48,6 +48,7 @@ index f9a94734c87cdda19f283f6a25a6a016fb354be9..dcf4d8544e048166bd70faef30d79699
 +            return;
 +        }
 +        // KioCG end
++
          if (world.getMaxLocalRawBrightness(pos.above()) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              this.advanceTree(world, pos, state, random);
          }
