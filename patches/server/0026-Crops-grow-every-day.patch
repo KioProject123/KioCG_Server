@@ -532,7 +532,7 @@ index d262a5a6da57ef9ba9a6fe0dfbc88f577105e74f..f9a94734c87cdda19f283f6a25a6a016
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
-index 924d80eb41d9a71d1e521c40742557251cf51832..bcb6c68d0cddd5b345c941f51711e7d6e644cf4a 100644
+index 924d80eb41d9a71d1e521c40742557251cf51832..bf21bfb894164e2228a781ab6552ab1692ab7d8e 100644
 --- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/StemBlock.java
 @@ -70,12 +70,19 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
@@ -556,6 +556,15 @@ index 924d80eb41d9a71d1e521c40742557251cf51832..bcb6c68d0cddd5b345c941f51711e7d6
                  int i = (Integer) state.getValue(StemBlock.AGE);
  
                  if (i < 7) {
+@@ -128,7 +135,7 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
+ 
+         CraftEventFactory.handleBlockGrowEvent(world, pos, iblockdata1, 2); // CraftBukkit
+         if (i == 7) {
+-            iblockdata1.randomTick(world, pos, world.random);
++            // iblockdata1.randomTick(world, pos, world.random); // KioCG
+         }
+ 
+     }
 diff --git a/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java b/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
 index c48c622e92cedeaa46b929c7adfedec98dd5a3fb..91d7268a35666ff1df995e37086f9c1f2707d322 100644
 --- a/src/main/java/net/minecraft/world/level/block/SugarCaneBlock.java
