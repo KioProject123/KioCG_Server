@@ -91,10 +91,10 @@ index 4a29117cedb2b0ab02c2e1b13c07feceadc1ee48..07cd4ebd9420d8aca34aebd92a15040d
              }
          } else if (this.sleepCounter > 0) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index ee7f4f06ff023d372611e704d5da58a37e80c388..2f254c7a5b60c21e0b4a69a5c7b6f5bb543da0de 100644
+index ee7f4f06ff023d372611e704d5da58a37e80c388..a6bea77afb8323948657c8f85b9938b6da93942b 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
-@@ -84,6 +84,30 @@ public class FoodData {
+@@ -84,6 +84,27 @@ public class FoodData {
  
          boolean flag = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
  
@@ -105,17 +105,14 @@ index ee7f4f06ff023d372611e704d5da58a37e80c388..2f254c7a5b60c21e0b4a69a5c7b6f5bb
 +                final float health = player.getHealth();
 +                player.heal(1.0F);
 +                if (player.getHealth() > health) {
-+                    final java.util.ArrayList<org.bukkit.entity.Player> receivers = new java.util.ArrayList<>(player.getBukkitEntity().getTrackedBy());
-+                    receivers.add(((ServerPlayer) player).getBukkitEntity());
-+                    player.getBukkitEntity().getWorld().spawnParticle(org.bukkit.Particle.HEART,
-+                                                                      receivers,
-+                                                                      ((ServerPlayer) player).getBukkitEntity(),
-+                                                                      player.getX(), player.getY(), player.getZ(),
-+                                                                      5,
-+                                                                      0.3, 0.3, 0.3,
-+                                                                      1.0,
-+                                                                      null,
-+                                                                      true);
++                    ((net.minecraft.server.level.ServerLevel) player.level()).sendParticles(
++                            (ServerPlayer) player,
++                            net.minecraft.core.particles.ParticleTypes.HEART,
++                            player.getX(), player.getY(), player.getZ(),
++                            5,
++                            0.3, 0.3, 0.3,
++                            1.0,
++                            false);
 +                }
 +
 +                this.tickTimer = 0;
