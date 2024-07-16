@@ -20,10 +20,10 @@ index 9bda7a360da9a13f8b6a5b289cafbc97bdf91bb0..64befd059110d71400cdb28c45c2214e
  
          public boolean sleepAnyTime = true;
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..4848157380072249b7b2b0d6265ced9c1f326502 100644
+index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..dd1ce5b2a3357c27c6a777a4c1b74202625ce55e 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-@@ -31,6 +31,36 @@ public class EndCrystal extends Entity {
+@@ -31,6 +31,38 @@ public class EndCrystal extends Entity {
      private static final EntityDataAccessor<Boolean> DATA_SHOW_BOTTOM = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.BOOLEAN);
      public int time;
      public boolean generatedByDragonFight = false; // Paper - Fix invulnerable end crystals
@@ -56,11 +56,13 @@ index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..4848157380072249b7b2b0d6265ced9c
 +    }
 +
 +    private int beamTicks = 0;
++    @Nullable
++    private net.minecraft.world.entity.LivingEntity target;
 +    // KioCG end
  
      public EndCrystal(EntityType<? extends EndCrystal> type, Level world) {
          super(type, world);
-@@ -80,6 +110,31 @@ public class EndCrystal extends Entity {
+@@ -80,6 +112,47 @@ public class EndCrystal extends Entity {
                  }
              }
              // Paper end - Fix invulnerable end crystals
@@ -70,29 +72,45 @@ index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..4848157380072249b7b2b0d6265ced9c
 +                    setBeamTarget(null);
 +                }
 +
-+                if (getTurretCooldown() <= 0 || this.time % getTurretCooldown() == 0) { // 使炮塔间的发射间隔错开
-+                    destroyTarget();
++                if (getTurretCooldown() < 0) {
++                    this.target = null;
++                } else if (getTurretCooldown() == 0 || this.time % getTurretCooldown() == 0) { // 使炮塔间的发射间隔错开
++                    refreshTarget();
++
++                    if (this.target != null) {
++                        this.target.hurt(this.level().damageSources().indirectMagic(this, this), (float) getTurretDamage());
++                        setBeamTarget(this.target.blockPosition().atY((int) this.target.getEyeY()).offset(0, -2, 0));
++                        this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW.value(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
++                        this.beamTicks = 4;
++                    }
 +                }
 +            }
 +        }
++
 +    }
 +
-+    private void destroyTarget() {
-+        java.util.List<net.minecraft.world.entity.monster.Monster> list1 = this.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, this.getBoundingBox().inflate(getTurretRange()), (entityliving1) -> {
-+            return entityliving1.isAlive() && entityliving1.hasLineOfSight(this);
-+        });
++    private void refreshTarget() {
++        final net.minecraft.world.phys.AABB aabb = this.getBoundingBox().inflate(getTurretRange(), getTurretRange() / 2.0, getTurretRange());
 +
-+        if (!list1.isEmpty()) {
-+            net.minecraft.world.entity.LivingEntity entityliving = list1.get(this.level().random.nextInt(list1.size()));
-+            entityliving.hurt(this.level().damageSources().indirectMagic(this, this), (float) getTurretDamage());
-+            setBeamTarget(entityliving.blockPosition().atY((int) entityliving.getEyeY()).offset(0, -2, 0));
-+            this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW.value(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
-+            beamTicks = 4;
++        if (this.target != null) {
++            if (!this.target.isAlive() || !this.target.getBoundingBox().intersects(aabb) || !this.target.hasLineOfSight(this)) {
++                this.target = null;
++            }
++        }
++
++        if (this.target == null) {
++            java.util.List<net.minecraft.world.entity.monster.Monster> list1 = this.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, aabb, (entityliving1) -> {
++                return entityliving1.isAlive() && entityliving1.hasLineOfSight(this);
++            });
++
++            if (!list1.isEmpty()) {
++                this.target = list1.get(this.level().random.nextInt(list1.size()));
++            }
 +            // KioCG end
          }
  
      }
-@@ -92,6 +147,18 @@ public class EndCrystal extends Entity {
+@@ -92,6 +165,18 @@ public class EndCrystal extends Entity {
  
          nbt.putBoolean("ShowBottom", this.showsBottom());
          if (this.generatedByDragonFight) nbt.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
@@ -111,7 +129,7 @@ index a33d89fe9ca9e343edab8bb1cc88c54130ddb4a7..4848157380072249b7b2b0d6265ced9c
      }
  
      @Override
-@@ -102,6 +169,17 @@ public class EndCrystal extends Entity {
+@@ -102,6 +187,17 @@ public class EndCrystal extends Entity {
          }
          if (nbt.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = nbt.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
  
