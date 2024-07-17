@@ -53,7 +53,7 @@ index aded31d47d3da87a9298602bd4b718d64895061b..3cf0aa30bb50233b1b0f467a4d63b0ca
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 45224dc3867892b298b006c17f7f85741fcc96d6..a715f6eba2d7d5e5149821767b51783248f9c3b7 100644
+index 45224dc3867892b298b006c17f7f85741fcc96d6..370deb43b04bcb9e4b6184b2d51f3c4c241cb970 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 @@ -254,11 +254,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
@@ -77,7 +77,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..a715f6eba2d7d5e5149821767b517832
 +
 +    @Nullable private UUID helpDisplayUUID;
 +
-+    public void tryAddHelpDisplay() {
++    public void addHelpDisplay() {
 +        final Display.ItemDisplay itemDisplay = this.addRiderDisplay(EntityType.ITEM_DISPLAY, 99, display -> {
 +            display.setItemStack(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
 +            display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
@@ -90,7 +90,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..a715f6eba2d7d5e5149821767b517832
 +        }
 +    }
 +
-+    public void tryRemoveHelpDisplay() {
++    public void removeHelpDisplay() {
 +        if (helpDisplayUUID != null) {
 +            this.removeRiderDisplay(helpDisplayUUID);
 +            helpDisplayUUID = null;
@@ -224,7 +224,7 @@ index 5633c5ee29938c0b61121c921cb82342d01329e3..199f939bb6f01370fc8466b12f6c73cc
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-index 797ae2cf1978e224ae5b07ffb889b1786327bf75..dce74d2eb31d62015347248d30974af3bbd216f4 100644
+index 797ae2cf1978e224ae5b07ffb889b1786327bf75..12c8c5dad4edcf0429f5f2d6c583878fee8a0865 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cat.java
 @@ -269,6 +269,16 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
@@ -233,12 +233,12 @@ index 797ae2cf1978e224ae5b07ffb889b1786327bf75..dce74d2eb31d62015347248d30974af3
          this.handleLieDown();
 +        // KioCG start
 +        if (this.onTheVergeOfDeath()) {
-+            tryAddHelpDisplay();
++            addHelpDisplay();
 +            if (!this.isOrderedToSit()) {
 +                this.setOrderedToSit(true);
 +            }
 +        } else {
-+            tryRemoveHelpDisplay();
++            removeHelpDisplay();
 +        }
 +        // KioCG end
      }
@@ -251,8 +251,8 @@ index 797ae2cf1978e224ae5b07ffb889b1786327bf75..dce74d2eb31d62015347248d30974af3
 +                    // KioCG start
 +                } else if (itemstack.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) {
 +                    this.playSound(SoundEvents.CAT_EAT, 1.0F, 1.0F);
-+                    super.usePlayerItem(player, hand, itemstack);
 +
++                    itemstack.consume(1, player);
 +                    this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
 +                    if (player.isCreative() || !this.isInvulnerable()) {
 +                        this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
@@ -264,7 +264,7 @@ index 797ae2cf1978e224ae5b07ffb889b1786327bf75..dce74d2eb31d62015347248d30974af3
  
                  enuminteractionresult = super.mobInteract(player, hand);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..c52f123a4721cc3dccb605a043a67f2b3282fdfb 100644
+index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..32e5bdf96439b4e8581e9085251c328c8fa684db 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 @@ -201,6 +201,21 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
@@ -276,12 +276,12 @@ index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..c52f123a4721cc3dccb605a043a67f2b
 +    public void tick() {
 +        super.tick();
 +        if (this.onTheVergeOfDeath()) {
-+            tryAddHelpDisplay();
++            addHelpDisplay();
 +            if (!this.isOrderedToSit()) {
 +                this.setOrderedToSit(true);
 +            }
 +        } else {
-+            tryRemoveHelpDisplay();
++            removeHelpDisplay();
 +        }
 +    }
 +    // KioCG end
@@ -299,7 +299,7 @@ index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..c52f123a4721cc3dccb605a043a67f2b
                  if (!this.level().isClientSide) {
                      this.setOrderedToSit(!this.isOrderedToSit());
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index 7ee0be0742f5d214026026a3b95b69cfd90a4968..8c3efa411903376aa8ff39235a0e0f7801c25ea7 100644
+index 7ee0be0742f5d214026026a3b95b69cfd90a4968..a51752d1bd3469a232cd99dc300a4d23467cfc41 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 @@ -334,6 +334,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
@@ -308,14 +308,14 @@ index 7ee0be0742f5d214026026a3b95b69cfd90a4968..8c3efa411903376aa8ff39235a0e0f78
  
 +            // KioCG start
 +            if (this.onTheVergeOfDeath()) {
-+                tryAddHelpDisplay();
++                addHelpDisplay();
 +                if (!this.isOrderedToSit()) {
 +                    this.navigation.stop();
 +                    this.setTarget((LivingEntity) null);
 +                    this.setOrderedToSit(true);
 +                }
 +            } else {
-+                tryRemoveHelpDisplay();
++                removeHelpDisplay();
 +            }
 +            // KioCG end
          }
