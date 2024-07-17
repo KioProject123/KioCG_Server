@@ -4,19 +4,24 @@ Date: Fri, 15 Mar 2024 17:35:18 +0100
 Subject: [PATCH] Auto discard rider display entity
 
 
-diff --git a/src/main/java/org/bukkit/entity/Display.java b/src/main/java/org/bukkit/entity/Display.java
-index 2b6f0c627a848f37bc5b3f1732d0e0b82d9f89ad..b53b56b66d93562e95ef13c91232d7c9df98bf8b 100644
---- a/src/main/java/org/bukkit/entity/Display.java
-+++ b/src/main/java/org/bukkit/entity/Display.java
-@@ -204,6 +204,11 @@ public interface Display extends Entity {
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index 725ef320f929d5e3d141c1ed3246d73a7d741f31..7701fd0935299915d568378e259f056d4d342eb2 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -1159,4 +1159,16 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
       */
-     public void setBrightness(@Nullable Brightness brightness);
- 
-+    // KioCG start
-+    public int getRiderPriority();
-+    public void setRiderPriority(int riderPriority);
-+    // KioCG end
+     @NotNull String getScoreboardEntryName();
+     // Paper end - entity scoreboard name
 +
-     /**
-      * Describes the axes/points around which the entity can pivot.
-      */
++    // KioCG start
++    default @Nullable <T extends Display> T addRiderDisplay(Class<T> clazz, java.util.function.Consumer<T> function) {
++        return addRiderDisplay(clazz, 0, function);
++    }
++    @Nullable <T extends Display> T addRiderDisplay(Class<T> clazz, int priority, java.util.function.Consumer<T> function);
++
++    default boolean removeRiderDisplay() {
++        return removeRiderDisplay(null);
++    }
++    boolean removeRiderDisplay(@NotNull UUID uuid);
++    // KioCG end
+ }

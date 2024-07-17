@@ -5,36 +5,53 @@ Subject: [PATCH] Auto discard rider display entity
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Display.java b/src/main/java/net/minecraft/world/entity/Display.java
-index a658943669cdfd49f66ba713505d11b33306ed86..0596375a5a4a25982a398f6d6c1d2a3324544fce 100644
+index a658943669cdfd49f66ba713505d11b33306ed86..cadb601efa9ea300c4ec4ac1ddb9ef6746061854 100644
 --- a/src/main/java/net/minecraft/world/entity/Display.java
 +++ b/src/main/java/net/minecraft/world/entity/Display.java
-@@ -97,6 +97,7 @@ public abstract class Display extends Entity {
+@@ -97,6 +97,19 @@ public abstract class Display extends Entity {
      private Display.RenderState renderState;
      @Nullable
      private Display.PosRotInterpolationTarget posRotInterpolationTarget;
-+    private int riderPriority = 0; public int getRiderPriority() { return this.riderPriority; } public void setRiderPriority(int riderPriority) { this.riderPriority = riderPriority; } // KioCG
++    // KioCG start
++    @Nullable
++    private Integer riderPriority = null;
++
++    @Nullable
++    public Integer getRiderPriority() {
++        return this.riderPriority;
++    }
++
++    public void setRiderPriority(@Nullable Integer riderPriority) {
++        this.riderPriority = riderPriority;
++    }
++    // KioCG end
  
      public Display(EntityType<?> type, Level world) {
          super(type, world);
-@@ -180,6 +181,17 @@ public abstract class Display extends Entity {
+@@ -180,6 +193,22 @@ public abstract class Display extends Entity {
          }
      }
  
 +    // KioCG start
 +    @Override
 +    public void stopRiding(boolean suppressCancellation) {
-+        Entity entity = this.getVehicle();
-+        super.stopRiding(suppressCancellation);
-+        if (entity != null && this.getVehicle() == null) {
-+            this.discard();
++        if (this.riderPriority != null) {
++            Entity entity = this.getVehicle();
++            super.stopRiding(suppressCancellation);
++            if (entity != null && this.getVehicle() == null) {
++                this.discard();
++            }
++            return;
 +        }
++
++        super.stopRiding(suppressCancellation);
 +    }
 +    // KioCG end
 +
      protected abstract void updateRenderSubState(boolean shouldLerp, float lerpProgress);
  
      @Override
-@@ -264,6 +276,8 @@ public abstract class Display extends Entity {
+@@ -264,6 +293,8 @@ public abstract class Display extends Entity {
          } else {
              this.setBrightnessOverride(null);
          }
@@ -43,20 +60,20 @@ index a658943669cdfd49f66ba713505d11b33306ed86..0596375a5a4a25982a398f6d6c1d2a33
      }
  
      public void setTransformation(Transformation transformation) {
-@@ -291,6 +305,8 @@ public abstract class Display extends Entity {
+@@ -291,6 +322,8 @@ public abstract class Display extends Entity {
          if (brightness != null) {
              Brightness.CODEC.encodeStart(NbtOps.INSTANCE, brightness).ifSuccess(brightnessx -> nbt.put("brightness", brightnessx));
          }
 +
-+        nbt.putInt("KioCG.RiderPriority", this.riderPriority); // KioCG
++        if (this.riderPriority != null) nbt.putInt("KioCG.RiderPriority", this.riderPriority); // KioCG
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 38f3f368a50cc0e1f0638424e4e92b264ee64abd..597e277481b26178b25f287f005715c86ad360ff 100644
+index 38f3f368a50cc0e1f0638424e4e92b264ee64abd..b6d1e52690e02031f4c078fdfd5b075758379017 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4762,6 +4762,42 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4762,6 +4762,46 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return null;
      }
  
@@ -69,8 +86,8 @@ index 38f3f368a50cc0e1f0638424e4e92b264ee64abd..597e277481b26178b25f287f005715c8
 +    @Nullable
 +    public <T extends Display> T addRiderDisplay(EntityType<T> type, int priority, java.util.function.Consumer<T> function) {
 +        final Entity firstPassenger = this.getFirstPassenger();
-+        if (firstPassenger == null || firstPassenger instanceof Display display && display.getRiderPriority() < priority) {
-+            this.ejectPassengers();
++        if (firstPassenger == null || firstPassenger instanceof Display display && Objects.requireNonNullElse(display.getRiderPriority(), Integer.MAX_VALUE) < priority) {
++            if (firstPassenger != null) firstPassenger.discard();
 +
 +            T display = type.create(this.level());
 +            if (display != null) {
@@ -86,9 +103,13 @@ index 38f3f368a50cc0e1f0638424e4e92b264ee64abd..597e277481b26178b25f287f005715c8
 +        return null;
 +    }
 +
++    public boolean removeRiderDisplay() {
++        return this.removeRiderDisplay(null);
++    }
++
 +    public boolean removeRiderDisplay(@Nullable UUID uuid) {
 +        final Entity firstPassenger = this.getFirstPassenger();
-+        if (firstPassenger instanceof Display display && (uuid == null || display.getUUID().equals(uuid))) {
++        if (firstPassenger instanceof Display display && (uuid == null && display.getRiderPriority() != null || display.getUUID().equals(uuid))) {
 +            firstPassenger.discard();
 +            return true;
 +        }
@@ -99,14 +120,38 @@ index 38f3f368a50cc0e1f0638424e4e92b264ee64abd..597e277481b26178b25f287f005715c8
      public static enum RemovalReason {
  
          KILLED(true, false), DISCARDED(true, false), UNLOADED_TO_CHUNK(false, true), UNLOADED_WITH_PLAYER(false, false), CHANGED_DIMENSION(false, false);
-diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
-index 48eeb1d9ba0ad6f895bfe507a6fbe4b9c9530e47..9f188b9e47948c111a89f3923c0d5386811215e1 100644
---- a/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
-+++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftDisplay.java
-@@ -167,4 +167,6 @@ public class CraftDisplay extends CraftEntity implements Display {
-             this.getHandle().setBrightnessOverride(null);
-         }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 2cde808bfa797256409879505ba205a71f381981..5da985512e9bdd3a536e6f7b6efb563a9b45ca8e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -1297,4 +1297,30 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return this.getHandle().getScoreboardName();
      }
+     // Paper end - entity scoreboard name
 +
-+    public int getRiderPriority() { return this.getHandle().getRiderPriority(); } public void setRiderPriority(int riderPriority) { this.getHandle().setRiderPriority(riderPriority); } // KioCG
++    // KioCG start
++    @Override
++    public <T extends org.bukkit.entity.Display> T addRiderDisplay(Class<T> clazz, int priority, java.util.function.Consumer<T> function) {
++        return (T) this.getHandle().addRiderDisplay(getNMSDisplayType(clazz), priority, nmsEntity -> {
++            function.accept((T) nmsEntity.getBukkitEntity());
++        }).getBukkitEntity();
++    }
++
++    @Override
++    public boolean removeRiderDisplay(UUID uuid) {
++        return this.getHandle().removeRiderDisplay(uuid);
++    }
++
++    private net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Display> getNMSDisplayType(Class<? extends org.bukkit.entity.Display> clazz) {
++        if (org.bukkit.entity.BlockDisplay.class.isAssignableFrom(clazz)) {
++            return net.minecraft.world.entity.EntityType.BLOCK_DISPLAY;
++        } else if (org.bukkit.entity.ItemDisplay.class.isAssignableFrom(clazz)) {
++            return net.minecraft.world.entity.EntityType.ITEM_DISPLAY;
++        } else if (org.bukkit.entity.TextDisplay.class.isAssignableFrom(clazz)) {
++            return net.minecraft.world.entity.EntityType.TEXT_DISPLAY;
++        } else {
++            throw new IllegalArgumentException("");
++        }
++    }
++    // KioCG end
  }
