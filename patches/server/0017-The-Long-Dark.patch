@@ -118,10 +118,10 @@ index 0000000000000000000000000000000000000000..e383f96793a8ce69dbc13b8aebb6f36f
 +}
 diff --git a/src/main/java/com/kiocg/player/ThirstData.java b/src/main/java/com/kiocg/player/ThirstData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f5297001730014909d53de7ef7eb66efcde1d144
+index 0000000000000000000000000000000000000000..61363982a4e5bfcfaf56ede88f4a5b26ccb841f9
 --- /dev/null
 +++ b/src/main/java/com/kiocg/player/ThirstData.java
-@@ -0,0 +1,89 @@
+@@ -0,0 +1,93 @@
 +package com.kiocg.player;
 +
 +import net.minecraft.nbt.CompoundTag;
@@ -182,15 +182,19 @@ index 0000000000000000000000000000000000000000..f5297001730014909d53de7ef7eb66ef
 +                addThirstRegain(-20 * quotient);
 +            }
 +
++            final int before = thirstValue;
 +            addThirstValue(-quotient);
++            if (entityhuman instanceof net.minecraft.server.level.ServerPlayer serverplayer && before > 3 && thirstValue <= 3) {
++                serverplayer.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundEntityPacket(net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(net.minecraft.sounds.SoundEvents.HUSK_AMBIENT), net.minecraft.sounds.SoundSource.MASTER, serverplayer, 1.0F, 1.75F, 2L));
++            }
 +
 +            if (thirstValue <= 3 && entityhuman.tickCount % 10 == 0) {
-+                if (!entityhuman.hasEffect(MobEffects.WEAKNESS) || entityhuman.getEffect(MobEffects.WEAKNESS).getAmplifier() == 0 && entityhuman.getEffect(MobEffects.WEAKNESS).endsWithin(20 - 1)) {
-+                    entityhuman.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20, 0));
++                if (!entityhuman.hasEffect(MobEffects.HUNGER) || entityhuman.getEffect(MobEffects.HUNGER).getAmplifier() == 0 && entityhuman.getEffect(MobEffects.HUNGER).endsWithin(20)) {
++                    entityhuman.addEffect(new MobEffectInstance(MobEffects.HUNGER, 20, 0));
 +                }
 +            }
 +
-+            this.entityhuman.getEntityData().set(Entity.DATA_AIR_SUPPLY_ID, getThirstProgress());
++            this.entityhuman.getEntityData().set(Entity.DATA_AIR_SUPPLY_ID, getThirstProgress(), true);
 +        }
 +    }
 +
@@ -212,10 +216,10 @@ index 0000000000000000000000000000000000000000..f5297001730014909d53de7ef7eb66ef
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..629b9c3dee73dfbddad96187f83e7f4568a1a2d7 100644
+index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..e25a25a84826303451b900568c749dbf8c46bca9 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -555,6 +555,31 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -555,6 +555,37 @@ public class WorldConfiguration extends ConfigurationPart {
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
          public boolean removeAutomationGameplay = true;
@@ -239,6 +243,12 @@ index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..629b9c3dee73dfbddad96187f83e7f45
 +                public double isOnFire = 20;
 +
 +                public double finalTemperatureMultiplier = 0.5;
++            }
++
++            public ThirstValue thirstValue;
++            public class ThirstValue extends ConfigurationPart {
++                public double thirstRegainMultiplierHealth = 1.0;
++                public double thirstRegainMultiplierFood = 2.0;
 +            }
 +
 +            public int campfireExtinguishingOne = -1;
@@ -342,18 +352,10 @@ index 83f3ffdd8fa901b3de580d2359cdb5ead0d762cb..38f3f368a50cc0e1f0638424e4e92b26
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index b9cef93fe382b666bec04ca95eeaf2d8acbb3c40..5d37ce6e45e818bc5d1a7094b581b097dc0ed80c 100644
+index b9cef93fe382b666bec04ca95eeaf2d8acbb3c40..8d1b5ea9c657603e1823e7c35e25fd726fc234ce 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -481,6 +481,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
-                             this.level().addParticle(ParticleTypes.BUBBLE, this.getX() + d2, this.getY() + d3, this.getZ() + d4, vec3d.x, vec3d.y, vec3d.z);
-                         }
- 
-+                        if (!(this instanceof net.minecraft.world.entity.player.Player)) // KioCG - 玩家永久水下呼吸
-                         this.hurt(this.damageSources().drown(), 2.0F);
-                     }
-                 }
-@@ -1356,6 +1357,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1356,6 +1356,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
          // Paper end
          float f1 = this.getHealth();
  
@@ -361,11 +363,11 @@ index b9cef93fe382b666bec04ca95eeaf2d8acbb3c40..5d37ce6e45e818bc5d1a7094b581b097
          if (f1 > 0.0F) {
              EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason, isFastRegen); // Paper
              // Suppress during worldgen
-@@ -1365,10 +1367,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1365,10 +1366,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
              if (!event.isCancelled()) {
                  this.setHealth((float) (this.getHealth() + event.getAmount()));
-+                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain(Math.max(this.getHealth() - f1, 0)); // KioCG
++                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain(Math.max(this.getHealth() - f1, 0) * this.level().paperConfig().kiocgConfig.theLongDark.thirstValue.thirstRegainMultiplierHealth); // KioCG
              }
              // CraftBukkit end
          }
@@ -374,7 +376,7 @@ index b9cef93fe382b666bec04ca95eeaf2d8acbb3c40..5d37ce6e45e818bc5d1a7094b581b097
      }
  
      public float getHealth() {
-@@ -3480,17 +3483,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3480,17 +3482,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int i = this.getTicksFrozen();
  
@@ -447,14 +449,14 @@ index 54ba25632c2a9e1c93a5b3a0b92e5280864c49d6..4a29117cedb2b0ab02c2e1b13c07fece
          nbt.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
          if (!this.getShoulderEntityLeft().isEmpty()) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index bd3f78e6453cfe18aa3da38176b04d734d83bb4b..ee7f4f06ff023d372611e704d5da58a37e80c388 100644
+index bd3f78e6453cfe18aa3da38176b04d734d83bb4b..b45e4a9793ddcc1e6d090c6a18f99e3b9bc35635 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
 @@ -74,6 +74,7 @@ public class FoodData {
  
                  if (!event.isCancelled()) {
                      this.foodLevel = event.getFoodLevel();
-+                    player.thirstData.addThirstRegain(Math.max(this.lastFoodLevel - this.foodLevel, 0)); // KioCG
++                    player.thirstData.addThirstRegain(Math.max(this.lastFoodLevel - this.foodLevel, 0) * player.level().paperConfig().kiocgConfig.theLongDark.thirstValue.thirstRegainMultiplierFood); // KioCG
                  }
  
                  ((ServerPlayer) player).connection.send(new ClientboundSetHealthPacket(((ServerPlayer) player).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
