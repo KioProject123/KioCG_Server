@@ -5,11 +5,11 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 2274b35bc9662f8a3496c193bd670f0ba1025309..c20014fbfedc2ca99945d92bac9d4e9d332b5da2 100644
+index bc3fca85450b7147103069644ac49283f8a32327..bdd59459cd2a8dc081fc17bbd8acda7768570fc4 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -600,6 +600,12 @@ public class WorldConfiguration extends ConfigurationPart {
-                 public boolean zombiesSkinnedIntoSkeletons = true;
+                 public boolean babyZombieJockey = true;
              }
  
 +            public KiocgConfig.Entity.Animal animal;
@@ -18,9 +18,9 @@ index 2274b35bc9662f8a3496c193bd670f0ba1025309..c20014fbfedc2ca99945d92bac9d4e9d
 +                public double feedingHugeChance = 0.001;
 +            }
 +
-             public boolean betterMobGriefingSetting = true;
              public boolean turretEnable = true;
              public int turretCooldownDefault = 100;
+             public double turretRangeDefault = 8.0;
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
 index 623d9e9b2d57085acfe3fad657bf6b507bc1dc21..a424084c6b425c5e96cdeffa75c5a09143611ed9 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java

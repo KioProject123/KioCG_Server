@@ -5,7 +5,7 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 1aa6f1afe6249ce616a3470b53ae0fccffa27979..48d36defbf453e0eb3f9ea2bca85a3169bd33241 100644
+index 1aa6f1afe6249ce616a3470b53ae0fccffa27979..0f1654f760a9799728c75b6b7bf2a2f34866d6ad 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -591,6 +591,14 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -17,8 +17,8 @@ index 1aa6f1afe6249ce616a3470b53ae0fccffa27979..48d36defbf453e0eb3f9ea2bca85a316
 +            public class Monster extends ConfigurationPart {
 +                public boolean spawnInLightAtNight = true;
 +                public int darkEnoughToSprint = 7;
-+                public boolean babyZombieJockey = true;
 +                public boolean zombiesSkinnedIntoSkeletons = true;
++                public boolean babyZombieJockey = true;
 +            }
          }
      }

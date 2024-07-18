@@ -5,7 +5,7 @@ Subject: [PATCH] Configurable persistent when picked up items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index dd084c971bd268e879914fec64d14773de91bee6..6e42dcf16d227c65ca6a7815e1628af9e1ed4c74 100644
+index f387db1cbf5f0867d85ddb053d135f5b7b33293a..3ec74438fc42563b6fbbf429171c3557c2c42597 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -607,6 +607,8 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -18,7 +18,7 @@ index dd084c971bd268e879914fec64d14773de91bee6..6e42dcf16d227c65ca6a7815e1628af9
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 4480fd52b14ce6b0f821fb1f2c4aabe76d9952f9..40dd11f9ca0a3e87c1c1256e0facd2790fe155dc 100644
+index 93fceaa1d5de21d6a900a319e235fae992d55fca..828f610a6d093e54fba017ce317c3710cfe50abe 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -770,6 +770,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab

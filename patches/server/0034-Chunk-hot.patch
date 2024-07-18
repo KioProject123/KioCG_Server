@@ -228,10 +228,10 @@ index 1d0ffded5f67118406d64411f64e59ada46e1003..748a6daa04bae2b2d3bfd7aebefdf429
          public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 00d65e0ab479bb96ef7f8d01e4af5d9ca3875d2e..f5d568d965d661bc781dd01cee5225d440484cbd 100644
+index 6e7dfb0e7fb194df6aeb857999f99d8b42c5ef35..ebea00e91c1d934b829cc6ad1c58eb680e2b040d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -618,6 +618,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -617,6 +617,12 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;
@@ -304,7 +304,7 @@ index ed313384080ce4eb452880b40eef2a252e2e7dc9..36d3c8a2912001cdb1e33f80c7db7465
          if (this.isTickTimeLoggingEnabled()) {
              this.getTickTimeLogger().logPartialSample(Util.getNanos() - tickStartTime, TpsDebugDimensions.TICK_SERVER_METHOD.ordinal());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index fc05936de50e2c8a0e0a462aea9ed6968226661a..dd7ca3613087ca40d832004ebbe9650b19dd118e 100644
+index 31b621d2d16f1a73727b33931714a6223f2bf857..a15f5430b958326388ed2c905b9031c0c64b2ca2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1263,6 +1263,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
@@ -436,10 +436,10 @@ index 1859477e96709368683fe5707327e92f56fbfc8e..4c4814094552fa4382b1cbe649f24f47
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 597e277481b26178b25f287f005715c86ad360ff..fcc9cefff084ecdac983253ea3539e4b118af58a 100644
+index b6d1e52690e02031f4c078fdfd5b075758379017..e6a01ad61cc689467d3672096d75d2e93f0da1a0 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4859,4 +4859,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4863,4 +4863,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return ((net.minecraft.server.level.ServerChunkCache) level.getChunkSource()).isPositionTicking(this);
      }
      // Paper end - Expose entity id counter
@@ -467,7 +467,7 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 69c0b9e326874c50ff28043354a72f62e5e70d62..4480fd52b14ce6b0f821fb1f2c4aabe76d9952f9 100644
+index d02bafb81681ad41e25d9ecc37aa1bd8b8b2a12f..93fceaa1d5de21d6a900a319e235fae992d55fca 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1860,4 +1860,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -531,7 +531,7 @@ index c249577dc53f37d960132178468e512262bdd1c2..5d89c66f0ac3acb7d2ddedc527775924
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 5f7d152f41eb85f17bcded4bc8099b998e5a338b..3b833418b5d9b2b93658e6fd11bd1054a50f735c 100644
+index 3a71b9c79fffe3a575bbf66f5b8b0ab28100d1a5..991a95c838965bb1cb8cf2eb8133e8ce8a1cd8ac 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -378,4 +378,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {

@@ -5,12 +5,12 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index ab05fe72beb0ce2b67842fa281169fbc3c5e6494..9bda7a360da9a13f8b6a5b289cafbc97bdf91bb0 100644
+index 0f1654f760a9799728c75b6b7bf2a2f34866d6ad..bdfcf4354abf436d25ae7bcac85e5c63913b7d8d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -602,6 +602,9 @@ public class WorldConfiguration extends ConfigurationPart {
- 
-             public boolean betterMobGriefingSetting = true;
+@@ -600,6 +600,9 @@ public class WorldConfiguration extends ConfigurationPart {
+                 public boolean babyZombieJockey = true;
+             }
          }
 +
 +        public boolean sleepAnyTime = true;

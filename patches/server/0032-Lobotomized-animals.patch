@@ -64,7 +64,7 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index c20014fbfedc2ca99945d92bac9d4e9d332b5da2..00d65e0ab479bb96ef7f8d01e4af5d9ca3875d2e 100644
+index bdd59459cd2a8dc081fc17bbd8acda7768570fc4..6e7dfb0e7fb194df6aeb857999f99d8b42c5ef35 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -604,6 +604,7 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -74,7 +74,7 @@ index c20014fbfedc2ca99945d92bac9d4e9d332b5da2..00d65e0ab479bb96ef7f8d01e4af5d9c
 +                public int lobotomizeCheckInterval = 100;
              }
  
-             public boolean betterMobGriefingSetting = true;
+             public boolean turretEnable = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 index 3cf0aa30bb50233b1b0f467a4d63b0cab40b3cb3..8d3f01a16da3477013cfcd106abbe5e80c6f5b56 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
@@ -241,7 +241,7 @@ index 2e9991e6b3c05584002744a2ee2579b1dba218b2..6a29d40c63ac550a7898176b1e10f589
              this.path = null;
              return false;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index 0043946e8dbd0c75c258b293182be6ecc2e39a70..cd926555b7007218fbaae858c4947268f06a682b 100644
+index 94d336897141f239630c6c6d81a774677c2a0e28..d04f87816dbaa1a9c1540c1ba36b43decb368093 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
 @@ -42,6 +42,7 @@ public abstract class Animal extends AgeableMob {
