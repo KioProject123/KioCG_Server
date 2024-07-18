@@ -5,7 +5,7 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 5be6cf1767b6f019736e75e74fc589d92fdfba00..d02bafb81681ad41e25d9ecc37aa1bd8b8b2a12f 100644
+index 82a5a5d944651a0a81ea2518dc060dba0af23794..4e4f4709b8a762b850a4feec5bae3ab5af9fec09 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -685,7 +685,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -141,7 +141,7 @@ index 860e385fc83f9787dca92efe35d21fd69c4dd635..19e243956385d23f450a90f838881ec8
  
                                  if (randomsource.nextBoolean()) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index 5e9a0f93e4074ea7ad4e2a3394993cc81bc0f831..c3721004e21d048cc99e6a17be993365fa9187c8 100644
+index 06cd00d571d583b9b94f3fb703e084fcde67391b..e55b3c44cfb7d71646a5d0b5102f4c4c593b2a52 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 @@ -389,7 +389,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento

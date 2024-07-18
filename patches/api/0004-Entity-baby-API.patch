@@ -5,18 +5,19 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
-index a1e54e9d14393a6c0ea57cca854071c5396d9717..84dc776b3ade7522a1262c78c04ac2aa9eb487ba 100644
+index a1e54e9d14393a6c0ea57cca854071c5396d9717..1f5976e583e29059bd95d97044b2777db778993c 100644
 --- a/src/main/java/org/bukkit/entity/LivingEntity.java
 +++ b/src/main/java/org/bukkit/entity/LivingEntity.java
-@@ -1458,4 +1458,11 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
+@@ -1458,4 +1458,12 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
       */
      boolean canUseEquipmentSlot(org.bukkit.inventory.@NotNull EquipmentSlot slot);
      // Paper end - Expose canUseSlot
 +
 +    // KioCG start
-+    public boolean isBabySimulate();
-+    public void setBabySimulate(boolean flag);
++    public void setBabySimulateOrVanilla();
++    public boolean isBabySimulateOrVanilla();
++    public void setHugeSimulate();
 +    public boolean isHugeSimulate();
-+    public void setHugeSimulate(boolean flag);
++    public void removeScaleAttributes();
 +    // KioCG end
  }

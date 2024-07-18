@@ -5,26 +5,26 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 7cfec96bddb2731baac6a8b7909c4a13d94d8794..942aaf7286205bc4294a29d62faeb9d783e21b42 100644
+index 5ed949083cd1e01b3d97713de0937fbee8ab4c3d..7acbe513ec7e0e8a35e13ec23d99d013ebcc6675 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -609,6 +609,7 @@ public class CraftEventFactory {
-     public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, List<net.minecraft.world.entity.LivingEntity> convertedList, EntityTransformEvent.TransformReason convertType) {
+@@ -610,6 +610,7 @@ public class CraftEventFactory {
          List<org.bukkit.entity.Entity> list = new ArrayList<>();
          for (net.minecraft.world.entity.LivingEntity entityLiving : convertedList) {
+             entityLiving.transformScaleSimulate(original); // KioCG
 +            entityLiving.spawnedViaMobSpawner = original.spawnedViaMobSpawner; // KioCG
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1337,6 +1338,7 @@ public class CraftEventFactory {
-     }
+@@ -1339,6 +1340,7 @@ public class CraftEventFactory {
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {
+         ((net.minecraft.world.entity.LivingEntity) pigzombie).transformScaleSimulate((net.minecraft.world.entity.LivingEntity) pig); // KioCG
 +        pigzombie.spawnedViaMobSpawner = pig.spawnedViaMobSpawner; // KioCG
          PigZapEvent event = new PigZapEvent((Pig) pig.getBukkitEntity(), (LightningStrike) lightning.getBukkitEntity(), (PigZombie) pigzombie.getBukkitEntity());
          pig.getBukkitEntity().getServer().getPluginManager().callEvent(event);
          return event;
-@@ -1350,6 +1352,7 @@ public class CraftEventFactory {
+@@ -1352,6 +1354,7 @@ public class CraftEventFactory {
  
      // Paper start
      public static com.destroystokyo.paper.event.entity.EntityZapEvent callEntityZapEvent(Entity entity, Entity lightning, Entity changedEntity) {
