@@ -6,7 +6,7 @@ Subject: [PATCH] The Long Dark
 
 diff --git a/src/main/java/com/kiocg/player/ColdData.java b/src/main/java/com/kiocg/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e383f96793a8ce69dbc13b8aebb6f36f69de51a7
+index 0000000000000000000000000000000000000000..b8071513e17d424e7ef524ae1bfe55be376fb0cf
 --- /dev/null
 +++ b/src/main/java/com/kiocg/player/ColdData.java
 @@ -0,0 +1,106 @@
@@ -63,17 +63,17 @@ index 0000000000000000000000000000000000000000..e383f96793a8ce69dbc13b8aebb6f36f
 +            final WorldConfiguration.KiocgConfig.TheLongDark theLongDark = world.paperConfig().kiocgConfig.theLongDark;
 +
 +            double ambientTemperature = theLongDark.coldValue.ambientTemperatureBase;
-+            if (theLongDark.coldValue.ambientTemperatureMultiplier != 0) {
-+                ambientTemperature += (world.getBiome(pos).value().getTemperature(pos) + theLongDark.coldValue.ambientTemperatureOffset) * theLongDark.coldValue.ambientTemperatureMultiplier;
-+            }
 +            if (theLongDark.coldValue.ambientSkyDarkenMultiplier != 0) {
-+                ambientTemperature += world.getSkyDarken() * world.getBrightness(LightLayer.SKY, pos) * theLongDark.coldValue.ambientSkyDarkenMultiplier;
++                ambientTemperature += world.getSkyDarken() * theLongDark.coldValue.ambientSkyDarkenMultiplier * world.getBrightness(LightLayer.SKY, pos);
++            }
++            if (theLongDark.coldValue.biomeTemperatureMultiplier != 0) {
++                ambientTemperature += (world.getBiome(pos).value().getTemperature(pos) + theLongDark.coldValue.biomeTemperatureOffset) * theLongDark.coldValue.biomeTemperatureMultiplier;
 +            }
 +
 +            double playerTemperature = theLongDark.coldValue.playerTemperatureBase;
 +            if (theLongDark.coldValue.playerLightBlockMultiplier != 0.0) {
 +                int blockLight = world.getBrightness(LightLayer.BLOCK, pos);
-+                playerTemperature += blockLight * theLongDark.coldValue.playerLightBlockMultiplier;
++                playerTemperature += Math.min(blockLight, 12) * theLongDark.coldValue.playerLightBlockMultiplier;
 +            }
 +
 +            if (theLongDark.coldValue.isInWaterOrBubble != 0 && (this.isInWater || entityhuman.isInPowderSnow || entityhuman.isInWaterOrBubble())) {
@@ -118,10 +118,10 @@ index 0000000000000000000000000000000000000000..e383f96793a8ce69dbc13b8aebb6f36f
 +}
 diff --git a/src/main/java/com/kiocg/player/ThirstData.java b/src/main/java/com/kiocg/player/ThirstData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..61363982a4e5bfcfaf56ede88f4a5b26ccb841f9
+index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f67be69c5
 --- /dev/null
 +++ b/src/main/java/com/kiocg/player/ThirstData.java
-@@ -0,0 +1,93 @@
+@@ -0,0 +1,97 @@
 +package com.kiocg.player;
 +
 +import net.minecraft.nbt.CompoundTag;
@@ -177,6 +177,10 @@ index 0000000000000000000000000000000000000000..61363982a4e5bfcfaf56ede88f4a5b26
 +
 +    public void tick() {
 +        if (!entityhuman.getAbilities().invulnerable) {
++            if (entityhuman.level().getBiome(entityhuman.blockPosition()).value().climateSettings.temperature() >= 2.0) {
++                addThirstRegain(entityhuman.level().paperConfig().kiocgConfig.theLongDark.thirstValue.highTemperatureBiomeThirst);
++            }
++
 +            int quotient = (int) thirstRegain / 20;
 +            if (quotient > 0) {
 +                addThirstRegain(-20 * quotient);
@@ -216,10 +220,10 @@ index 0000000000000000000000000000000000000000..61363982a4e5bfcfaf56ede88f4a5b26
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..e25a25a84826303451b900568c749dbf8c46bca9 100644
+index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..ee0695b9f95dd4aa541bbe93f9a60d438da3f8c1 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -555,6 +555,37 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -555,6 +555,38 @@ public class WorldConfiguration extends ConfigurationPart {
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = false;
          public boolean removeAutomationGameplay = true;
@@ -231,24 +235,25 @@ index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..e25a25a84826303451b900568c749dbf
 +            public ColdValue coldValue;
 +            public class ColdValue extends ConfigurationPart {
 +                public double ambientTemperatureBase = 0;
-+                public double ambientTemperatureOffset = -0.65;
-+                public double ambientTemperatureMultiplier = 20;
-+                public double ambientSkyDarkenMultiplier = -0.25;
++                public double ambientSkyDarkenMultiplier = -0.15;
++                public double biomeTemperatureOffset = -0.65;
++                public double biomeTemperatureMultiplier = 30;
 +
 +                public double playerTemperatureBase = 0;
 +                public double playerLightBlockMultiplier = 5;
-+                public double isInWaterOrBubble = -50;
-+                public double isInRain = -20;
-+                public double isInLava = 500;
-+                public double isOnFire = 20;
++                public double isInWaterOrBubble = -35;
++                public double isInRain = -15;
++                public double isInLava = 300;
++                public double isOnFire = 10;
 +
-+                public double finalTemperatureMultiplier = 0.5;
++                public double finalTemperatureMultiplier = 1.0;
 +            }
 +
 +            public ThirstValue thirstValue;
 +            public class ThirstValue extends ConfigurationPart {
 +                public double thirstRegainMultiplierHealth = 1.0;
 +                public double thirstRegainMultiplierFood = 2.0;
++                public double highTemperatureBiomeThirst = 0.02;
 +            }
 +
 +            public int campfireExtinguishingOne = -1;
