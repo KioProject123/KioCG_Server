@@ -189,8 +189,8 @@ index 0000000000000000000000000000000000000000..61363982a4e5bfcfaf56ede88f4a5b26
 +            }
 +
 +            if (thirstValue <= 3 && entityhuman.tickCount % 10 == 0) {
-+                if (!entityhuman.hasEffect(MobEffects.HUNGER) || entityhuman.getEffect(MobEffects.HUNGER).getAmplifier() == 0 && entityhuman.getEffect(MobEffects.HUNGER).endsWithin(20)) {
-+                    entityhuman.addEffect(new MobEffectInstance(MobEffects.HUNGER, 20, 0));
++                if (!entityhuman.hasEffect(MobEffects.WEAKNESS) || entityhuman.getEffect(MobEffects.WEAKNESS).getAmplifier() == 0 && entityhuman.getEffect(MobEffects.WEAKNESS).endsWithin(20)) {
++                    entityhuman.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20, 0));
 +                }
 +            }
 +
