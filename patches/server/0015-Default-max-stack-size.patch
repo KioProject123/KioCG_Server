@@ -26,6 +26,28 @@ index 60757f8df706cba92350d73503b73913cff3bcfc..194dc9b7831d2cfaf054bc4a40d81927
          .set(LORE, ItemLore.EMPTY)
          .set(ENCHANTMENTS, ItemEnchantments.EMPTY)
          .set(REPAIR_COST, 0)
+diff --git a/src/main/java/net/minecraft/server/commands/ItemCommands.java b/src/main/java/net/minecraft/server/commands/ItemCommands.java
+index 75bef113fc8f488477813e836436e2b3001107c4..fa6e4e42e86d9b93300d468593c7b822cf0861bd 100644
+--- a/src/main/java/net/minecraft/server/commands/ItemCommands.java
++++ b/src/main/java/net/minecraft/server/commands/ItemCommands.java
+@@ -90,7 +90,7 @@ public class ItemCommands {
+                                                                         )
+                                                                 )
+                                                                 .then(
+-                                                                    Commands.argument("count", IntegerArgumentType.integer(1, 99))
++                                                                    Commands.argument("count", IntegerArgumentType.integer(1, 999)) // KioCG
+                                                                         .executes(
+                                                                             context -> setBlockItem(
+                                                                                     context.getSource(),
+@@ -198,7 +198,7 @@ public class ItemCommands {
+                                                                         )
+                                                                 )
+                                                                 .then(
+-                                                                    Commands.argument("count", IntegerArgumentType.integer(1, 99))
++                                                                    Commands.argument("count", IntegerArgumentType.integer(1, 999)) // KioCG
+                                                                         .executes(
+                                                                             context -> setEntityItem(
+                                                                                     context.getSource(),
 diff --git a/src/main/java/net/minecraft/world/Container.java b/src/main/java/net/minecraft/world/Container.java
 index 5db5ba026462ca642dcee718af732f80fadabef5..c53a99e9c06b07c595086d0571c41050efe87bd7 100644
 --- a/src/main/java/net/minecraft/world/Container.java
@@ -59,6 +81,19 @@ index 8fd54bccb7af59da9113d8a289d12d8fad1fb467..a09b7fbcdcb0f1f321c625d112a0d9b3
              return this.component(DataComponents.MAX_STACK_SIZE, maxCount);
          }
  
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index 312b57b4ef340935f4335989ce1d6a4b8b61532c..f8e84758928907243a3b59dd5f4c285dcb65e4f1 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -129,7 +129,7 @@ public final class ItemStack implements DataComponentHolder {
+     });
+     public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(() -> {
+         return RecordCodecBuilder.<ItemStack>create((instance) -> { // CraftBukkit - decompile error
+-            return instance.group(ItemStack.ITEM_NON_AIR_CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder), ExtraCodecs.intRange(1, 99).fieldOf("count").orElse(1).forGetter(ItemStack::getCount), DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter((itemstack) -> {
++            return instance.group(ItemStack.ITEM_NON_AIR_CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder), ExtraCodecs.intRange(1, 999).fieldOf("count").orElse(1).forGetter(ItemStack::getCount), DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter((itemstack) -> { // KioCG
+                 return itemstack.components.asPatch();
+             })).apply(instance, ItemStack::new);
+         });
 diff --git a/src/main/java/net/minecraft/world/item/Items.java b/src/main/java/net/minecraft/world/item/Items.java
 index 07315232192f6e09910a028c4643d7f0544c62e3..6cef99bc8ff178f86b0e0ea6c66b70efe30e75f1 100644
 --- a/src/main/java/net/minecraft/world/item/Items.java
