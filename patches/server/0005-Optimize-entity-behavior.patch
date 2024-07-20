@@ -5,10 +5,10 @@ Subject: [PATCH] Optimize entity behavior
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/PathfinderMob.java b/src/main/java/net/minecraft/world/entity/PathfinderMob.java
-index 9c995085357eff3c3b6c9c23129c2be6ea51e371..c5f6ab5b040db2815829a602fc8e199363af187b 100644
+index ec9e76c548393235dcc6658c29e72e07e5d3510b..b151a4538b875aaf28c69513a39b6254aa9b93a3 100644
 --- a/src/main/java/net/minecraft/world/entity/PathfinderMob.java
 +++ b/src/main/java/net/minecraft/world/entity/PathfinderMob.java
-@@ -69,7 +69,7 @@ public abstract class PathfinderMob extends Mob {
+@@ -68,7 +68,7 @@ public abstract class PathfinderMob extends Mob {
      @Override
      public void closeRangeLeashBehaviour(Entity entity) {
          super.closeRangeLeashBehaviour(entity);
@@ -90,10 +90,10 @@ index 97931bfd360725945ab9606ff698b518ae101076..b87dfc9e103e78a3a576c8ef2d8bc455
  
      public static AttributeSupplier.Builder createAttributes() {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index c382a8f95f612db881b9cdbd07316d1ca1cd9c4b..7ee0be0742f5d214026026a3b95b69cfd90a4968 100644
+index 22024d79b566ad5d388ceb644605ada3123ca608..0c51106537876f704e382a9afbcd2d7e083cb480 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-@@ -136,17 +136,38 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -137,17 +137,38 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
          this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
          this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F));
          this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
@@ -135,7 +135,7 @@ index c382a8f95f612db881b9cdbd07316d1ca1cd9c4b..7ee0be0742f5d214026026a3b95b69cf
          this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
      }
  
-@@ -726,7 +747,7 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -732,7 +753,7 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
          @Override
          public boolean canUse() {

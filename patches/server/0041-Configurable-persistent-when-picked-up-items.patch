@@ -18,10 +18,10 @@ index 1554aa9be5a811dcb60585bf0c307cb880143a28..7c12eddfdc0820a4fae203431860469d
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ac667870f5f1c5ed3c8a590ba7ecfb76feec087a..729c6629b08c08098220d2bc1bf6e9935bfefe62 100644
+index 59cc026fd79a343e7b35a2ae79e642c8fb6be202..a34c0696a6af0107425a3ba2ff3d1a51179bbba7 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -770,6 +770,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -768,6 +768,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      protected void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
          this.setItemSlot(slot, stack);
          this.setGuaranteedDrop(slot);
@@ -29,7 +29,7 @@ index ac667870f5f1c5ed3c8a590ba7ecfb76feec087a..729c6629b08c08098220d2bc1bf6e993
          this.persistenceRequired = true;
      }
  
-@@ -885,6 +886,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -883,6 +884,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -37,7 +37,7 @@ index ac667870f5f1c5ed3c8a590ba7ecfb76feec087a..729c6629b08c08098220d2bc1bf6e993
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Player entityhuman = this.level().findNearbyPlayer(this, -1.0D, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
  
-@@ -895,6 +897,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -893,6 +895,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
                  if (d0 > (double) j && this.removeWhenFarAway(d0)) {
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -45,7 +45,7 @@ index ac667870f5f1c5ed3c8a590ba7ecfb76feec087a..729c6629b08c08098220d2bc1bf6e993
                  }
  
                  int k = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory()).soft(); // Paper - Configurable despawn distances
-@@ -902,6 +905,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -900,6 +903,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
                  if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -53,7 +53,7 @@ index ac667870f5f1c5ed3c8a590ba7ecfb76feec087a..729c6629b08c08098220d2bc1bf6e993
                  } else if (d0 < (double) l) {
                      this.noActionTime = 0;
                  }
-@@ -912,6 +916,16 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -910,6 +914,16 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          }
      }
  

@@ -25,7 +25,7 @@ index c91a3f08b2a56a14c69bd1e93dc682b803092df2..1554aa9be5a811dcb60585bf0c307cb8
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Creeper.java b/src/main/java/net/minecraft/world/entity/monster/Creeper.java
-index cb1b19e2e0d8f0744b2355b8f4da0206b196b19c..5c32b2c473e5e56d6bd30218d3fea64ce5809b12 100644
+index d1041f2a4f1b3ea29ad532006e18cdc30c5019fa..aeb03a9648cbb149cc555177301cbe96e24e0486 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Creeper.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Creeper.java
 @@ -191,7 +191,7 @@ public class Creeper extends Monster implements PowerableMob {

@@ -19,10 +19,10 @@ index c442dfeceedf78f05312b31ffab930bff7c243fa..04d1d9f0b811e747eac768856526e10d
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index f72d85b28327a99149d17c9f533f0c4bc3155937..c56346d4c204299df97ea6bce15abf4c131e3f13 100644
+index 45c9d6fe59d3167cd67b9faa9f1b0a00995df3f9..e762c3ccda1f3200bb3b9cd5547caaec4add7287 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -656,6 +656,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -683,6 +683,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
@@ -30,7 +30,7 @@ index f72d85b28327a99149d17c9f533f0c4bc3155937..c56346d4c204299df97ea6bce15abf4c
          if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
              // CraftBukkit start
              j = this.levelData.getDayTime() + 24000L;
-@@ -675,6 +676,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -702,6 +703,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  this.resetWeatherCycle();
              }
          }
@@ -38,7 +38,7 @@ index f72d85b28327a99149d17c9f533f0c4bc3155937..c56346d4c204299df97ea6bce15abf4c
  
          this.updateSkyBrightness();
          if (flag) {
-@@ -1009,6 +1011,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1046,6 +1048,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
      }
  
      private void announceSleepStatus() {
@@ -47,10 +47,10 @@ index f72d85b28327a99149d17c9f533f0c4bc3155937..c56346d4c204299df97ea6bce15abf4c
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 3fa64d67b00a7864810403968602d2bf0619f382..fa72d34522e51a179ba3d044e2cf309c0498dcd2 100644
+index 151e259820185947056a8560f93e151a46d2451d..7287a23cff32e3458a626197eb8ef0cf369a98a7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1512,7 +1512,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1513,7 +1513,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                  return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.OBSTRUCTED);
              } else {
                  this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -59,7 +59,7 @@ index 3fa64d67b00a7864810403968602d2bf0619f382..fa72d34522e51a179ba3d044e2cf309c
                      return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
                  } else {
                      if (!this.isCreative()) {
-@@ -1562,7 +1562,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1563,7 +1563,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                          CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                      });
  
@@ -68,7 +68,7 @@ index 3fa64d67b00a7864810403968602d2bf0619f382..fa72d34522e51a179ba3d044e2cf309c
                          this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                      }
  
-@@ -2542,7 +2542,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -2543,7 +2543,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent
@@ -78,10 +78,10 @@ index 3fa64d67b00a7864810403968602d2bf0619f382..fa72d34522e51a179ba3d044e2cf309c
  
              this.respawnPosition = pos;
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 4a29117cedb2b0ab02c2e1b13c07feceadc1ee48..07cd4ebd9420d8aca34aebd92a15040deb995059 100644
+index ed668fae11f05bbaa8153c68d38f084db4d2d1d5..0d4076141505b28da0172eca920ee63558421b5a 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -275,7 +275,7 @@ public abstract class Player extends LivingEntity {
+@@ -276,7 +276,7 @@ public abstract class Player extends LivingEntity {
                  this.sleepCounter = 100;
              }
  

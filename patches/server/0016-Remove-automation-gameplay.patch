@@ -90,7 +90,7 @@ index 45fafee2cf1893dccf477939dad05e9e1938ec8c..aa511b55b89397616aae1b775b2ecffe
                          itemstack1 = DropperBlock.DISPENSE_BEHAVIOUR.dispense(sourceblock, itemstack);
                      } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index a233a6f702a65f5b2ddc18cedb0e2d74bf0ddb55..d3e96a35d1f64c614bd83d26a77999293bdd7946 100644
+index af36be670714ba5191b2e761ae03812060f38e34..611bde0fee3d419494e7ada9ca1a32369d6ce341 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -140,6 +140,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen

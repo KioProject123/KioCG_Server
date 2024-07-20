@@ -44,15 +44,14 @@ index 0000000000000000000000000000000000000000..ff3fa06944b0c616a5a8ba9e5839f5cb
 +}
 diff --git a/src/main/java/com/kiocg/task/BossBarTask.java b/src/main/java/com/kiocg/task/BossBarTask.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2d5b4181902210a4069bac1c43a718a4efd235cf
+index 0000000000000000000000000000000000000000..2d1235b34e7cb69365d7b9a42b1d180434978b82
 --- /dev/null
 +++ b/src/main/java/com/kiocg/task/BossBarTask.java
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,96 @@
 +package com.kiocg.task;
 +
 +import net.kyori.adventure.bossbar.BossBar;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
 +import org.bukkit.entity.Player;
 +import org.bukkit.scheduler.BukkitRunnable;
 +
@@ -143,6 +142,165 @@ index 0000000000000000000000000000000000000000..2d5b4181902210a4069bac1c43a718a4
 +
 +    public static void removeFromAll(Player player) {
 +        TPSBarTask.instance().removePlayer(player);
++    }
++}
+diff --git a/src/main/java/com/kiocg/task/MinecraftInternalPlugin.java b/src/main/java/com/kiocg/task/MinecraftInternalPlugin.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..97be10af4909e5054971192be9a3ead02cc63894
+--- /dev/null
++++ b/src/main/java/com/kiocg/task/MinecraftInternalPlugin.java
+@@ -0,0 +1,153 @@
++package com.kiocg.task;
++
++import io.papermc.paper.plugin.configuration.PluginMeta;
++import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
++import org.bukkit.Server;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.bukkit.configuration.file.FileConfiguration;
++import org.bukkit.generator.BiomeProvider;
++import org.bukkit.generator.ChunkGenerator;
++import org.bukkit.plugin.Plugin;
++import org.bukkit.plugin.PluginBase;
++import org.bukkit.plugin.PluginDescriptionFile;
++import org.bukkit.plugin.PluginLoader;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++import java.io.File;
++import java.io.InputStream;
++import java.util.List;
++import java.util.logging.Logger;
++
++public class MinecraftInternalPlugin extends PluginBase {
++    private boolean enabled = true;
++
++    private final String pluginName;
++    private PluginDescriptionFile pdf;
++
++    public MinecraftInternalPlugin() {
++        this.pluginName = "Minecraft";
++        pdf = new PluginDescriptionFile(pluginName, "1.0", "nms");
++    }
++
++    public void setEnabled(boolean enabled) {
++        this.enabled = enabled;
++    }
++
++    @Override
++    public @NotNull File getDataFolder() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @NotNull PluginDescriptionFile getDescription() {
++        return pdf;
++    }
++
++    @NotNull
++    @Override
++    public PluginMeta getPluginMeta() {
++        return pdf;
++    }
++
++    @Override
++    public @NotNull FileConfiguration getConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @Nullable InputStream getResource(@NotNull String filename) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void saveConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void saveDefaultConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void saveResource(@NotNull String resourcePath, boolean replace) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void reloadConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @NotNull PluginLoader getPluginLoader() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @NotNull Server getServer() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public boolean isEnabled() {
++        return enabled;
++    }
++
++    @Override
++    public void onDisable() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void onLoad() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void onEnable() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public boolean isNaggable() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void setNaggable(boolean canNag) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @Nullable BiomeProvider getDefaultBiomeProvider(@NotNull String worldName, @Nullable String id) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @NotNull Logger getLogger() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @NotNull LifecycleEventManager<Plugin> getLifecycleManager() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
++        throw new UnsupportedOperationException("Not supported.");
 +    }
 +}
 diff --git a/src/main/java/com/kiocg/task/TPSBarTask.java b/src/main/java/com/kiocg/task/TPSBarTask.java
@@ -290,10 +448,10 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 593022f294774d3d4babf611f3f28e4e0c0d462f..1d0ffded5f67118406d64411f64e59ada46e1003 100644
+index 0495547f5dcb870962d2d9ec947adfda13d1dc2f..747dd9e73e0d4c2c8bf1cd542fc3007a47fb30c2 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -422,6 +422,16 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -429,6 +429,16 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean dontKillMyPet = true;
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
@@ -323,10 +481,10 @@ index 1d1e76de60e40224f5cb81893f9ee50fe987badb..d26aecbfbd1930e2c6938d049e45b700
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 330bee331335454a61cf8350a6654217c8124445..ed313384080ce4eb452880b40eef2a252e2e7dc9 100644
+index 9325d6f95165a7cee00d7de736af723681cc16b4..8206de9c96c19ce3c32293beebdd75d778cd4974 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1140,6 +1140,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1135,6 +1135,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.safeShutdown(waitForShutdown, false);
      }
      public void safeShutdown(boolean waitForShutdown, boolean isRestarting) {
@@ -335,10 +493,10 @@ index 330bee331335454a61cf8350a6654217c8124445..ed313384080ce4eb452880b40eef2a25
          this.hasLoggedStop = true; // Paper - Debugging
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index ff74e69ddc1423bec03937b61b3be04b2be4529d..48f3a21b79f00541f3c976f48b900d4f57d7443c 100644
+index c5592d288325e35f4c7150a8b2696954eafbf5a6..fec556836eb03e28d3e8abc0aca49ea8957856b0 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -357,6 +357,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -359,6 +359,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
                  DedicatedServer.LOGGER.info("JMX monitoring enabled");
              }
  
@@ -347,10 +505,10 @@ index ff74e69ddc1423bec03937b61b3be04b2be4529d..48f3a21b79f00541f3c976f48b900d4f
          }
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 1092d7acd21c8842375f20943cd3304186e34314..9e5202bb9ee1bc16282fba1b24d5f9ff4956954e 100644
+index 511da4fcb807b25df763e760f38d3b246476d78a..6df8f121b2c01db395e00092c6cea3160ac7b0f1 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -590,6 +590,7 @@ public abstract class PlayerList {
+@@ -591,6 +591,7 @@ public abstract class PlayerList {
      }
      public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
          // Paper end - Fix kick event leave message not being sent

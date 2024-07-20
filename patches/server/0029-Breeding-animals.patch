@@ -152,10 +152,10 @@ index 4e2c23ccdf4e4a4d65b291dbe20952bae1838bff..8b5a8ae87449257ca322a205899ee2c7
              BlockPos blockposition = this.mob.blockPosition();
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..94d336897141f239630c6c6d81a774677c2a0e28 100644
+index 1808e1b01afa3041a54c9c9a7586d4d61960527a..0c1c5c1fb670acce8d2d183fc036bde30cbb7744 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-@@ -146,16 +146,16 @@ public abstract class Animal extends AgeableMob {
+@@ -147,16 +147,16 @@ public abstract class Animal extends AgeableMob {
          if (this.isFood(itemstack)) {
              int i = this.getAge();
  
@@ -176,7 +176,7 @@ index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..94d336897141f239630c6c6d81a77467
                  return InteractionResult.sidedSuccess(this.level().isClientSide);
              }
  
-@@ -171,33 +171,56 @@ public abstract class Animal extends AgeableMob {
+@@ -172,33 +172,56 @@ public abstract class Animal extends AgeableMob {
          stack.consume(1, player);
      }
  
@@ -248,7 +248,7 @@ index e96fca314bebea5fcdb684d3478af1b6dc5f13cf..94d336897141f239630c6c6d81a77467
          this.level().broadcastEntityEvent(this, (byte) 18);
 +
 +        if (!this.isHugeSimulate() && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
-+            this.setHugeSimulate(true);
++            this.setHugeSimulate();
 +        }
      }
 +    // KioCG end
@@ -402,7 +402,7 @@ index 38ac2759894660be1ee7ba59b0bd1270158e9232..888f96021de87e6f57c36e9809f74e19
  
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Turtle.java b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
-index caf4120721be8f2f7e2d737abbf73296cbe170b5..0c4a187b002eab149fb2d14c231a3965d69c3649 100644
+index 4bfa947531c4a67989e18032754dabf4c69e989c..cb19f599ff2ea5316861a163fd7f6caef2f1b1da 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Turtle.java
 @@ -252,8 +252,10 @@ public class Turtle extends Animal {
@@ -454,10 +454,10 @@ index caf4120721be8f2f7e2d737abbf73296cbe170b5..0c4a187b002eab149fb2d14c231a3965
  
          private final Turtle turtle;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java b/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java
-index 792d9039ac0561464c666977ff8308e4c629e5eb..2e80afd8d52bca3a77d1060480a3f13ac43a974d 100644
+index 729fd2d52dd48e25ee7a077a3ffafc80ecef7c9f..f61e39e3d28c47ab4315e4bae160821a19a77706 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/armadillo/Armadillo.java
-@@ -137,7 +137,7 @@ public class Armadillo extends Animal {
+@@ -141,7 +141,7 @@ public class Armadillo extends Animal {
          this.level().getProfiler().push("armadilloActivityUpdate");
          ArmadilloAi.updateActivity(this);
          this.level().getProfiler().pop();
@@ -466,7 +466,7 @@ index 792d9039ac0561464c666977ff8308e4c629e5eb..2e80afd8d52bca3a77d1060480a3f13a
              this.playSound(SoundEvents.ARMADILLO_SCUTE_DROP, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
              this.forceDrops = true; // CraftBukkit
              this.spawnAtLocation((ItemLike) Items.ARMADILLO_SCUTE);
-@@ -323,7 +323,7 @@ public class Armadillo extends Animal {
+@@ -327,7 +327,7 @@ public class Armadillo extends Animal {
  
      @Override
      public void ageUp(int age, boolean overGrow) {
@@ -475,7 +475,7 @@ index 792d9039ac0561464c666977ff8308e4c629e5eb..2e80afd8d52bca3a77d1060480a3f13a
              this.makeSound(SoundEvents.ARMADILLO_EAT);
          }
  
-@@ -331,9 +331,10 @@ public class Armadillo extends Animal {
+@@ -335,9 +335,10 @@ public class Armadillo extends Animal {
      }
  
      public boolean brushOffScute() {
@@ -487,7 +487,7 @@ index 792d9039ac0561464c666977ff8308e4c629e5eb..2e80afd8d52bca3a77d1060480a3f13a
              this.forceDrops = true; // CraftBukkit
              this.spawnAtLocation(new ItemStack(Items.ARMADILLO_SCUTE));
              this.forceDrops = false; // CraftBukkit
-@@ -348,14 +349,18 @@ public class Armadillo extends Animal {
+@@ -352,14 +353,18 @@ public class Armadillo extends Animal {
      }
  
      @Override
@@ -511,10 +511,10 @@ index 792d9039ac0561464c666977ff8308e4c629e5eb..2e80afd8d52bca3a77d1060480a3f13a
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
-index 147974651d37e81d81ca97bfa31c9df9867492be..0834583d1ebc480cc5976f956ea475cbcf59c8be 100644
+index 8941752e4600ccd11b3fa1147b2e414785589eed..c0f7b8ec1cf78fd964d6ea6034d0d0c2e1e8532f 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -387,18 +387,18 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
+@@ -390,18 +390,18 @@ public class Camel extends AbstractHorse implements PlayerRideableJumping, Saddl
                  this.heal(2.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // Paper - Add missing regain reason
              }
  

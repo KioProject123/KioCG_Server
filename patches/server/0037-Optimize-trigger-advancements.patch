@@ -17,10 +17,10 @@ index 9a24249fe868e6a574ed365ff31253b490593272..96a9a37c76e26d516b00e87a1bc42245
      public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
      public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index b04133aa05fce15e6ff6cd84501106a59d62f0ba..f2798d8d5894e1683f8c690b4602da3bfafb8439 100644
+index 64630a596b3874e0e6a24ea80f8cc0e13ac6fb8e..ee02dca4bf7a5f244009dc7d2d975c3af822a331 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -751,6 +751,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -750,6 +750,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
  
      @Override
      public void onInsideBlock(BlockState state) {
@@ -28,7 +28,7 @@ index b04133aa05fce15e6ff6cd84501106a59d62f0ba..f2798d8d5894e1683f8c690b4602da3b
          CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
      }
  
-@@ -799,6 +800,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -798,6 +799,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          }
  
          CriteriaTriggers.TICK.trigger(this);
@@ -36,7 +36,7 @@ index b04133aa05fce15e6ff6cd84501106a59d62f0ba..f2798d8d5894e1683f8c690b4602da3b
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -929,6 +931,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -928,6 +930,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              }
  
              if (this.tickCount % 20 == 0) {

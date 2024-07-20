@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
-index 394ea92c1021d04e1687b8c12854356265e3d5de..2dd589537d8828ff351564bb50cffab4e1b5d208 100644
+index 6ff1988092de06f9d751cd40da521c2ed6e2e4bd..d679455c83bbe079d2bf1404ebec91e21b5b50f8 100644
 --- a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
-@@ -194,6 +194,12 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
+@@ -198,6 +198,12 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
           * When an Allay duplicate itself
           */
          DUPLICATION,

@@ -24,10 +24,10 @@ index ef95afc096d10f7a01c64163fef9bc1d346455dc..c442dfeceedf78f05312b31ffab930bf
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index 759839e912c54598b257ad738481364940f88a18..d35feeb8cf509656b92bf43b659b5f931703e314 100644
+index e7bfce0534c7ef3a1480a1082ae8514caf78778b..e5ae714972d28f5d60d6fabe70dd154d3ad510f3 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-@@ -43,6 +43,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+@@ -42,6 +42,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
          this.updateSwingTime();
          this.updateNoActionTime();
          super.aiStep();
@@ -47,7 +47,7 @@ index 759839e912c54598b257ad738481364940f88a18..d35feeb8cf509656b92bf43b659b5f93
      }
  
      protected void updateNoActionTime() {
-@@ -88,6 +101,7 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+@@ -87,6 +100,7 @@ public abstract class Monster extends PathfinderMob implements Enemy {
      }
  
      public static boolean isDarkEnoughToSpawn(ServerLevelAccessor world, BlockPos pos, RandomSource random) {

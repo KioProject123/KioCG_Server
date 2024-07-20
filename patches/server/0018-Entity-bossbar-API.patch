@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..1824d2b10bc0ea64234ab42896ce8fd1d3001ef7 100644
+index bd7c6ce15698aed70376c109ba36f52d6794a2f8..a22428615705582575e71252b4b4ee9dd2de72d3 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -145,6 +145,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -53,7 +53,7 @@ index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..1824d2b10bc0ea64234ab42896ce8fd1
  
      public boolean aware = true; // CraftBukkit
  
-@@ -449,6 +450,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -447,6 +448,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
              this.updateControlFlags();
          }
  
@@ -61,7 +61,7 @@ index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..1824d2b10bc0ea64234ab42896ce8fd1
      }
  
      protected void updateControlFlags() {
-@@ -551,6 +553,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -549,6 +551,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          }
  
          nbt.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
@@ -70,7 +70,7 @@ index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..1824d2b10bc0ea64234ab42896ce8fd1
      }
  
      @Override
-@@ -628,6 +632,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -626,6 +630,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
              this.aware = nbt.getBoolean("Bukkit.Aware");
          }
          // CraftBukkit end
@@ -79,7 +79,7 @@ index 7b93c6a04cca2ac31d137f06ef83bb08559b10bf..1824d2b10bc0ea64234ab42896ce8fd1
      }
  
      @Override
-@@ -1804,4 +1810,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1802,4 +1808,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }

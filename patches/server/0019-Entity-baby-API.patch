@@ -40,7 +40,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 8d1b5ea9c657603e1823e7c35e25fd726fc234ce..5cc1af1ecfe580f4a7794f4fe8bbf02a88acd72d 100644
+index ff12f09b5a4b24518534174eb95832bf96df5f58..4a78bc9cf032467e457946222062eba2e6b56c5f 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -129,7 +129,7 @@ index 8d1b5ea9c657603e1823e7c35e25fd726fc234ce..5cc1af1ecfe580f4a7794f4fe8bbf02a
      public float getAgeScale() {
          return this.isBaby() ? 0.5F : 1.0F;
      }
-@@ -811,6 +883,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -812,6 +884,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
          dataresult.resultOrPartial(logger::error).ifPresent((nbtbase) -> {
              nbt.put("Brain", nbtbase);
          });
@@ -142,7 +142,7 @@ index 8d1b5ea9c657603e1823e7c35e25fd726fc234ce..5cc1af1ecfe580f4a7794f4fe8bbf02a
      }
  
      @Override
-@@ -899,6 +977,16 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -900,6 +978,16 @@ public abstract class LivingEntity extends Entity implements Attackable {
              this.brain = this.makeBrain(new Dynamic(NbtOps.INSTANCE, nbt.get("Brain")));
          }
  
@@ -159,7 +159,7 @@ index 8d1b5ea9c657603e1823e7c35e25fd726fc234ce..5cc1af1ecfe580f4a7794f4fe8bbf02a
      }
  
      // CraftBukkit start
-@@ -2729,7 +2817,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2779,7 +2867,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
      }
  
      public float getVoicePitch() {
@@ -169,10 +169,10 @@ index 8d1b5ea9c657603e1823e7c35e25fd726fc234ce..5cc1af1ecfe580f4a7794f4fe8bbf02a
  
      protected boolean isImmobile() {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 1824d2b10bc0ea64234ab42896ce8fd1d3001ef7..82a5a5d944651a0a81ea2518dc060dba0af23794 100644
+index a22428615705582575e71252b4b4ee9dd2de72d3..9e98f60b70d2d3105935b2a0f03b6fef74e34de0 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1690,7 +1690,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1688,7 +1688,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
      }
  
@@ -304,10 +304,10 @@ index d2bb0831394c03b620b2cbd8306cb82b621f34f7..f71f4eaea20a3a799e775416da158589
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index bd6fee3e3ad9116802ff8bb57bfa741b881c4057..93e8a8d98024e502dfffab78be5f8a892779ef09 100644
+index 0ab53d46f0b8f3f3791dd01766738522c86932e8..73c41171173864ed4ca44bca2461c5e4ed17e4ce 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -609,6 +609,7 @@ public class CraftEventFactory {
+@@ -613,6 +613,7 @@ public class CraftEventFactory {
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, List<net.minecraft.world.entity.LivingEntity> convertedList, EntityTransformEvent.TransformReason convertType) {
          List<org.bukkit.entity.Entity> list = new ArrayList<>();
          for (net.minecraft.world.entity.LivingEntity entityLiving : convertedList) {
@@ -315,7 +315,7 @@ index bd6fee3e3ad9116802ff8bb57bfa741b881c4057..93e8a8d98024e502dfffab78be5f8a89
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1337,6 +1338,7 @@ public class CraftEventFactory {
+@@ -1344,6 +1345,7 @@ public class CraftEventFactory {
      }
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {

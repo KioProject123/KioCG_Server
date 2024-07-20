@@ -76,10 +76,10 @@ index 55902bd43f990b2141e32f25af55ec22e8c03caa..6b6b1cc9d169cb18e4be96d5d4cb8318
  
              public boolean turretEnable = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index a0d6048a78c3c23e414075fe197fab3299dbb851..4175eaa8710cc25e892fe5a5152d153f3d3ef0bb 100644
+index 660ad922d5ba11835dade72ba528f5deea6cd4ae..9646b819efa220bf5333e0919efae929be0efa6c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -4696,6 +4696,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -4764,6 +4764,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return flag;
      }
  
@@ -241,10 +241,10 @@ index 2e9991e6b3c05584002744a2ee2579b1dba218b2..6a29d40c63ac550a7898176b1e10f589
              this.path = null;
              return false;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Animal.java b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-index 94d336897141f239630c6c6d81a774677c2a0e28..d04f87816dbaa1a9c1540c1ba36b43decb368093 100644
+index 0c1c5c1fb670acce8d2d183fc036bde30cbb7744..0df74c132c608a19e15884504bc61ef281b55338 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Animal.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Animal.java
-@@ -42,6 +42,7 @@ public abstract class Animal extends AgeableMob {
+@@ -43,6 +43,7 @@ public abstract class Animal extends AgeableMob {
      @Nullable
      public UUID loveCause;
      public ItemStack breedItem; // CraftBukkit - Add breedItem variable
@@ -252,7 +252,7 @@ index 94d336897141f239630c6c6d81a774677c2a0e28..d04f87816dbaa1a9c1540c1ba36b43de
  
      protected Animal(EntityType<? extends Animal> type, Level world) {
          super(type, world);
-@@ -76,8 +77,31 @@ public abstract class Animal extends AgeableMob {
+@@ -77,8 +78,31 @@ public abstract class Animal extends AgeableMob {
              }
          }
  
@@ -283,8 +283,8 @@ index 94d336897141f239630c6c6d81a774677c2a0e28..d04f87816dbaa1a9c1540c1ba36b43de
 +
      @Override
      // CraftBukkit start - void -> boolean
-     public boolean actuallyHurt(DamageSource damagesource, float f) {
-@@ -102,7 +126,7 @@ public abstract class Animal extends AgeableMob {
+     public boolean actuallyHurt(DamageSource damagesource, float f, EntityDamageEvent event) {
+@@ -103,7 +127,7 @@ public abstract class Animal extends AgeableMob {
          if (this.loveCause != null) {
              nbt.putUUID("LoveCause", this.loveCause);
          }
@@ -293,7 +293,7 @@ index 94d336897141f239630c6c6d81a774677c2a0e28..d04f87816dbaa1a9c1540c1ba36b43de
      }
  
      @Override
-@@ -110,6 +134,13 @@ public abstract class Animal extends AgeableMob {
+@@ -111,6 +135,13 @@ public abstract class Animal extends AgeableMob {
          super.readAdditionalSaveData(nbt);
          this.inLove = nbt.getInt("InLove");
          this.loveCause = nbt.hasUUID("LoveCause") ? nbt.getUUID("LoveCause") : null;

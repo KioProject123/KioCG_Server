@@ -82,7 +82,7 @@ index 8fd54bccb7af59da9113d8a289d12d8fad1fb467..a09b7fbcdcb0f1f321c625d112a0d9b3
          }
  
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 312b57b4ef340935f4335989ce1d6a4b8b61532c..f8e84758928907243a3b59dd5f4c285dcb65e4f1 100644
+index 2c312c0b741fb96a008881e9e01fa660a1fb63ab..1bba45407c0308a6032f2c3c4377b9e1392e9bbe 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -129,7 +129,7 @@ public final class ItemStack implements DataComponentHolder {

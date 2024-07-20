@@ -5,10 +5,10 @@ Subject: [PATCH] Expand container rows
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 07cd4ebd9420d8aca34aebd92a15040deb995059..c249577dc53f37d960132178468e512262bdd1c2 100644
+index 0d4076141505b28da0172eca920ee63558421b5a..a2b130e4e93bf8a780afdf5aea13766434b91ac3 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -198,6 +198,7 @@ public abstract class Player extends LivingEntity {
+@@ -199,6 +199,7 @@ public abstract class Player extends LivingEntity {
      private int currentImpulseContextResetGraceTime;
      public boolean affectsSpawning = true; // Paper - Affects Spawning API
      public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
@@ -360,7 +360,7 @@ index cc7bf4d39b834fba472bc163226a01a0cd4b6010..dca1d737d9311a9b52dc530dc2e06af1
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index be79dbfd006a403abe157d74b4a050196bea4a4e..9eb83019c602b239a6dff51205faf8fec3bceff5 100644
+index 0230e4fe47b3536934684b355be5d87d3e3d02df..0ee82c40b47d4337941e4a81f12869233bbda590 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -234,6 +234,29 @@ public class CraftPlayer extends CraftHumanEntity implements Player {

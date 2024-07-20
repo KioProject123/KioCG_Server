@@ -5,10 +5,10 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 9baf940db57c2980d0c68f8141396ad8836f8c46..593022f294774d3d4babf611f3f28e4e0c0d462f 100644
+index af9a57860a8c41e35b1aabac7a5fc1317b16a63f..0495547f5dcb870962d2d9ec947adfda13d1dc2f 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -418,6 +418,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -425,6 +425,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
              public int fixedCumulativeCost = 4;
          }
@@ -32,10 +32,10 @@ index f56e5c0f53f9b52a9247b9be9265b949494fc924..b622a82986efd7a6d7cd5491f3ba2569
      public static <T> TicketType<T> create(String name, Comparator<T> argumentComparator) {
          return new TicketType<>(name, argumentComparator, 0L);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 5cc1af1ecfe580f4a7794f4fe8bbf02a88acd72d..a0d6048a78c3c23e414075fe197fab3299dbb851 100644
+index 4a78bc9cf032467e457946222062eba2e6b56c5f..660ad922d5ba11835dade72ba528f5deea6cd4ae 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2452,7 +2452,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2502,7 +2502,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damagesource, f);
@@ -131,7 +131,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..370deb43b04bcb9e4b6184b2d51f3c4c
          public void tick() {
              if (!TamableAnimal.this.unableToMoveToOwner() && TamableAnimal.this.shouldTryTeleportToOwner()) {
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
-index fe635e46569c67dac1d3581ee930d1bfa8b4030e..8c6731fa6d693e652031f35aee2c65c3587ec637 100644
+index 508d4f391fe563453d7bf6782b3082741c358006..fa58ec8288952f7dd546ad979fcff72dd10ed2aa 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
 @@ -53,7 +53,7 @@ public class StopAttackingIfTargetInvalid {
@@ -299,10 +299,10 @@ index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..32e5bdf96439b4e8581e9085251c328c
                  if (!this.level().isClientSide) {
                      this.setOrderedToSit(!this.isOrderedToSit());
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index 7ee0be0742f5d214026026a3b95b69cfd90a4968..a51752d1bd3469a232cd99dc300a4d23467cfc41 100644
+index 0c51106537876f704e382a9afbcd2d7e083cb480..d33288338237d999f53cf94adf841e52d306714b 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-@@ -334,6 +334,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -335,6 +335,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
                  }
              }
  
@@ -321,7 +321,7 @@ index 7ee0be0742f5d214026026a3b95b69cfd90a4968..a51752d1bd3469a232cd99dc300a4d23
          }
      }
  
-@@ -464,6 +476,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -470,6 +482,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
                  this.heal(2.0F * f, EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
                  return InteractionResult.sidedSuccess(this.level().isClientSide());

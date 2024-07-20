@@ -5,10 +5,10 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 82a5a5d944651a0a81ea2518dc060dba0af23794..4e4f4709b8a762b850a4feec5bae3ab5af9fec09 100644
+index 9e98f60b70d2d3105935b2a0f03b6fef74e34de0..ddb21438ccb7c2a19d211f28d76d0b38558ebabc 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -685,7 +685,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -683,7 +683,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
      public void aiStep() {
          super.aiStep();
          this.level().getProfiler().push("looting");

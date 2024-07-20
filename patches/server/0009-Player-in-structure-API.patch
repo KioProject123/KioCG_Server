@@ -5,18 +5,18 @@ Subject: [PATCH] Player in structure API
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 89ed20e9c629cf39a24c7a0ce5c4fee41fc64fd5..cbeb1425c3252cd2ec7b6256f9d5bf625f9ca104 100644
+index 5980b70e2d7273239245237189b2debcbccfbac3..5a746714b9958abee8319854d58f1b9f1095bc98 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -300,6 +300,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
-     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
+@@ -301,6 +301,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+     public boolean isRealPlayer; // Paper
      public com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
      public @Nullable String clientBrandName = null; // Paper - Brand support
 +    public boolean inStructure; // KioCG
      public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
  
      // Paper start - rewrite chunk system
-@@ -898,6 +899,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -897,6 +898,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
  
              if (this.tickCount % 20 == 0) {
                  CriteriaTriggers.LOCATION.trigger(this);
@@ -79,10 +79,10 @@ index 54972cce2314eff774250101df43a9b7074e9604..1189beb9351a12dc0a48fd6b8b66151a
          SectionPos sectionPos = SectionPos.of(pos);
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 7eea190ce8a62960ecc42ff56a4ef71b754184fb..ee1bece10d033679209d7a17c175073e5a985eab 100644
+index 992437a6e838f653f32d33b5b3f702c484640a97..44167f288e4aeed28a8d53566ef363dbd940f3b9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3429,6 +3429,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3430,6 +3430,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
      // Paper end
  

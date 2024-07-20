@@ -140,10 +140,10 @@ index 665a1dd59cd65e1b3e0739c7075106e767def41a..5c6bdd5b26e37449b76cf61d51fd09cd
  
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 8310d132006043e93c612890514c4c7f3eb1c74d..a233a6f702a65f5b2ddc18cedb0e2d74bf0ddb55 100644
+index 53f9d28bf3c6aafd4fdd6c12e0285500fe7350ce..af36be670714ba5191b2e761ae03812060f38e34 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -524,7 +524,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -525,7 +525,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
          return aint;
      }
  

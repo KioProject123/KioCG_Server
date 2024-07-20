@@ -18,10 +18,10 @@ index 5251de7f1c475fcbb279e0c9161dbc1b54b92f99..71cfc0f7e502cb07aad74254ea396bbd
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index cbeb1425c3252cd2ec7b6256f9d5bf625f9ca104..593e06708f8bf9320c5f8835afbf0dbfd1c2141b 100644
+index 5a746714b9958abee8319854d58f1b9f1095bc98..d2508509df3f3d6d3eda6ef78d35c1f3ec585fa5 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1029,7 +1029,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1028,7 +1028,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          if (!keepInventory) {
              for (ItemStack item : this.getInventory().getContents()) {
                  if (!item.isEmpty() && !EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
