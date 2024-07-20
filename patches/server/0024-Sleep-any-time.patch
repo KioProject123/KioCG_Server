@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 0f1654f760a9799728c75b6b7bf2a2f34866d6ad..bdfcf4354abf436d25ae7bcac85e5c63913b7d8d 100644
+index c442dfeceedf78f05312b31ffab930bff7c243fa..04d1d9f0b811e747eac768856526e10dacb34bda 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -600,6 +600,9 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -607,6 +607,9 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean babyZombieJockey = true;
              }
          }
@@ -91,7 +91,7 @@ index 4a29117cedb2b0ab02c2e1b13c07feceadc1ee48..07cd4ebd9420d8aca34aebd92a15040d
              }
          } else if (this.sleepCounter > 0) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index ee7f4f06ff023d372611e704d5da58a37e80c388..a6bea77afb8323948657c8f85b9938b6da93942b 100644
+index b45e4a9793ddcc1e6d090c6a18f99e3b9bc35635..8e65c2de9d71869b0c3945f16eeb0e5a4f0dff60 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
 @@ -84,6 +84,27 @@ public class FoodData {

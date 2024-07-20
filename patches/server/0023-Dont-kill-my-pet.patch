@@ -32,10 +32,10 @@ index f56e5c0f53f9b52a9247b9be9265b949494fc924..b622a82986efd7a6d7cd5491f3ba2569
      public static <T> TicketType<T> create(String name, Comparator<T> argumentComparator) {
          return new TicketType<>(name, argumentComparator, 0L);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 63aefefcf566023236444d9229cda3babdfb803f..dfc6a9187c6ead2d5a13c3f78c3eb593ea6f6f24 100644
+index 5cc1af1ecfe580f4a7794f4fe8bbf02a88acd72d..a0d6048a78c3c23e414075fe197fab3299dbb851 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2453,7 +2453,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2452,7 +2452,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damagesource, f);

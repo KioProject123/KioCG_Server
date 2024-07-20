@@ -5,10 +5,10 @@ Subject: [PATCH] Configurable can drop mobs skull
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index ebea00e91c1d934b829cc6ad1c58eb680e2b040d..f387db1cbf5f0867d85ddb053d135f5b7b33293a 100644
+index c91a3f08b2a56a14c69bd1e93dc682b803092df2..1554aa9be5a811dcb60585bf0c307cb880143a28 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -598,6 +598,15 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -605,6 +605,15 @@ public class WorldConfiguration extends ConfigurationPart {
                  public int darkEnoughToSprint = 7;
                  public boolean zombiesSkinnedIntoSkeletons = true;
                  public boolean babyZombieJockey = true;

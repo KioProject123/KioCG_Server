@@ -5,10 +5,10 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 629b9c3dee73dfbddad96187f83e7f4568a1a2d7..1aa6f1afe6249ce616a3470b53ae0fccffa27979 100644
+index 04eaa9042432f077a97c9557aa36f6a0a915369a..ef95afc096d10f7a01c64163fef9bc1d346455dc 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -580,6 +580,18 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -587,6 +587,18 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;
          }
@@ -40,7 +40,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..63aefefcf566023236444d9229cda3babdfb803f 100644
+index 8d1b5ea9c657603e1823e7c35e25fd726fc234ce..5cc1af1ecfe580f4a7794f4fe8bbf02a88acd72d 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -55,7 +55,7 @@ index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..63aefefcf566023236444d9229cda3ba
  
      @Override
      public float getBukkitYaw() {
-@@ -592,6 +597,73 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -591,6 +596,73 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return false;
      }
  
@@ -129,7 +129,7 @@ index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..63aefefcf566023236444d9229cda3ba
      public float getAgeScale() {
          return this.isBaby() ? 0.5F : 1.0F;
      }
-@@ -812,6 +884,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -811,6 +883,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
          dataresult.resultOrPartial(logger::error).ifPresent((nbtbase) -> {
              nbt.put("Brain", nbtbase);
          });
@@ -142,7 +142,7 @@ index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..63aefefcf566023236444d9229cda3ba
      }
  
      @Override
-@@ -900,6 +978,16 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -899,6 +977,16 @@ public abstract class LivingEntity extends Entity implements Attackable {
              this.brain = this.makeBrain(new Dynamic(NbtOps.INSTANCE, nbt.get("Brain")));
          }
  
@@ -159,7 +159,7 @@ index 5d37ce6e45e818bc5d1a7094b581b097dc0ed80c..63aefefcf566023236444d9229cda3ba
      }
  
      // CraftBukkit start
-@@ -2730,7 +2818,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2729,7 +2817,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
      }
  
      public float getVoicePitch() {
@@ -304,7 +304,7 @@ index d2bb0831394c03b620b2cbd8306cb82b621f34f7..f71f4eaea20a3a799e775416da158589
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 7cfec96bddb2731baac6a8b7909c4a13d94d8794..5ed949083cd1e01b3d97713de0937fbee8ab4c3d 100644
+index bd6fee3e3ad9116802ff8bb57bfa741b881c4057..93e8a8d98024e502dfffab78be5f8a892779ef09 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -609,6 +609,7 @@ public class CraftEventFactory {

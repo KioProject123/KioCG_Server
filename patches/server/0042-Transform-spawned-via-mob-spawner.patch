@@ -5,7 +5,7 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 5ed949083cd1e01b3d97713de0937fbee8ab4c3d..7acbe513ec7e0e8a35e13ec23d99d013ebcc6675 100644
+index 93e8a8d98024e502dfffab78be5f8a892779ef09..2d11495b2ce45eb5b7230d8b0a9ddc46a1ae6113 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -610,6 +610,7 @@ public class CraftEventFactory {

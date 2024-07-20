@@ -220,12 +220,12 @@ index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 89ceed996d77d63b7e27ad06ac434b4f6a1b47f9..ee0695b9f95dd4aa541bbe93f9a60d438da3f8c1 100644
+index 18ff6952111657df71558451046c54ec0ca9e52d..04eaa9042432f077a97c9557aa36f6a0a915369a 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -555,6 +555,38 @@ public class WorldConfiguration extends ConfigurationPart {
      public class KiocgConfig extends ConfigurationPart {
-         public boolean deathItemsOnlyPickedUpByOneself = false;
+         public boolean deathItemsOnlyPickedUpByOneself = true;
          public boolean removeAutomationGameplay = true;
 +
 +        public TheLongDark theLongDark;
