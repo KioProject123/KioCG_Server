@@ -158,7 +158,7 @@ index 0000000000000000000000000000000000000000..9e2da03a2c841e04f191dbcbd3792cd7
 +    }
 +}
 diff --git a/src/main/java/com/kiocg/task/TPSBarTask.java b/src/main/java/com/kiocg/task/TPSBarTask.java
-index 751c7b02564be5f79d293223612d21569bde10e0..ed28fbcdbd896a9c152a9385cef7f631c8a5303f 100644
+index 3c44d94ba77a24023e77ef4c778b181736ff5f98..ae3ebd432a89f63b5f6277ba66df898d1e1ecc40 100644
 --- a/src/main/java/com/kiocg/task/TPSBarTask.java
 +++ b/src/main/java/com/kiocg/task/TPSBarTask.java
 @@ -28,9 +28,15 @@ public class TPSBarTask extends BossBarTask {
@@ -173,7 +173,7 @@ index 751c7b02564be5f79d293223612d21569bde10e0..ed28fbcdbd896a9c152a9385cef7f631
 +
 +        bossbar.progress(getBossBarProgress((float) serverPlayer.getNearbyChunkHot(), (float) serverPlayer.level().paperConfig().kiocgConfig.chunkHot.phaseOne));
 +        bossbar.color(getBossBarColor(serverPlayer));
-         bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTPSBarTitle,
+         bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTpsBarTitle,
 +                                                           Placeholder.component("totalhot", getChunkHotColor(serverPlayer)),
 +                                                           Placeholder.parsed("chunkhot", String.valueOf(chunkhot)),
                                                             Placeholder.component("tps", getTPSColor()),
@@ -188,12 +188,12 @@ index 751c7b02564be5f79d293223612d21569bde10e0..ed28fbcdbd896a9c152a9385cef7f631
 +    private BossBar.Color getBossBarColor(net.minecraft.server.level.ServerPlayer player) {
 +        long hot = player.getNearbyChunkHot();
 +        if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseOne) {
-             return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorGood;
+             return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorGood;
 -        } else if (isMedium(fillMode)) {
 +        } else if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseTwo) {
-             return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorMedium;
+             return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorMedium;
          } else {
-             return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorLow;
+             return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorLow;
 @@ -132,6 +139,19 @@ public class TPSBarTask extends BossBarTask {
          return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", ping)));
      }
@@ -202,11 +202,11 @@ index 751c7b02564be5f79d293223612d21569bde10e0..ed28fbcdbd896a9c152a9385cef7f631
 +        long hot = player.getNearbyChunkHot();
 +        String color;
 +        if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseOne) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorGood;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorGood;
 +        } else if (hot < player.level().paperConfig().kiocgConfig.chunkHot.phaseTwo) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorMedium;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorMedium;
 +        } else {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorLow;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorLow;
 +        }
 +        return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", hot)));
 +    }
@@ -215,18 +215,18 @@ index 751c7b02564be5f79d293223612d21569bde10e0..ed28fbcdbd896a9c152a9385cef7f631
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 747dd9e73e0d4c2c8bf1cd542fc3007a47fb30c2..ed0385dc614ffec175ab2d8a08b00670995594ee 100644
+index 525c8d31ec3097bc975252c6ff1e07ade12cb74e..25d31e696e09a545a09948ddfcd4a92c0855e7f7 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -430,7 +430,7 @@ public class GlobalConfiguration extends ConfigurationPart {
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
  
--        public String commandTPSBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
-+        public String commandTPSBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms Hot<yellow>:</yellow> <totalhot>/<gray><chunkhot>";
-         public net.kyori.adventure.bossbar.BossBar.Overlay commandTPSBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
-         public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
-         public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
+-        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
++        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms Hot<yellow>:</yellow> <totalhot>/<gray><chunkhot>";
+         public net.kyori.adventure.bossbar.BossBar.Overlay commandTpsBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
+         public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
+         public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 index 6b6b1cc9d169cb18e4be96d5d4cb83185513aa68..c91a3f08b2a56a14c69bd1e93dc682b803092df2 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java

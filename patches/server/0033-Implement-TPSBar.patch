@@ -305,7 +305,7 @@ index 0000000000000000000000000000000000000000..97be10af4909e5054971192be9a3ead0
 +}
 diff --git a/src/main/java/com/kiocg/task/TPSBarTask.java b/src/main/java/com/kiocg/task/TPSBarTask.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d21569bde10e0
+index 0000000000000000000000000000000000000000..3c44d94ba77a24023e77ef4c778b181736ff5f98
 --- /dev/null
 +++ b/src/main/java/com/kiocg/task/TPSBarTask.java
 @@ -0,0 +1,138 @@
@@ -334,14 +334,14 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +
 +    @Override
 +    BossBar createBossBar() {
-+        return BossBar.bossBar(Component.text(""), 0.0F, GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorGood, GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressOverlay);
++        return BossBar.bossBar(Component.text(""), 0.0F, GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorGood, GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressOverlay);
 +    }
 +
 +    @Override
 +    void updateBossBar(BossBar bossbar, Player player) {
 +        bossbar.progress(getBossBarProgress((float) mspt, 50.0F));
 +        bossbar.color(getBossBarColor(FillMode.MSPT));
-+        bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTPSBarTitle,
++        bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTpsBarTitle,
 +                                                           Placeholder.component("tps", getTPSColor()),
 +                                                           Placeholder.component("mspt", getMSPTColor()),
 +                                                           Placeholder.component("ping", getPingColor(player.getPing()))
@@ -350,7 +350,7 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +
 +    @Override
 +    public void run() {
-+        if (++tick < GlobalConfiguration.get().kiocgConfig.commandTPSBarTickInterval) {
++        if (++tick < GlobalConfiguration.get().kiocgConfig.commandTpsBarTickInterval) {
 +            return;
 +        }
 +        tick = 0;
@@ -367,11 +367,11 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +
 +    private BossBar.Color getBossBarColor(FillMode fillMode) {
 +        if (isGood(fillMode)) {
-+            return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorGood;
++            return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorGood;
 +        } else if (isMedium(fillMode)) {
-+            return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorMedium;
++            return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorMedium;
 +        } else {
-+            return GlobalConfiguration.get().kiocgConfig.commandTPSBarProgressColorLow;
++            return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorLow;
 +        }
 +    }
 +
@@ -410,11 +410,11 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +    private Component getTPSColor() {
 +        String color;
 +        if (isGood(FillMode.TPS)) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorGood;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorGood;
 +        } else if (isMedium(FillMode.TPS)) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorMedium;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorMedium;
 +        } else {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorLow;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorLow;
 +        }
 +        return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%.2f", tps)));
 +    }
@@ -422,11 +422,11 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +    private Component getMSPTColor() {
 +        String color;
 +        if (isGood(FillMode.MSPT)) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorGood;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorGood;
 +        } else if (isMedium(FillMode.MSPT)) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorMedium;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorMedium;
 +        } else {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorLow;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorLow;
 +        }
 +        return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%.2f", mspt)));
 +    }
@@ -434,11 +434,11 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +    private Component getPingColor(int ping) {
 +        String color;
 +        if (isGood(FillMode.PING, ping)) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorGood;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorGood;
 +        } else if (isMedium(FillMode.PING, ping)) {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorMedium;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorMedium;
 +        } else {
-+            color = GlobalConfiguration.get().kiocgConfig.commandTPSBarTextColorLow;
++            color = GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorLow;
 +        }
 +        return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", ping)));
 +    }
@@ -448,7 +448,7 @@ index 0000000000000000000000000000000000000000..751c7b02564be5f79d293223612d2156
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 0495547f5dcb870962d2d9ec947adfda13d1dc2f..747dd9e73e0d4c2c8bf1cd542fc3007a47fb30c2 100644
+index 0495547f5dcb870962d2d9ec947adfda13d1dc2f..525c8d31ec3097bc975252c6ff1e07ade12cb74e 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -429,6 +429,16 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -456,15 +456,15 @@ index 0495547f5dcb870962d2d9ec947adfda13d1dc2f..747dd9e73e0d4c2c8bf1cd542fc3007a
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
 +
-+        public String commandTPSBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
-+        public net.kyori.adventure.bossbar.BossBar.Overlay commandTPSBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
-+        public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
-+        public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
-+        public net.kyori.adventure.bossbar.BossBar.Color commandTPSBarProgressColorLow = net.kyori.adventure.bossbar.BossBar.Color.RED;
-+        public String commandTPSBarTextColorGood = "<gradient:#55ff55:#00aa00><text></gradient>";
-+        public String commandTPSBarTextColorMedium = "<gradient:#ffff55:#ffaa00><text></gradient>";
-+        public String commandTPSBarTextColorLow = "<gradient:#ff5555:#aa0000><text></gradient>";
-+        public int commandTPSBarTickInterval = 20;
++        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
++        public net.kyori.adventure.bossbar.BossBar.Overlay commandTpsBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
++        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
++        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
++        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorLow = net.kyori.adventure.bossbar.BossBar.Color.RED;
++        public String commandTpsBarTextColorGood = "<gradient:#55ff55:#00aa00><text></gradient>";
++        public String commandTpsBarTextColorMedium = "<gradient:#ffff55:#ffaa00><text></gradient>";
++        public String commandTpsBarTextColorLow = "<gradient:#ff5555:#aa0000><text></gradient>";
++        public int commandTpsBarTickInterval = 20;
      }
      // KioCG end
  }
