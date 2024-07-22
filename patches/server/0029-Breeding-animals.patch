@@ -21,6 +21,46 @@ index 0ed0ba1d1ffd172994fbb5e82e193bc72df1ab43..55902bd43f990b2141e32f25af55ec22
              public boolean turretEnable = true;
              public int turretCooldownDefault = 100;
              public double turretRangeDefault = 8.0;
+diff --git a/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java b/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
+index 60d3319016beb4f60cbc26dde165f64cf7577602..3c0538033b6e2e2dc7994edb3b51796957d74c1b 100644
+--- a/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
++++ b/src/main/java/net/minecraft/core/dispenser/DispenseItemBehavior.java
+@@ -902,7 +902,7 @@ public interface DispenseItemBehavior {
+             protected ItemStack execute(BlockSource pointer, ItemStack stack) {
+                 ServerLevel worldserver = pointer.level();
+                 BlockPos blockposition = pointer.pos().relative((Direction) pointer.state().getValue(DispenserBlock.FACING));
+-                List<Armadillo> list = worldserver.getEntitiesOfClass(Armadillo.class, new AABB(blockposition), EntitySelector.NO_SPECTATORS);
++                List<LivingEntity> list = worldserver.getEntitiesOfClass(LivingEntity.class, new AABB(blockposition), EntitySelector.NO_SPECTATORS); // KioCG
+ 
+                 if (list.isEmpty()) {
+                     this.setSuccess(false);
+@@ -935,7 +935,7 @@ public interface DispenseItemBehavior {
+                     // CraftBukkit end
+                     Iterator iterator1 = list.iterator();
+ 
+-                    Armadillo armadillo;
++                    boolean continueLoop = true; // KioCG
+ 
+                     do {
+                         if (!iterator1.hasNext()) {
+@@ -943,8 +943,15 @@ public interface DispenseItemBehavior {
+                             return stack;
+                         }
+ 
+-                        armadillo = (Armadillo) iterator1.next();
+-                    } while (!armadillo.brushOffScute());
++                        // KioCG start
++                        final LivingEntity entity = (LivingEntity) iterator1.next();
++                        if (entity instanceof Armadillo armadillo) {
++                            continueLoop = !armadillo.brushOffScute();
++                        } else if (entity instanceof net.minecraft.world.entity.animal.Turtle turtle) {
++                            continueLoop = !turtle.brushOffScute();
++                        }
++                    } while (continueLoop);
++                        // KioCG end
+ 
+                     stack.hurtAndBreak(16, worldserver, (ServerPlayer) null, (item) -> {
+                     });
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
 index 7a61d82039a4793f090c928189c01c4df66a7ede..66ebf99bafed7db8f5c4f1b7d813909be090b700 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
