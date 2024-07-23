@@ -1,0 +1,17 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 23 Jul 2024 18:29:58 +0800
+Subject: [PATCH] Campfire boiling water
+
+
+diff --git a/src/main/java/org/bukkit/block/Campfire.java b/src/main/java/org/bukkit/block/Campfire.java
+index 9c3952459ed216f727b3654b2ed536f17f320402..3950c50a9b9321c0075ac792cd444185b8ff80c0 100644
+--- a/src/main/java/org/bukkit/block/Campfire.java
++++ b/src/main/java/org/bukkit/block/Campfire.java
+@@ -105,4 +105,6 @@ public interface Campfire extends TileState {
+      */
+     boolean isCookingDisabled(int index);
+     // Paper end
++
++    boolean isCauldronBoiling(); // KioCG
+ }

@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index ef95afc096d10f7a01c64163fef9bc1d346455dc..c442dfeceedf78f05312b31ffab930bff7c243fa 100644
+index 3516d502c6557c722f51ec94e06cfd6607e45d4d..152511b62c5cd442ecb7ebeef7658358633b3347 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -598,6 +598,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -599,6 +599,14 @@ public class WorldConfiguration extends ConfigurationPart {
                  map.defaultReturnValue(200);
                  map.put(EntityType.SKELETON, 200);
              });

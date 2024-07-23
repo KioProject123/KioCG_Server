@@ -219,7 +219,7 @@ index 265b4d670f64ccff59acb6eb18ce1e9089fb1cd3..f417cb37268828e421fa63da758e4c19
          if (world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !EnchantmentHelper.hasTag(tool, EnchantmentTags.PREVENTS_INFESTED_SPAWNS)) {
              this.spawnInfestation(world, pos);
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 66dabb34eb4dfdd526ee1800d04aeda0cc99fcda..710792d406dbf1e47dac8035affcc0950ec4bd35 100644
+index 098fcb24a5174c173c57bfdd9afb5fb8227c4968..4f633c287bcfd817349f702c16808f65a07bad4c 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 @@ -69,7 +69,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {

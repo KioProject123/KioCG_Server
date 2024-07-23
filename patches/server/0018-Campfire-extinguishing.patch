@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 23 Jul 2024 16:55:21 +0800
+Subject: [PATCH] Campfire extinguishing
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 1c721c9c1aa60f3c515015549d27f936296ed5af..04eaa9042432f077a97c9557aa36f6a0a915369a 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -583,6 +583,9 @@ public class WorldConfiguration extends ConfigurationPart {
+                 public double thirstRegainMultiplierFood = 2.0;
+                 public double highTemperatureBiomeThirst = 0.02;
+             }
++
++            public int campfireExtinguishingOne = -1;
++            public int campfireExtinguishingTwo = -1;
+         }
+     }
+     // KioCG end
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+index 20d4cda6396601621b684f6048afffba650598bf..4d29c609c44fe2100c132cbac8abfdef4d0b201f 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -47,6 +47,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+     public final int[] cookingTime;
+     private final RecipeManager.CachedCheck<SingleRecipeInput, CampfireCookingRecipe> quickCheck;
+     public final boolean[] stopCooking; // Paper - Add more Campfire API
++    private int litTicks = 0; // KioCG
+ 
+     public CampfireBlockEntity(BlockPos pos, BlockState state) {
+         super(BlockEntityType.CAMPFIRE, pos, state);
+@@ -60,6 +61,28 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+     public static void cookTick(Level world, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
+         boolean flag = false;
+ 
++        // KioCG start
++        ++campfire.litTicks;
++        int extinguishingTick = state.is(net.minecraft.world.level.block.Blocks.CAMPFIRE) ? world.paperConfig().kiocgConfig.theLongDark.campfireExtinguishingOne : world.paperConfig().kiocgConfig.theLongDark.campfireExtinguishingTwo;
++        if (extinguishingTick >= 0 && campfire.litTicks > extinguishingTick) {
++            if (state.is(net.minecraft.world.level.block.Blocks.CAMPFIRE)) {
++                world.removeBlockEntity(pos); // 移除BlockEntity来保留物品
++                world.setBlock(pos, net.minecraft.world.level.block.Blocks.SOUL_CAMPFIRE.withPropertiesOf(state), 3);
++
++                CampfireBlockEntity soulCampfire = (CampfireBlockEntity) world.getBlockEntity(pos);
++                for (int i = 0; i < campfire.items.size(); i++) {
++                    soulCampfire.items.set(i, campfire.items.get(i));
++                }
++                System.arraycopy(campfire.cookingProgress, 0, soulCampfire.cookingProgress, 0, campfire.cookingProgress.length);
++                System.arraycopy(campfire.cookingTime, 0, soulCampfire.cookingTime, 0, campfire.cookingTime.length);
++                System.arraycopy(campfire.stopCooking, 0, soulCampfire.stopCooking, 0, campfire.stopCooking.length);
++            } else {
++                world.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
++            }
++            return;
++        }
++        // KioCG end
++
+         for (int i = 0; i < campfire.items.size(); ++i) {
+             ItemStack itemstack = (ItemStack) campfire.items.get(i);
+ 
+@@ -233,6 +256,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+             System.arraycopy(cookingState, 0, this.stopCooking, 0, Math.min(this.stopCooking.length, abyte.length));
+         }
+         // Paper end - Add more Campfire API
++
++        if (nbt.contains("KioCG.LitTicks", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) litTicks = nbt.getInt("KioCG.LitTicks"); // KioCG
+     }
+ 
+     @Override
+@@ -248,6 +273,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+         }
+         nbt.putByteArray("Paper.StopCooking", cookingState);
+         // Paper end - Add more Campfire API
++        nbt.putInt("KioCG.LitTicks", litTicks); // KioCG
+     }
+ 
+     @Override
+@@ -309,6 +335,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+         if (this.level != null) {
+             this.markUpdated();
+             this.cooldownImmediately(this.getLevel(), this.getBlockPos(), this.getBlockState(), (CampfireBlockEntity) this); // KioCG - 优化未燃烧的运算
++            this.litTicks = 0; // KioCG
+         }
+ 
+     }

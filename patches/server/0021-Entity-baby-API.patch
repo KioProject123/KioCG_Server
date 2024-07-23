@@ -5,12 +5,12 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 04eaa9042432f077a97c9557aa36f6a0a915369a..ef95afc096d10f7a01c64163fef9bc1d346455dc 100644
+index 928e3bdd2d8135ae975a570aabba5ee65982435c..3516d502c6557c722f51ec94e06cfd6607e45d4d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,6 +587,18 @@ public class WorldConfiguration extends ConfigurationPart {
-             public int campfireExtinguishingOne = -1;
+@@ -588,6 +588,18 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingTwo = -1;
+             public int campfireBoilingWaterTime = 600;
          }
 +
 +        public Entity entity;
