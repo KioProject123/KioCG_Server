@@ -17,10 +17,10 @@ index c66510c461d0eb1252e93ad37adcec81f46688d7..ed9c8642bb829709bb49c1e15547aa8d
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-index f270e5aa7dfd722a44fd717c9a7186b6f1fe695e..76c32cc91e1308f3d5d908e4ec6732c764300bec 100644
+index c5c211227c3dbe117af6cd0eb3a26a439f7375c1..8d8eab673ec48776578352abd496618a1ec796a5 100644
 --- a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-@@ -122,6 +122,13 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
+@@ -115,6 +115,13 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
      protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (!isHanging(state)) {
              if (true) { // Paper - Fix Spigot growth modifiers // KioCG
@@ -35,7 +35,7 @@ index f270e5aa7dfd722a44fd717c9a7186b6f1fe695e..76c32cc91e1308f3d5d908e4ec6732c7
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-index f9a94734c87cdda19f283f6a25a6a016fb354be9..e6232a5ab135576b3f3919908c47587329de2161 100644
+index 2216f341ca39b06947e6e77418a4dce12efc26fb..2bc986771ab978a795dcbe26f208d1c49ac1f527 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 @@ -62,6 +62,13 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {

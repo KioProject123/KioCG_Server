@@ -304,7 +304,7 @@ index 8206de9c96c19ce3c32293beebdd75d778cd4974..030a7b816c638de6bd01f93621cca4a3
          if (this.isTickTimeLoggingEnabled()) {
              this.getTickTimeLogger().logPartialSample(Util.getNanos() - tickStartTime, TpsDebugDimensions.TICK_SERVER_METHOD.ordinal());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index cb566041ee5f3c2caba5f679a56556a225327a33..6fc00d3af25979a6ab54109c806ab6459aa9c087 100644
+index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03dca7b0d21 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1323,6 +1323,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
