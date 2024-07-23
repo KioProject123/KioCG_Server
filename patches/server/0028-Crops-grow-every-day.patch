@@ -236,7 +236,7 @@ index fe4237b40af32415f8635ab769edc0f948a3e12d..ba919cda0600e6d97cf0c1a8b45db3e3
  
              if (i < 2) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 112d2feba5f75a2a873b595617780515945c10e4..eadc1600253a158bcb600cd8824b6bf38d721caa 100644
+index 112d2feba5f75a2a873b595617780515945c10e4..07fc99bf2fca96bc8cd974c1f179f74ffb026a3b 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,24 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -254,7 +254,7 @@ index 112d2feba5f75a2a873b595617780515945c10e4..eadc1600253a158bcb600cd8824b6bf3
 +        BlockState iblockdata = world.getBlockState(blockposition1);
 +        if (iblockdata.is(Blocks.FARMLAND)) {
 +            boolean moisture = (Integer) iblockdata.getValue(FarmBlock.MOISTURE) > 1; // 湿度1代表刚放置的耕地
-+            ((FarmBlock) iblockdata.getBlock()).dayTick0(iblockdata, world, blockposition1, random);
++            ((FarmBlock) iblockdata.getBlock()).dayTickFarmland(iblockdata, world, blockposition1, random, true);
 +            return moisture || (Integer) world.getBlockState(blockposition1).getValue(FarmBlock.MOISTURE) > 1;
 +        }
 +        return false;
@@ -282,10 +282,10 @@ index 112d2feba5f75a2a873b595617780515945c10e4..eadc1600253a158bcb600cd8824b6bf3
          BlockPos blockposition1 = pos.below();
  
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index 00706d964cec85f1ddcc8d8e366d905b13b4b106..95562cddf389c8fed5a2a26b7412bb698ca24b8f 100644
+index 00706d964cec85f1ddcc8d8e366d905b13b4b106..ab0569f3471affe3ccf5d78f2fd354f56d01140c 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-@@ -90,14 +90,49 @@ public class FarmBlock extends Block {
+@@ -90,13 +90,24 @@ public class FarmBlock extends Block {
  
      }
  
@@ -301,6 +301,8 @@ index 00706d964cec85f1ddcc8d8e366d905b13b4b106..95562cddf389c8fed5a2a26b7412bb69
          int i = (Integer) state.getValue(FarmBlock.MOISTURE);
 -        if (i > 0 && world.paperConfig().tickRates.wetFarmland != 1 && (world.paperConfig().tickRates.wetFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.wetFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
 -        if (i == 0 && world.paperConfig().tickRates.dryFarmland != 1 && (world.paperConfig().tickRates.dryFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.dryFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
+-
+-        if (!FarmBlock.isNearWater(world, pos) && !world.isRainingAt(pos.above())) {
 +        // KioCG start
 +        if (i >= 7) return; // 快速返回
 +        // if (i > 0 && world.paperConfig().tickRates.wetFarmland != 1 && (world.paperConfig().tickRates.wetFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.wetFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
@@ -309,43 +311,48 @@ index 00706d964cec85f1ddcc8d8e366d905b13b4b106..95562cddf389c8fed5a2a26b7412bb69
 +
 +        if (!world.isRainingAt(pos.above())) { // KioCG - 水源不要湿润耕地
 +            if (true) return; // KioCG - dayTick
-+            if (i > 0) {
-+                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
-+            } else if (!FarmBlock.shouldMaintainFarmland(world, pos)) {
-+                FarmBlock.turnToDirt((Entity) null, state, world, pos);
-+            }
-+        } else if (i < 7) {
-+            org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 7), 2); // CraftBukkit
-+        }
-+
-+    }
-+
+             if (i > 0) {
+                 org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
+             } else if (!FarmBlock.shouldMaintainFarmland(world, pos)) {
+@@ -108,6 +119,38 @@ public class FarmBlock extends Block {
+ 
+     }
+ 
 +    // KioCG start
 +    @Override
 +    protected void dayTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
 +        if (!shouldMaintainFarmland(world, pos)) { // 使农作物来运算耕地
-+            dayTick0(state, world, pos, random);
++            dayTickFarmland(state, world, pos, random, false);
 +        }
 +    }
 +    // 复制randomTick()的逻辑，区块加载时作物可能需要生长，但此时不一定会计算randomTick()
-+    public void dayTick0(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++    public void dayTickFarmland(BlockState state, ServerLevel world, BlockPos pos, RandomSource random, boolean shouldMaintain) {
 +        int i = (Integer) state.getValue(FarmBlock.MOISTURE);
- 
--        if (!FarmBlock.isNearWater(world, pos) && !world.isRainingAt(pos.above())) {
-+        if (!world.isRainingAt(pos.above())) {
-             if (i > 0) {
-+                i = 1; // KioCG - 强制干燥
-                 org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
-             } else if (!FarmBlock.shouldMaintainFarmland(world, pos)) {
-                 FarmBlock.turnToDirt((Entity) null, state, world, pos);
-@@ -107,6 +142,7 @@ public class FarmBlock extends Block {
-         }
- 
-     }
++
++        if (shouldMaintain) {
++            if (!world.isRainingAt(pos.above())) {
++                if (i > 1) {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 1), 2); // CraftBukkit
++                }
++            } else if (i < 7) {
++                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 7), 2); // CraftBukkit
++            }
++        } else {
++            if (!world.isRainingAt(pos.above())) {
++                if (i > 0) {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 0), 2); // CraftBukkit
++                } else {
++                    FarmBlock.turnToDirt((Entity) null, state, world, pos);
++                }
++            }
++        }
++
++    }
 +    // KioCG end
- 
++
      @Override
      public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+         super.fallOn(world, state, pos, entity, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
 diff --git a/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java b/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
 index cf05da1c86e3018db11dc079bf50317b6639e5cc..ae2ba7be106e991fd8e7b6a9acdb65e8d79aca98 100644
 --- a/src/main/java/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
