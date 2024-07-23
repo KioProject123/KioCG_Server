@@ -17,7 +17,7 @@ index ed9c8642bb829709bb49c1e15547aa8dd4df6707..fc78416fa2da6b902e8aaee162c38bea
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/FlowerBlock.java b/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
-index 630cc4f2e7c9a5286375f2cf19d6374bed4a751b..6f19c7e2e14f5ff5ebcc29820420b9089c7d2dd8 100644
+index 630cc4f2e7c9a5286375f2cf19d6374bed4a751b..463948ec9e7eab86de9ed6fd55dbbad47e5f7548 100644
 --- a/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FlowerBlock.java
 @@ -52,4 +52,52 @@ public class FlowerBlock extends BushBlock implements SuspiciousEffectHolder {
@@ -32,8 +32,8 @@ index 630cc4f2e7c9a5286375f2cf19d6374bed4a751b..6f19c7e2e14f5ff5ebcc29820420b908
 +    }
 +
 +    @Override
-+    public boolean isDayTicking() {
-+        return true;
++    public byte dayTicking() {
++        return 1;
 +    }
 +
 +    @Override
@@ -74,7 +74,7 @@ index 630cc4f2e7c9a5286375f2cf19d6374bed4a751b..6f19c7e2e14f5ff5ebcc29820420b908
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java b/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
-index d8d256e29f341c9759c3905ec0371e637e1a27d1..e36bad2f027f0e186fef52d3fe70213fc89f1e04 100644
+index d8d256e29f341c9759c3905ec0371e637e1a27d1..06cf43db29225eed0787bab9fb3100984edd2d37 100644
 --- a/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TallGrassBlock.java
 @@ -48,4 +48,52 @@ public class TallGrassBlock extends BushBlock implements BonemealableBlock {
@@ -89,8 +89,8 @@ index d8d256e29f341c9759c3905ec0371e637e1a27d1..e36bad2f027f0e186fef52d3fe70213f
 +    }
 +
 +    @Override
-+    public boolean isDayTicking() {
-+        return true;
++    public byte dayTicking() {
++        return 1;
 +    }
 +
 +    @Override
