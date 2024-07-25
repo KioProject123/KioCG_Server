@@ -60,6 +60,19 @@ index 5db5ba026462ca642dcee718af732f80fadabef5..c53a99e9c06b07c595086d0571c41050
 +    int MAX_STACK = 999; // KioCG
      // CraftBukkit end
  }
+diff --git a/src/main/java/net/minecraft/world/Containers.java b/src/main/java/net/minecraft/world/Containers.java
+index 16093c08975aca34a4a215c656648cf7a4e3ab0e..e7310b70307b7ce87dd89ec02f9175cf482ef1ed 100644
+--- a/src/main/java/net/minecraft/world/Containers.java
++++ b/src/main/java/net/minecraft/world/Containers.java
+@@ -37,7 +37,7 @@ public class Containers {
+         double i = Math.floor(z) + world.random.nextDouble() * e + f;
+ 
+         while (!stack.isEmpty()) {
+-            ItemEntity itemEntity = new ItemEntity(world, g, h, i, stack.split(world.random.nextInt(21) + 10));
++            ItemEntity itemEntity = new ItemEntity(world, g, h, i, stack.copyAndClear()); // KioCG - 不要拆分物品，太多了...
+             float j = 0.05F;
+             itemEntity.setDeltaMovement(
+                 world.random.triangle(0.0, 0.11485000171139836),
 diff --git a/src/main/java/net/minecraft/world/item/Item.java b/src/main/java/net/minecraft/world/item/Item.java
 index 8fd54bccb7af59da9113d8a289d12d8fad1fb467..a09b7fbcdcb0f1f321c625d112a0d9b3a451d066 100644
 --- a/src/main/java/net/minecraft/world/item/Item.java
