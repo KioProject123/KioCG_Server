@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Thu, 25 Jul 2024 12:27:14 +0800
+Subject: [PATCH] Anti ancient debris ESP
+
+
+diff --git a/src/main/java/net/minecraft/world/level/levelgen/feature/Feature.java b/src/main/java/net/minecraft/world/level/levelgen/feature/Feature.java
+index d69bac79e99639abf5598edf7b865d7b3444cca1..052eb7d9e9c18db2d5afe79b8e72e84727d1014d 100644
+--- a/src/main/java/net/minecraft/world/level/levelgen/feature/Feature.java
++++ b/src/main/java/net/minecraft/world/level/levelgen/feature/Feature.java
+@@ -216,7 +216,7 @@ public abstract class Feature<FC extends FeatureConfiguration> {
+     }
+ 
+     public static boolean isAdjacentToAir(Function<BlockPos, BlockState> posToState, BlockPos pos) {
+-        return checkNeighbors(posToState, pos, BlockBehaviour.BlockStateBase::isAir);
++        return checkNeighbors(posToState, pos, blockState -> blockState.isAir() || blockState == net.minecraft.world.level.block.Blocks.LAVA.defaultBlockState()); // KioCG
+     }
+ 
+     protected void markAboveForPostProcessing(WorldGenLevel world, BlockPos pos) {
