@@ -5,12 +5,12 @@ Subject: [PATCH] Configurable can drop mobs skull
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 2216ffc706b05328cc1e49f77bf5272166cdfc46..230967bec7893d91369a934a53e6130363e45db3 100644
+index 42a7e9c94846d9e51f0e3b20e5227f9a4ba519df..d0aa95394a9ca1178fd091a79726cbe0b8f906e2 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -606,6 +606,15 @@ public class WorldConfiguration extends ConfigurationPart {
                  public int darkEnoughToSprint = 7;
-                 public boolean zombiesSkinnedIntoSkeletons = true;
+                 public double zombiesSkinnedChance = 0.25;
                  public boolean babyZombieJockey = true;
 +
 +                public Monster.Creeper creeper;
@@ -64,7 +64,7 @@ index bb2e7cee612dc1fafa042674a0b0d07d7165b54c..98b60652732fcaf3b13a3c093b90a6fa
                  this.spawnAtLocation((ItemLike) Items.WITHER_SKELETON_SKULL);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 65b2e6623b73f727a006b9d29fd1f3bfa84c5939..8cb42ce5574ace29fcde4fa9dc32ba6f7978b1e7 100644
+index c90e8104c9f9451ae43e359a98161d0589783ee7..b00bdba6c11d63b7e31d1be90ea118e1cd794758 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -655,7 +655,7 @@ public class Zombie extends Monster {

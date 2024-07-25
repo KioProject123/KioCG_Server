@@ -64,7 +64,7 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index d339e07c29338f7ba179a702a2a317c95e47b171..8f5000db220918efabeacf53b817b1eb14918574 100644
+index eeed8dfb6cfc145d6288e456811e271572b0289d..425fbb08b2574de3334a90a20d98c29fd36ee73f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -612,6 +612,7 @@ public class WorldConfiguration extends ConfigurationPart {

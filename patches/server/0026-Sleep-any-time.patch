@@ -5,7 +5,7 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 152511b62c5cd442ecb7ebeef7658358633b3347..c48fa3e3b6b5e0dad6e1b08655d14596b76c48e0 100644
+index f589618d87143eaadd6d38639bb20e5f03217e5f..7366ed58bceb0aa37972cfce6d7a7485ff839954 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -608,6 +608,9 @@ public class WorldConfiguration extends ConfigurationPart {
