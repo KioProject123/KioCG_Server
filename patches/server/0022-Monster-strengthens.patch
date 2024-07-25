@@ -69,7 +69,7 @@ index e675f1e3e5b6f9e1aa0d928ebb9abe76458edb38..7bfdbb389f8ca72b1d5bc1de7d86b481
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 8c180d6286cda99a7fd656eab588f55584e6e10f..c90e8104c9f9451ae43e359a98161d0589783ee7 100644
+index 8c180d6286cda99a7fd656eab588f55584e6e10f..8de73725f9121cd9ba79ed7b2020c3ccff684d41 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -117,6 +117,16 @@ public class Zombie extends Monster {
@@ -89,11 +89,18 @@ index 8c180d6286cda99a7fd656eab588f55584e6e10f..c90e8104c9f9451ae43e359a98161d05
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-@@ -308,6 +318,52 @@ public class Zombie extends Monster {
+@@ -308,6 +318,61 @@ public class Zombie extends Monster {
  
      }
  
 +    // KioCG start
++    private boolean skipEquipmentLoot;
++
++    @Override
++    protected boolean shouldSkipLoot(EquipmentSlot slot) {
++        return skipEquipmentLoot;
++    }
++
 +    @Override
 +    public void die(DamageSource damageSource) {
 +        if (damageSource.is(net.minecraft.tags.DamageTypeTags.IS_PLAYER_ATTACK) && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedChance) {
@@ -104,7 +111,9 @@ index 8c180d6286cda99a7fd656eab588f55584e6e10f..c90e8104c9f9451ae43e359a98161d05
 +                if (world instanceof ServerLevel) {
 +                    ServerLevel worldserver = (ServerLevel) world;
 +
++                    skipEquipmentLoot = true; // 僵尸剥皮: 不要掉落护甲
 +                    org.bukkit.event.entity.EntityDeathEvent deathEvent = this.dropAllDeathLoot(worldserver, damageSource);
++                    skipEquipmentLoot = false; // 僵尸剥皮: 不要掉落护甲
 +                    if (deathEvent == null || !deathEvent.isCancelled()) {
 +                        if (this.isSleeping()) {
 +                            this.stopSleeping();
@@ -142,11 +151,3 @@ index 8c180d6286cda99a7fd656eab588f55584e6e10f..c90e8104c9f9451ae43e359a98161d05
      public boolean isSunSensitive() {
          return this.shouldBurnInDay; // Paper - Add more Zombie API
      }
-@@ -594,6 +650,7 @@ public class Zombie extends Monster {
- 
-     @Override
-     protected void dropCustomDeathLoot(ServerLevel world, DamageSource source, boolean causedByPlayer) {
-+        if (!this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedIntoSkeletons) // KioCG - 僵尸剥皮: 不要掉落护甲
-         super.dropCustomDeathLoot(world, source, causedByPlayer);
-         Entity entity = source.getEntity();
- 
