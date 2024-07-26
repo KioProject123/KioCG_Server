@@ -5,7 +5,7 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f589618d87143eaadd6d38639bb20e5f03217e5f..7366ed58bceb0aa37972cfce6d7a7485ff839954 100644
+index 86e9a90b9a5efaf6b602cfb56db63b33e1207d45..143be2b54de6525ea2c6fbe74f5e8ce104f384bf 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -608,6 +608,9 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -14,7 +14,7 @@ index f589618d87143eaadd6d38639bb20e5f03217e5f..7366ed58bceb0aa37972cfce6d7a7485
          }
 +
 +        public boolean sleepAnyTime = true;
-+        public double sleepHealingRegenRate = 20;
++        public double sleepHealingRegenRate = 20.0;
      }
      // KioCG end
  }

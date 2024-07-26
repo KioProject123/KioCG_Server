@@ -5,13 +5,13 @@ Subject: [PATCH] Saplings withered
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 85c8162a8d4cfef449fb64faf97d2858f5e0c041..3f2261eedfdc84704bcabf8c3dcfaf1fd2cfc096 100644
+index d984739ffb7849151735a422e2dd160774dfadcd..e779f403d23a466e86c880afe6c5819afcf965e2 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -616,6 +616,7 @@ public class WorldConfiguration extends ConfigurationPart {
  
          public boolean sleepAnyTime = true;
-         public double sleepHealingRegenRate = 20;
+         public double sleepHealingRegenRate = 20.0;
 +        public double saplingsWitheredChance = 0.025;
      }
      // KioCG end

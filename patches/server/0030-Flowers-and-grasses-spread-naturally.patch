@@ -5,12 +5,12 @@ Subject: [PATCH] Flowers and grasses spread naturally
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 3f2261eedfdc84704bcabf8c3dcfaf1fd2cfc096..11f2f6c1ee7d6cbdd8bac0202fe82d6b86d49ab0 100644
+index e779f403d23a466e86c880afe6c5819afcf965e2..de1df06184bd0f663d612219e2d7012686e046f1 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -617,6 +617,7 @@ public class WorldConfiguration extends ConfigurationPart {
          public boolean sleepAnyTime = true;
-         public double sleepHealingRegenRate = 20;
+         public double sleepHealingRegenRate = 20.0;
          public double saplingsWitheredChance = 0.025;
 +        public boolean flowersAndGrassesSpreadNaturally = true;
      }

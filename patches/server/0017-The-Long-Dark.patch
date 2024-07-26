@@ -221,7 +221,7 @@ index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 18ff6952111657df71558451046c54ec0ca9e52d..1c721c9c1aa60f3c515015549d27f936296ed5af 100644
+index 18ff6952111657df71558451046c54ec0ca9e52d..08512ecb6a3720df269d55d84bf0f76ac45b6e6e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -555,6 +555,35 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -235,17 +235,17 @@ index 18ff6952111657df71558451046c54ec0ca9e52d..1c721c9c1aa60f3c515015549d27f936
 +
 +            public ColdValue coldValue;
 +            public class ColdValue extends ConfigurationPart {
-+                public double ambientTemperatureBase = 0;
++                public double ambientTemperatureBase = 0.0;
 +                public double ambientSkyDarkenMultiplier = -0.15;
 +                public double biomeTemperatureOffset = -0.65;
-+                public double biomeTemperatureMultiplier = 30;
++                public double biomeTemperatureMultiplier = 30.0;
 +
-+                public double playerTemperatureBase = 0;
-+                public double playerLightBlockMultiplier = 5;
-+                public double isInWaterOrBubble = -35;
-+                public double isInRain = -15;
-+                public double isInLava = 300;
-+                public double isOnFire = 10;
++                public double playerTemperatureBase = 0.0;
++                public double playerLightBlockMultiplier = 5.0;
++                public double isInWaterOrBubble = -35.0;
++                public double isInRain = -15.0;
++                public double isInLava = 300.0;
++                public double isOnFire = 10.0;
 +
 +                public double finalTemperatureMultiplier = 1.0;
 +            }
