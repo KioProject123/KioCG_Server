@@ -6,10 +6,10 @@ Subject: [PATCH] The Long Dark
 
 diff --git a/src/main/java/com/kiocg/player/ColdData.java b/src/main/java/com/kiocg/player/ColdData.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b8071513e17d424e7ef524ae1bfe55be376fb0cf
+index 0000000000000000000000000000000000000000..35de173aa5cb8eb9859f4f9eebee681602f349b3
 --- /dev/null
 +++ b/src/main/java/com/kiocg/player/ColdData.java
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,107 @@
 +package com.kiocg.player;
 +
 +import io.papermc.paper.configuration.WorldConfiguration;
@@ -18,6 +18,7 @@ index 0000000000000000000000000000000000000000..b8071513e17d424e7ef524ae1bfe55be
 +import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
 +import net.minecraft.server.level.ServerPlayer;
 +import net.minecraft.util.Mth;
++import net.minecraft.world.entity.ai.attributes.Attributes;
 +import net.minecraft.world.entity.player.Player;
 +import net.minecraft.world.level.Level;
 +import net.minecraft.world.level.LightLayer;
@@ -70,7 +71,7 @@ index 0000000000000000000000000000000000000000..b8071513e17d424e7ef524ae1bfe55be
 +                ambientTemperature += (world.getBiome(pos).value().getTemperature(pos) + theLongDark.coldValue.biomeTemperatureOffset) * theLongDark.coldValue.biomeTemperatureMultiplier;
 +            }
 +
-+            double playerTemperature = theLongDark.coldValue.playerTemperatureBase;
++            double playerTemperature = theLongDark.coldValue.playerTemperatureBase + entityhuman.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE); // 属性用于玩家温度
 +            if (theLongDark.coldValue.playerLightBlockMultiplier != 0.0) {
 +                int blockLight = world.getBrightness(LightLayer.BLOCK, pos);
 +                playerTemperature += Math.min(blockLight, 12) * theLongDark.coldValue.playerLightBlockMultiplier;
@@ -354,7 +355,7 @@ index 1f7594e22f0f08ae110ef9b42f15119358aa5723..25cfc0704e717a0d18395b914b2e01e7
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index fe435d4a387bb28be6831cec0c8bb0a7c8b603a4..ff12f09b5a4b24518534174eb95832bf96df5f58 100644
+index fe435d4a387bb28be6831cec0c8bb0a7c8b603a4..6d9d4878c869a3354d6fd6c87da4f41b569f19e9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1357,6 +1357,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -378,7 +379,16 @@ index fe435d4a387bb28be6831cec0c8bb0a7c8b603a4..ff12f09b5a4b24518534174eb95832bf
      }
  
      public float getHealth() {
-@@ -3530,17 +3532,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3319,6 +3321,8 @@ public abstract class LivingEntity extends Entity implements Attackable {
+ 
+                 if (!itemstack3.isEmpty()) {
+                     itemstack3.forEachModifier(enumitemslot1, (holder, attributemodifier) -> {
++                        if (this instanceof net.minecraft.world.entity.monster.Zombie && holder == Attributes.SPAWN_REINFORCEMENTS_CHANCE) return; // KioCG - 属性用于玩家温度
++
+                         AttributeInstance attributemodifiable = this.attributes.getInstance(holder);
+ 
+                         if (attributemodifiable != null) {
+@@ -3530,17 +3534,23 @@ public abstract class LivingEntity extends Entity implements Attackable {
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int i = this.getTicksFrozen();
  
@@ -406,8 +416,21 @@ index fe435d4a387bb28be6831cec0c8bb0a7c8b603a4..ff12f09b5a4b24518534174eb95832bf
          }
  
          this.level().getProfiler().pop();
+diff --git a/src/main/java/net/minecraft/world/entity/ai/attributes/Attributes.java b/src/main/java/net/minecraft/world/entity/ai/attributes/Attributes.java
+index 5fd346c520b73b30fabff6094f478d5989d2fca7..db561d2399f4b1ac8f5c442ec63cf2fefdc5f4b6 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/attributes/Attributes.java
++++ b/src/main/java/net/minecraft/world/entity/ai/attributes/Attributes.java
+@@ -34,7 +34,7 @@ public class Attributes {
+     public static final Holder<Attribute> SAFE_FALL_DISTANCE = Attributes.register("generic.safe_fall_distance", (new RangedAttribute("attribute.name.generic.safe_fall_distance", 3.0D, -1024.0D, 1024.0D)).setSyncable(true));
+     public static final Holder<Attribute> SCALE = Attributes.register("generic.scale", (new RangedAttribute("attribute.name.generic.scale", 1.0D, 0.0625D, 16.0D)).setSyncable(true).setSentiment(Attribute.Sentiment.NEUTRAL));
+     public static final Holder<Attribute> SNEAKING_SPEED = Attributes.register("player.sneaking_speed", (new RangedAttribute("attribute.name.player.sneaking_speed", 0.3D, 0.0D, 1.0D)).setSyncable(true));
+-    public static final Holder<Attribute> SPAWN_REINFORCEMENTS_CHANCE = Attributes.register("zombie.spawn_reinforcements", new RangedAttribute("attribute.name.zombie.spawn_reinforcements", 0.0D, 0.0D, 1.0D));
++    public static final Holder<Attribute> SPAWN_REINFORCEMENTS_CHANCE = Attributes.register("zombie.spawn_reinforcements", new RangedAttribute("attribute.name.zombie.spawn_reinforcements", 0.0D, -1024.0D, 1024.0D)); // KioCG - 属性用于玩家温度
+     public static final Holder<Attribute> STEP_HEIGHT = Attributes.register("generic.step_height", (new RangedAttribute("attribute.name.generic.step_height", 0.6D, 0.0D, 10.0D)).setSyncable(true));
+     public static final Holder<Attribute> SUBMERGED_MINING_SPEED = Attributes.register("player.submerged_mining_speed", (new RangedAttribute("attribute.name.player.submerged_mining_speed", 0.2D, 0.0D, 20.0D)).setSyncable(true));
+     public static final Holder<Attribute> SWEEPING_DAMAGE_RATIO = Attributes.register("player.sweeping_damage_ratio", (new RangedAttribute("attribute.name.player.sweeping_damage_ratio", 0.0D, 0.0D, 1.0D)).setSyncable(true));
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..ed668fae11f05bbaa8153c68d38f084db4d2d1d5 100644
+index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..97404a624465a369737eff635718f0f65d8e7866 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -162,6 +162,8 @@ public abstract class Player extends LivingEntity {
@@ -419,6 +442,15 @@ index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..ed668fae11f05bbaa8153c68d38f084d
      protected int jumpTriggerTime;
      public float oBob;
      public float bob;
+@@ -236,7 +238,7 @@ public abstract class Player extends LivingEntity {
+     }
+ 
+     public static AttributeSupplier.Builder createAttributes() {
+-        return LivingEntity.createLivingAttributes().add(Attributes.ATTACK_DAMAGE, 1.0D).add(Attributes.MOVEMENT_SPEED, 0.10000000149011612D).add(Attributes.ATTACK_SPEED).add(Attributes.LUCK).add(Attributes.BLOCK_INTERACTION_RANGE, 4.5D).add(Attributes.ENTITY_INTERACTION_RANGE, 3.0D).add(Attributes.BLOCK_BREAK_SPEED).add(Attributes.SUBMERGED_MINING_SPEED).add(Attributes.SNEAKING_SPEED).add(Attributes.MINING_EFFICIENCY).add(Attributes.SWEEPING_DAMAGE_RATIO);
++        return LivingEntity.createLivingAttributes().add(Attributes.ATTACK_DAMAGE, 1.0D).add(Attributes.MOVEMENT_SPEED, 0.10000000149011612D).add(Attributes.ATTACK_SPEED).add(Attributes.LUCK).add(Attributes.BLOCK_INTERACTION_RANGE, 4.5D).add(Attributes.ENTITY_INTERACTION_RANGE, 3.0D).add(Attributes.BLOCK_BREAK_SPEED).add(Attributes.SUBMERGED_MINING_SPEED).add(Attributes.SNEAKING_SPEED).add(Attributes.MINING_EFFICIENCY).add(Attributes.SWEEPING_DAMAGE_RATIO).add(Attributes.SPAWN_REINFORCEMENTS_CHANCE); // KioCG - 属性用于玩家温度
+     }
+ 
+     @Override
 @@ -294,6 +296,8 @@ public abstract class Player extends LivingEntity {
          this.moveCloak();
          if (!this.level().isClientSide) {
