@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Fri, 26 Jul 2024 22:23:36 +0800
+Subject: [PATCH] Override upstream patches
+
+
+diff --git a/src/main/java/org/bukkit/NamespacedKey.java b/src/main/java/org/bukkit/NamespacedKey.java
+index 7ff6d60deb129e23b2a4d772aee123eb6c0b6433..1fbb01151a3d23574229738816ecc9c5e0efc829 100644
+--- a/src/main/java/org/bukkit/NamespacedKey.java
++++ b/src/main/java/org/bukkit/NamespacedKey.java
+@@ -30,6 +30,7 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key { // Pap
+      * compatibility measures.
+      */
+     public static final String BUKKIT = "bukkit";
++    public static final String KIOCG = "kiocg"; // KioCG
+     //
+     private final String namespace;
+     private final String key;
+@@ -179,6 +180,13 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key { // Pap
+         return new NamespacedKey(MINECRAFT, key);
+     }
+ 
++    // KioCG start
++    @NotNull
++    public static NamespacedKey kiocg(@NotNull String key) {
++        return new NamespacedKey(KIOCG, key.toLowerCase(Locale.ROOT));
++    }
++    // KioCG end
++
+     /**
+      * Get a NamespacedKey from the supplied string with a default namespace if
+      * a namespace is not defined. This is a utility method meant to fetch a
