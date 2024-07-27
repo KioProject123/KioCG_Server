@@ -4,8 +4,20 @@ Date: Tue, 28 May 2024 15:02:18 +0800
 Subject: [PATCH] Entity baby API
 
 
+diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
+index 83a726bcf8b7dce73a361b0d79dbd63a0afc7a12..006d15fe18f8b7616d9c3080793abbe3ce34cba5 100644
+--- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
++++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
+@@ -233,6 +233,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+                 .serializers(serializers -> serializers
+                     .register(new TypeToken<Reference2IntMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<Reference2IntMap<?>>(Reference2IntOpenHashMap::new, Integer.TYPE))
+                     .register(new TypeToken<Reference2LongMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<Reference2LongMap<?>>(Reference2LongOpenHashMap::new, Long.TYPE))
++                    .register(new TypeToken<it.unimi.dsi.fastutil.objects.Reference2DoubleMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<it.unimi.dsi.fastutil.objects.Reference2DoubleMap<?>>(it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap::new, Double.TYPE)) // KioCG
+                     .register(new TypeToken<Table<?, ?, ?>>() {}, new TableSerializer())
+                     .register(StringRepresentableSerializer::isValidFor, new StringRepresentableSerializer())
+                     .register(IntOr.Default.SERIALIZER)
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..4fd63c95e2314cf0515e282862ddbf9f2b97b882 100644
+index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..656deb2dc72eebe43f902289d917fc33d822db93 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -588,6 +588,18 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -15,13 +27,13 @@ index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..4fd63c95e2314cf0515e282862ddbf9f
 +
 +        public Entity entity;
 +        public class Entity extends ConfigurationPart {
-+            public Reference2IntMap<EntityType<?>> sizeScalingBaby = Util.make(new Reference2IntOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
-+                map.defaultReturnValue(50);
-+                map.put(EntityType.SKELETON, 65);
++            public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> sizeScalingBaby = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(0.5);
++                map.put(EntityType.SKELETON, 0.65);
 +            });
-+            public Reference2IntMap<EntityType<?>> sizeScalingHuge = Util.make(new Reference2IntOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
-+                map.defaultReturnValue(200);
-+                map.put(EntityType.SKELETON, 200);
++            public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> sizeScalingHuge = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(2.0);
++                map.put(EntityType.SKELETON, 2.0);
 +            });
 +        }
      }
@@ -40,7 +52,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..2c5cc56618574766d8c134d2267977f873b3a567 100644
+index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4ebdac2cc7e 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -49,8 +61,8 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..2c5cc56618574766d8c134d2267977f8
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
 +    // KioCG start
 +    private ScaleSimulate scaleSimulate = ScaleSimulate.NORMAL;
-+    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), (this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 50) - 100) / 100.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-+    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), (this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 200) - 100) / 100.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 0.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 2.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    // KioCG end
  
      @Override

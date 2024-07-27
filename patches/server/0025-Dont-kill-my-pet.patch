@@ -32,7 +32,7 @@ index f56e5c0f53f9b52a9247b9be9265b949494fc924..b622a82986efd7a6d7cd5491f3ba2569
      public static <T> TicketType<T> create(String name, Comparator<T> argumentComparator) {
          return new TicketType<>(name, argumentComparator, 0L);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 2c5cc56618574766d8c134d2267977f873b3a567..ae40b78372a56bf3fe192071e7d4116351e1c2f9 100644
+index 97c09c366cdf5f6f91f059bf71b5a4ebdac2cc7e..e0846fd1ae7fb88a412b126e2aa0e6c8776b21d0 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2502,7 +2502,15 @@ public abstract class LivingEntity extends Entity implements Attackable {

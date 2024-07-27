@@ -5,12 +5,12 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 4fd63c95e2314cf0515e282862ddbf9f2b97b882..86e9a90b9a5efaf6b602cfb56db63b33e1207d45 100644
+index 656deb2dc72eebe43f902289d917fc33d822db93..951cd5548a63e1e4646b6fe127a54416b534c5d1 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -599,6 +599,14 @@ public class WorldConfiguration extends ConfigurationPart {
-                 map.defaultReturnValue(200);
-                 map.put(EntityType.SKELETON, 200);
+                 map.defaultReturnValue(2.0);
+                 map.put(EntityType.SKELETON, 2.0);
              });
 +
 +            public KiocgConfig.Entity.Monster monster;

@@ -64,7 +64,7 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 94fe4c13bf1e9edffefbb604cd27287fa8d683ba..52ad0a3b649d71584b07c41121babfd05aa559e7 100644
+index efa39a88070c251038bc41aad035c20f0ba25d61..4d3d41c31985506ace170cdf8e78ce1f6f207406 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -612,6 +612,7 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -76,7 +76,7 @@ index 94fe4c13bf1e9edffefbb604cd27287fa8d683ba..52ad0a3b649d71584b07c41121babfd0
  
              public boolean turretEnable = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index ae40b78372a56bf3fe192071e7d4116351e1c2f9..f0f15d88fdb00e370cb98321585fb42636550ebc 100644
+index e0846fd1ae7fb88a412b126e2aa0e6c8776b21d0..0b81c29443977d11009efcc4b6dc2501501c05b4 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -4766,6 +4766,8 @@ public abstract class LivingEntity extends Entity implements Attackable {

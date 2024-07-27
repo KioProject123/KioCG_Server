@@ -228,7 +228,7 @@ index 525c8d31ec3097bc975252c6ff1e07ade12cb74e..25d31e696e09a545a09948ddfcd4a92c
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 52ad0a3b649d71584b07c41121babfd05aa559e7..21ec452ba06790c6781e6d21c598ee4633c2c749 100644
+index 4d3d41c31985506ace170cdf8e78ce1f6f207406..fe4e57f5447e1aed26728bb63d7b69d01f3dc945 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -625,6 +625,12 @@ public class WorldConfiguration extends ConfigurationPart {
