@@ -1,0 +1,226 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sun, 28 Jul 2024 22:41:58 +0800
+Subject: [PATCH] PlayerItemUseEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..03c68e0b6672fc8ceeb41b04f6fcbd25cb4a0e4a 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -478,11 +478,43 @@ public class ServerPlayerGameMode {
+     }
+ 
+     public InteractionResult useItem(ServerPlayer player, Level world, ItemStack stack, InteractionHand hand) {
++        // KioCG start
++        return this.useItem(player, world, stack, hand, null, false, null);
++    }
++    public InteractionResult useItem(ServerPlayer player, Level world, ItemStack stack, InteractionHand hand, net.minecraft.world.phys.HitResult movingobjectposition, boolean interactCancelled, PlayerInteractEvent interactEvent) {
++        // KioCG end
+         if (this.gameModeForPlayer == GameType.SPECTATOR) {
+             return InteractionResult.PASS;
+         } else if (player.getCooldowns().isOnCooldown(stack.getItem())) {
+             return InteractionResult.PASS;
+         } else {
++            // KioCG start - 复制PlayerInteractEvent的行为
++            boolean cancelled;
++            if (movingobjectposition == null || movingobjectposition.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) {
++                com.kiocg.event.player.PlayerItemUseEvent event = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_AIR, null, Direction.SOUTH, stack, hand, null, interactEvent);
++                cancelled = event.isCancelled();
++            } else {
++                BlockHitResult movingobjectpositionblock = (BlockHitResult) movingobjectposition;
++                if (this.player.gameMode.firedUseItem && this.player.gameMode.useItemPosition.equals(movingobjectpositionblock.getBlockPos()) && this.player.gameMode.useItemHand == hand && ItemStack.isSameItemSameComponents(this.player.gameMode.useItemItemStack, stack)) {
++                    cancelled = this.player.gameMode.useItemResult;
++                } else {
++                    com.kiocg.event.player.PlayerItemUseEvent event = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getDirection(), stack, hand, movingobjectpositionblock.getLocation(), interactEvent);
++                    cancelled = event.isCancelled();
++                }
++                this.player.gameMode.firedUseItem = false;
++            }
++
++            if (cancelled || interactCancelled) {
++                this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
++                this.player.getBukkitEntity().updateInventory(); // SPIGOT-2524
++                return InteractionResultHolder.fail(stack).getResult();
++            }
++            stack = this.player.getItemInHand(hand); // Update in case it was changed in the event
++            if (stack.isEmpty()) {
++                return InteractionResultHolder.fail(stack).getResult();
++            }
++            // KioCG end - 复制PlayerInteractEvent的行为
++
+             int i = stack.getCount();
+             int j = stack.getDamageValue();
+             InteractionResultHolder<ItemStack> interactionresultwrapper = stack.use(world, player, hand);
+@@ -516,6 +548,13 @@ public class ServerPlayerGameMode {
+     public BlockPos interactPosition;
+     public InteractionHand interactHand;
+     public ItemStack interactItemStack;
++    // KioCG start
++    public boolean useItemResult = false;
++    public boolean firedUseItem = false;
++    public BlockPos useItemPosition;
++    public InteractionHand useItemHand;
++    public ItemStack useItemItemStack;
++    // KioCG end
+     public InteractionResult useItemOn(ServerPlayer player, Level world, ItemStack stack, InteractionHand hand, BlockHitResult hitResult) {
+         BlockPos blockposition = hitResult.getBlockPos();
+         BlockState iblockdata = world.getBlockState(blockposition);
+@@ -562,6 +601,19 @@ public class ServerPlayerGameMode {
+             // Paper end - extend Player Interact cancellation
+             player.getBukkitEntity().updateInventory(); // SPIGOT-2867
+             this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
++
++            // KioCG start
++            com.kiocg.event.player.PlayerItemUseEvent event1 = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_BLOCK, blockposition, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
++            this.firedUseItem = true;
++            this.useItemResult = event1.isCancelled();
++            this.useItemPosition = blockposition.immutable();
++            this.useItemHand = hand;
++            this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
++            if (event1.isCancelled()) {
++                return InteractionResult.SUCCESS;
++            }
++            // KioCG end
++
+             return (event.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+         } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
+             MenuProvider itileinventory = iblockdata.getMenuProvider(world, blockposition);
+@@ -596,6 +648,18 @@ public class ServerPlayerGameMode {
+             }
+ 
+             if (!stack.isEmpty() && !this.interactResult) { // add !interactResult SPIGOT-764
++                // KioCG start
++                com.kiocg.event.player.PlayerItemUseEvent event1 = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_BLOCK, blockposition, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
++                this.firedUseItem = true;
++                this.useItemResult = event1.isCancelled();
++                this.useItemPosition = blockposition.immutable();
++                this.useItemHand = hand;
++                this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
++                if (event1.isCancelled()) {
++                    return InteractionResult.PASS;
++                }
++                // KioCG end
++
+                 UseOnContext itemactioncontext = new UseOnContext(player, hand, hitResult);
+ 
+                 if (this.isCreative()) {
+@@ -613,6 +677,20 @@ public class ServerPlayerGameMode {
+ 
+                 return enuminteractionresult;
+             } else {
++                // KioCG start
++                if (!stack.isEmpty()) {
++                    com.kiocg.event.player.PlayerItemUseEvent event1 = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_BLOCK, blockposition, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
++                    this.firedUseItem = true;
++                    this.useItemResult = event1.isCancelled();
++                    this.useItemPosition = blockposition.immutable();
++                    this.useItemHand = hand;
++                    this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
++                    if (event1.isCancelled()) {
++                        return InteractionResult.PASS;
++                    }
++                }
++                // KioCG end
++
+                 // Paper start - Properly cancel usable items; Cancel only if cancelled + if the interact result is different from default response
+                 if (this.interactResult && this.interactResult != cancelledItem) {
+                     this.player.resyncUsingItem(this.player);
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 048c324ba344d168ced8569771b67627ee57530d..0a8796a5de3187c5e6464c70612d09f6ce6c3b2f 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -1935,31 +1935,37 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+             HitResult movingobjectposition = this.player.level().clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.player));
+ 
+             boolean cancelled;
++            org.bukkit.event.player.PlayerInteractEvent interactEvent; // KioCG
+             if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK) {
+                 org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.player, Action.RIGHT_CLICK_AIR, itemstack, enumhand);
+                 cancelled = event.useItemInHand() == Event.Result.DENY;
++                interactEvent = event; // KioCG
+             } else {
+                 BlockHitResult movingobjectpositionblock = (BlockHitResult) movingobjectposition;
+                 if (this.player.gameMode.firedInteract && this.player.gameMode.interactPosition.equals(movingobjectpositionblock.getBlockPos()) && this.player.gameMode.interactHand == enumhand && ItemStack.isSameItemSameComponents(this.player.gameMode.interactItemStack, itemstack)) {
+                     cancelled = this.player.gameMode.interactResult;
++                    interactEvent = null; // KioCG
+                 } else {
+                     org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.player, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getDirection(), itemstack, true, enumhand, movingobjectpositionblock.getLocation());
+                     cancelled = event.useItemInHand() == Event.Result.DENY;
++                    interactEvent = event; // KioCG
+                 }
+                 this.player.gameMode.firedInteract = false;
+             }
+ 
+-            if (cancelled) {
+-                this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
+-                this.player.getBukkitEntity().updateInventory(); // SPIGOT-2524
+-                return;
+-            }
++            // KioCG start - 移动到useItem()
++            // if (cancelled) {
++            //     this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
++            //     this.player.getBukkitEntity().updateInventory(); // SPIGOT-2524
++            //     return;
++            // }
++            // KioCG end - 移动到useItem()
+             itemstack = this.player.getItemInHand(enumhand); // Update in case it was changed in the event
+             if (itemstack.isEmpty()) {
+                 return;
+             }
+             // CraftBukkit end
+-            InteractionResult enuminteractionresult = this.player.gameMode.useItem(this.player, worldserver, itemstack, enumhand);
++            InteractionResult enuminteractionresult = this.player.gameMode.useItem(this.player, worldserver, itemstack, enumhand, movingobjectposition, cancelled, interactEvent); // KioCG
+ 
+             if (enuminteractionresult.shouldSwing()) {
+                 this.player.swing(enumhand, true);
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 413d430f0eb68b34d5d17eb54d79f8cd8f23c0f7..924f9b27872dfe438a64dedf6091a053d8c9b5f3 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -600,6 +600,45 @@ public class CraftEventFactory {
+         return event;
+     }
+ 
++    // KioCG start
++    public static com.kiocg.event.player.PlayerItemUseEvent callPlayerItemUseEvent(net.minecraft.world.entity.player.Player who, Action action, BlockPos position, Direction direction, ItemStack itemstack, InteractionHand hand, Vec3 targetPos, PlayerInteractEvent interactEvent) {
++        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
++        CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
++
++        Vector clickedPos = null;
++        if (position != null && targetPos != null) {
++            clickedPos = CraftVector.toBukkit(targetPos.subtract(Vec3.atLowerCornerOf(position)));
++        }
++
++        CraftWorld craftWorld = (CraftWorld) player.getWorld();
++        CraftServer craftServer = (CraftServer) player.getServer();
++
++        Block blockClicked = null;
++        if (position != null) {
++            blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
++        } else {
++            switch (action) {
++                case LEFT_CLICK_BLOCK:
++                    action = Action.LEFT_CLICK_AIR;
++                    break;
++                case RIGHT_CLICK_BLOCK:
++                    action = Action.RIGHT_CLICK_AIR;
++                    break;
++            }
++        }
++        BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
++
++        if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0) {
++            itemInHand = null;
++        }
++
++        com.kiocg.event.player.PlayerItemUseEvent event = new com.kiocg.event.player.PlayerItemUseEvent(player, action, itemInHand, blockClicked, blockFace, (hand == null) ? null : ((hand == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND), clickedPos, interactEvent);
++        craftServer.getPluginManager().callEvent(event);
++
++        return event;
++    }
++    // KioCG end
++
+     /**
+      * EntityTransformEvent
+      */
