@@ -53,10 +53,10 @@ index 97c09c366cdf5f6f91f059bf71b5a4ebdac2cc7e..e0846fd1ae7fb88a412b126e2aa0e6c8
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 45224dc3867892b298b006c17f7f85741fcc96d6..370deb43b04bcb9e4b6184b2d51f3c4c241cb970 100644
+index 45224dc3867892b298b006c17f7f85741fcc96d6..dae63d74fbd6561975ccd3875550bd2ae3e54baf 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-@@ -254,11 +254,50 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -254,11 +254,59 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
@@ -75,25 +75,34 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..370deb43b04bcb9e4b6184b2d51f3c4c
 +        return (amount == Float.MAX_VALUE || !onTheVergeOfDeath()) && super.hurt(source, amount);
 +    }
 +
-+    @Nullable private UUID helpDisplayUUID;
++    @Override
++    public void tick() {
++        super.tick();
++        if (this.helpDisplay != null && this.helpDisplay.isRemoved()) {
++            this.helpDisplay = null;
++        }
++    }
++
++    @Nullable protected Display helpDisplay = null;
 +
 +    public void addHelpDisplay() {
-+        final Display.ItemDisplay itemDisplay = this.addRiderDisplay(EntityType.ITEM_DISPLAY, 99, display -> {
-+            display.setItemStack(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
-+            display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
-+            display.setBillboardConstraints(Display.BillboardConstraints.VERTICAL);
-+            display.setTransformation(new com.mojang.math.Transformation(new org.joml.Vector3f(0.0F, 0.5F, 0.0F), null, null, null));
-+        });
++        if (helpDisplay == null) {
++            final Display.ItemDisplay itemDisplay = this.addRiderDisplay(EntityType.ITEM_DISPLAY, 99, display -> {
++                display.setItemStack(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
++                display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
++                display.setBillboardConstraints(Display.BillboardConstraints.VERTICAL);
++                display.setTransformation(new com.mojang.math.Transformation(new org.joml.Vector3f(0.0F, 0.5F, 0.0F), null, null, null));
++            });
 +
-+        if (itemDisplay != null) {
-+            helpDisplayUUID = itemDisplay.getUUID();
++            if (itemDisplay != null) {
++                helpDisplay = itemDisplay;
++            }
 +        }
 +    }
 +
 +    public void removeHelpDisplay() {
-+        if (helpDisplayUUID != null) {
-+            this.removeRiderDisplay(helpDisplayUUID);
-+            helpDisplayUUID = null;
++        if (helpDisplay != null) {
++            helpDisplay.discard();
 +        }
 +    }
 +    // KioCG end
@@ -107,7 +116,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..370deb43b04bcb9e4b6184b2d51f3c4c
          this.orderedToSit = sitting;
      }
  
-@@ -274,7 +313,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -274,7 +322,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
      public boolean shouldTryTeleportToOwner() {
          LivingEntity entityliving = this.getOwner();
  
@@ -116,7 +125,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..370deb43b04bcb9e4b6184b2d51f3c4c
      }
  
      private void teleportToAroundBlockPos(BlockPos pos) {
-@@ -346,6 +385,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -346,6 +394,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
              super(TamableAnimal.this, d0);
          }
  

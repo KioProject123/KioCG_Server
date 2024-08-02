@@ -70,10 +70,10 @@ index a658943669cdfd49f66ba713505d11b33306ed86..cadb601efa9ea300c4ec4ac1ddb9ef67
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 25cfc0704e717a0d18395b914b2e01e77be43778..64fa7b13ac13d2858858dc6849d7e772e1aa6b81 100644
+index 25cfc0704e717a0d18395b914b2e01e77be43778..7414082fb9cb2b57fb4f1893e85d76bb5eb8903e 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4929,6 +4929,46 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4929,6 +4929,33 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return null;
      }
  
@@ -85,9 +85,9 @@ index 25cfc0704e717a0d18395b914b2e01e77be43778..64fa7b13ac13d2858858dc6849d7e772
 +
 +    @Nullable
 +    public <T extends Display> T addRiderDisplay(EntityType<T> type, int priority, java.util.function.Consumer<T> function) {
-+        final Entity firstPassenger = this.getFirstPassenger();
-+        if (firstPassenger == null || firstPassenger instanceof Display display && Objects.requireNonNullElse(display.getRiderPriority(), Integer.MAX_VALUE) < priority) {
-+            if (firstPassenger != null) firstPassenger.discard();
++        Entity lastPassenger = this.passengers.isEmpty() ? null : this.passengers.getLast();
++        if (lastPassenger == null || lastPassenger instanceof Display display && Objects.requireNonNullElse(display.getRiderPriority(), Integer.MAX_VALUE) < priority) {
++            if (lastPassenger != null) lastPassenger.discard();
 +
 +            T display = type.create(this.level());
 +            if (display != null) {
@@ -102,29 +102,16 @@ index 25cfc0704e717a0d18395b914b2e01e77be43778..64fa7b13ac13d2858858dc6849d7e772
 +        }
 +        return null;
 +    }
-+
-+    public boolean removeRiderDisplay() {
-+        return this.removeRiderDisplay(null);
-+    }
-+
-+    public boolean removeRiderDisplay(@Nullable UUID uuid) {
-+        final Entity firstPassenger = this.getFirstPassenger();
-+        if (firstPassenger instanceof Display display && (uuid == null && display.getRiderPriority() != null || display.getUUID().equals(uuid))) {
-+            firstPassenger.discard();
-+            return true;
-+        }
-+        return false;
-+    }
 +    // KioCG end
 +
      public static enum RemovalReason {
  
          KILLED(true, false), DISCARDED(true, false), UNLOADED_TO_CHUNK(false, true), UNLOADED_WITH_PLAYER(false, false), CHANGED_DIMENSION(false, false);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-index 2cde808bfa797256409879505ba205a71f381981..5da985512e9bdd3a536e6f7b6efb563a9b45ca8e 100644
+index 2cde808bfa797256409879505ba205a71f381981..3b717e1f68e25a0974f0ad8fdf48f0916c96b5de 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -1297,4 +1297,30 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+@@ -1297,4 +1297,25 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          return this.getHandle().getScoreboardName();
      }
      // Paper end - entity scoreboard name
@@ -135,11 +122,6 @@ index 2cde808bfa797256409879505ba205a71f381981..5da985512e9bdd3a536e6f7b6efb563a
 +        return (T) this.getHandle().addRiderDisplay(getNMSDisplayType(clazz), priority, nmsEntity -> {
 +            function.accept((T) nmsEntity.getBukkitEntity());
 +        }).getBukkitEntity();
-+    }
-+
-+    @Override
-+    public boolean removeRiderDisplay(UUID uuid) {
-+        return this.getHandle().removeRiderDisplay(uuid);
 +    }
 +
 +    private net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Display> getNMSDisplayType(Class<? extends org.bukkit.entity.Display> clazz) {
