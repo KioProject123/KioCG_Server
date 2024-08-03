@@ -5,7 +5,7 @@ Subject: [PATCH] Configurable persistent when picked up items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 42feeddcabd0287e8062e155f9438b2fdbd79ab7..45bbd7e2ca03daebe7ac09b9e34ced646d00ab75 100644
+index 158347f4a618306ee6b6a73559dc1cea94027679..2261658ef4a8e3a2bc19dce31e4aa3919889180f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -615,6 +615,8 @@ public class WorldConfiguration extends ConfigurationPart {

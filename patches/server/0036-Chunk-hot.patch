@@ -215,7 +215,7 @@ index 3c44d94ba77a24023e77ef4c778b181736ff5f98..ae3ebd432a89f63b5f6277ba66df898d
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 525c8d31ec3097bc975252c6ff1e07ade12cb74e..25d31e696e09a545a09948ddfcd4a92c0855e7f7 100644
+index 525c8d31ec3097bc975252c6ff1e07ade12cb74e..bc847741e9ab752ef8b7c3724a3a257ee01a7a0b 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -430,7 +430,7 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -223,15 +223,15 @@ index 525c8d31ec3097bc975252c6ff1e07ade12cb74e..25d31e696e09a545a09948ddfcd4a92c
          public boolean petFollowKeepChunkLoaded = true;
  
 -        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
-+        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms Hot<yellow>:</yellow> <totalhot>/<gray><chunkhot>";
++        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms SAN<yellow>:</yellow> <totalhot>/<gray><chunkhot>";
          public net.kyori.adventure.bossbar.BossBar.Overlay commandTpsBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 4d3d41c31985506ace170cdf8e78ce1f6f207406..fe4e57f5447e1aed26728bb63d7b69d01f3dc945 100644
+index 4d3d41c31985506ace170cdf8e78ce1f6f207406..1d3203953d48432c9239ca9eac0c123c7e4ba64f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -625,6 +625,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -625,6 +625,14 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20.0;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;
@@ -240,6 +240,8 @@ index 4d3d41c31985506ace170cdf8e78ce1f6f207406..fe4e57f5447e1aed26728bb63d7b69d0
 +        public class ChunkHot extends ConfigurationPart {
 +            public long phaseOne = 300000L;
 +            public long phaseTwo = 500000L;
++            public String phaseOneMessage = "<red><i>这片区域令你感到不适";
++            public String phaseTwoMessage = "<dark_red><i><b>古神在你耳边窃窃私语";
 +        }
      }
      // KioCG end
@@ -359,7 +361,7 @@ index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03d
  
      @Override
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 7287a23cff32e3458a626197eb8ef0cf369a98a7..64630a596b3874e0e6a24ea80f8cc0e13ac6fb8e 100644
+index 7287a23cff32e3458a626197eb8ef0cf369a98a7..9991900c9c428aea357deb26797a27555f2ed022 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,6 +303,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -370,7 +372,7 @@ index 7287a23cff32e3458a626197eb8ef0cf369a98a7..64630a596b3874e0e6a24ea80f8cc0e1
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -805,6 +806,36 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -805,6 +806,34 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this);
@@ -378,13 +380,11 @@ index 7287a23cff32e3458a626197eb8ef0cf369a98a7..64630a596b3874e0e6a24ea80f8cc0e1
 +        // KioCG start
 +        if (this.server.getTickCount() % 20 == 1) {
 +            this.nearbyChunkHot = this.refreshNearbyChunkHot();
-+            this.hasVisualFire = false;
 +            if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseTwo) {
-+                this.hasVisualFire = true;
 +                this.hurt(this.damageSources().generic(), 2.0F);
-+                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize("<red><italic>你所在的区域太热辣!")), true);
++                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.phaseTwoMessage)), true);
 +            } else if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseOne) {
-+                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize("<red><italic>你所在的区域有点热.")), true);
++                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.phaseOneMessage)), true);
 +            }
 +        }
 +    }

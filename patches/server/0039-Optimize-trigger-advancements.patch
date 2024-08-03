@@ -17,7 +17,7 @@ index 9a24249fe868e6a574ed365ff31253b490593272..96a9a37c76e26d516b00e87a1bc42245
      public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
      public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 64630a596b3874e0e6a24ea80f8cc0e13ac6fb8e..ee02dca4bf7a5f244009dc7d2d975c3af822a331 100644
+index 9991900c9c428aea357deb26797a27555f2ed022..393658b4aa60921a0020742d57dd1888a584583b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -750,6 +750,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -36,7 +36,7 @@ index 64630a596b3874e0e6a24ea80f8cc0e13ac6fb8e..ee02dca4bf7a5f244009dc7d2d975c3a
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -928,6 +930,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -926,6 +928,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              }
  
              if (this.tickCount % 20 == 0) {
