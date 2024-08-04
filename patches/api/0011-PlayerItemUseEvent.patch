@@ -6,10 +6,10 @@ Subject: [PATCH] PlayerItemUseEvent
 
 diff --git a/src/main/java/com/kiocg/event/player/PlayerItemUseEvent.java b/src/main/java/com/kiocg/event/player/PlayerItemUseEvent.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..58da18d0f2802be035f1200c31d14e8f9d69f4af
+index 0000000000000000000000000000000000000000..8abdf15ff3ae517ee77c96e94edd8470e4399086
 --- /dev/null
 +++ b/src/main/java/com/kiocg/event/player/PlayerItemUseEvent.java
-@@ -0,0 +1,235 @@
+@@ -0,0 +1,218 @@
 +package com.kiocg.event.player;
 +
 +import org.bukkit.Location;
@@ -50,15 +50,15 @@ index 0000000000000000000000000000000000000000..58da18d0f2802be035f1200c31d14e8f
 +    private EquipmentSlot hand;
 +    private Vector clickedPosistion;
 +
-+    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @Nullable final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final PlayerInteractEvent interactEvent) {
++    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final PlayerInteractEvent interactEvent) {
 +        this(who, action, item, clickedBlock, clickedFace, EquipmentSlot.HAND, interactEvent);
 +    }
 +
-+    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @Nullable final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final EquipmentSlot hand, @Nullable final PlayerInteractEvent interactEvent) {
++    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final EquipmentSlot hand, @Nullable final PlayerInteractEvent interactEvent) {
 +        this(who, action, item, clickedBlock, clickedFace, hand, null, interactEvent);
 +    }
 +
-+    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @Nullable final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final EquipmentSlot hand, @Nullable final Vector clickedPosition, @Nullable final PlayerInteractEvent interactEvent) {
++    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final EquipmentSlot hand, @Nullable final Vector clickedPosition, @Nullable final PlayerInteractEvent interactEvent) {
 +        super(who);
 +        this.action = action;
 +        this.item = item;
@@ -86,7 +86,7 @@ index 0000000000000000000000000000000000000000..58da18d0f2802be035f1200c31d14e8f
 +     *
 +     * @return ItemStack the item used
 +     */
-+    @Nullable
++    @NotNull
 +    public ItemStack getItem() {
 +        return this.item;
 +    }
@@ -99,10 +99,6 @@ index 0000000000000000000000000000000000000000..58da18d0f2802be035f1200c31d14e8f
 +     */
 +    @NotNull
 +    public Material getMaterial() {
-+        if (!hasItem()) {
-+            return Material.AIR;
-+        }
-+
 +        return item.getType();
 +    }
 +
@@ -116,25 +112,12 @@ index 0000000000000000000000000000000000000000..58da18d0f2802be035f1200c31d14e8f
 +    }
 +
 +    /**
-+     * Check if this event involved an item
-+     *
-+     * @return boolean true if it did
-+     */
-+    public boolean hasItem() {
-+        return this.item != null;
-+    }
-+
-+    /**
 +     * Convenience method to inform the user whether this was a block
 +     * placement event.
 +     *
 +     * @return boolean true if the item in hand was a block
 +     */
 +    public boolean isBlockInHand() {
-+        if (!hasItem()) {
-+            return false;
-+        }
-+
 +        return item.getType().isBlock();
 +    }
 +
