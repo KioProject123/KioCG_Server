@@ -6,7 +6,7 @@ Subject: [PATCH] PlayerItemUseEvent
 
 diff --git a/src/main/java/com/kiocg/event/player/PlayerItemUseEvent.java b/src/main/java/com/kiocg/event/player/PlayerItemUseEvent.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8abdf15ff3ae517ee77c96e94edd8470e4399086
+index 0000000000000000000000000000000000000000..10d525bfde4f6ce01f9d6c7d138b6f0f3c0a52c9
 --- /dev/null
 +++ b/src/main/java/com/kiocg/event/player/PlayerItemUseEvent.java
 @@ -0,0 +1,218 @@
@@ -54,11 +54,11 @@ index 0000000000000000000000000000000000000000..8abdf15ff3ae517ee77c96e94edd8470
 +        this(who, action, item, clickedBlock, clickedFace, EquipmentSlot.HAND, interactEvent);
 +    }
 +
-+    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final EquipmentSlot hand, @Nullable final PlayerInteractEvent interactEvent) {
++    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @NotNull final EquipmentSlot hand, @Nullable final PlayerInteractEvent interactEvent) {
 +        this(who, action, item, clickedBlock, clickedFace, hand, null, interactEvent);
 +    }
 +
-+    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final EquipmentSlot hand, @Nullable final Vector clickedPosition, @Nullable final PlayerInteractEvent interactEvent) {
++    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @NotNull final EquipmentSlot hand, @Nullable final Vector clickedPosition, @Nullable final PlayerInteractEvent interactEvent) {
 +        super(who);
 +        this.action = action;
 +        this.item = item;
@@ -172,7 +172,7 @@ index 0000000000000000000000000000000000000000..8abdf15ff3ae517ee77c96e94edd8470
 +     *
 +     * @return the hand used to interact. May be null.
 +     */
-+    @Nullable
++    @NotNull
 +    public EquipmentSlot getHand() {
 +        return hand;
 +    }

@@ -177,7 +177,7 @@ index 048c324ba344d168ced8569771b67627ee57530d..0a8796a5de3187c5e6464c70612d09f6
              if (enuminteractionresult.shouldSwing()) {
                  this.player.swing(enumhand, true);
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 413d430f0eb68b34d5d17eb54d79f8cd8f23c0f7..a8113ae5f76a46f698bf66823cc99436d1a1ab69 100644
+index 413d430f0eb68b34d5d17eb54d79f8cd8f23c0f7..8e459fe7514c2790819f0010dc9a062ed2d618a3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -600,6 +600,41 @@ public class CraftEventFactory {
@@ -212,7 +212,7 @@ index 413d430f0eb68b34d5d17eb54d79f8cd8f23c0f7..a8113ae5f76a46f698bf66823cc99436
 +        }
 +        BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
 +
-+        com.kiocg.event.player.PlayerItemUseEvent event = new com.kiocg.event.player.PlayerItemUseEvent(player, action, itemInHand, blockClicked, blockFace, (hand == null) ? null : ((hand == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND), clickedPos, interactEvent);
++        com.kiocg.event.player.PlayerItemUseEvent event = new com.kiocg.event.player.PlayerItemUseEvent(player, action, itemInHand, blockClicked, blockFace, ((hand == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND), clickedPos, interactEvent);
 +        craftServer.getPluginManager().callEvent(event);
 +
 +        return event;
