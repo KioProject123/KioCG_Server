@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Mon, 5 Aug 2024 12:13:50 +0800
+Subject: [PATCH] More API
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index c043d239c449bf4bb13a24467f2f6c67b4d28d2d..54cd10faaf3ee87a32046a6698dbb887f534ae87 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -626,6 +626,8 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+     @NotNull
+     public List<Player> matchPlayer(@NotNull String name);
+ 
++    public boolean isValidPlayerName(@NotNull String name); // KioCG
++
+     /**
+      * Gets the player with the given UUID.
+      *

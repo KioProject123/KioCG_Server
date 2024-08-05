@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Mon, 5 Aug 2024 12:14:08 +0800
+Subject: [PATCH] More API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index c8b82bc41f2042bb4b067f06265a3a22e51f7629..7716f2d21ea05cec7339db6ae8547869768e7d64 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -705,6 +705,13 @@ public final class CraftServer implements Server {
+         return (player != null) ? player.getBukkitEntity() : null;
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isValidPlayerName(String name) {
++        return net.minecraft.util.StringUtil.isReasonablePlayerName(name);
++    }
++    // KioCG end
++
+     @Override
+     public Player getPlayer(UUID id) {
+         Preconditions.checkArgument(id != null, "UUID id cannot be null");
