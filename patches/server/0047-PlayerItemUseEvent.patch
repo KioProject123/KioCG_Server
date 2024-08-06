@@ -5,7 +5,7 @@ Subject: [PATCH] PlayerItemUseEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..107622a0d7a78a28225e4494b8aa9e9da2fdd00a 100644
+index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..a83a9a294018e433740c203314c3a655165c5d17 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -478,11 +478,43 @@ public class ServerPlayerGameMode {
@@ -88,11 +88,12 @@ index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..107622a0d7a78a28225e4494b8aa9e9d
              return (event.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider itileinventory = iblockdata.getMenuProvider(world, blockposition);
-@@ -596,6 +650,18 @@ public class ServerPlayerGameMode {
+@@ -595,6 +649,19 @@ public class ServerPlayerGameMode {
+                 }
              }
  
-             if (!stack.isEmpty() && !this.interactResult) { // add !interactResult SPIGOT-764
-+                // KioCG start
++            // KioCG start
++            if (!stack.isEmpty()) {
 +                com.kiocg.event.player.PlayerItemUseEvent event1 = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_BLOCK, blockposition, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
 +                this.firedUseItem = true;
 +                this.useItemResult = event1.isCancelled();
@@ -102,32 +103,11 @@ index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..107622a0d7a78a28225e4494b8aa9e9d
 +                if (event1.isCancelled()) {
 +                    return InteractionResult.PASS;
 +                }
-+                // KioCG end
-+
++            }
++            // KioCG end
+             if (!stack.isEmpty() && !this.interactResult) { // add !interactResult SPIGOT-764
                  UseOnContext itemactioncontext = new UseOnContext(player, hand, hitResult);
  
-                 if (this.isCreative()) {
-@@ -613,6 +679,20 @@ public class ServerPlayerGameMode {
- 
-                 return enuminteractionresult;
-             } else {
-+                // KioCG start
-+                if (!stack.isEmpty()) {
-+                    com.kiocg.event.player.PlayerItemUseEvent event1 = CraftEventFactory.callPlayerItemUseEvent(player, Action.RIGHT_CLICK_BLOCK, blockposition, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
-+                    this.firedUseItem = true;
-+                    this.useItemResult = event1.isCancelled();
-+                    this.useItemPosition = blockposition.immutable();
-+                    this.useItemHand = hand;
-+                    this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
-+                    if (event1.isCancelled()) {
-+                        return InteractionResult.PASS;
-+                    }
-+                }
-+                // KioCG end
-+
-                 // Paper start - Properly cancel usable items; Cancel only if cancelled + if the interact result is different from default response
-                 if (this.interactResult && this.interactResult != cancelledItem) {
-                     this.player.resyncUsingItem(this.player);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 index 048c324ba344d168ced8569771b67627ee57530d..0a8796a5de3187c5e6464c70612d09f6ce6c3b2f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
