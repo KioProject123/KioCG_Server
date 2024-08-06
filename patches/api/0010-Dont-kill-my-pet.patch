@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 6 Aug 2024 11:44:54 +0800
+Subject: [PATCH] Dont kill my pet
+
+
+diff --git a/src/main/java/org/bukkit/entity/Cat.java b/src/main/java/org/bukkit/entity/Cat.java
+index 60cf07bff0898176c8d7af84b3e65d7a1ee8cf2e..acd7a634ad8d6da1dbc9858864e08eefdae726b4 100644
+--- a/src/main/java/org/bukkit/entity/Cat.java
++++ b/src/main/java/org/bukkit/entity/Cat.java
+@@ -128,4 +128,9 @@ public interface Cat extends Tameable, Sittable, io.papermc.paper.entity.CollarC
+      */
+     public boolean isHeadUp();
+     // Paper end - More cat api
++
++    // KioCG start
++    public boolean isFollowOwner();
++    public void setFollowOwner(boolean followOwner);
++    // KioCG end
+ }
+diff --git a/src/main/java/org/bukkit/entity/Parrot.java b/src/main/java/org/bukkit/entity/Parrot.java
+index c545a025c2ff5d3a0a4fff4e379277f38acf5c06..cc730f8ca5f4b5abdf56ee445bc2bdf746f3533f 100644
+--- a/src/main/java/org/bukkit/entity/Parrot.java
++++ b/src/main/java/org/bukkit/entity/Parrot.java
+@@ -29,6 +29,11 @@ public interface Parrot extends Tameable, Sittable {
+      */
+     public boolean isDancing();
+ 
++    // KioCG start
++    public boolean isFollowOwner();
++    public void setFollowOwner(boolean followOwner);
++    // KioCG end
++
+     /**
+      * Represents the variant of a parrot - ie its color.
+      */
+diff --git a/src/main/java/org/bukkit/entity/Wolf.java b/src/main/java/org/bukkit/entity/Wolf.java
+index 4b84c04675775e2a606630b00de8afe51665cebc..0e0680d3e34ba806941f1f35e14d6842e350d91f 100644
+--- a/src/main/java/org/bukkit/entity/Wolf.java
++++ b/src/main/java/org/bukkit/entity/Wolf.java
+@@ -89,6 +89,11 @@ public interface Wolf extends Tameable, Sittable, io.papermc.paper.entity.Collar
+      */
+     void setVariant(@NotNull Variant variant);
+ 
++    // KioCG start
++    public boolean isFollowOwner();
++    public void setFollowOwner(boolean followOwner);
++    // KioCG end
++
+     /**
+      * Represents the variant of a wolf.
+      */

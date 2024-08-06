@@ -53,10 +53,34 @@ index 97c09c366cdf5f6f91f059bf71b5a4ebdac2cc7e..e0846fd1ae7fb88a412b126e2aa0e6c8
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 45224dc3867892b298b006c17f7f85741fcc96d6..dae63d74fbd6561975ccd3875550bd2ae3e54baf 100644
+index 45224dc3867892b298b006c17f7f85741fcc96d6..a2b4b2b86d7921ffe81f3b83f894281f7ec74ad0 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-@@ -254,11 +254,59 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -41,6 +41,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+     protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamableAnimal.class, EntityDataSerializers.BYTE);
+     protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData.defineId(TamableAnimal.class, EntityDataSerializers.OPTIONAL_UUID);
+     private boolean orderedToSit;
++    public boolean followOwner = true; // KioCG
+ 
+     protected TamableAnimal(EntityType<? extends TamableAnimal> type, Level world) {
+         super(type, world);
+@@ -61,6 +62,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+         }
+ 
+         nbt.putBoolean("Sitting", this.orderedToSit);
++        nbt.putBoolean("KioCG.FollowOwner", this.followOwner); // KioCG
+     }
+ 
+     @Override
+@@ -87,6 +89,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+ 
+         this.orderedToSit = nbt.getBoolean("Sitting");
+         this.setInSittingPose(this.orderedToSit, false); // Paper - Add EntityToggleSitEvent
++        if (nbt.contains("KioCG.FollowOwner")) this.followOwner = nbt.getBoolean("KioCG.FollowOwner"); // KioCG
+     }
+ 
+     @Override
+@@ -254,11 +257,59 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
@@ -116,7 +140,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..dae63d74fbd6561975ccd3875550bd2a
          this.orderedToSit = sitting;
      }
  
-@@ -274,7 +322,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -274,7 +325,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
      public boolean shouldTryTeleportToOwner() {
          LivingEntity entityliving = this.getOwner();
  
@@ -125,7 +149,15 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..dae63d74fbd6561975ccd3875550bd2a
      }
  
      private void teleportToAroundBlockPos(BlockPos pos) {
-@@ -346,6 +394,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -329,6 +380,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+     }
+ 
+     public final boolean unableToMoveToOwner() {
++        if (!this.followOwner) return true; // KioCG
+         return this.isOrderedToSit() || this.isPassenger() || this.mayBeLeashed() || this.getOwner() != null && this.getOwner().isSpectator();
+     }
+ 
+@@ -346,6 +398,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
              super(TamableAnimal.this, d0);
          }
  
@@ -347,3 +379,24 @@ index 0c51106537876f704e382a9afbcd2d7e083cb480..d33288338237d999f53cf94adf841e52
              } else {
                  if (item instanceof DyeItem) {
                      DyeItem itemdye = (DyeItem) item;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
+index cedb8e67e208cdf954d052a4f0a100c1c07a962b..22b6bc3aedc79ff8f846009bb562f7c2dd3844ff 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
+@@ -81,6 +81,16 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
+         this.getHandle().setOrderedToSit(sitting);
+     }
+ 
++    // KioCG start
++    public boolean isFollowOwner() {
++        return this.getHandle().followOwner;
++    }
++
++    public void setFollowOwner(boolean followOwner) {
++        this.getHandle().followOwner = followOwner;
++    }
++    // KioCG end
++
+     @Override
+     public String toString() {
+         return this.getClass().getSimpleName() + "{owner=" + this.getOwner() + ",tamed=" + this.isTamed() + "}";
