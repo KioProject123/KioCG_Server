@@ -326,19 +326,24 @@ index 8e347718f72297398b5e6d34a893264bc10efe18..a54680c1201be07efbb769f13ed7dbfb
  
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cow.java b/src/main/java/net/minecraft/world/entity/animal/Cow.java
-index e336934f37075a827843e4b1bb2b6b660d2c60c9..75d4d2e613078d2677b0af2af580e380aca4dd20 100644
+index e336934f37075a827843e4b1bb2b6b660d2c60c9..174d4188b459edbdbf408e85b49a898139b90c1e 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cow.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cow.java
-@@ -96,7 +96,7 @@ public class Cow extends Animal {
-     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+@@ -97,6 +97,13 @@ public class Cow extends Animal {
          ItemStack itemstack = player.getItemInHand(hand);
  
--        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
-+        if (itemstack.is(Items.BUCKET) && !this.isBaby() && this.canProduce()) { // KioCG
+         if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
++            // KioCG start
++            if (!this.canProduce()) {
++                player.containerMenu.sendAllDataToRemote(); // Paper - Fix inventory desync
++                return InteractionResult.PASS;
++            }
++            // KioCG end
++
              // CraftBukkit start - Got milk?
              PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
  
-@@ -109,6 +109,7 @@ public class Cow extends Animal {
+@@ -109,6 +116,7 @@ public class Cow extends Animal {
              player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
              ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, player, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
  
@@ -347,19 +352,24 @@ index e336934f37075a827843e4b1bb2b6b660d2c60c9..75d4d2e613078d2677b0af2af580e380
              return InteractionResult.sidedSuccess(this.level().isClientSide);
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java b/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
-index 0c21959f57ae88fcd0a4d6dc911c1ce347c96528..760cdd726d3c242a5214d9995cddb04e587fb0a1 100644
+index 0c21959f57ae88fcd0a4d6dc911c1ce347c96528..659d55516cbe238c0ba04cdd9b0d9f53a2e9fdde 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -95,7 +95,7 @@ public class MushroomCow extends Cow implements Shearable, VariantHolder<Mushroo
-     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+@@ -96,6 +96,13 @@ public class MushroomCow extends Cow implements Shearable, VariantHolder<Mushroo
          ItemStack itemstack = player.getItemInHand(hand);
  
--        if (itemstack.is(Items.BOWL) && !this.isBaby()) {
-+        if (itemstack.is(Items.BOWL) && !this.isBaby() && this.canProduce()) { // KioCG
+         if (itemstack.is(Items.BOWL) && !this.isBaby()) {
++            // KioCG start
++            if (!this.canProduce()) {
++                player.containerMenu.sendAllDataToRemote(); // Paper - Fix inventory desync
++                return InteractionResult.PASS;
++            }
++            // KioCG end
++
              boolean flag = false;
              ItemStack itemstack1;
  
-@@ -110,6 +110,7 @@ public class MushroomCow extends Cow implements Shearable, VariantHolder<Mushroo
+@@ -110,6 +117,7 @@ public class MushroomCow extends Cow implements Shearable, VariantHolder<Mushroo
  
              ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, player, itemstack1, false);
  
@@ -578,19 +588,24 @@ index 8941752e4600ccd11b3fa1147b2e414785589eed..c0f7b8ec1cf78fd964d6ea6034d0d0c2
              }
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-index 376bcbc189008464f4d518c1e07643431ba96306..3b37046ede330a09ceb44f784fbc1a3934885fd9 100644
+index 376bcbc189008464f4d518c1e07643431ba96306..4479a4021fc1c0c6fc06b00e7705fafa0cd3afcd 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-@@ -229,7 +229,7 @@ public class Goat extends Animal {
-     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+@@ -230,6 +230,13 @@ public class Goat extends Animal {
          ItemStack itemstack = player.getItemInHand(hand);
  
--        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
-+        if (itemstack.is(Items.BUCKET) && !this.isBaby() && this.canProduce()) { // KioCG
+         if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
++            // KioCG start
++            if (!this.canProduce()) {
++                player.containerMenu.sendAllDataToRemote(); // Paper - Fix inventory desync
++                return InteractionResult.PASS;
++            }
++            // KioCG end
++
              // CraftBukkit start - Got milk?
              PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
  
-@@ -241,6 +241,7 @@ public class Goat extends Animal {
+@@ -241,6 +248,7 @@ public class Goat extends Animal {
              player.playSound(this.getMilkingSound(), 1.0F, 1.0F);
              ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, player, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
  
