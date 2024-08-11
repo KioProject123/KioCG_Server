@@ -43,7 +43,7 @@ index 0dbfd23bbfc6ad203f048142f8c90ef741849fe1..962522590aa10bde17652d9b2d5c8647
          super(type, syncId);
          checkContainerSize(inventory, rows * 9);
 diff --git a/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java b/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java
-index a15d5ff872dbd77f3c3145e0328f3d02e431ff8c..39ede269cdf5f096a79c3b4cf19c641224c8f061 100644
+index a15d5ff872dbd77f3c3145e0328f3d02e431ff8c..5622ad7997012b6e0743f353887d51b9db83253b 100644
 --- a/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java
 +++ b/src/main/java/net/minecraft/world/inventory/PlayerEnderChestContainer.java
 @@ -31,11 +31,18 @@ public class PlayerEnderChestContainer extends SimpleContainer {
@@ -51,7 +51,7 @@ index a15d5ff872dbd77f3c3145e0328f3d02e431ff8c..39ede269cdf5f096a79c3b4cf19c6412
  
      public PlayerEnderChestContainer(Player owner) {
 -        super(27);
-+        super(6 * 9); // KioCG
++        super(6 * 9); // KioCG - 始终加载最大末影箱
          this.owner = owner;
          // CraftBukkit end
      }
@@ -66,6 +66,33 @@ index a15d5ff872dbd77f3c3145e0328f3d02e431ff8c..39ede269cdf5f096a79c3b4cf19c6412
      public void setActiveChest(EnderChestBlockEntity blockEntity) {
          this.activeChest = blockEntity;
      }
+@@ -48,7 +55,7 @@ public class PlayerEnderChestContainer extends SimpleContainer {
+     public void fromTag(ListTag list, HolderLookup.Provider registries) {
+         int i;
+ 
+-        for (i = 0; i < this.getContainerSize(); ++i) {
++        for (i = 0; i < 6 * 9; ++i) { // KioCG - 始终加载最大末影箱
+             this.setItem(i, ItemStack.EMPTY);
+         }
+ 
+@@ -56,7 +63,7 @@ public class PlayerEnderChestContainer extends SimpleContainer {
+             CompoundTag nbttagcompound = list.getCompound(i);
+             int j = nbttagcompound.getByte("Slot") & 255;
+ 
+-            if (j >= 0 && j < this.getContainerSize()) {
++            if (j >= 0 && j < 6 * 9) { // KioCG - 始终加载最大末影箱
+                 this.setItem(j, (ItemStack) ItemStack.parse(registries, nbttagcompound).orElse(ItemStack.EMPTY));
+             }
+         }
+@@ -67,7 +74,7 @@ public class PlayerEnderChestContainer extends SimpleContainer {
+     public ListTag createTag(HolderLookup.Provider registries) {
+         ListTag nbttaglist = new ListTag();
+ 
+-        for (int i = 0; i < this.getContainerSize(); ++i) {
++        for (int i = 0; i < 6 * 9; ++i) { // KioCG - 始终加载最大末影箱
+             ItemStack itemstack = this.getItem(i);
+ 
+             if (!itemstack.isEmpty()) {
 diff --git a/src/main/java/net/minecraft/world/level/block/ChestBlock.java b/src/main/java/net/minecraft/world/level/block/ChestBlock.java
 index 8fbfd18b3caeed769396b3ffb1b1778b2f38edc0..303f50597d205f7ccf7f9ec316fdd2767dc125d9 100644
 --- a/src/main/java/net/minecraft/world/level/block/ChestBlock.java
