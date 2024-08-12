@@ -5,7 +5,7 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9f53b440d6952a8a73a6bc631d48117ab1b5ac17..efa39a88070c251038bc41aad035c20f0ba25d61 100644
+index 9f53b440d6952a8a73a6bc631d48117ab1b5ac17..a7b686a21776812fc3dcd9de14e6143654bda541 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -608,6 +608,12 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -15,7 +15,7 @@ index 9f53b440d6952a8a73a6bc631d48117ab1b5ac17..efa39a88070c251038bc41aad035c20f
 +            public KiocgConfig.Entity.Animal animal;
 +            public class Animal extends ConfigurationPart {
 +                public boolean villagerCanBreed = false;
-+                public double feedingHugeChance = 0.001;
++                public double feedingHugeChance = 0.01;
 +            }
 +
              public boolean turretEnable = true;

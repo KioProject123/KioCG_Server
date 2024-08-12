@@ -5,7 +5,7 @@ Subject: [PATCH] More realistic fishing
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..2d7dfb522bb04c3d5aa31fe4f7f066d7389b78de 100644
+index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..0c615c0a78ad2d1c3cfd2c4947d3ec8ee6b72873 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 @@ -86,6 +86,12 @@ public class FishingHook extends Projectile {
@@ -157,7 +157,7 @@ index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..2d7dfb522bb04c3d5aa31fe4f7f066d7
      public boolean calculateOpenWater(BlockPos pos) {
          FishingHook.OpenWaterType entityfishinghook_waterposition = FishingHook.OpenWaterType.INVALID;
  
-@@ -521,6 +587,15 @@ public class FishingHook extends Projectile {
+@@ -521,6 +587,16 @@ public class FishingHook extends Projectile {
                  i = this.hookedIn instanceof ItemEntity ? 3 : 5;
                  } // Paper - re-check to see if there is a hooked entity
              } else if (this.nibble > 0) {
@@ -166,6 +166,7 @@ index 1223c5d23d0ea6aed068bdf0f5725e2ad49fc82c..2d7dfb522bb04c3d5aa31fe4f7f066d7
 +                    double x = entityhuman.position().x - this.position().x;
 +                    double z = entityhuman.position().z - this.position().z;
 +                    this.setDeltaMovementSync(this.getDeltaMovement().add(x * 0.1 * this.fishWeight, 0, z * 0.1 * this.fishWeight));
++                    this.nibble = Mth.nextInt(this.random, 20, 40);
 +                    return 0;
 +                }
 +                // KioCG end
