@@ -51,7 +51,7 @@ index ca01f3344005b295c7ae98f6d5b03f79513b12a4..3032aeed30a75c3330771c9c5732881a
          builder.addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
          builder.addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index d3a451158dd46be0d58150a1c956dc8cb344c5c5..63411731e62f3475a901bfb53b1dc2013156617f 100644
+index d3a451158dd46be0d58150a1c956dc8cb344c5c5..844d7aaf3848d8e5799085374fd6476f2a4ebeb4 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -149,6 +149,8 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -128,7 +128,7 @@ index d3a451158dd46be0d58150a1c956dc8cb344c5c5..63411731e62f3475a901bfb53b1dc201
                  if (itemstack2.isEmpty()) {
                      nonnulllist.set(2, itemstack1.copy());
                  } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
-@@ -490,10 +524,13 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -490,7 +524,10 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              // CraftBukkit end
  
              if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !((ItemStack) nonnulllist.get(1)).isEmpty() && ((ItemStack) nonnulllist.get(1)).is(Items.BUCKET)) {
@@ -139,11 +139,7 @@ index d3a451158dd46be0d58150a1c956dc8cb344c5c5..63411731e62f3475a901bfb53b1dc201
 +                // KioCG end
              }
  
--            itemstack.shrink(1);
-+            itemstack.setCount(0); // KioCG - 直接清除材料, 因为配方不支持指定材料数量 (使用插件自定义行为)
-             return true;
-         } else {
-             return false;
+             itemstack.shrink(1);
 @@ -516,6 +553,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
          // Paper start - cook speed multiplier API
          /* Scale the recipe's cooking time to the current cookSpeedMultiplier */
