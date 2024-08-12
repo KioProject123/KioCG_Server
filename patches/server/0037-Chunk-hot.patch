@@ -215,10 +215,10 @@ index 3c44d94ba77a24023e77ef4c778b181736ff5f98..ae3ebd432a89f63b5f6277ba66df898d
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 525c8d31ec3097bc975252c6ff1e07ade12cb74e..bc847741e9ab752ef8b7c3724a3a257ee01a7a0b 100644
+index b18cd30e4040d5e59b731b0b7442c324f302399f..2545ff28769ac53e9032db3b80adf88eacf98ebf 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -430,7 +430,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -436,7 +436,7 @@ public class GlobalConfiguration extends ConfigurationPart {
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
  

@@ -5,26 +5,99 @@ Subject: [PATCH] Fixed cumulative cost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index a145720768cab69c58e66f26a923e92188ff4d96..af9a57860a8c41e35b1aabac7a5fc1317b16a63f 100644
+index a145720768cab69c58e66f26a923e92188ff4d96..ff476a2d5dc5c27fbf2dca82ba48e1ada214220f 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -423,6 +423,7 @@ public class GlobalConfiguration extends ConfigurationPart {
-         public Enchant enchant;
+@@ -424,6 +424,13 @@ public class GlobalConfiguration extends ConfigurationPart {
          public class Enchant extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
-+            public int fixedCumulativeCost = 4;
          }
++
++        public Anvil anvil;
++        public class Anvil extends ConfigurationPart {
++            public int fixedCumulativeCost = 4;
++            public boolean repairNoLevelCost = true;
++            public boolean renameNoLevelCost = true;
++        }
      }
      // KioCG end
+ }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 03ce932a285a4183c4023a84618a4b8460815dbf..af76c89a3d84a806268107f3cf19dd3b2dba6f4f 100644
+index 03ce932a285a4183c4023a84618a4b8460815dbf..a06e6b7445ed5be896750e53eab45b6d004b1521 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-@@ -148,6 +148,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -142,17 +142,21 @@ public class AnvilMenu extends ItemCombinerMenu {
+         int i = 0;
+         long j = 0L;
+         byte b0 = 0;
++        boolean allowZeroLevel = false; // KioCG
+ 
+         if (!itemstack.isEmpty() && EnchantmentHelper.canStoreEnchantments(itemstack)) {
+             ItemStack itemstack1 = itemstack.copy();
              ItemStack itemstack2 = this.inputSlots.getItem(1);
              ItemEnchantments.Mutable itemenchantments_a = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemstack1));
  
-+            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost >= 0) j += io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.fixedCumulativeCost * 2L; else // KioCG
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost >= 0) j += io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost; else // KioCG
              j += (long) (Integer) itemstack.getOrDefault(DataComponents.REPAIR_COST, 0) + (long) (Integer) itemstack2.getOrDefault(DataComponents.REPAIR_COST, 0);
              this.repairItemCountCost = 0;
              int k;
+ 
+             if (!itemstack2.isEmpty()) {
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost >= 0) j += io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost; // KioCG
++
+                 boolean flag = itemstack2.has(DataComponents.STORED_ENCHANTMENTS);
+                 int l;
+                 int i1;
+@@ -170,6 +174,12 @@ public class AnvilMenu extends ItemCombinerMenu {
+                     for (i1 = 0; k > 0 && i1 < itemstack2.getCount(); ++i1) {
+                         l = itemstack1.getDamageValue() - k;
+                         itemstack1.setDamageValue(l);
++                        // KioCG start
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.repairNoLevelCost) {
++                            allowZeroLevel = true;
++                            j = 0;
++                        } else
++                        // KioCG end
+                         ++i;
+                         k = Math.min(itemstack1.getDamageValue(), itemstack1.getMaxDamage() / 4);
+                     }
+@@ -264,11 +274,23 @@ public class AnvilMenu extends ItemCombinerMenu {
+             if (this.itemName != null && !StringUtil.isBlank(this.itemName)) {
+                 if (!this.itemName.equals(itemstack.getHoverName().getString())) {
+                     b0 = 1;
++                    // KioCG start
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.renameNoLevelCost) {
++                        allowZeroLevel = true;
++                        j = 0;
++                    } else
++                    // KioCG end
+                     i += b0;
+                     itemstack1.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
+                 }
+             } else if (itemstack.has(DataComponents.CUSTOM_NAME)) {
+                 b0 = 1;
++                // KioCG start
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.renameNoLevelCost) {
++                    allowZeroLevel = true;
++                    j = 0;
++                } else
++                // KioCG end
+                 i += b0;
+                 itemstack1.remove(DataComponents.CUSTOM_NAME);
+             }
+@@ -277,6 +299,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+ 
+             this.cost.set(k2);
+             if (i <= 0) {
++                if (i < 0 || !allowZeroLevel) // KioCG
+                 itemstack1 = ItemStack.EMPTY;
+             }
+ 
+@@ -295,6 +318,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+                 }
+ 
+                 if (b0 != i || b0 == 0) {
++                    if (k2 != 0) // KioCG - 如果启用, 则重命名或原材料修复装备不计算铁砧惩罚
+                     k = AnvilMenu.calculateIncreasedRepairCost(k);
+                 }
+ 

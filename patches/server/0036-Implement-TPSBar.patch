@@ -448,10 +448,10 @@ index 0000000000000000000000000000000000000000..3c44d94ba77a24023e77ef4c778b1817
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 0495547f5dcb870962d2d9ec947adfda13d1dc2f..525c8d31ec3097bc975252c6ff1e07ade12cb74e 100644
+index 49dde96f217d5c314bee79642f250a363529822d..b18cd30e4040d5e59b731b0b7442c324f302399f 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -429,6 +429,16 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -435,6 +435,16 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean dontKillMyPet = true;
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
