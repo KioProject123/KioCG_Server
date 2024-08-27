@@ -17,13 +17,13 @@ index 19bac830117a63bfbea2800de97d0eac396cb30e..2cbec6586865e3adaca8a3a260393bc2
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-index c5c211227c3dbe117af6cd0eb3a26a439f7375c1..8d8eab673ec48776578352abd496618a1ec796a5 100644
+index ff3fbca8d1e6c731e9441c4f4a6e5dc657ce5403..c849965f3f61cddbbc8feb2459c53c75ae330862 100644
 --- a/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 @@ -115,6 +115,13 @@ public class MangrovePropaguleBlock extends SaplingBlock implements SimpleWaterl
      protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
          if (!isHanging(state)) {
-             if (true) { // Paper - Fix Spigot growth modifiers // KioCG
+             if (random.nextFloat() < (world.spigotConfig.saplingModifier / 100.0F)) { // Paper - Fix Spigot growth modifiers // KioCG
 +                // KioCG start
 +                if (random.nextDouble() < world.paperConfig().kiocgConfig.saplingsWitheredChance) {
 +                    world.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
@@ -35,20 +35,20 @@ index c5c211227c3dbe117af6cd0eb3a26a439f7375c1..8d8eab673ec48776578352abd496618a
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-index 2216f341ca39b06947e6e77418a4dce12efc26fb..2bc986771ab978a795dcbe26f208d1c49ac1f527 100644
+index d8a8e040e2f7e7488d8ae1699e9ad4702e4e395a..eca7c524cf353b432abfb4dd2a9675787507e387 100644
 --- a/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SaplingBlock.java
-@@ -62,6 +62,13 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
- 
+@@ -63,6 +63,13 @@ public class SaplingBlock extends BushBlock implements BonemealableBlock {
      @Override
      protected void randomTick(net.minecraft.world.level.block.state.BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-+        // KioCG start
-+        if (random.nextDouble() < world.paperConfig().kiocgConfig.saplingsWitheredChance) {
-+            world.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
-+            return;
-+        }
-+        // KioCG end
+         if (world.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextFloat() < (world.spigotConfig.saplingModifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
++            // KioCG start
++            if (random.nextDouble() < world.paperConfig().kiocgConfig.saplingsWitheredChance) {
++                world.setBlock(pos, Blocks.DEAD_BUSH.defaultBlockState(), 3);
++                return;
++            }
++            // KioCG end
 +
-         if (world.getMaxLocalRawBrightness(pos.above()) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              this.advanceTree(world, pos, state, random);
          }
+ 
