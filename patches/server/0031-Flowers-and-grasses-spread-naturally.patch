@@ -5,7 +5,7 @@ Subject: [PATCH] Flowers and grasses spread naturally
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 2cbec6586865e3adaca8a3a260393bc2d654747b..9f53b440d6952a8a73a6bc631d48117ab1b5ac17 100644
+index c3aa9e03a0c248cda03a915244f3a7bc1a6653c3..60be3e663b76f2ad96e1950f8af98eb91d7f4415 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -617,6 +617,7 @@ public class WorldConfiguration extends ConfigurationPart {

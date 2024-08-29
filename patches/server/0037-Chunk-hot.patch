@@ -228,7 +228,7 @@ index b18cd30e4040d5e59b731b0b7442c324f302399f..2545ff28769ac53e9032db3b80adf88e
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 60d5bb952d2caa71269b11a51d3134c165ec4625..0e26cf13ed55281c1fd35f86a5ede4b6a4911419 100644
+index 593dbfc806ebf1c3493413f0dea58aeffad6545a..a287b12defdf63b0a60516910d95edcb56da5690 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -625,6 +625,14 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -467,10 +467,10 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ddb21438ccb7c2a19d211f28d76d0b38558ebabc..59cc026fd79a343e7b35a2ae79e642c8fb6be202 100644
+index 58fab5b0245d1a80c6093e09a2c5a467a4436421..ebe1fd3a4f0019cd159ef09df30dbc9497af4b32 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1856,4 +1856,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1867,4 +1867,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          }
      }
      // KioCG end

@@ -5,7 +5,7 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index add4fef23d3453415d738e413554b6f3da170d0f..19bac830117a63bfbea2800de97d0eac396cb30e 100644
+index da5f9ee0478eba4cf0ec2c1b1c31582dc9b6af47..80ac84a3684a619a406c85c4b76f929c6de0aa1e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -607,6 +607,11 @@ public class WorldConfiguration extends ConfigurationPart {

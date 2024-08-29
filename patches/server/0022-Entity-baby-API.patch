@@ -17,7 +17,7 @@ index 83a726bcf8b7dce73a361b0d79dbd63a0afc7a12..006d15fe18f8b7616d9c3080793abbe3
                      .register(StringRepresentableSerializer::isValidFor, new StringRepresentableSerializer())
                      .register(IntOr.Default.SERIALIZER)
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..656deb2dc72eebe43f902289d917fc33d822db93 100644
+index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..426f1d92b2d974753b1eb1f0f16282517daec83d 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -588,6 +588,18 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -32,8 +32,8 @@ index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..656deb2dc72eebe43f902289d917fc33
 +                map.put(EntityType.SKELETON, 0.65);
 +            });
 +            public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> sizeScalingHuge = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
-+                map.defaultReturnValue(2.0);
-+                map.put(EntityType.SKELETON, 2.0);
++                map.defaultReturnValue(1.5);
++                map.put(EntityType.SKELETON, 1.5);
 +            });
 +        }
      }
@@ -52,7 +52,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4ebdac2cc7e 100644
+index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..fa9539337d3a1f4772a9f4e790fbbb529c8ea0b9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -62,12 +62,12 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +    // KioCG start
 +    private ScaleSimulate scaleSimulate = ScaleSimulate.NORMAL;
 +    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 0.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-+    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 2.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(ResourceLocation.withDefaultNamespace("scale_simulate"), this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 1.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    // KioCG end
  
      @Override
      public float getBukkitYaw() {
-@@ -591,6 +596,73 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -591,6 +596,66 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return false;
      }
  
@@ -75,9 +75,6 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +    public void setScaleSimulate(ScaleSimulate scale) {
 +        switch (scale) {
 +            case BABY -> {
-+                if (this instanceof Mob mob) {
-+                    mob.setBaby(true);
-+                }
 +                if (isBaby()) return; // Vanilla baby
 +
 +                this.scaleSimulate = scale;
@@ -85,10 +82,6 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +                attributemodifiable.addOrUpdateTransientModifier(this.SCALE_MODIFIER_BABY);
 +            }
 +            case HUGE -> {
-+                if (this instanceof Mob mob) {
-+                    mob.setBaby(false);
-+                }
-+
 +                this.scaleSimulate = scale;
 +                AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
 +                attributemodifiable.addOrUpdateTransientModifier(this.SCALE_MODIFIER_HUGE);
@@ -101,11 +94,11 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +        }
 +    }
 +
-+    public void setBabySimulateOrVanilla() {
++    public void setBabySimulate() {
 +        this.setScaleSimulate(ScaleSimulate.BABY);
 +    }
 +
-+    public boolean isBabySimulateOrVanilla() {
++    public boolean isBabySimulate() {
 +        return this.scaleSimulate == ScaleSimulate.BABY || this.isBaby();
 +    }
 +
@@ -122,8 +115,8 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +    }
 +
 +    public void transformScaleSimulate(LivingEntity original) {
-+        if (original.isBabySimulateOrVanilla()) {
-+            setBabySimulateOrVanilla();
++        if (original.isBabySimulate()) {
++            setBabySimulate();
 +        } else if (original.isHugeSimulate()) {
 +            setHugeSimulate();
 +        } else {
@@ -131,7 +124,7 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +        }
 +    }
 +
-+    private enum ScaleSimulate {
++    enum ScaleSimulate {
 +        BABY,
 +        HUGE,
 +        NORMAL
@@ -141,7 +134,7 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
      public float getAgeScale() {
          return this.isBaby() ? 0.5F : 1.0F;
      }
-@@ -812,6 +884,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -812,6 +877,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
          dataresult.resultOrPartial(logger::error).ifPresent((nbtbase) -> {
              nbt.put("Brain", nbtbase);
          });
@@ -154,7 +147,7 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
      }
  
      @Override
-@@ -900,6 +978,16 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -900,6 +971,16 @@ public abstract class LivingEntity extends Entity implements Attackable {
              this.brain = this.makeBrain(new Dynamic(NbtOps.INSTANCE, nbt.get("Brain")));
          }
  
@@ -162,7 +155,7 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
 +        if (nbt.contains("KioCG.ScaleSimulate")) {
 +            String ss = nbt.getString("KioCG.ScaleSimulate");
 +            try {
-+                this.scaleSimulate = ScaleSimulate.valueOf(ss);
++                this.setScaleSimulate(ScaleSimulate.valueOf(ss));
 +            } catch (Exception ignored) {
 +                LOGGER.error("Unknown scale simulate " + ss + " for " + this);
 +            }
@@ -171,40 +164,37 @@ index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..97c09c366cdf5f6f91f059bf71b5a4eb
      }
  
      // CraftBukkit start
-@@ -2779,7 +2867,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2779,7 +2860,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
      }
  
      public float getVoicePitch() {
 -        return this.isBaby() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
-+        return this.isBabySimulateOrVanilla() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F; // KioCG
++        return this.isBabySimulate() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F; // KioCG
      }
  
      protected boolean isImmobile() {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index a22428615705582575e71252b4b4ee9dd2de72d3..9e98f60b70d2d3105935b2a0f03b6fef74e34de0 100644
+index a22428615705582575e71252b4b4ee9dd2de72d3..81397196026c3cfa9e693190cbd183bc675af117 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1688,7 +1688,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
-         return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
-     }
+@@ -1690,6 +1690,17 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
--    public void setBaby(boolean baby) {}
-+    public void setBaby(boolean baby) { if(baby){removeScaleAttributes();} } // KioCG - add removeScaleAttributes()
+     public void setBaby(boolean baby) {}
  
++    // KioCG start
++    public void setScaleSimulate(ScaleSimulate scale) {
++        switch (scale) {
++            case BABY -> setBaby(true);
++            case HUGE -> setBaby(false);
++        }
++
++        super.setScaleSimulate(scale);
++    }
++    // KioCG end
++
      @Override
      public HumanoidArm getMainArm() {
-diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-index 816977990639ec0559b652fc9666afd5046f0a5d..65913849fdf400a34d8a66aade80714b605b9660 100644
---- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-+++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-@@ -257,6 +257,7 @@ public class Frog extends Animal implements VariantHolder<Holder<FrogVariant>> {
- 
-     @Override
-     public void setBaby(boolean baby) {
-+        if (baby) removeScaleAttributes(); // KioCG
-     }
- 
-     @Override
+         return this.isLeftHanded() ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 index fadd341ff398886a4da102eefa1beb95a63bbd6d..4da9c658e367dd2099e0391e1360e3ca56bdc0ed 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
@@ -263,7 +253,7 @@ index bc58323801ee16fe9b63c21332144ec002a902f2..06cd00d571d583b9b94f3fb703e084fc
          if (!this.level().isClientSide) {
              AttributeInstance attributemodifiable = this.getAttribute(Attributes.MOVEMENT_SPEED);
 diff --git a/src/main/java/net/minecraft/world/item/SpawnEggItem.java b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
-index 9cea8da84f39bb3f687139ef213ccea358724dee..12e150829358c2ae407891e11c28a3d1b25cb6b3 100644
+index 9cea8da84f39bb3f687139ef213ccea358724dee..4e4a7c346359468c0754285a023bbf677411a8d9 100644
 --- a/src/main/java/net/minecraft/world/item/SpawnEggItem.java
 +++ b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
 @@ -174,8 +174,10 @@ public class SpawnEggItem extends Item {
@@ -273,14 +263,14 @@ index 9cea8da84f39bb3f687139ef213ccea358724dee..12e150829358c2ae407891e11c28a3d1
 -                ((Mob) object).setBaby(true);
 -                if (!((Mob) object).isBaby()) {
 +                // KioCG start
-+                ((Mob) object).setBabySimulateOrVanilla();
++                ((Mob) object).setBabySimulate();
 +                if (false && !((Mob) object).isBaby()) {
 +                // KioCG end
                      return Optional.empty();
                  } else {
                      ((Mob) object).moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-index d2bb0831394c03b620b2cbd8306cb82b621f34f7..f71f4eaea20a3a799e775416da158589e8726134 100644
+index d2bb0831394c03b620b2cbd8306cb82b621f34f7..6c1a9cb2ef24048264fa9faed735cf1ef79c3259 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 @@ -1189,4 +1189,31 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
@@ -290,13 +280,13 @@ index d2bb0831394c03b620b2cbd8306cb82b621f34f7..f71f4eaea20a3a799e775416da158589
 +
 +    // KioCG start
 +    @Override
-+    public void setBabySimulateOrVanilla() {
-+        getHandle().setBabySimulateOrVanilla();
++    public void setBabySimulate() {
++        getHandle().setBabySimulate();
 +    }
 +
 +    @Override
-+    public boolean isBabySimulateOrVanilla() {
-+        return getHandle().isBabySimulateOrVanilla();
++    public boolean isBabySimulate() {
++        return getHandle().isBabySimulate();
 +    }
 +
 +    @Override
