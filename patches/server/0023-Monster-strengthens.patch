@@ -24,7 +24,7 @@ index 5000a16c7e4647b5aa5be7e2190077bb4448d363..ae6c6b3a32ceddcb6636941ce827e78b
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index e7bfce0534c7ef3a1480a1082ae8514caf78778b..a80ce791255845669592fab922798df66511f41c 100644
+index e7bfce0534c7ef3a1480a1082ae8514caf78778b..edba5bc4b5656fee09adad302cdca403c46a0171 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
 @@ -42,6 +42,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
@@ -51,7 +51,7 @@ index e7bfce0534c7ef3a1480a1082ae8514caf78778b..a80ce791255845669592fab922798df6
          if (world.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
              return false;
          } else {
-+            if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.entity.monster.spawnInLightAtNight && world.getSkyDarken() >= 5) return true; // KioCG
++            if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.entity.monster.spawnInLightAtNight && world.getSkyDarken() >= 5 && level.canSeeSky(pos)) return true; // KioCG
              DimensionType dimensionType = world.dimensionType();
              int i = world.getLevel().paperConfig().entities.spawning.monsterSpawnMaxLightLevel.or(dimensionType.monsterSpawnBlockLightLimit()); // Paper - Configurable max block light for monster spawning
              if (i < 15 && world.getBrightness(LightLayer.BLOCK, pos) > i) {
