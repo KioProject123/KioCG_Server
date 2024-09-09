@@ -24,7 +24,7 @@ index 5000a16c7e4647b5aa5be7e2190077bb4448d363..ae6c6b3a32ceddcb6636941ce827e78b
      }
      // KioCG end
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index e7bfce0534c7ef3a1480a1082ae8514caf78778b..a80ce791255845669592fab922798df66511f41c 100644
+index e7bfce0534c7ef3a1480a1082ae8514caf78778b..577bcd3dce5e4f1d1202406bade43333d9255672 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
 @@ -42,6 +42,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
@@ -47,14 +47,31 @@ index e7bfce0534c7ef3a1480a1082ae8514caf78778b..a80ce791255845669592fab922798df6
      }
  
      protected void updateNoActionTime() {
-@@ -90,6 +103,7 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+@@ -87,9 +100,15 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+     }
+ 
+     public static boolean isDarkEnoughToSpawn(ServerLevelAccessor world, BlockPos pos, RandomSource random) {
++        // KioCG start
++        return isDarkEnoughToSpawn(world, pos, random, null);
++    }
++    public static boolean isDarkEnoughToSpawn(ServerLevelAccessor world, BlockPos pos, RandomSource random, EntityType entityType) {
++        // KioCG end
          if (world.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
              return false;
          } else {
-+            if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.entity.monster.spawnInLightAtNight && world.getSkyDarken() >= 5) return true; // KioCG
++            if (world instanceof net.minecraft.server.level.ServerLevel level && level.paperConfig().kiocgConfig.entity.monster.spawnInLightAtNight && entityType != EntityType.CREEPER && world.getSkyDarken() >= 5) return true; // KioCG
              DimensionType dimensionType = world.dimensionType();
              int i = world.getLevel().paperConfig().entities.spawning.monsterSpawnMaxLightLevel.or(dimensionType.monsterSpawnBlockLightLimit()); // Paper - Configurable max block light for monster spawning
              if (i < 15 && world.getBrightness(LightLayer.BLOCK, pos) > i) {
+@@ -105,7 +124,7 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+         EntityType<? extends Monster> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random
+     ) {
+         return world.getDifficulty() != Difficulty.PEACEFUL
+-            && (MobSpawnType.ignoresLightRequirements(spawnReason) || isDarkEnoughToSpawn(world, pos, random))
++            && (MobSpawnType.ignoresLightRequirements(spawnReason) || isDarkEnoughToSpawn(world, pos, random, type)) // KioCG - add type
+             && checkMobSpawnRules(type, world, spawnReason, pos, random);
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Spider.java b/src/main/java/net/minecraft/world/entity/monster/Spider.java
 index a30fb47559eb74b7fe634678e63a85e7e2cad9a4..de9f64f8e7247fe27b960b55b9d9837a96eebcbb 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Spider.java
