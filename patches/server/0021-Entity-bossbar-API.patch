@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 763abeea3f14f15c27d600e0bdae44b387687bb4..efb0225deb10e5fdc0d8e3acd68bb71446e22802 100644
+index 763abeea3f14f15c27d600e0bdae44b387687bb4..1b8cab3c9d4586c350981738df13cedaa0d02d2e 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -145,6 +145,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -79,7 +79,7 @@ index 763abeea3f14f15c27d600e0bdae44b387687bb4..efb0225deb10e5fdc0d8e3acd68bb714
      }
  
      @Override
-@@ -1806,4 +1812,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1806,4 +1812,58 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
@@ -107,10 +107,16 @@ index 763abeea3f14f15c27d600e0bdae44b387687bb4..efb0225deb10e5fdc0d8e3acd68bb714
 +            this.bossbar.setProgress(this.getHealth() / this.getMaxHealth());
 +
 +            java.util.Set<net.minecraft.server.level.ServerPlayer> set = com.google.common.collect.Sets.newHashSet();
-+            Iterator iterator = this.tracker.seenBy.iterator();
++
++            net.minecraft.server.level.ChunkMap.TrackedEntity ete = ((net.minecraft.server.level.ServerLevel) this.level()).getChunkSource().chunkMap.entityMap.get(this.getId());
++            if (ete == null) {
++                return;
++            }
++
++            Iterator<ServerPlayerConnection> iterator = ete.seenBy.iterator();
 +
 +            while (iterator.hasNext()) {
-+                net.minecraft.server.level.ServerPlayer entityplayer = (net.minecraft.server.level.ServerPlayer) iterator.next();
++                net.minecraft.server.level.ServerPlayer entityplayer = iterator.next().getPlayer();
 +
 +                if (this.position().distanceToSqr(entityplayer.position()) <= 16 * 16) {
 +                    this.bossbar.addPlayer(entityplayer);
