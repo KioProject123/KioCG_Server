@@ -5,10 +5,10 @@ Subject: [PATCH] Crops grow every day
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e762c3ccda1f3200bb3b9cd5547caaec4add7287..c1dc46ea9c35950073f323db5f9f724b19de5110 100644
+index 5bc5925a63ba75ad50e1179d9c3d59bd041690cb..274fbfd84e0cb52c3a846801a22c3ef7e15cf107 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -896,6 +896,50 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -853,6 +853,50 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
              }
          }
  
@@ -668,10 +668,10 @@ index 57e7f275ffd6202ef578d64857cfdace6f1c760d..4c2af621e526f469df8192910675e355
                  BlockPos blockposition1 = pos.above();
                  BlockPos blockposition2;
 diff --git a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
-index ded6d148110fe3fbb6272ce44582a28472dd49a6..444f98a9772bed41a64161620963e5c708c98b2f 100644
+index d0109633e8bdf109cfc9178963d7b6cf92f8b189..9b489da3934396bfe544cdfa935dc2f0dd1666a7 100644
 --- a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -333,6 +333,16 @@ public abstract class BlockBehaviour implements FeatureElement {
+@@ -334,6 +334,16 @@ public abstract class BlockBehaviour implements FeatureElement {
  
      protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {}
  
@@ -688,7 +688,7 @@ index ded6d148110fe3fbb6272ce44582a28472dd49a6..444f98a9772bed41a64161620963e5c7
      protected void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {}
  
      protected float getDestroyProgress(BlockState state, Player player, BlockGetter world, BlockPos pos) {
-@@ -1225,6 +1235,24 @@ public abstract class BlockBehaviour implements FeatureElement {
+@@ -1226,6 +1236,24 @@ public abstract class BlockBehaviour implements FeatureElement {
              this.getBlock().randomTick(this.asState(), world, pos, random);
          }
  

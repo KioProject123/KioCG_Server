@@ -5,10 +5,10 @@ Subject: [PATCH] Fixed cumulative cost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index a145720768cab69c58e66f26a923e92188ff4d96..ff476a2d5dc5c27fbf2dca82ba48e1ada214220f 100644
+index ab4ffb08121c058498dcd79f7ed085aed675029f..ba1de28783d8a3bb652bd974f9924d43ce93d82a 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -424,6 +424,13 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -427,6 +427,13 @@ public class GlobalConfiguration extends ConfigurationPart {
          public class Enchant extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
          }
@@ -23,7 +23,7 @@ index a145720768cab69c58e66f26a923e92188ff4d96..ff476a2d5dc5c27fbf2dca82ba48e1ad
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 03ce932a285a4183c4023a84618a4b8460815dbf..a06e6b7445ed5be896750e53eab45b6d004b1521 100644
+index 2854ecc3598364a86ff1104e9bc8dad90caedce4..e1d645a9fa00b42b3c3c3eb5e44cc440f067af5e 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -142,17 +142,21 @@ public class AnvilMenu extends ItemCombinerMenu {

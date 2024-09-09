@@ -77,7 +77,7 @@ index 223259e7a09ada681b6181c898f6857888594f85..b7eecd75eeb741dacde2e29c5a946c5b
      public static final Block WATER_CAULDRON = register(
          "water_cauldron", new LayeredCauldronBlock(Biome.Precipitation.RAIN, CauldronInteraction.WATER, BlockBehaviour.Properties.ofLegacyCopy(CAULDRON))
 diff --git a/src/main/java/net/minecraft/world/level/block/DropperBlock.java b/src/main/java/net/minecraft/world/level/block/DropperBlock.java
-index 45fafee2cf1893dccf477939dad05e9e1938ec8c..aa511b55b89397616aae1b775b2ecffec06b0220 100644
+index ddecf443df3679e3098eb54edd19585a0512e342..0ab847b57585bef7a4eb15d3323b90307254ff7d 100644
 --- a/src/main/java/net/minecraft/world/level/block/DropperBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/DropperBlock.java
 @@ -70,7 +70,7 @@ public class DropperBlock extends DispenserBlock {
@@ -90,7 +90,7 @@ index 45fafee2cf1893dccf477939dad05e9e1938ec8c..aa511b55b89397616aae1b775b2ecffe
                          itemstack1 = DropperBlock.DISPENSE_BEHAVIOUR.dispense(sourceblock, itemstack);
                      } else {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index af36be670714ba5191b2e761ae03812060f38e34..611bde0fee3d419494e7ada9ca1a32369d6ce341 100644
+index 127977166335acdc6fa85316a38723bdb905a13b..aa81a7fa7b2ff4e3e1d55812405c5e014be7c42c 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -140,6 +140,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen

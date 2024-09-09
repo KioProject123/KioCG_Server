@@ -5,10 +5,10 @@ Subject: [PATCH] Vanilla recipe excludes model items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index eb47dd2417f2892a57d0ee9ddcdd75b37fb1cb3a..91931b1cf06ad489a5c3acd19f6d8706954f8997 100644
+index 4b22d5c0891e993f6b94e204e33e9064b32a0b81..1110a2300fb4eec39bf815c23edd7cbc1279ba7c 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -359,6 +359,66 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -362,6 +362,66 @@ public class GlobalConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public String feedbackForwardingSenderName = "MOSS";
@@ -109,7 +109,7 @@ index 32910f677b0522ac8ec513fa0d00b714b52cfae4..cbcb0e4507a3ef26a73e4118dd6b4ad3
      // The reason this is a supplier, is that the createHolder method uses the bukkit InventoryView#getTopInventory to get the inventory in question
      // and that can't be obtained safely until the AbstractContainerMenu has been fully constructed. Using a supplier lazily
 diff --git a/src/main/java/net/minecraft/world/inventory/AbstractFurnaceMenu.java b/src/main/java/net/minecraft/world/inventory/AbstractFurnaceMenu.java
-index 6474b6063992d2c643c21187663de499f37b32d6..fc252b5b137c472a5610a78650aa7f3f03208280 100644
+index 58a5338e73aedaa3744dced128ac3eb6f5f6f87e..df3f176ffadc98eed8d0c9652ee08b0f620c21e8 100644
 --- a/src/main/java/net/minecraft/world/inventory/AbstractFurnaceMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AbstractFurnaceMenu.java
 @@ -149,7 +149,7 @@ public abstract class AbstractFurnaceMenu extends RecipeBookMenu<SingleRecipeInp
@@ -122,7 +122,7 @@ index 6474b6063992d2c643c21187663de499f37b32d6..fc252b5b137c472a5610a78650aa7f3f
                          return ItemStack.EMPTY;
                      }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 7198dc9ffc9a37dab3654e12aa497c442a9993c5..03ce932a285a4183c4023a84618a4b8460815dbf 100644
+index d685511104ac552dfc9ae2111e1bfb60fa812102..2854ecc3598364a86ff1104e9bc8dad90caedce4 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 @@ -159,9 +159,11 @@ public class AnvilMenu extends ItemCombinerMenu {
@@ -152,7 +152,7 @@ index 7198dc9ffc9a37dab3654e12aa497c442a9993c5..03ce932a285a4183c4023a84618a4b84
                      }
  
 diff --git a/src/main/java/net/minecraft/world/inventory/BeaconMenu.java b/src/main/java/net/minecraft/world/inventory/BeaconMenu.java
-index 7f513e8c4f81524aee9326ddbbc6bec0b3fa1b27..3ab3e2a81d528a49b91081c2bcbdd944328bc57d 100644
+index b93c118d957f0a2f40e2f31fd6400bd69438cf72..7973578e3a2b53ecd1d0f0024eb692893a47eb21 100644
 --- a/src/main/java/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/BeaconMenu.java
 @@ -45,6 +45,7 @@ public class BeaconMenu extends AbstractContainerMenu {
@@ -172,7 +172,7 @@ index 7f513e8c4f81524aee9326ddbbc6bec0b3fa1b27..3ab3e2a81d528a49b91081c2bcbdd944
          }
  
 diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-index 93c4657f345b6d3442b1f2ab17b2703ded86b525..d7be1e1f3144073a2be7a5393a62f8571e53d586 100644
+index eb2cdb36366e376b4e91aea847170b82ca26d274..925b9de4de9f3f91c62dcdc460c6fe74a36f2569 100644
 --- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 @@ -177,6 +177,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
@@ -251,10 +251,10 @@ index f9e4714cb0ee74505ed72200abed7756aa68dc90..6dea980f8be3e3e0ca8f7a7f47d9bbc2
                  }
              }
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index 07223046761cb2186d75de8edc03a91d2e8e8b2f..ae64e05a72b4fc6c898c0fbb47cff7eeadeb1f44 100644
+index 1ef014b29645ed09ccffb898f1819428c3dc6259..bef578d546cd3df43a20db111fcaf9bb915d05d7 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -95,6 +95,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -92,6 +92,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
          this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) { // CraftBukkit - decompile error
              @Override
              public boolean mayPlace(ItemStack stack) {
@@ -262,7 +262,7 @@ index 07223046761cb2186d75de8edc03a91d2e8e8b2f..ae64e05a72b4fc6c898c0fbb47cff7ee
                  return stack.is(Items.LAPIS_LAZULI);
              }
  
-@@ -186,6 +187,13 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -183,6 +184,13 @@ public class EnchantmentMenu extends AbstractContainerMenu {
  
                      PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(this.player, this.getBukkitView(), this.access.getLocation().getBlock(), item, offers, i);
                      event.setCancelled(!itemstack.isEnchantable());
@@ -276,7 +276,7 @@ index 07223046761cb2186d75de8edc03a91d2e8e8b2f..ae64e05a72b4fc6c898c0fbb47cff7ee
                      world.getCraftServer().getPluginManager().callEvent(event);
  
                      if (event.isCancelled()) {
-@@ -371,7 +379,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -368,7 +376,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
                  if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                      return ItemStack.EMPTY;
                  }
@@ -310,7 +310,7 @@ index 1678f6c8b2c7db761783e53043169bf12bc2cb29..914eef0cf1944de0b4bb23460a62aafd
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/inventory/LoomMenu.java b/src/main/java/net/minecraft/world/inventory/LoomMenu.java
-index 531336c44c46555fef8c001fe8ca00c93624ad42..6469b367b53051df0fefcd2b90c4bc5c54fedab3 100644
+index 0e954dfe82ed263cbe63dbf49ff49e83f38228b8..dd05fc62b79746216fc3e201122b955786808627 100644
 --- a/src/main/java/net/minecraft/world/inventory/LoomMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/LoomMenu.java
 @@ -106,18 +106,21 @@ public class LoomMenu extends AbstractContainerMenu {
@@ -373,7 +373,7 @@ index 86e51fcce767d265ee0d3beb611be2119085830b..c8ff5c4180f8a93455b26665668397f1
                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareSmithingEvent(this.getBukkitView(), itemstack);
                  // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/inventory/StonecutterMenu.java b/src/main/java/net/minecraft/world/inventory/StonecutterMenu.java
-index 5ddae1afab0a68465ea60395c84b0997ee994f88..92349284a8bf14beab0556c4fbb7a5c232db95ab 100644
+index 5a0015f761f6a25d7bb7b9cfe7a9b4771a6a37ec..5fd976d90ac25e5719829a623f62fa43e16c05ad 100644
 --- a/src/main/java/net/minecraft/world/inventory/StonecutterMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/StonecutterMenu.java
 @@ -200,7 +200,7 @@ public class StonecutterMenu extends AbstractContainerMenu {

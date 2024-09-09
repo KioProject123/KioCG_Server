@@ -215,10 +215,10 @@ index 3c44d94ba77a24023e77ef4c778b181736ff5f98..ae3ebd432a89f63b5f6277ba66df898d
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index b18cd30e4040d5e59b731b0b7442c324f302399f..2545ff28769ac53e9032db3b80adf88eacf98ebf 100644
+index d556a1dac0c27478eb1d8f9a20b8358799d1a6a9..a5730ce4564408c6b41eed54471e3dd12949346b 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -436,7 +436,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -439,7 +439,7 @@ public class GlobalConfiguration extends ConfigurationPart {
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
  
@@ -259,10 +259,10 @@ index d26aecbfbd1930e2c6938d049e45b700b3197230..71c4291b90e5bbe2fb60f2a637e9e727
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 8206de9c96c19ce3c32293beebdd75d778cd4974..030a7b816c638de6bd01f93621cca4a3dce19d06 100644
+index ef4930d8af3d279a67a689815cfc9748fe1e4682..ec160cc41ecb931fbcfaed1c03ff6802605a1cdc 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1594,6 +1594,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1595,6 +1595,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
  
          ++this.tickCount;
@@ -270,7 +270,7 @@ index 8206de9c96c19ce3c32293beebdd75d778cd4974..030a7b816c638de6bd01f93621cca4a3
          this.tickRateManager.tick();
          this.tickChildren(shouldKeepTicking);
          if (i - this.lastServerStatus >= MinecraftServer.STATUS_EXPIRE_TIME_NANOS) {
-@@ -1635,6 +1636,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1636,6 +1637,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - lastTick) / 1000000D), remaining).callEvent();
          this.server.spark.tickEnd(((double)(endTime - lastTick) / 1000000D)); // Paper - spark
          // Paper end - Server Tick Events
@@ -278,7 +278,7 @@ index 8206de9c96c19ce3c32293beebdd75d778cd4974..030a7b816c638de6bd01f93621cca4a3
          this.profiler.push("tallying");
          long j = Util.getNanos() - i;
          int k = this.tickCount % 100;
-@@ -1654,6 +1656,26 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1655,6 +1657,26 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
      }
  
@@ -306,10 +306,10 @@ index 8206de9c96c19ce3c32293beebdd75d778cd4974..030a7b816c638de6bd01f93621cca4a3
          if (this.isTickTimeLoggingEnabled()) {
              this.getTickTimeLogger().logPartialSample(Util.getNanos() - tickStartTime, TpsDebugDimensions.TICK_SERVER_METHOD.ordinal());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03dca7b0d21 100644
+index 274fbfd84e0cb52c3a846801a22c3ef7e15cf107..3f784ff275df5fc8710c324dd1f5553d584b5d05 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1323,6 +1323,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1280,6 +1280,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          // Paper start- timings
          final boolean isActive = org.spigotmc.ActivationRange.checkIfActive(entity);
          timer = isActive ? entity.getType().tickTimer.startTiming() : entity.getType().inactiveTickTimer.startTiming(); // Paper
@@ -318,7 +318,7 @@ index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03d
          try {
          // Paper end - timings
          entity.setOldPosAndRot();
-@@ -1340,6 +1342,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1297,6 +1299,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          } else { entity.inactiveTick(); } // Paper - EAR 2
          this.getProfiler().pop();
          } finally { timer.stopTiming(); } // Paper - timings
@@ -326,7 +326,7 @@ index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03d
          Iterator iterator = entity.getPassengers().iterator();
  
          while (iterator.hasNext()) {
-@@ -1363,6 +1366,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1320,6 +1323,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  // Paper - EAR 2
                  final boolean isActive = org.spigotmc.ActivationRange.checkIfActive(passenger);
                  co.aikar.timings.Timing timer = isActive ? passenger.getType().passengerTickTimer.startTiming() : passenger.getType().passengerInactiveTickTimer.startTiming(); // Paper
@@ -335,7 +335,7 @@ index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03d
                  try {
                  // Paper end
                  passenger.setOldPosAndRot();
-@@ -1394,6 +1399,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1351,6 +1356,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  }
  
              } finally { timer.stopTiming(); }// Paper - EAR2 timings
@@ -343,7 +343,7 @@ index c1dc46ea9c35950073f323db5f9f724b19de5110..ba95a98ba7b06fbb0b07df6c2b51f03d
              }
          } else {
              passenger.stopRiding();
-@@ -1922,7 +1928,15 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1879,7 +1885,15 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
      private boolean doBlockEvent(BlockEventData event) {
          BlockState iblockdata = this.getBlockState(event.pos());
  
@@ -408,7 +408,7 @@ index 7287a23cff32e3458a626197eb8ef0cf369a98a7..9991900c9c428aea357deb26797a2755
  
      private void updatePlayerAttributes() {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 7796e191747be545e744564a2b0b65790f69114d..048c324ba344d168ced8569771b67627ee57530d 100644
+index 624b80c796e9c95040d71d1595d11f98e2899cf3..d5026646739ae295420ebea17fbf0cfd450cd072 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -400,6 +400,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -436,7 +436,7 @@ index 1859477e96709368683fe5707327e92f56fbfc8e..4c4814094552fa4382b1cbe649f24f47
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 7414082fb9cb2b57fb4f1893e85d76bb5eb8903e..a983d4a1789236aba8aa80e8723a6c445de801fa 100644
+index ff1b70049c396402a082683bc31d0d016040d7ca..36b388bc676c626a556e471d48669c14070bbef6 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5017,4 +5017,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -531,10 +531,10 @@ index 8b84a5f2c3419ec3a1de653d80937cc52e232fb8..e011d5b281b49b0b384ec08a9227f3f6
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 3a71b9c79fffe3a575bbf66f5b8b0ab28100d1a5..991a95c838965bb1cb8cf2eb8133e8ce8a1cd8ac 100644
+index e50c4a200a176e513b947af8900a767e90cbe4e5..570409c994f8a0f0cb5faa1500e0066cf33d2ab2 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -378,4 +378,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -390,4 +390,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
  
          return DoubleDoubleImmutablePair.of(d0, d1);
      }

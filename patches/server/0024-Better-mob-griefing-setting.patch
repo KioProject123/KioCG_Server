@@ -154,10 +154,10 @@ index 06cd00d571d583b9b94f3fb703e084fcde67391b..e55b3c44cfb7d71646a5d0b5102f4c4c
  
      protected boolean canReplaceCurrentItem(ItemStack stack) {
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 5f7d152f41eb85f17bcded4bc8099b998e5a338b..3a71b9c79fffe3a575bbf66f5b8b0ab28100d1a5 100644
+index de64de5d1328d3e0826c9990eb7c7eca5088cb9c..e50c4a200a176e513b947af8900a767e90cbe4e5 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -355,7 +355,7 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -367,7 +367,7 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      public boolean mayInteract(Level world, BlockPos pos) {
          Entity entity = this.getOwner();
  

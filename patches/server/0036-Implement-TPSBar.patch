@@ -448,10 +448,10 @@ index 0000000000000000000000000000000000000000..3c44d94ba77a24023e77ef4c778b1817
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 49dde96f217d5c314bee79642f250a363529822d..b18cd30e4040d5e59b731b0b7442c324f302399f 100644
+index 11195566e0c86d593622be800647e9cfc699053e..d556a1dac0c27478eb1d8f9a20b8358799d1a6a9 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -435,6 +435,16 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -438,6 +438,16 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean dontKillMyPet = true;
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
@@ -481,10 +481,10 @@ index 1d1e76de60e40224f5cb81893f9ee50fe987badb..d26aecbfbd1930e2c6938d049e45b700
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 9325d6f95165a7cee00d7de736af723681cc16b4..8206de9c96c19ce3c32293beebdd75d778cd4974 100644
+index 23ddd26af762c1cd7fb3920669abb96b3213ab37..ef4930d8af3d279a67a689815cfc9748fe1e4682 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1135,6 +1135,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1136,6 +1136,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.safeShutdown(waitForShutdown, false);
      }
      public void safeShutdown(boolean waitForShutdown, boolean isRestarting) {

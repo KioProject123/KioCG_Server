@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 91931b1cf06ad489a5c3acd19f6d8706954f8997..a145720768cab69c58e66f26a923e92188ff4d96 100644
+index 1110a2300fb4eec39bf815c23edd7cbc1279ba7c..ab4ffb08121c058498dcd79f7ed085aed675029f 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -419,6 +419,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -422,6 +422,11 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }
@@ -139,7 +139,7 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..f3b78df6bdd2f3fd833f63948594d0ee
      public int getBlocksSetOnFire() {
          return this.blocksSetOnFire;
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-index ddf47dab1ab92c45e3eea09239d418a9798ed59e..a5558f85a47953bf5abe2d170729910268057372 100644
+index 9ca29b3d4bf8bca5f51f3644e12fcbec2cb5d35e..c76932112cb00354484157571cb06749d74e783f 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 @@ -442,6 +442,14 @@ public abstract class AbstractArrow extends Projectile {
@@ -229,10 +229,10 @@ index 44c733c5b2c3e9942f28e882ad72306a24459c2c..3ccc7a2959e45cc02d05dedd22e4dcb1
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index ae64e05a72b4fc6c898c0fbb47cff7eeadeb1f44..96edb8830f76accec8d9b72de98bb8e3f41ba1c0 100644
+index bef578d546cd3df43a20db111fcaf9bb915d05d7..78849ad63f0fa4fa9f53376c4bc0823b28ce5a26 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -143,6 +143,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
+@@ -140,6 +140,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
                      int i = 0;
                      Iterator iterator = EnchantingTableBlock.BOOKSHELF_OFFSETS.iterator();
  

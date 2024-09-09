@@ -76,7 +76,7 @@ index a7a6f6e22ec8deea2cb083485d8ed912649890e0..593dbfc806ebf1c3493413f0dea58aef
  
              public boolean turretEnable = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 85fa3515f404aecf697efa9b3ef830b2bcf73be5..84d4db079e17e78106bf301b5cbd49232f3d78a2 100644
+index f76c4f793605e9bf9ae62bca203223000893e11e..b77c6da0d89be0ca9cb22016e357235ad98891ef 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -4759,6 +4759,8 @@ public abstract class LivingEntity extends Entity implements Attackable {

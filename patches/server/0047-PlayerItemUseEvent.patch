@@ -109,7 +109,7 @@ index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..a83a9a294018e433740c203314c3a655
                  UseOnContext itemactioncontext = new UseOnContext(player, hand, hitResult);
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 048c324ba344d168ced8569771b67627ee57530d..0a8796a5de3187c5e6464c70612d09f6ce6c3b2f 100644
+index d5026646739ae295420ebea17fbf0cfd450cd072..7c0867debf6163069f86f244f54e3a205e416b3f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -1935,31 +1935,37 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -157,10 +157,10 @@ index 048c324ba344d168ced8569771b67627ee57530d..0a8796a5de3187c5e6464c70612d09f6
              if (enuminteractionresult.shouldSwing()) {
                  this.player.swing(enumhand, true);
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 413d430f0eb68b34d5d17eb54d79f8cd8f23c0f7..8e459fe7514c2790819f0010dc9a062ed2d618a3 100644
+index c02d209d5efb3bdde3faa2bb5f3523c148a2e426..6e147c52be6c102ba6cc4333069c82e1c6c93f3b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -600,6 +600,41 @@ public class CraftEventFactory {
+@@ -604,6 +604,41 @@ public class CraftEventFactory {
          return event;
      }
  

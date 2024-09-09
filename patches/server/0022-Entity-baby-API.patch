@@ -5,10 +5,10 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index 83a726bcf8b7dce73a361b0d79dbd63a0afc7a12..006d15fe18f8b7616d9c3080793abbe3ce34cba5 100644
+index 783eac6e458c6f1a0584301fb84a2fe341868f34..1a7017cf499daddfd27709aa9a75286a989e0e57 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -233,6 +233,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -234,6 +234,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
                  .serializers(serializers -> serializers
                      .register(new TypeToken<Reference2IntMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<Reference2IntMap<?>>(Reference2IntOpenHashMap::new, Integer.TYPE))
                      .register(new TypeToken<Reference2LongMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<Reference2LongMap<?>>(Reference2LongOpenHashMap::new, Long.TYPE))
@@ -52,7 +52,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 6d9d4878c869a3354d6fd6c87da4f41b569f19e9..fa9539337d3a1f4772a9f4e790fbbb529c8ea0b9 100644
+index 93483be27e7704c0fc1e1252e1363ce9333fba5c..f2ab0a17aeaa36b76fc926acdccde13f77d0b3b1 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -306,10 +306,10 @@ index d2bb0831394c03b620b2cbd8306cb82b621f34f7..6c1a9cb2ef24048264fa9faed735cf1e
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 0ab53d46f0b8f3f3791dd01766738522c86932e8..73c41171173864ed4ca44bca2461c5e4ed17e4ce 100644
+index 8dd85b9ca3b3e3429de4d0ec0654982589c6e93e..761f6dc3b361934f0cf651430cbb0e7da10e0149 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -613,6 +613,7 @@ public class CraftEventFactory {
+@@ -617,6 +617,7 @@ public class CraftEventFactory {
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, List<net.minecraft.world.entity.LivingEntity> convertedList, EntityTransformEvent.TransformReason convertType) {
          List<org.bukkit.entity.Entity> list = new ArrayList<>();
          for (net.minecraft.world.entity.LivingEntity entityLiving : convertedList) {
@@ -317,7 +317,7 @@ index 0ab53d46f0b8f3f3791dd01766738522c86932e8..73c41171173864ed4ca44bca2461c5e4
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1344,6 +1345,7 @@ public class CraftEventFactory {
+@@ -1348,6 +1349,7 @@ public class CraftEventFactory {
      }
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {

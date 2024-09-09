@@ -5,10 +5,10 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 73c41171173864ed4ca44bca2461c5e4ed17e4ce..413d430f0eb68b34d5d17eb54d79f8cd8f23c0f7 100644
+index 761f6dc3b361934f0cf651430cbb0e7da10e0149..c02d209d5efb3bdde3faa2bb5f3523c148a2e426 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -614,6 +614,7 @@ public class CraftEventFactory {
+@@ -618,6 +618,7 @@ public class CraftEventFactory {
          List<org.bukkit.entity.Entity> list = new ArrayList<>();
          for (net.minecraft.world.entity.LivingEntity entityLiving : convertedList) {
              entityLiving.transformScaleSimulate(original); // KioCG
@@ -16,7 +16,7 @@ index 73c41171173864ed4ca44bca2461c5e4ed17e4ce..413d430f0eb68b34d5d17eb54d79f8cd
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1346,6 +1347,7 @@ public class CraftEventFactory {
+@@ -1350,6 +1351,7 @@ public class CraftEventFactory {
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {
          ((net.minecraft.world.entity.LivingEntity) pigzombie).transformScaleSimulate((net.minecraft.world.entity.LivingEntity) pig); // KioCG
@@ -24,7 +24,7 @@ index 73c41171173864ed4ca44bca2461c5e4ed17e4ce..413d430f0eb68b34d5d17eb54d79f8cd
          PigZapEvent event = new PigZapEvent((Pig) pig.getBukkitEntity(), (LightningStrike) lightning.getBukkitEntity(), (PigZombie) pigzombie.getBukkitEntity());
          pig.getBukkitEntity().getServer().getPluginManager().callEvent(event);
          return event;
-@@ -1359,6 +1361,7 @@ public class CraftEventFactory {
+@@ -1363,6 +1365,7 @@ public class CraftEventFactory {
  
      // Paper start
      public static com.destroystokyo.paper.event.entity.EntityZapEvent callEntityZapEvent(Entity entity, Entity lightning, Entity changedEntity) {

@@ -19,10 +19,10 @@ index 5151a50f37dbc15d3180f6a05469f76035983b58..da5f9ee0478eba4cf0ec2c1b1c31582d
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 45c9d6fe59d3167cd67b9faa9f1b0a00995df3f9..e762c3ccda1f3200bb3b9cd5547caaec4add7287 100644
+index c5bf1c35ed1c46230b8fd01ae98dd12fa151a6f4..5bc5925a63ba75ad50e1179d9c3d59bd041690cb 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -683,6 +683,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -640,6 +640,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
@@ -30,7 +30,7 @@ index 45c9d6fe59d3167cd67b9faa9f1b0a00995df3f9..e762c3ccda1f3200bb3b9cd5547caaec
          if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
              // CraftBukkit start
              j = this.levelData.getDayTime() + 24000L;
-@@ -702,6 +703,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -659,6 +660,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  this.resetWeatherCycle();
              }
          }
@@ -38,7 +38,7 @@ index 45c9d6fe59d3167cd67b9faa9f1b0a00995df3f9..e762c3ccda1f3200bb3b9cd5547caaec
  
          this.updateSkyBrightness();
          if (flag) {
-@@ -1046,6 +1048,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1003,6 +1005,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
      }
  
      private void announceSleepStatus() {
