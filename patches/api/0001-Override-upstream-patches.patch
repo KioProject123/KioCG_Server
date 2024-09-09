@@ -5,10 +5,10 @@ Subject: [PATCH] Override upstream patches
 
 
 diff --git a/src/main/java/org/bukkit/NamespacedKey.java b/src/main/java/org/bukkit/NamespacedKey.java
-index 7ff6d60deb129e23b2a4d772aee123eb6c0b6433..1fbb01151a3d23574229738816ecc9c5e0efc829 100644
+index 52a2763773b234c581b2dcc6f0584f8d8b0fbc60..d429e15d5915ca7af2cefa3b7a404dc91b8f9361 100644
 --- a/src/main/java/org/bukkit/NamespacedKey.java
 +++ b/src/main/java/org/bukkit/NamespacedKey.java
-@@ -30,6 +30,7 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key { // Pap
+@@ -30,6 +30,7 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key, com.des
       * compatibility measures.
       */
      public static final String BUKKIT = "bukkit";
@@ -16,7 +16,7 @@ index 7ff6d60deb129e23b2a4d772aee123eb6c0b6433..1fbb01151a3d23574229738816ecc9c5
      //
      private final String namespace;
      private final String key;
-@@ -179,6 +180,13 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key { // Pap
+@@ -181,6 +182,13 @@ public final class NamespacedKey implements net.kyori.adventure.key.Key, com.des
          return new NamespacedKey(MINECRAFT, key);
      }
  

@@ -5,10 +5,10 @@ Subject: [PATCH] Vanilla recipe excludes model items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 4b22d5c0891e993f6b94e204e33e9064b32a0b81..1110a2300fb4eec39bf815c23edd7cbc1279ba7c 100644
+index e38bd355023b2b0f2326f79ecf039f555ccba55a..d3bc26a8f4ffb26c73d5b2079806e2dad0cc8433 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -362,6 +362,66 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -363,6 +363,66 @@ public class GlobalConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public String feedbackForwardingSenderName = "MOSS";
@@ -88,7 +88,7 @@ index c3a0b91516c04a417f6093d3f8e30de6acc5d0ca..4c4dee793a075f6a00f0933364cd733e
              return false;
          } else if (!this.count.matches(stack.getCount())) {
 diff --git a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
-index 32910f677b0522ac8ec513fa0d00b714b52cfae4..cbcb0e4507a3ef26a73e4118dd6b4ad3a1f7659b 100644
+index dd4218e108f87f3305b76fbc8d88f488b447c609..838cb584c2a571ddb7f1476e391078bf6ae19d8b 100644
 --- a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
 @@ -1020,6 +1020,16 @@ public abstract class AbstractContainerMenu {
@@ -251,7 +251,7 @@ index f9e4714cb0ee74505ed72200abed7756aa68dc90..6dea980f8be3e3e0ca8f7a7f47d9bbc2
                  }
              }
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index 1ef014b29645ed09ccffb898f1819428c3dc6259..bef578d546cd3df43a20db111fcaf9bb915d05d7 100644
+index 9bc9b4218ffd966f43097c9e009b2926af58c810..22370812e2bfb70a0980bcaff3464733045c1942 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 @@ -92,6 +92,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {
@@ -298,10 +298,10 @@ index 4e656268de1058e179cd18f15228276ff5accba5..2c1e8fc56f09ca834c5edbb3c5a65020
      }
  
 diff --git a/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java b/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java
-index 1678f6c8b2c7db761783e53043169bf12bc2cb29..914eef0cf1944de0b4bb23460a62aafd99d63002 100644
+index 138f77d13dda574def523d74fa55bc71b5bfa01b..da843a0a9d36e313a89d6df308470f216cdf537d 100644
 --- a/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -184,6 +184,7 @@ public class GrindstoneMenu extends AbstractContainerMenu {
+@@ -188,6 +188,7 @@ public class GrindstoneMenu extends AbstractContainerMenu {
  
                  return !EnchantmentHelper.hasAnyEnchantments(itemstack2) ? ItemStack.EMPTY : this.removeNonCursesFrom(itemstack2.copy());
              } else {
@@ -310,7 +310,7 @@ index 1678f6c8b2c7db761783e53043169bf12bc2cb29..914eef0cf1944de0b4bb23460a62aafd
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/inventory/LoomMenu.java b/src/main/java/net/minecraft/world/inventory/LoomMenu.java
-index 0e954dfe82ed263cbe63dbf49ff49e83f38228b8..dd05fc62b79746216fc3e201122b955786808627 100644
+index 2c0e182f7b03ed0f87c259af4df9c4e52106220d..0ca09850dbd29230a3f823780dc75c0b045defde 100644
 --- a/src/main/java/net/minecraft/world/inventory/LoomMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/LoomMenu.java
 @@ -106,18 +106,21 @@ public class LoomMenu extends AbstractContainerMenu {
@@ -335,7 +335,7 @@ index 0e954dfe82ed263cbe63dbf49ff49e83f38228b8..dd05fc62b79746216fc3e201122b9557
                  return stack.getItem() instanceof BannerPatternItem;
              }
          });
-@@ -326,15 +329,15 @@ public class LoomMenu extends AbstractContainerMenu {
+@@ -310,15 +313,15 @@ public class LoomMenu extends AbstractContainerMenu {
  
                  slot1.onQuickCraft(itemstack1, itemstack);
              } else if (slot != this.dyeSlot.index && slot != this.bannerSlot.index && slot != this.patternSlot.index) {
@@ -436,7 +436,7 @@ index 730aca233f6e7564d4cb85b5b628d23c4f01d2f4..4546b7d36d031647098db967c675579f
          }
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-index 15fd1fe1b55b6421d2c09e8385c9f69fa0152e56..38cf831b3b9e991c42ca36ab3c518a7502b98754 100644
+index 2ddf349fde5b310ec3f74baee1f3d33e09d5286c..795bf8229113a090fb2a5540103d7e61bf5b3974 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 @@ -206,6 +206,12 @@ public abstract class BaseContainerBlockEntity extends BlockEntity implements Co

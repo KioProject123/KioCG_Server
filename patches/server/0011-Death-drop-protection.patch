@@ -5,10 +5,10 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 5251de7f1c475fcbb279e0c9161dbc1b54b92f99..71cfc0f7e502cb07aad74254ea396bbde219a84d 100644
+index 9c1220f57a9bfe8729316c722976342f882dccf2..4d9e24d183e04239323f008307bab01e0f8f573c 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -553,7 +553,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -580,7 +580,7 @@ public class WorldConfiguration extends ConfigurationPart {
      public KiocgConfig kiocgConfig;
  
      public class KiocgConfig extends ConfigurationPart {
@@ -18,7 +18,7 @@ index 5251de7f1c475fcbb279e0c9161dbc1b54b92f99..71cfc0f7e502cb07aad74254ea396bbd
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 5a746714b9958abee8319854d58f1b9f1095bc98..d2508509df3f3d6d3eda6ef78d35c1f3ec585fa5 100644
+index dd329aa9f07303ebd4aaa94fa343da8816c7ca03..efbbf9f9b078b0faaf20c980142a1e5404b934f6 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1028,7 +1028,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple

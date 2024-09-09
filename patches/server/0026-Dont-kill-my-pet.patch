@@ -5,10 +5,10 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index ba1de28783d8a3bb652bd974f9924d43ce93d82a..11195566e0c86d593622be800647e9cfc699053e 100644
+index 6731c73a20d1ff90311754c5332940288eea428b..2b9642316916a273cb3b1241db0c6f27e7deb139 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -434,6 +434,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -435,6 +435,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public boolean repairNoLevelCost = true;
              public boolean renameNoLevelCost = true;
          }
@@ -32,7 +32,7 @@ index f56e5c0f53f9b52a9247b9be9265b949494fc924..b622a82986efd7a6d7cd5491f3ba2569
      public static <T> TicketType<T> create(String name, Comparator<T> argumentComparator) {
          return new TicketType<>(name, argumentComparator, 0L);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f2ab0a17aeaa36b76fc926acdccde13f77d0b3b1..f76c4f793605e9bf9ae62bca203223000893e11e 100644
+index 87955d252206816c255fe3c6948876c1d5216863..9813c73ea7439a7a191f985527a009581574a744 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2495,7 +2495,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -53,7 +53,7 @@ index f2ab0a17aeaa36b76fc926acdccde13f77d0b3b1..f76c4f793605e9bf9ae62bca20322300
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 45224dc3867892b298b006c17f7f85741fcc96d6..a2b4b2b86d7921ffe81f3b83f894281f7ec74ad0 100644
+index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c2780486b 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 @@ -41,6 +41,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
@@ -80,7 +80,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..a2b4b2b86d7921ffe81f3b83f894281f
      }
  
      @Override
-@@ -254,11 +257,59 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -258,11 +261,59 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
@@ -140,7 +140,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..a2b4b2b86d7921ffe81f3b83f894281f
          this.orderedToSit = sitting;
      }
  
-@@ -274,7 +325,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -278,7 +329,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
      public boolean shouldTryTeleportToOwner() {
          LivingEntity entityliving = this.getOwner();
  
@@ -149,7 +149,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..a2b4b2b86d7921ffe81f3b83f894281f
      }
  
      private void teleportToAroundBlockPos(BlockPos pos) {
-@@ -329,6 +380,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -333,6 +384,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
      }
  
      public final boolean unableToMoveToOwner() {
@@ -157,7 +157,7 @@ index 45224dc3867892b298b006c17f7f85741fcc96d6..a2b4b2b86d7921ffe81f3b83f894281f
          return this.isOrderedToSit() || this.isPassenger() || this.mayBeLeashed() || this.getOwner() != null && this.getOwner().isSpectator();
      }
  
-@@ -346,6 +398,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -350,6 +402,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
              super(TamableAnimal.this, d0);
          }
  

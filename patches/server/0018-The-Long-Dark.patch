@@ -221,10 +221,10 @@ index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 18ff6952111657df71558451046c54ec0ca9e52d..08512ecb6a3720df269d55d84bf0f76ac45b6e6e 100644
+index 9a90cb9932a8223c4593e28a6394edbd7dbee849..95280590b995174f9ae6136bcfc67aad65006656 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -555,6 +555,35 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -582,6 +582,35 @@ public class WorldConfiguration extends ConfigurationPart {
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = true;
          public boolean removeAutomationGameplay = true;
@@ -261,7 +261,7 @@ index 18ff6952111657df71558451046c54ec0ca9e52d..08512ecb6a3720df269d55d84bf0f76a
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index d2508509df3f3d6d3eda6ef78d35c1f3ec585fa5..151e259820185947056a8560f93e151a46d2451d 100644
+index efbbf9f9b078b0faaf20c980142a1e5404b934f6..dc6552fb554c831e6ae76a6a86bbae9a225f7f40 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -891,7 +891,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -273,7 +273,7 @@ index d2508509df3f3d6d3eda6ef78d35c1f3ec585fa5..151e259820185947056a8560f93e151a
                  this.lastSentExp = this.totalExperience;
                  this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
              }
-@@ -2934,6 +2934,8 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -2937,6 +2937,8 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new FoodData(this);
@@ -283,10 +283,10 @@ index d2508509df3f3d6d3eda6ef78d35c1f3ec585fa5..151e259820185947056a8560f93e151a
          this.totalExperience = this.newTotalExp;
          this.experienceProgress = 0;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 44e6b97303b033c5f3fd61135c32b1ab82edb33a..511da4fcb807b25df763e760f38d3b246476d78a 100644
+index 90d7ad8f5d13f55ddf4a4c7f53bbe78499f088ca..065c8937c6f9fc2530ea5f9e76bd334beb3a5cee 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -883,7 +883,7 @@ public abstract class PlayerList {
+@@ -887,7 +887,7 @@ public abstract class PlayerList {
          entityplayer1.connection.teleport(CraftLocation.toBukkit(entityplayer1.position(), worldserver1.getWorld(), entityplayer1.getYRot(), entityplayer1.getXRot())); // CraftBukkit
          entityplayer1.connection.send(new ClientboundSetDefaultSpawnPositionPacket(worldserver.getSharedSpawnPos(), worldserver.getSharedSpawnAngle()));
          entityplayer1.connection.send(new ClientboundChangeDifficultyPacket(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
@@ -295,7 +295,7 @@ index 44e6b97303b033c5f3fd61135c32b1ab82edb33a..511da4fcb807b25df763e760f38d3b24
          this.sendActivePlayerEffects(entityplayer1);
          this.sendLevelInfo(entityplayer1, worldserver);
          this.sendPlayerPermissionLevel(entityplayer1);
-@@ -932,6 +932,8 @@ public abstract class PlayerList {
+@@ -936,6 +936,8 @@ public abstract class PlayerList {
          // Paper start - Add PlayerPostRespawnEvent
          if (isRespawn) {
              cserver.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(entityplayer.getBukkitEntity(), location, isBedSpawn));
@@ -321,7 +321,7 @@ index 7b415dca88f50dc472fe4be96e5ef0996f117913..742177e7d9246c259065216ca0483ddd
              int oldFoodLevel = entityhuman.getFoodData().foodLevel;
              org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, amplifier + 1 + oldFoodLevel);
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 490ee48346395fcbaf2eb0151e9248f18974fea6..2b10ddcdd9b216617062b0dc89024ade94e54cca 100644
+index e0827d8bb3fa17d4f590a5342ff41a514f623e68..b4e4b2f2d77b1cd8bfabec909d5882564e61fb7f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -362,7 +362,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -355,7 +355,7 @@ index 490ee48346395fcbaf2eb0151e9248f18974fea6..2b10ddcdd9b216617062b0dc89024ade
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index ccd9dff20a60f019e0c320acfb526b8bf3e5f806..93483be27e7704c0fc1e1252e1363ce9333fba5c 100644
+index 9c9e2377f44b1f1bbd8bb0e8bc963a80f4f9ee68..9613724b4652227ef7e0806fa6c2ac73e475320d 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1357,6 +1357,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -519,7 +519,7 @@ index a5c7c2d24498c66159316a4f92677625975ce5ca..66dabb34eb4dfdd526ee1800d04aeda0
  
      @io.papermc.paper.annotation.DoNotUse @Deprecated // Paper - fix powdered snow cauldron extinguishing entities; use #handleEntityOnFireInsideWithEvent
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 44167f288e4aeed28a8d53566ef363dbd940f3b9..0230e4fe47b3536934684b355be5d87d3e3d02df 100644
+index 4a4707d65d2d6d03964bb107e9ef8cac5c0f2314..d5386e47cc6e3996f15373dca5b08a4b447da77d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -207,6 +207,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {

@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index bd7c6ce15698aed70376c109ba36f52d6794a2f8..a22428615705582575e71252b4b4ee9dd2de72d3 100644
+index 763abeea3f14f15c27d600e0bdae44b387687bb4..efb0225deb10e5fdc0d8e3acd68bb71446e22802 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -145,6 +145,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -79,7 +79,7 @@ index bd7c6ce15698aed70376c109ba36f52d6794a2f8..a22428615705582575e71252b4b4ee9d
      }
  
      @Override
-@@ -1802,4 +1808,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1806,4 +1812,52 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
@@ -133,13 +133,13 @@ index bd7c6ce15698aed70376c109ba36f52d6794a2f8..a22428615705582575e71252b4b4ee9d
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-index deb66c04abefb4a88521483db1612e494bd27164..6476349ef9759a9b471472f69d3545376d1dd17f 100644
+index 5f9f7e325e3e0276f7a475c4a4725cc0e1b54afd..faa655a6a8c512f516b4102a4aa440fd18d679f8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-@@ -175,4 +175,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
-         return getHandle().getExperienceReward((ServerLevel) this.getHandle().level(), null);
+@@ -192,4 +192,16 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob, io.pape
+         return io.papermc.paper.entity.PaperLeashable.super.setLeashHolder(holder);
      }
-     // Paper end
+     // Paper end - Leashable API
 +
 +    // KioCG start
 +    @Override

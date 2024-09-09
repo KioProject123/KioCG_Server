@@ -17,7 +17,7 @@ index 9a24249fe868e6a574ed365ff31253b490593272..96a9a37c76e26d516b00e87a1bc42245
      public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
      public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 9991900c9c428aea357deb26797a27555f2ed022..f50809f2ebfd8c9abc4e2dbe5b482016bbe48a9d 100644
+index 98cac77e90e0fd42c0d89d07d7a798490ab25d77..e51ab6d25f969f375b88eafee596f0bf365a5aa1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -750,6 +750,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -37,7 +37,7 @@ index 9991900c9c428aea357deb26797a27555f2ed022..f50809f2ebfd8c9abc4e2dbe5b482016
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
 diff --git a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
-index cbcb0e4507a3ef26a73e4118dd6b4ad3a1f7659b..18516069b693c6c38776dda2d8e43e121ca0a424 100644
+index 838cb584c2a571ddb7f1476e391078bf6ae19d8b..a00a21c90800de7a232aa379d0f0fc6e40f7883a 100644
 --- a/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AbstractContainerMenu.java
 @@ -231,15 +231,29 @@ public abstract class AbstractContainerMenu {

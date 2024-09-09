@@ -5,10 +5,10 @@ Subject: [PATCH] Remove automation gameplay
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 71cfc0f7e502cb07aad74254ea396bbde219a84d..18ff6952111657df71558451046c54ec0ca9e52d 100644
+index 4d9e24d183e04239323f008307bab01e0f8f573c..9a90cb9932a8223c4593e28a6394edbd7dbee849 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -554,6 +554,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -581,6 +581,7 @@ public class WorldConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public boolean deathItemsOnlyPickedUpByOneself = true;

@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 5151a50f37dbc15d3180f6a05469f76035983b58..da5f9ee0478eba4cf0ec2c1b1c31582dc9b6af47 100644
+index ae6c6b3a32ceddcb6636941ce827e78b9d4fc6bf..29f1a8e24e643b6f68aa381d2ad3040fb452d083 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -608,6 +608,9 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -635,6 +635,9 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean babyZombieJockey = true;
              }
          }
@@ -19,7 +19,7 @@ index 5151a50f37dbc15d3180f6a05469f76035983b58..da5f9ee0478eba4cf0ec2c1b1c31582d
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c5bf1c35ed1c46230b8fd01ae98dd12fa151a6f4..5bc5925a63ba75ad50e1179d9c3d59bd041690cb 100644
+index 14fd6be798f4f3a388dc72dc1690de2b3671d766..4989d2a6ddec45315e1f1c6c651efdb2de5890fd 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -640,6 +640,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
@@ -47,10 +47,10 @@ index c5bf1c35ed1c46230b8fd01ae98dd12fa151a6f4..5bc5925a63ba75ad50e1179d9c3d59bd
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 151e259820185947056a8560f93e151a46d2451d..7287a23cff32e3458a626197eb8ef0cf369a98a7 100644
+index dc6552fb554c831e6ae76a6a86bbae9a225f7f40..77e1dd00211fc2cad64b17478e0b943795c13392 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1513,7 +1513,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1512,7 +1512,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                  return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.OBSTRUCTED);
              } else {
                  this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -59,7 +59,7 @@ index 151e259820185947056a8560f93e151a46d2451d..7287a23cff32e3458a626197eb8ef0cf
                      return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
                  } else {
                      if (!this.isCreative()) {
-@@ -1563,7 +1563,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1562,7 +1562,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                          CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                      });
  
@@ -68,7 +68,7 @@ index 151e259820185947056a8560f93e151a46d2451d..7287a23cff32e3458a626197eb8ef0cf
                          this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                      }
  
-@@ -2543,7 +2543,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -2546,7 +2546,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent

@@ -5,7 +5,7 @@ Subject: [PATCH] PlayerItemUseEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..a83a9a294018e433740c203314c3a655165c5d17 100644
+index ee9e4521079137d7b72194e8789810e7a89b8e75..335298a91d975748920864efea15141f66b10db8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -478,11 +478,43 @@ public class ServerPlayerGameMode {
@@ -88,7 +88,7 @@ index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..a83a9a294018e433740c203314c3a655
              return (event.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider itileinventory = iblockdata.getMenuProvider(world, blockposition);
-@@ -595,6 +649,19 @@ public class ServerPlayerGameMode {
+@@ -594,6 +648,19 @@ public class ServerPlayerGameMode {
                  }
              }
  
@@ -109,10 +109,10 @@ index cc01ead133cc6859ca5d7a1d0ac3c12955e590da..a83a9a294018e433740c203314c3a655
                  UseOnContext itemactioncontext = new UseOnContext(player, hand, hitResult);
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d5026646739ae295420ebea17fbf0cfd450cd072..7c0867debf6163069f86f244f54e3a205e416b3f 100644
+index f1dda687a9301d11e12694de76e02e3f93345b42..74f4cc5c6f1bcf4349513958bbb67b5158d54d4c 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1935,31 +1935,37 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -2006,31 +2006,37 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
              HitResult movingobjectposition = this.player.level().clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.player));
  
              boolean cancelled;
@@ -157,10 +157,10 @@ index d5026646739ae295420ebea17fbf0cfd450cd072..7c0867debf6163069f86f244f54e3a20
              if (enuminteractionresult.shouldSwing()) {
                  this.player.swing(enumhand, true);
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index c02d209d5efb3bdde3faa2bb5f3523c148a2e426..6e147c52be6c102ba6cc4333069c82e1c6c93f3b 100644
+index ae09b77db91184553ee1a7d40fad461671512896..e63474cc560d65e09fa9cacb7aba42f7655d8ce0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -604,6 +604,41 @@ public class CraftEventFactory {
+@@ -606,6 +606,41 @@ public class CraftEventFactory {
          return event;
      }
  

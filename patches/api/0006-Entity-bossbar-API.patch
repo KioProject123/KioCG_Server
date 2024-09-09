@@ -5,10 +5,10 @@ Subject: [PATCH] Entity bossbar API
 
 
 diff --git a/src/main/java/org/bukkit/entity/Mob.java b/src/main/java/org/bukkit/entity/Mob.java
-index 256e5645bcfa76e7ede58ae365e69b4a4bed6204..db467c74b17d6019b097ea261f633cf2f5937c63 100644
+index 9a10262a952e330f42187d6e4edab5a225bfba62..3632a9f7f9a5a97893fd19de93a6350d3b7f56bd 100644
 --- a/src/main/java/org/bukkit/entity/Mob.java
 +++ b/src/main/java/org/bukkit/entity/Mob.java
-@@ -229,4 +229,10 @@ public interface Mob extends LivingEntity, Lootable {
+@@ -229,4 +229,10 @@ public interface Mob extends LivingEntity, Lootable, io.papermc.paper.entity.Lea
       */
      public int getPossibleExperienceReward();
      // Paper end - mob xp reward API

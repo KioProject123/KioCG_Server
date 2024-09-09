@@ -5,7 +5,7 @@ Subject: [PATCH] World data synchronization
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 2fe9d9b38c01d04416843fdd48d3e33899b7de63..c5bf1c35ed1c46230b8fd01ae98dd12fa151a6f4 100644
+index c96f3dcd365bc140b1f4680ef6bd770c80f8eda1..14fd6be798f4f3a388dc72dc1690de2b3671d766 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1310,6 +1310,13 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.

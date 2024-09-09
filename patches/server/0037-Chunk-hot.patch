@@ -215,10 +215,10 @@ index 3c44d94ba77a24023e77ef4c778b181736ff5f98..ae3ebd432a89f63b5f6277ba66df898d
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index d556a1dac0c27478eb1d8f9a20b8358799d1a6a9..a5730ce4564408c6b41eed54471e3dd12949346b 100644
+index a0c15381b6082cdd6e278e4c6e1136721e70d6de..c978c990f2ae2d616e12c495e2bfaa3a94d98e0d 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -439,7 +439,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -440,7 +440,7 @@ public class GlobalConfiguration extends ConfigurationPart {
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
  
@@ -228,10 +228,10 @@ index d556a1dac0c27478eb1d8f9a20b8358799d1a6a9..a5730ce4564408c6b41eed54471e3dd1
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 593dbfc806ebf1c3493413f0dea58aeffad6545a..a287b12defdf63b0a60516910d95edcb56da5690 100644
+index 992adeba9d06d5034378167dab1d7dec3beb60b9..6e6d92fbf4fa3f5aa5bcce17d6414ce11c3f0673 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -625,6 +625,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -652,6 +652,14 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20.0;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;
@@ -306,7 +306,7 @@ index ef4930d8af3d279a67a689815cfc9748fe1e4682..ec160cc41ecb931fbcfaed1c03ff6802
          if (this.isTickTimeLoggingEnabled()) {
              this.getTickTimeLogger().logPartialSample(Util.getNanos() - tickStartTime, TpsDebugDimensions.TICK_SERVER_METHOD.ordinal());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 274fbfd84e0cb52c3a846801a22c3ef7e15cf107..3f784ff275df5fc8710c324dd1f5553d584b5d05 100644
+index 71d5aa4b9c0252e4eb8efce944077f14afd73022..6288803155d97d3b625d65d2d177a41f17a13f47 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1280,6 +1280,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
@@ -361,7 +361,7 @@ index 274fbfd84e0cb52c3a846801a22c3ef7e15cf107..3f784ff275df5fc8710c324dd1f5553d
  
      @Override
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 7287a23cff32e3458a626197eb8ef0cf369a98a7..9991900c9c428aea357deb26797a27555f2ed022 100644
+index 77e1dd00211fc2cad64b17478e0b943795c13392..98cac77e90e0fd42c0d89d07d7a798490ab25d77 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,6 +303,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -408,7 +408,7 @@ index 7287a23cff32e3458a626197eb8ef0cf369a98a7..9991900c9c428aea357deb26797a2755
  
      private void updatePlayerAttributes() {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 624b80c796e9c95040d71d1595d11f98e2899cf3..d5026646739ae295420ebea17fbf0cfd450cd072 100644
+index fcccf989c25f0a259b160c4ff7873f7009e64d14..f1dda687a9301d11e12694de76e02e3f93345b42 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -400,6 +400,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -436,7 +436,7 @@ index 1859477e96709368683fe5707327e92f56fbfc8e..4c4814094552fa4382b1cbe649f24f47
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index ff1b70049c396402a082683bc31d0d016040d7ca..36b388bc676c626a556e471d48669c14070bbef6 100644
+index 5ef8d9f5948211e0d11dfe5d165d1eaab7044d86..1a813acc4043c012a298e1e353eaa90d5a121333 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5017,4 +5017,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -467,10 +467,10 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 58fab5b0245d1a80c6093e09a2c5a467a4436421..ebe1fd3a4f0019cd159ef09df30dbc9497af4b32 100644
+index 598a9786179f700668028e011cadf67dfcd73d56..dd364568077d2c94be360bdb7d425ee29b138ea5 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1867,4 +1867,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1871,4 +1871,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
          }
      }
      // KioCG end
@@ -547,7 +547,7 @@ index e50c4a200a176e513b947af8900a767e90cbe4e5..570409c994f8a0f0cb5faa1500e0066c
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index bfe1d4a232745b8e1fab51e30b6454d2ed68e4e2..d948b0da3c33987c6573866cc4126a7b7373a908 100644
+index 57e7de5f573e0afc5cb45bad7fb759a3bcdc245b..531727f03f7a5cc9549048b18c73168ad2810720 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -85,6 +85,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
@@ -558,7 +558,7 @@ index bfe1d4a232745b8e1fab51e30b6454d2ed68e4e2..d948b0da3c33987c6573866cc4126a7b
  
      public LevelChunk(Level world, ChunkPos pos) {
          this(world, pos, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, 0, (LevelChunkSection[]) null, (LevelChunk.PostLoadProcessor) null, (BlendingData) null); // KioCG - CropDays
-@@ -1022,6 +1023,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
+@@ -1027,6 +1028,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
  
                          gameprofilerfiller.push(this::getType);
                          this.blockEntity.tickTimer.startTiming(); // Spigot
@@ -566,7 +566,7 @@ index bfe1d4a232745b8e1fab51e30b6454d2ed68e4e2..d948b0da3c33987c6573866cc4126a7b
                          BlockState iblockdata = LevelChunk.this.getBlockState(blockposition);
  
                          if (this.blockEntity.getType().isValid(iblockdata)) {
-@@ -1049,6 +1051,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
+@@ -1054,6 +1056,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
                          // Spigot start
                      } finally {
                          this.blockEntity.tickTimer.stopTiming();

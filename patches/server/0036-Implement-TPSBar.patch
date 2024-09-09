@@ -448,10 +448,10 @@ index 0000000000000000000000000000000000000000..3c44d94ba77a24023e77ef4c778b1817
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 11195566e0c86d593622be800647e9cfc699053e..d556a1dac0c27478eb1d8f9a20b8358799d1a6a9 100644
+index 2b9642316916a273cb3b1241db0c6f27e7deb139..a0c15381b6082cdd6e278e4c6e1136721e70d6de 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -438,6 +438,16 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -439,6 +439,16 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean dontKillMyPet = true;
          public double petTeleportDistanceSqr = 256.0;
          public boolean petFollowKeepChunkLoaded = true;
@@ -505,7 +505,7 @@ index c5592d288325e35f4c7150a8b2696954eafbf5a6..fec556836eb03e28d3e8abc0aca49ea8
          }
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 511da4fcb807b25df763e760f38d3b246476d78a..6df8f121b2c01db395e00092c6cea3160ac7b0f1 100644
+index 065c8937c6f9fc2530ea5f9e76bd334beb3a5cee..7731a8e4473f455ccbd2718c7fd73d164811f5ac 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -591,6 +591,7 @@ public abstract class PlayerList {

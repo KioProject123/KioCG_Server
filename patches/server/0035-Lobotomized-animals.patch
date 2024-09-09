@@ -64,10 +64,10 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index a7a6f6e22ec8deea2cb083485d8ed912649890e0..593dbfc806ebf1c3493413f0dea58aeffad6545a 100644
+index 10e4349d1678d60b4f894b3bea20b05a7208947a..992adeba9d06d5034378167dab1d7dec3beb60b9 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -612,6 +612,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -639,6 +639,7 @@ public class WorldConfiguration extends ConfigurationPart {
              public class Animal extends ConfigurationPart {
                  public boolean villagerCanBreed = false;
                  public double feedingHugeChance = 0.01;
@@ -76,7 +76,7 @@ index a7a6f6e22ec8deea2cb083485d8ed912649890e0..593dbfc806ebf1c3493413f0dea58aef
  
              public boolean turretEnable = true;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f76c4f793605e9bf9ae62bca203223000893e11e..b77c6da0d89be0ca9cb22016e357235ad98891ef 100644
+index 9813c73ea7439a7a191f985527a009581574a744..4a164912ded8372c6c330027a8263e4f49be582f 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -4759,6 +4759,8 @@ public abstract class LivingEntity extends Entity implements Attackable {

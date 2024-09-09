@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 1110a2300fb4eec39bf815c23edd7cbc1279ba7c..ab4ffb08121c058498dcd79f7ed085aed675029f 100644
+index d3bc26a8f4ffb26c73d5b2079806e2dad0cc8433..337123deeb20f561e176ba92f41929a908bc4b6e 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -422,6 +422,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -423,6 +423,11 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }
@@ -229,7 +229,7 @@ index 44c733c5b2c3e9942f28e882ad72306a24459c2c..3ccc7a2959e45cc02d05dedd22e4dcb1
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
-index bef578d546cd3df43a20db111fcaf9bb915d05d7..78849ad63f0fa4fa9f53376c4bc0823b28ce5a26 100644
+index 22370812e2bfb70a0980bcaff3464733045c1942..80e3f08aa88836bda60ca2988578ad10e83bbb84 100644
 --- a/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/EnchantmentMenu.java
 @@ -140,6 +140,7 @@ public class EnchantmentMenu extends AbstractContainerMenu {

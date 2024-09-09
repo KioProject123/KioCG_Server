@@ -5,22 +5,22 @@ Subject: [PATCH] Entity baby API
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index 783eac6e458c6f1a0584301fb84a2fe341868f34..1a7017cf499daddfd27709aa9a75286a989e0e57 100644
+index 1029b6de6f36b08bf634b4056ef5701383f6f258..16d8ae74f535614b21366244eb741551fd5f9e59 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -234,6 +234,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -241,6 +241,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
                  .serializers(serializers -> serializers
                      .register(new TypeToken<Reference2IntMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<Reference2IntMap<?>>(Reference2IntOpenHashMap::new, Integer.TYPE))
                      .register(new TypeToken<Reference2LongMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<Reference2LongMap<?>>(Reference2LongOpenHashMap::new, Long.TYPE))
 +                    .register(new TypeToken<it.unimi.dsi.fastutil.objects.Reference2DoubleMap<?>>() {}, new FastutilMapSerializer.SomethingToPrimitive<it.unimi.dsi.fastutil.objects.Reference2DoubleMap<?>>(it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap::new, Double.TYPE)) // KioCG
                      .register(new TypeToken<Table<?, ?, ?>>() {}, new TableSerializer())
+                     .register(DespawnRange.class, DespawnRange.SERIALIZER)
                      .register(StringRepresentableSerializer::isValidFor, new StringRepresentableSerializer())
-                     .register(IntOr.Default.SERIALIZER)
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 4f1a2a6bab29aa9b61fb3304368ec3e161981da5..426f1d92b2d974753b1eb1f0f16282517daec83d 100644
+index a2b838cccfceb98279d58179cb78cc091c4eb29d..5000a16c7e4647b5aa5be7e2190077bb4448d363 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -588,6 +588,18 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -615,6 +615,18 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingTwo = -1;
              public int campfireBoilingWaterTime = 600;
          }
@@ -52,7 +52,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 93483be27e7704c0fc1e1252e1363ce9333fba5c..f2ab0a17aeaa36b76fc926acdccde13f77d0b3b1 100644
+index 9613724b4652227ef7e0806fa6c2ac73e475320d..87955d252206816c255fe3c6948876c1d5216863 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -174,10 +174,10 @@ index 93483be27e7704c0fc1e1252e1363ce9333fba5c..f2ab0a17aeaa36b76fc926acdccde13f
  
      protected boolean isImmobile() {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index a22428615705582575e71252b4b4ee9dd2de72d3..81397196026c3cfa9e693190cbd183bc675af117 100644
+index efb0225deb10e5fdc0d8e3acd68bb71446e22802..cec653a4296f7642832a631825077b414c90ef8a 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1690,6 +1690,17 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1694,6 +1694,17 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
      public void setBaby(boolean baby) {}
  
@@ -270,10 +270,10 @@ index 9cea8da84f39bb3f687139ef213ccea358724dee..4e4a7c346359468c0754285a023bbf67
                  } else {
                      ((Mob) object).moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-index d2bb0831394c03b620b2cbd8306cb82b621f34f7..6c1a9cb2ef24048264fa9faed735cf1ef79c3259 100644
+index beb6ad312028adb14053e3f019a4fcf6c9149373..3400312af794b6f7b782047a0862781b1660c032 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -1189,4 +1189,31 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+@@ -1163,4 +1163,31 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
          return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
      }
      // Paper end - Expose canUseSlot
@@ -306,10 +306,10 @@ index d2bb0831394c03b620b2cbd8306cb82b621f34f7..6c1a9cb2ef24048264fa9faed735cf1e
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 8dd85b9ca3b3e3429de4d0ec0654982589c6e93e..761f6dc3b361934f0cf651430cbb0e7da10e0149 100644
+index 77ef27f9254235180a8596c6c8c4af750dc759d1..b6045bf89f3b4d4e04664ab4f0e0ca592e6d63c3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -617,6 +617,7 @@ public class CraftEventFactory {
+@@ -619,6 +619,7 @@ public class CraftEventFactory {
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, List<net.minecraft.world.entity.LivingEntity> convertedList, EntityTransformEvent.TransformReason convertType) {
          List<org.bukkit.entity.Entity> list = new ArrayList<>();
          for (net.minecraft.world.entity.LivingEntity entityLiving : convertedList) {
@@ -317,7 +317,7 @@ index 8dd85b9ca3b3e3429de4d0ec0654982589c6e93e..761f6dc3b361934f0cf651430cbb0e7d
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1348,6 +1349,7 @@ public class CraftEventFactory {
+@@ -1350,6 +1351,7 @@ public class CraftEventFactory {
      }
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {

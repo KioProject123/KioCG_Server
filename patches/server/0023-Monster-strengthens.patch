@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 426f1d92b2d974753b1eb1f0f16282517daec83d..5151a50f37dbc15d3180f6a05469f76035983b58 100644
+index 5000a16c7e4647b5aa5be7e2190077bb4448d363..ae6c6b3a32ceddcb6636941ce827e78b9d4fc6bf 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -599,6 +599,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -626,6 +626,14 @@ public class WorldConfiguration extends ConfigurationPart {
                  map.defaultReturnValue(1.5);
                  map.put(EntityType.SKELETON, 1.5);
              });
@@ -56,7 +56,7 @@ index e7bfce0534c7ef3a1480a1082ae8514caf78778b..a80ce791255845669592fab922798df6
              int i = world.getLevel().paperConfig().entities.spawning.monsterSpawnMaxLightLevel.or(dimensionType.monsterSpawnBlockLightLimit()); // Paper - Configurable max block light for monster spawning
              if (i < 15 && world.getBrightness(LightLayer.BLOCK, pos) > i) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Spider.java b/src/main/java/net/minecraft/world/entity/monster/Spider.java
-index e675f1e3e5b6f9e1aa0d928ebb9abe76458edb38..7bfdbb389f8ca72b1d5bc1de7d86b48145b121b2 100644
+index a30fb47559eb74b7fe634678e63a85e7e2cad9a4..de9f64f8e7247fe27b960b55b9d9837a96eebcbb 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Spider.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Spider.java
 @@ -192,7 +192,7 @@ public class Spider extends Monster {

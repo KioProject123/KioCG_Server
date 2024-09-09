@@ -5,7 +5,7 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/org/bukkit/entity/Cat.java b/src/main/java/org/bukkit/entity/Cat.java
-index 60cf07bff0898176c8d7af84b3e65d7a1ee8cf2e..acd7a634ad8d6da1dbc9858864e08eefdae726b4 100644
+index 22b7f9c2450698b0cf0807880a3d779a0b4f1c37..2fe2cca5e1a2481d0a39b1546812cd4f8d4f6a76 100644
 --- a/src/main/java/org/bukkit/entity/Cat.java
 +++ b/src/main/java/org/bukkit/entity/Cat.java
 @@ -128,4 +128,9 @@ public interface Cat extends Tameable, Sittable, io.papermc.paper.entity.CollarC
