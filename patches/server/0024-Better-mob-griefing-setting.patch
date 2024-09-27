@@ -5,7 +5,7 @@ Subject: [PATCH] Better mob griefing setting
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index fbd441f87715b98c62cb3a30833efaa24d81c4f6..9a579541783e4bb1f3609fef1ee8d8850b2bf854 100644
+index 20479a80602f53162d141787ae1233ea318d6297..ab5caeae658bd2a8f010bc6cb8a6659bc1c2b110 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -683,7 +683,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab

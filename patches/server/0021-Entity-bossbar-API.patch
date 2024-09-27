@@ -42,7 +42,7 @@ index 4f91107f9ae42f96c060c310596db9aa869a8dbc..e0cd8255c962927461915ef2a8cc1490
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 763abeea3f14f15c27d600e0bdae44b387687bb4..1b8cab3c9d4586c350981738df13cedaa0d02d2e 100644
+index 763abeea3f14f15c27d600e0bdae44b387687bb4..64d4608388f177d7cf4f16b643e6d08a8660000c 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -145,6 +145,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -113,7 +113,7 @@ index 763abeea3f14f15c27d600e0bdae44b387687bb4..1b8cab3c9d4586c350981738df13ceda
 +                return;
 +            }
 +
-+            Iterator<ServerPlayerConnection> iterator = ete.seenBy.iterator();
++            Iterator<net.minecraft.server.network.ServerPlayerConnection> iterator = ete.seenBy.iterator();
 +
 +            while (iterator.hasNext()) {
 +                net.minecraft.server.level.ServerPlayer entityplayer = iterator.next().getPlayer();

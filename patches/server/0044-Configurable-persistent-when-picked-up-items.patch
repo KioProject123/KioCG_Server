@@ -18,7 +18,7 @@ index 5dfbc8a4230f78fa4aa2bc50221201dcac926ec4..9bc1b34253d69c881d74c8d090dcf5db
  
              public KiocgConfig.Entity.Animal animal;
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ea975368c27c382b9f31066afaf12f0bd4662ea2..0077b26012d0305adff15ca34f15b25e7b457e49 100644
+index bcbaf28d03e50206357498173a13b03961d16771..99d3396fcf1dbb35c09a6f03cf62e3d64dd3b639 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -768,6 +768,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab

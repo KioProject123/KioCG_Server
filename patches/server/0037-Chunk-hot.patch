@@ -467,7 +467,7 @@ index f3b78df6bdd2f3fd833f63948594d0eebc9f717d..aa76cdbd5bd0574b7ec430bbbdc62daf
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 9a579541783e4bb1f3609fef1ee8d8850b2bf854..ea975368c27c382b9f31066afaf12f0bd4662ea2 100644
+index ab5caeae658bd2a8f010bc6cb8a6659bc1c2b110..bcbaf28d03e50206357498173a13b03961d16771 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1877,4 +1877,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab

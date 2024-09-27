@@ -174,7 +174,7 @@ index 9613724b4652227ef7e0806fa6c2ac73e475320d..87955d252206816c255fe3c6948876c1
  
      protected boolean isImmobile() {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 1b8cab3c9d4586c350981738df13cedaa0d02d2e..fbd441f87715b98c62cb3a30833efaa24d81c4f6 100644
+index 64d4608388f177d7cf4f16b643e6d08a8660000c..20479a80602f53162d141787ae1233ea318d6297 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1694,6 +1694,17 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
