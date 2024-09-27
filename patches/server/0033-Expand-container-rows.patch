@@ -153,236 +153,71 @@ index 491a59336899179c79820cd61541d49f7337c0f6..eac92b5dfdfd7ed85dd32726168f1caa
      @Override
      public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
          return new EnderChestBlockEntity(pos, state);
-diff --git a/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
-index 6186e55014bbb9d5bedaa0e9d196879c55339d42..1c3daf6486364974ddc603d95a9ebd0abfeb50d9 100644
---- a/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
-+++ b/src/main/java/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
-@@ -27,7 +27,7 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
- import org.bukkit.entity.HumanEntity;
- // CraftBukkit end
- 
--public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
-+public class BarrelBlockEntity extends RowsContainerBlockEntity { // KioCG
- 
-     // CraftBukkit start - add fields and methods
-     public List<HumanEntity> transaction = new ArrayList<>();
-@@ -117,10 +117,12 @@ public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
- 
+diff --git a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
+index 17f0f170d68bb55efc61771e9a32ce62924bab2b..035ecad765ad8c0149f335c84f7ab09d8aeb3765 100644
+--- a/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TrappedChestBlock.java
+@@ -37,6 +37,8 @@ public class TrappedChestBlock extends ChestBlock {
+         return Stats.CUSTOM.get(Stats.TRIGGER_TRAPPED_CHEST);
      }
  
--    @Override
--    public int getContainerSize() {
--        return 27;
--    }
 +    // KioCG start
-+    // @Override
-+    // public int getContainerSize() {
-+    //     return 27;
-+    // }
-+    // KioCG end
- 
++    /*
      @Override
-     protected NonNullList<ItemStack> getItems() {
-@@ -137,10 +139,12 @@ public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
-         return Component.translatable("container.barrel");
+     protected boolean isSignalSource(BlockState state) {
+         return true;
+@@ -51,4 +53,6 @@ public class TrappedChestBlock extends ChestBlock {
+     protected int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
+         return direction == Direction.UP ? state.getSignal(world, pos, direction) : 0;
      }
- 
--    @Override
--    protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
--        return ChestMenu.threeRows(syncId, playerInventory, this);
--    }
-+    // KioCG start
-+    // @Override
-+    // protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
-+    //     return ChestMenu.threeRows(syncId, playerInventory, this);
-+    // }
++     */
 +    // KioCG end
- 
-     @Override
-     public void startOpen(Player player) {
+ }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-index b88aa184cd06a0485146f58a5b61a56a50911209..18c3672d12fbaf94c8309c5acb7a0b82aecc5962 100644
+index b88aa184cd06a0485146f58a5b61a56a50911209..4f3d36721fbc021df3d21476f8019ab05da9fe44 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -29,7 +29,7 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
- import org.bukkit.entity.HumanEntity;
- // CraftBukkit end
+@@ -68,7 +68,7 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
  
--public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
-+public class ChestBlockEntity extends RowsContainerBlockEntity implements LidBlockEntity { // KioCG
- 
-     private static final int EVENT_SET_OPEN_COUNT = 1;
-     private NonNullList<ItemStack> items;
-@@ -103,10 +103,12 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
-         this(BlockEntityType.CHEST, pos, state);
+     protected ChestBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+         super(type, pos, state);
+-        this.items = NonNullList.withSize(27, ItemStack.EMPTY);
++        this.items = NonNullList.withSize(type == BlockEntityType.TRAPPED_CHEST ? 54 : 27, ItemStack.EMPTY); // KioCG
+         this.openersCounter = new ContainerOpenersCounter() {
+             @Override
+             protected void onOpen(Level world, BlockPos pos, BlockState state) {
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
+index 74ad37e2b6ebb7a54497767337df98525cf55f22..46ca82cc4f29f8f404ac8049268d1488a9a959ba 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
+@@ -10,6 +10,8 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
+         super(BlockEntityType.TRAPPED_CHEST, pos, state);
      }
  
--    @Override
--    public int getContainerSize() {
--        return 27;
--    }
 +    // KioCG start
-+    // @Override
-+    // public int getContainerSize() {
-+    //     return 27;
-+    // }
-+    // KioCG end
- 
++    /*
      @Override
-     protected Component getDefaultName() {
-@@ -217,10 +219,12 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
-         to.setItems(nonnulllist);
+     protected void signalOpenCount(Level world, BlockPos pos, BlockState state, int oldViewerCount, int newViewerCount) {
+         super.signalOpenCount(world, pos, state, oldViewerCount, newViewerCount);
+@@ -19,4 +21,21 @@ public class TrappedChestBlockEntity extends ChestBlockEntity {
+             world.updateNeighborsAt(pos.below(), block);
+         }
      }
- 
--    @Override
--    protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
--        return ChestMenu.threeRows(syncId, playerInventory, this);
--    }
-+    // KioCG start
-+    // @Override
-+    // protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
-+    //     return ChestMenu.threeRows(syncId, playerInventory, this);
-+    // }
-+    // KioCG end
- 
-     public void recheckOpen() {
-         if (!this.remove) {
-diff --git a/src/main/java/net/minecraft/world/level/block/entity/RowsContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RowsContainerBlockEntity.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..f365f91b412c3178962a81dfe6a602c4ddfd60e2
---- /dev/null
-+++ b/src/main/java/net/minecraft/world/level/block/entity/RowsContainerBlockEntity.java
-@@ -0,0 +1,103 @@
-+// KioCG start - all class
-+package net.minecraft.world.level.block.entity;
++     */
 +
-+import net.minecraft.core.BlockPos;
-+import net.minecraft.core.HolderLookup;
-+import net.minecraft.core.NonNullList;
-+import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.world.entity.player.Inventory;
-+import net.minecraft.world.inventory.AbstractContainerMenu;
-+import net.minecraft.world.inventory.ChestMenu;
-+import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.entity.HumanEntity;
-+
-+import java.util.List;
-+
-+public abstract class RowsContainerBlockEntity extends RandomizableContainerBlockEntity {
-+    private int rows;
-+
-+    protected RowsContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-+        super(type, pos, state);
-+        this.rows = getVanillaRows();
-+    }
-+
-+    protected int getVanillaRows() {
-+        return 3;
-+    }
-+
-+    public int getRows() {
-+        return this.rows;
++    @Override
++    protected net.minecraft.world.inventory.AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory) {
++        return net.minecraft.world.inventory.ChestMenu.sixRows(syncId, playerInventory, this);
 +    }
 +
 +    @Override
-+    public final int getContainerSize() {
-+        return this.rows * 9;
-+    }
-+
-+    public List<ItemStack> setRows(int rows) {
-+        for (HumanEntity viewer : this.getViewers()) {
-+            viewer.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.CANT_USE);
-+        }
-+
-+        this.rows = rows;
-+
-+        List<ItemStack> leftover = new java.util.ArrayList<>();
-+        List<ItemStack> items = this.getContents();
-+        List<ItemStack> newItems = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
-+        for (int i = 0; i < items.size(); ++i) {
-+            ItemStack itemStack = items.get(i);
-+            if (i < newItems.size()) {
-+                newItems.set(i, itemStack);
-+            } else if (!itemStack.isEmpty()) {
-+                leftover.add(itemStack);
-+            }
-+        }
-+
-+        this.setItems((NonNullList<ItemStack>) newItems);
-+        return leftover;
++    protected net.minecraft.network.chat.Component getDefaultName() {
++        return net.minecraft.network.chat.Component.translatable("container.chestDouble");
 +    }
 +
 +    @Override
-+    protected void applyImplicitComponents(BlockEntity.DataComponentInput components) {
-+        super.applyImplicitComponents(components);
-+        final net.minecraft.world.item.component.CustomData customData = components.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-+        if (customData != null && customData.getUnsafe().contains("KioCG.Rows", net.minecraft.nbt.Tag.TAG_INT)) {
-+            this.setRows(customData.getUnsafe().getInt("KioCG.Rows"));
-+        }
-+    }
-+
-+    @Override
-+    public void removeComponentsFromTag(CompoundTag nbt) {
-+        super.removeComponentsFromTag(nbt);
-+        nbt.remove("KioCG.Rows");
-+    }
-+
-+    @Override
-+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-+        super.loadAdditional(nbt, registryLookup);
-+        if (nbt.contains("KioCG.Rows", net.minecraft.nbt.Tag.TAG_INT)) {
-+            this.rows = nbt.getInt("KioCG.Rows");
-+        }
-+    }
-+
-+    @Override
-+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-+        super.saveAdditional(nbt, registryLookup);
-+        nbt.putInt("KioCG.Rows", this.rows);
-+    }
-+
-+    @Override
-+    protected final AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
-+        return switch (getContainerSize()) {
-+            case 9 -> ChestMenu.oneRow(syncId, playerInventory, this);
-+            case 2 * 9 -> ChestMenu.twoRows(syncId, playerInventory, this);
-+            case 3 * 9 -> ChestMenu.threeRows(syncId, playerInventory, this);
-+            case 4 * 9 -> ChestMenu.fourRows(syncId, playerInventory, this);
-+            case 5 * 9 -> ChestMenu.fiveRows(syncId, playerInventory, this);
-+            case 6 * 9 -> ChestMenu.sixRows(syncId, playerInventory, this);
-+            default -> throw new IllegalStateException("Unexpected value: " + getContainerSize());
-+        };
-+    }
-+}
-+// KioCG end - all class
-diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java b/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
-index cc7bf4d39b834fba472bc163226a01a0cd4b6010..dca1d737d9311a9b52dc530dc2e06af130f14102 100644
---- a/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
-+++ b/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
-@@ -124,4 +124,25 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
-             && ChestBlock.isChestBlockedAt(world, neighbourBlockPos);
-     }
-     // Paper end - More Chest Block API
-+
-+    // KioCG start
-+    @Override
-+    public int getRows() {
-+        return getTileEntity().getRows();
-+    }
-+
-+    @Override
-+    public org.bukkit.inventory.ItemStack[] setRows(int rows) {
-+        final java.util.List<net.minecraft.world.item.ItemStack> mcItems = getTileEntity().setRows(rows);
-+        int size = mcItems.size();
-+        org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[size];
-+
-+        for (int i = 0; i < size; i++) {
-+            net.minecraft.world.item.ItemStack mcItem = mcItems.get(i);
-+            items[i] = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(mcItem);
-+        }
-+
-+        return items;
++    public int getContainerSize() {
++        return 54;
 +    }
 +    // KioCG end
  }
@@ -420,71 +255,3 @@ index d5386e47cc6e3996f15373dca5b08a4b447da77d..687c2359c5f5087c222eee20db527915
      @Override
      public boolean isOp() {
          return this.server.getHandle().isOp(this.getProfile());
-diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
-index 10a5b1853d3984427209c87bdec1d471dddb1244..3c3426314c94e689299e32cbf71d2a7c2e468fb9 100644
---- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
-+++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
-@@ -184,7 +184,18 @@ public class CraftContainer extends AbstractContainerMenu {
-             case CHEST:
-             case ENDER_CHEST:
-             case BARREL:
--                this.delegate = new ChestMenu(MenuType.GENERIC_9x3, windowId, bottom, top, top.getContainerSize() / 9);
-+                // KioCG start
-+                MenuType menuType = switch (top.getContainerSize()) {
-+                    case 9 -> MenuType.GENERIC_9x1;
-+                    case 18 -> MenuType.GENERIC_9x2;
-+                    case 27, 41 /*player*/ -> MenuType.GENERIC_9x3;
-+                    case 36 -> MenuType.GENERIC_9x4;
-+                    case 45 -> MenuType.GENERIC_9x5;
-+                    case 54 -> MenuType.GENERIC_9x6;
-+                    default -> throw new IllegalArgumentException("Unsupported custom inventory size " + top.getContainerSize());
-+                };
-+                this.delegate = new ChestMenu(menuType, windowId, bottom, top, top.getContainerSize() / 9);
-+                // KioCG end
-                 break;
-             case DISPENSER:
-             case DROPPER:
-diff --git a/src/main/resources/data/minecraft/loot_table/blocks/barrel.json b/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
-index b1b80b266b13f1de0cb33c62a5a5f4033e42f6fe..66fe913e2beac9b131652932d546548f83a8c417 100644
---- a/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
-+++ b/src/main/resources/data/minecraft/loot_table/blocks/barrel.json
-@@ -18,6 +18,17 @@
-                 "minecraft:custom_name"
-               ],
-               "source": "block_entity"
-+            },
-+            {
-+              "function": "minecraft:copy_custom_data",
-+              "ops": [
-+                {
-+                  "source": "'KioCG.Rows'",
-+                  "target": "'KioCG.Rows'",
-+                  "op": "replace"
-+                }
-+              ],
-+              "source": "block_entity"
-             }
-           ],
-           "name": "minecraft:barrel"
-diff --git a/src/main/resources/data/minecraft/loot_table/blocks/chest.json b/src/main/resources/data/minecraft/loot_table/blocks/chest.json
-index 7faaf3b2f3ea2f092a32b06344d3947ba55ffc4e..f73d13671773fa65e312dfa3be1446ea14c59800 100644
---- a/src/main/resources/data/minecraft/loot_table/blocks/chest.json
-+++ b/src/main/resources/data/minecraft/loot_table/blocks/chest.json
-@@ -18,6 +18,17 @@
-                 "minecraft:custom_name"
-               ],
-               "source": "block_entity"
-+            },
-+            {
-+              "function": "minecraft:copy_custom_data",
-+              "ops": [
-+                {
-+                  "source": "'KioCG.Rows'",
-+                  "target": "'KioCG.Rows'",
-+                  "op": "replace"
-+                }
-+              ],
-+              "source": "block_entity"
-             }
-           ],
-           "name": "minecraft:chest"
