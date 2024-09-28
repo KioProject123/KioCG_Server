@@ -59,25 +59,6 @@ index 4989d2a6ddec45315e1f1c6c651efdb2de5890fd..71d5aa4b9c0252e4eb8efce944077f14
          return;
      }
      // Paper end - optimise random ticking
-diff --git a/src/main/java/net/minecraft/world/item/HoeItem.java b/src/main/java/net/minecraft/world/item/HoeItem.java
-index 06497b5141e611cc7a1b6030a7b9c54b5c4eda06..30776cf07429b150362c21c0423b5dd8ab7a4c69 100644
---- a/src/main/java/net/minecraft/world/item/HoeItem.java
-+++ b/src/main/java/net/minecraft/world/item/HoeItem.java
-@@ -26,11 +26,11 @@ public class HoeItem extends DiggerItem {
-     protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> TILLABLES = Maps.newHashMap(
-         ImmutableMap.of(
-             Blocks.GRASS_BLOCK,
--            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())),
-+            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState().setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 1))), // KioCG
-             Blocks.DIRT_PATH,
--            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())),
-+            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState().setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 1))), // KioCG
-             Blocks.DIRT,
--            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())),
-+            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState().setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 1))), // KioCG
-             Blocks.COARSE_DIRT,
-             Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.DIRT.defaultBlockState())),
-             Blocks.ROOTED_DIRT,
 diff --git a/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java b/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
 index ac0881f64ef98ea92d32b600c08c77aa3442a410..eb7352941ba038be9ddf02da21b61159d1c19448 100644
 --- a/src/main/java/net/minecraft/world/level/block/BambooSaplingBlock.java
@@ -243,7 +224,7 @@ index fe4237b40af32415f8635ab769edc0f948a3e12d..d714d04c9ab95dc590d445ef339d1330
  
              if (i < 2) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 112d2feba5f75a2a873b595617780515945c10e4..2bef8e1a4e696abe790f238b76a307011e7c61a8 100644
+index 112d2feba5f75a2a873b595617780515945c10e4..36399ec26439843bd328f8c3b2c72fe92c4c9131 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,13 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -265,7 +246,7 @@ index 112d2feba5f75a2a873b595617780515945c10e4..2bef8e1a4e696abe790f238b76a30701
                  }
  
 -                if (random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+                if (modifier > 0 && FarmBlock.tickMoisture(world, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
++                if (modifier > 0 && FarmBlock.isMoisture(world, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
                      // Spigot end
                      CraftEventFactory.handleBlockGrowEvent(world, pos, this.getStateForAge(i + 1), 2); // CraftBukkit
                  }
@@ -278,81 +259,17 @@ index 112d2feba5f75a2a873b595617780515945c10e4..2bef8e1a4e696abe790f238b76a30701
          BlockPos blockposition1 = pos.below();
  
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index 00706d964cec85f1ddcc8d8e366d905b13b4b106..e768a2c6ee25e65720c5110725c56e4234c22b89 100644
+index 00706d964cec85f1ddcc8d8e366d905b13b4b106..192cd56a20bd3e93eea7746b966d65a0b5e8ade6 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-@@ -90,13 +90,24 @@ public class FarmBlock extends Block {
+@@ -108,6 +108,13 @@ public class FarmBlock extends Block {
  
      }
  
 +    // KioCG start
-+    @Override
-+    public byte dayTicking() {
-+        return 2;
-+    }
-+    // KioCG end
-+
-     @Override
-     protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-         int i = (Integer) state.getValue(FarmBlock.MOISTURE);
--        if (i > 0 && world.paperConfig().tickRates.wetFarmland != 1 && (world.paperConfig().tickRates.wetFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.wetFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
--        if (i == 0 && world.paperConfig().tickRates.dryFarmland != 1 && (world.paperConfig().tickRates.dryFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.dryFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
--
--        if (!FarmBlock.isNearWater(world, pos) && !world.isRainingAt(pos.above())) {
-+        // KioCG start
-+        if (i >= 7) return; // 快速返回
-+        // if (i > 0 && world.paperConfig().tickRates.wetFarmland != 1 && (world.paperConfig().tickRates.wetFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.wetFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
-+        // if (i == 0 && world.paperConfig().tickRates.dryFarmland != 1 && (world.paperConfig().tickRates.dryFarmland < 1 || (net.minecraft.server.MinecraftServer.currentTick + pos.hashCode()) % world.paperConfig().tickRates.dryFarmland != 0)) { return; } // Paper - Configurable random tick rates for blocks
-+        // KioCG end
-+
-+        if (!world.isRainingAt(pos.above())) { // KioCG - 水源不要湿润耕地
-+            if (true) return; // KioCG - dayTick
-             if (i > 0) {
-                 org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
-             } else if (!FarmBlock.shouldMaintainFarmland(world, pos)) {
-@@ -108,6 +119,48 @@ public class FarmBlock extends Block {
- 
-     }
- 
-+    // KioCG start
-+    @Override
-+    protected void dayTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-+        if (!shouldMaintainFarmland(world, pos)) { // 使农作物来运算耕地
-+            dayTickFarmland(state, world, pos, random, false);
-+        }
-+    }
-+    // 复制randomTick()的逻辑，区块加载时作物可能需要生长，但此时不一定会计算randomTick()
-+    public void dayTickFarmland(BlockState state, ServerLevel world, BlockPos pos, RandomSource random, boolean shouldMaintain) {
-+        int i = (Integer) state.getValue(FarmBlock.MOISTURE);
-+
-+        if (shouldMaintain) {
-+            if (!world.isRainingAt(pos.above())) {
-+                if (i > 1) {
-+                    org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 1), 2); // CraftBukkit
-+                }
-+            } else if (i < 7) {
-+                org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 7), 2); // CraftBukkit
-+            }
-+        } else {
-+            if (!world.isRainingAt(pos.above())) {
-+                if (i > 0) {
-+                    org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(world, pos, (BlockState) state.setValue(FarmBlock.MOISTURE, 0), 2); // CraftBukkit
-+                } else {
-+                    FarmBlock.turnToDirt((Entity) null, state, world, pos);
-+                }
-+            }
-+        }
-+
-+    }
-+
-+    public static boolean tickMoisture(ServerLevel world, BlockPos pos, RandomSource random) {
++    public static boolean isMoisture(ServerLevel world, BlockPos pos, RandomSource random) {
 +        BlockState iblockdata = world.getBlockState(pos);
-+        if (iblockdata.is(Blocks.FARMLAND)) {
-+            boolean moisture = (Integer) iblockdata.getValue(FarmBlock.MOISTURE) > 1; // 湿度1代表半干燥的耕地
-+            ((FarmBlock) iblockdata.getBlock()).dayTickFarmland(iblockdata, world, pos, random, true);
-+            return moisture || (Integer) world.getBlockState(pos).getValue(FarmBlock.MOISTURE) > 1;
-+        }
-+        return random.nextInt(16) == 0; // 不在耕地上的作物
++        return iblockdata.is(Blocks.FARMLAND) && (Integer) iblockdata.getValue(FarmBlock.MOISTURE) > 0;
 +    }
 +    // KioCG end
 +
@@ -495,7 +412,7 @@ index acbd60a2f162fe0e254e36d0e8e7face3fc8a7b3..f81d2d4afeee07e932fc638fe292d8c8
              org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
          }
 diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..7bbab31c0bdf4eb53ad972b709b8a1755d663fe9 100644
+index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..7e875736c04a87dcc3413051e4aa9d7d293079bb 100644
 --- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 @@ -120,11 +120,18 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
@@ -515,7 +432,7 @@ index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..7bbab31c0bdf4eb53ad972b709b8a175
 -        boolean bl = random.nextFloat() < (world.spigotConfig.pitcherPlantModifier / (100.0F * (Math.floor(25.0F / f) + 1))); // Paper - Fix Spigot growth modifiers
 -        if (bl) {
 +        boolean bl = random.nextFloat() < (world.spigotConfig.pitcherPlantModifier / 100.0F); // Paper - Fix Spigot growth modifiers // KioCG
-+        if (world.spigotConfig.pitcherPlantModifier > 0 && FarmBlock.tickMoisture(world, pos.below(), world.random) && bl) { // KioCG
++        if (world.spigotConfig.pitcherPlantModifier > 0 && FarmBlock.isMoisture(world, pos.below(), world.random) && bl) { // KioCG
              this.grow(world, state, pos, 1);
          }
      }
@@ -542,7 +459,7 @@ index d262a5a6da57ef9ba9a6fe0dfbc88f577105e74f..d8a8e040e2f7e7488d8ae1699e9ad470
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/StemBlock.java b/src/main/java/net/minecraft/world/level/block/StemBlock.java
-index 924d80eb41d9a71d1e521c40742557251cf51832..add653d2f61655af73148a42dbf884d0a0f0bb3a 100644
+index 924d80eb41d9a71d1e521c40742557251cf51832..2e2f787521f960728d0c6d898b59a6303c399f82 100644
 --- a/src/main/java/net/minecraft/world/level/block/StemBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/StemBlock.java
 @@ -70,12 +70,20 @@ public class StemBlock extends BushBlock implements BonemealableBlock {
@@ -563,7 +480,7 @@ index 924d80eb41d9a71d1e521c40742557251cf51832..add653d2f61655af73148a42dbf884d0
  
 -            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +            int modifier = this == Blocks.PUMPKIN_STEM ? world.spigotConfig.pumpkinModifier : world.spigotConfig.melonModifier; // KioCG
-+            if (modifier > 0 && FarmBlock.tickMoisture(world, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
++            if (modifier > 0 && FarmBlock.isMoisture(world, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
                  int i = (Integer) state.getValue(StemBlock.AGE);
  
                  if (i < 7) {
@@ -608,7 +525,7 @@ index c48c622e92cedeaa46b929c7adfedec98dd5a3fb..0154a3f64dad1530ea146adf915e27f3
                  }
              }
 diff --git a/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java b/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
-index 6008c634c408c4eed563815da4d57b2eef69835c..53edd3e2963458730ab015d6d564142e5e4d1a30 100644
+index 6008c634c408c4eed563815da4d57b2eef69835c..3adcd7ebeb3c5f1340961cb99e59003ebd5bbd9a 100644
 --- a/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/SweetBerryBushBlock.java
 @@ -70,11 +70,18 @@ public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock
@@ -627,7 +544,7 @@ index 6008c634c408c4eed563815da4d57b2eef69835c..53edd3e2963458730ab015d6d564142e
          int i = (Integer) state.getValue(SweetBerryBushBlock.AGE);
  
 -        if (i < 3 && random.nextFloat() < (world.spigotConfig.sweetBerryModifier / (100.0f * 5)) && world.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
-+        if (i < 3 && world.spigotConfig.sweetBerryModifier > 0 && world.getRawBrightness(pos.above(), 0) >= 9 && FarmBlock.tickMoisture(world, pos.below(), random) && random.nextFloat() < (world.spigotConfig.sweetBerryModifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
++        if (i < 3 && world.spigotConfig.sweetBerryModifier > 0 && world.getRawBrightness(pos.above(), 0) >= 9 && random.nextFloat() < (world.spigotConfig.sweetBerryModifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG
              BlockState iblockdata1 = (BlockState) state.setValue(SweetBerryBushBlock.AGE, i + 1);
  
              if (!CraftEventFactory.handleBlockGrowEvent(world, pos, iblockdata1, 2)) return; // CraftBukkit
@@ -668,7 +585,7 @@ index 57e7f275ffd6202ef578d64857cfdace6f1c760d..4c2af621e526f469df8192910675e355
                  BlockPos blockposition1 = pos.above();
                  BlockPos blockposition2;
 diff --git a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
-index d0109633e8bdf109cfc9178963d7b6cf92f8b189..9b489da3934396bfe544cdfa935dc2f0dd1666a7 100644
+index d0109633e8bdf109cfc9178963d7b6cf92f8b189..515eac1d14840ce79672a7ff5772012dbd05e54d 100644
 --- a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 @@ -334,6 +334,16 @@ public abstract class BlockBehaviour implements FeatureElement {
@@ -677,7 +594,7 @@ index d0109633e8bdf109cfc9178963d7b6cf92f8b189..9b489da3934396bfe544cdfa935dc2f0
  
 +    // KioCG start
 +    public byte dayTicking() {
-+        return 0;
++        return 0; // 0代表仅randomTicking, 1代表仅dayTicking, 2代表两者皆有
 +    }
 +
 +    protected void dayTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
@@ -697,7 +614,7 @@ index d0109633e8bdf109cfc9178963d7b6cf92f8b189..9b489da3934396bfe544cdfa935dc2f0
 +            return this.getBlock().dayTicking();
 +        }
 +
-+        public boolean isDayTicking() {
++        public boolean hasDayTicking() {
 +            return this.dayTicking() > 0;
 +        }
 +
@@ -770,7 +687,7 @@ index 7c11853c5090fbc4fa5b3e73a69acf166158fdec..57e7de5f573e0afc5cb45bad7fb759a3
  
          while (iterator.hasNext()) {
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
-index c3b1caa352b988ec44fa2b2eb0536517711f5460..d1103e6d98a2f8ce6238ba4e1d1983ba8f9c9434 100644
+index c3b1caa352b988ec44fa2b2eb0536517711f5460..d6eb35a918f33d80299540a244d8fb5aa9b19423 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 @@ -36,6 +36,7 @@ public class LevelChunkSection implements ca.spottedleaf.moonrise.patches.block_
@@ -804,7 +721,7 @@ index c3b1caa352b988ec44fa2b2eb0536517711f5460..d1103e6d98a2f8ce6238ba4e1d1983ba
  
          if (iblockdata1.isRandomlyTicking()) {
 +            // KioCG start
-+            if (iblockdata1.isDayTicking()) this.cropsBlocks.remove(x, y, z);
++            if (iblockdata1.hasDayTicking()) this.cropsBlocks.remove(x, y, z);
 +            if (!iblockdata1.isDayTickingOnly()) {
 +            // KioCG end
              this.tickingBlocks.remove(x, y, z);
@@ -812,7 +729,7 @@ index c3b1caa352b988ec44fa2b2eb0536517711f5460..d1103e6d98a2f8ce6238ba4e1d1983ba
          }
          if (state.isRandomlyTicking()) {
 +            // KioCG start
-+            if (state.isDayTicking()) this.cropsBlocks.add(x, y, z, state);
++            if (state.hasDayTicking()) this.cropsBlocks.add(x, y, z, state);
 +            if (!state.isDayTickingOnly()) {
 +            // KioCG end
              this.tickingBlocks.add(x, y, z, state);
@@ -839,7 +756,7 @@ index c3b1caa352b988ec44fa2b2eb0536517711f5460..d1103e6d98a2f8ce6238ba4e1d1983ba
                      java.util.Objects.checkFromToIndex(0, paletteCount, raw.length);
                      for (int i = 0; i < paletteCount; ++i) {
 +                        // KioCG start
-+                        if (state.isDayTicking()) this.cropsBlocks.add(raw[i], state);
++                        if (state.hasDayTicking()) this.cropsBlocks.add(raw[i], state);
 +                        if (!state.isDayTickingOnly()) {
 +                        // KioCG end
                          this.tickingBlocks.add(raw[i], state);
