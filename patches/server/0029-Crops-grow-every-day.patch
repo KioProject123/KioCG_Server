@@ -224,7 +224,7 @@ index fe4237b40af32415f8635ab769edc0f948a3e12d..d714d04c9ab95dc590d445ef339d1330
  
              if (i < 2) {
 diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
-index 112d2feba5f75a2a873b595617780515945c10e4..36399ec26439843bd328f8c3b2c72fe92c4c9131 100644
+index 55ee9da5bde921d4e509202751d5228f4dbfc5c8..fc5fdc3172f493a206946d2177c181046e0a27c2 100644
 --- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
 @@ -75,6 +75,13 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
@@ -259,7 +259,7 @@ index 112d2feba5f75a2a873b595617780515945c10e4..36399ec26439843bd328f8c3b2c72fe9
          BlockPos blockposition1 = pos.below();
  
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index 00706d964cec85f1ddcc8d8e366d905b13b4b106..192cd56a20bd3e93eea7746b966d65a0b5e8ade6 100644
+index c33a777db6a4cffcc21ea92e5a9fca6f9825bbc8..fff05f0d10d5f68d0ff927a49b81cffb9f840804 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 @@ -108,6 +108,13 @@ public class FarmBlock extends Block {
@@ -412,7 +412,7 @@ index acbd60a2f162fe0e254e36d0e8e7face3fc8a7b3..f81d2d4afeee07e932fc638fe292d8c8
              org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, pos, state, 2); // CraftBukkit
          }
 diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
-index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..7e875736c04a87dcc3413051e4aa9d7d293079bb 100644
+index b4cf9b3b814d951819b8e7ca07b61a65f9835c94..2d80619bbbc0dbc2823fc54a62f8fe18c28c3073 100644
 --- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
 @@ -120,11 +120,18 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl

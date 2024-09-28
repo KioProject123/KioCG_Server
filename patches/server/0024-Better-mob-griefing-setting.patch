@@ -4,6 +4,32 @@ Date: Wed, 13 Mar 2024 23:28:41 +0800
 Subject: [PATCH] Better mob griefing setting
 
 
+diff --git a/src/main/java/net/minecraft/world/effect/WeavingMobEffect.java b/src/main/java/net/minecraft/world/effect/WeavingMobEffect.java
+index 1b2d41a6c6f149701c8a78f3d345f45069f1f857..8490631bdf9a7900d5631d501426e4357889f6a7 100644
+--- a/src/main/java/net/minecraft/world/effect/WeavingMobEffect.java
++++ b/src/main/java/net/minecraft/world/effect/WeavingMobEffect.java
+@@ -24,7 +24,7 @@ class WeavingMobEffect extends MobEffect {
+ 
+     @Override
+     public void onMobRemoved(LivingEntity entity, int amplifier, Entity.RemovalReason reason) {
+-        if (reason == Entity.RemovalReason.KILLED && (entity instanceof Player || entity.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) {
++        if (reason == Entity.RemovalReason.KILLED && (false || entity.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER))) { // KioCG
+             this.spawnCobwebsRandomlyAround(entity, entity.level(), entity.getRandom(), entity.getOnPos()); // Paper - Fire EntityChangeBlockEvent in more places
+         }
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 87955d252206816c255fe3c6948876c1d5216863..96028ad24a8221c2da053eeb184ea41a704d7775 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -1911,7 +1911,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             boolean flag = false;
+ 
+             if (this.dead && adversary instanceof WitherBoss) { // Paper
+-                if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+                     BlockPos blockposition = this.blockPosition();
+                     BlockState iblockdata = Blocks.WITHER_ROSE.defaultBlockState();
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
 index 20479a80602f53162d141787ae1233ea318d6297..ab5caeae658bd2a8f010bc6cb8a6659bc1c2b110 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
@@ -17,6 +43,19 @@ index 20479a80602f53162d141787ae1233ea318d6297..ab5caeae658bd2a8f010bc6cb8a6659b
              Vec3i baseblockposition = this.getPickupReach();
              List<ItemEntity> list = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double) baseblockposition.getX(), (double) baseblockposition.getY(), (double) baseblockposition.getZ()));
              Iterator iterator = list.iterator();
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java b/src/main/java/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
+index 2ade08d1466660ee1787fa97908002ef56389712..e87810e38cb7c6eec9a3fe702689220d7244ca8d 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
+@@ -47,7 +47,7 @@ public class HarvestFarmland extends Behavior<Villager> {
+     }
+ 
+     protected boolean checkExtraStartConditions(ServerLevel world, Villager entity) {
+-        if (!world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (!world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+             return false;
+         } else if (entity.getVillagerData().getProfession() != VillagerProfession.FARMER) {
+             return false;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
 index a85885ee51df585fa11ae9f8fcd67ff2a71c5a18..a342602a1cdb6750d6b4de7d50ab519a7bc087f2 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
@@ -38,6 +77,41 @@ index a85885ee51df585fa11ae9f8fcd67ff2a71c5a18..a342602a1cdb6750d6b4de7d50ab519a
              this.mob.level().removeBlock(this.doorPos, false);
              this.mob.level().levelEvent(1021, this.doorPos, 0);
              this.mob.level().levelEvent(2001, this.doorPos, Block.getId(oldState)); // Paper - fix MC-263999
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
+index 4e2c23ccdf4e4a4d65b291dbe20952bae1838bff..dc77b005e5f9d28162c0d8ab56b6cff01df83507 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
+@@ -74,7 +74,7 @@ public class EatBlockGoal extends Goal {
+ 
+             final BlockState blockState = this.level.getBlockState(blockposition); // Paper - fix wrong block state
+             if (EatBlockGoal.IS_TALL_GRASS.test(blockState)) { // Paper - fix wrong block state
+-                if (CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition, blockState.getFluidState().createLegacyBlock(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit // Paper - fix wrong block state
++                if (CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition, blockState.getFluidState().createLegacyBlock(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER))) { // CraftBukkit // Paper - fix wrong block state // KioCG
+                     this.level.destroyBlock(blockposition, false);
+                 }
+ 
+@@ -83,7 +83,7 @@ public class EatBlockGoal extends Goal {
+                 BlockPos blockposition1 = blockposition.below();
+ 
+                 if (this.level.getBlockState(blockposition1).is(Blocks.GRASS_BLOCK)) {
+-                    if (CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition1, Blocks.DIRT.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit // Paper - Fix wrong block state
++                    if (CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition1, Blocks.DIRT.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER))) { // CraftBukkit // Paper - Fix wrong block state // KioCG
+                         this.level.levelEvent(2001, blockposition1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
+                         this.level.setBlock(blockposition1, Blocks.DIRT.defaultBlockState(), 2);
+                     }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
+index 6634228ef002cbef67980272a26be4a75c954116..295b9cdb67b27c17428c12ccbbc845aaa1752fb9 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
+@@ -40,7 +40,7 @@ public class RemoveBlockGoal extends MoveToBlockGoal {
+ 
+     @Override
+     public boolean canUse() {
+-        if (!this.removerMob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (!this.removerMob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+             return false;
+         } else if (this.nextStartTick > 0) {
+             --this.nextStartTick;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Fox.java b/src/main/java/net/minecraft/world/entity/animal/Fox.java
 index 9a0adf65d4d54852301a91b6fe444e4c5a139f5d..60e7821814dfa55bcbb7bc4dfd9461bd490107d3 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Fox.java
@@ -81,6 +155,19 @@ index 0109c8ed8bf6a053674456fa4473934e028ca418..14fe17dafdc31555fb9e547017e644c9
                      this.canRaid = true;
                      return true;
                  }
+diff --git a/src/main/java/net/minecraft/world/entity/animal/SnowGolem.java b/src/main/java/net/minecraft/world/entity/animal/SnowGolem.java
+index 5c2ed3c39c8eb850f3be1e2ea5b5a7ea266e16d1..dfb08941f41c6c441474f999571881f62b3618a2 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/SnowGolem.java
++++ b/src/main/java/net/minecraft/world/entity/animal/SnowGolem.java
+@@ -101,7 +101,7 @@ public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackM
+                 this.hurt(this.damageSources().melting(), 1.0F); // CraftBukkit - DamageSources.ON_FIRE -> CraftEventFactory.MELTING
+             }
+ 
+-            if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+                 return;
+             }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java b/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
 index 69986f75d3cf729204cca0c7e5428536af31f695..52eb8e17879fabb0a105c7275b6f530675955aa6 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
@@ -94,10 +181,45 @@ index 69986f75d3cf729204cca0c7e5428536af31f695..52eb8e17879fabb0a105c7275b6f5306
      }
  
      private boolean allayConsidersItemEqual(ItemStack stack, ItemStack stack2) {
+diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
+index 5868d2e9e05a698c77117cf87c79b636b50fe289..14229def7f57b60e67949c9ccc43f6ba842f6ab6 100644
+--- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
++++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
+@@ -540,7 +540,7 @@ public class EnderDragon extends Mob implements Enemy {
+                     BlockState iblockdata = this.level().getBlockState(blockposition);
+ 
+                     if (!iblockdata.isAir() && !iblockdata.is(BlockTags.DRAGON_TRANSPARENT)) {
+-                        if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && !iblockdata.is(BlockTags.DRAGON_IMMUNE)) {
++                        if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) && !iblockdata.is(BlockTags.DRAGON_IMMUNE)) { // KioCG
+                             // CraftBukkit start - Add blocks to list rather than destroying them
+                             // flag1 = this.level().removeBlock(blockposition, false) || flag1;
+                             flag1 = true;
+diff --git a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+index d3b4d492aee380dc17f4232d90eaae4f07bb9f86..67361eb31df2c15db60c1e0459038a3c304a1a7d 100644
+--- a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+@@ -364,7 +364,7 @@ public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob
+ 
+             if (this.destroyBlocksTick > 0) {
+                 --this.destroyBlocksTick;
+-                if (this.destroyBlocksTick == 0 && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                if (this.destroyBlocksTick == 0 && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+                     boolean flag = false;
+ 
+                     j = Mth.floor(this.getBbWidth() / 2.0F + 1.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 828c51477cd8f35d591367b30bf4feef6a250292..fc62c57304ba3c41e87f4c4c52897af9c974cf61 100644
+index 828c51477cd8f35d591367b30bf4feef6a250292..5ce665f19bbac726450b13ad27fcef33a2ab1b08 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
+@@ -501,7 +501,7 @@ public class EnderMan extends Monster implements NeutralMob {
+ 
+         @Override
+         public boolean canUse() {
+-            return this.enderman.getCarriedBlock() == null ? false : (!this.enderman.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? false : this.enderman.getRandom().nextInt(reducedTickDelay(2000)) == 0);
++            return this.enderman.getCarriedBlock() == null ? false : (!this.enderman.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) ? false : this.enderman.getRandom().nextInt(reducedTickDelay(2000)) == 0); // KioCG
+         }
+ 
+         @Override
 @@ -521,8 +521,8 @@ public class EnderMan extends Monster implements NeutralMob {
              if (iblockdata2 != null) {
                  iblockdata2 = Block.updateFromNeighbourShapes(iblockdata2, this.enderman.level(), blockposition);
@@ -117,6 +239,15 @@ index 828c51477cd8f35d591367b30bf4feef6a250292..fc62c57304ba3c41e87f4c4c52897af9
              return stateAbove.isAir() && !state.isAir() && !state.is(Blocks.BEDROCK) && state.isCollisionShapeFullBlock(world, pos) && carriedState.canSurvive(world, posAbove) && world.getEntities(this.enderman, AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(posAbove))).isEmpty();
          }
      }
+@@ -546,7 +547,7 @@ public class EnderMan extends Monster implements NeutralMob {
+ 
+         @Override
+         public boolean canUse() {
+-            return this.enderman.getCarriedBlock() != null ? false : (!this.enderman.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? false : this.enderman.getRandom().nextInt(reducedTickDelay(20)) == 0);
++            return this.enderman.getCarriedBlock() != null ? false : (!this.enderman.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) ? false : this.enderman.getRandom().nextInt(reducedTickDelay(20)) == 0); // KioCG
+         }
+ 
+         @Override
 @@ -565,8 +566,8 @@ public class EnderMan extends Monster implements NeutralMob {
              boolean flag = movingobjectpositionblock.getBlockPos().equals(blockposition);
  
@@ -128,11 +259,48 @@ index 828c51477cd8f35d591367b30bf4feef6a250292..fc62c57304ba3c41e87f4c4c52897af9
                  world.gameEvent((Holder) GameEvent.BLOCK_DESTROY, blockposition, GameEvent.Context.of(this.enderman, iblockdata));
                  this.enderman.setCarriedBlock(iblockdata.getBlock().defaultBlockState());
                  } // CraftBukkit
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Evoker.java b/src/main/java/net/minecraft/world/entity/monster/Evoker.java
+index 627cf7ba8f512285228121e46208fff51f22b563..395a01b4163ef2e77e18fba4b3f83493471476d7 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Evoker.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Evoker.java
+@@ -340,7 +340,7 @@ public class Evoker extends SpellcasterIllager {
+                 return false;
+             } else if (Evoker.this.tickCount < this.nextAttackTickCount) {
+                 return false;
+-            } else if (!Evoker.this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            } else if (!Evoker.this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+                 return false;
+             } else {
+                 List<Sheep> list = Evoker.this.level().getNearbyEntities(Sheep.class, this.wololoTargeting, Evoker.this, Evoker.this.getBoundingBox().inflate(16.0D, 4.0D, 16.0D));
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Ravager.java b/src/main/java/net/minecraft/world/entity/monster/Ravager.java
+index 212d341425c0f93bba0376de69bea61ffcf4dbd6..790fce97bf4d066adf299c6fa08d6a0b2e3d0cbe 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Ravager.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Ravager.java
+@@ -139,7 +139,7 @@ public class Ravager extends Raider {
+                 this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(Mth.lerp(0.1D, d1, d0));
+             }
+ 
+-            if (this.horizontalCollision && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (this.horizontalCollision && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+                 boolean flag = false;
+                 AABB axisalignedbb = this.getBoundingBox().inflate(0.2D);
+                 Iterator iterator = BlockPos.betweenClosed(Mth.floor(axisalignedbb.minX), Mth.floor(axisalignedbb.minY), Mth.floor(axisalignedbb.minZ), Mth.floor(axisalignedbb.maxX), Mth.floor(axisalignedbb.maxY), Mth.floor(axisalignedbb.maxZ)).iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Silverfish.java b/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
-index 860e385fc83f9787dca92efe35d21fd69c4dd635..19e243956385d23f450a90f838881ec8a0ba42bf 100644
+index 860e385fc83f9787dca92efe35d21fd69c4dd635..6a0cc43f535d11cf528085f98638ef8caed7b7a9 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Silverfish.java
-@@ -171,6 +171,7 @@ public class Silverfish extends Monster {
+@@ -162,15 +162,16 @@ public class Silverfish extends Monster {
+ 
+                             if (block instanceof InfestedBlock) {
+                                 // CraftBukkit start
+-                                BlockState afterState = world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? iblockdata.getFluidState().createLegacyBlock() : ((InfestedBlock) block).hostStateByInfested(world.getBlockState(blockposition1)); // Paper - fix wrong block state
++                                BlockState afterState = world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) ? iblockdata.getFluidState().createLegacyBlock() : ((InfestedBlock) block).hostStateByInfested(world.getBlockState(blockposition1)); // Paper - fix wrong block state // KioCG
+                                 if (!CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockposition1, afterState)) { // Paper - fix wrong block state
+                                     continue;
+                                 }
+                                 // CraftBukkit end
+-                                if (world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                                if (world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
                                      world.destroyBlock(blockposition1, true, this.silverfish);
                                  } else {
                                      world.setBlock(blockposition1, ((InfestedBlock) block).hostStateByInfested(world.getBlockState(blockposition1)), 3);
@@ -140,6 +308,15 @@ index 860e385fc83f9787dca92efe35d21fd69c4dd635..19e243956385d23f450a90f838881ec8
                                  }
  
                                  if (randomsource.nextBoolean()) {
+@@ -205,7 +206,7 @@ public class Silverfish extends Monster {
+             } else {
+                 RandomSource randomsource = this.mob.getRandom();
+ 
+-                if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
++                if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) && randomsource.nextInt(reducedTickDelay(10)) == 0) { // KioCG
+                     this.selectedDirection = Direction.getRandom(randomsource);
+                     BlockPos blockposition = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
+                     BlockState iblockdata = this.mob.level().getBlockState(blockposition);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 index 06cd00d571d583b9b94f3fb703e084fcde67391b..e55b3c44cfb7d71646a5d0b5102f4c4c593b2a52 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
@@ -153,8 +330,36 @@ index 06cd00d571d583b9b94f3fb703e084fcde67391b..e55b3c44cfb7d71646a5d0b5102f4c4c
      }
  
      protected boolean canReplaceCurrentItem(ItemStack stack) {
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/LargeFireball.java b/src/main/java/net/minecraft/world/entity/projectile/LargeFireball.java
+index 28a65f2a9ef441ae96a7a635e0695b14ce2ee367..1e860edbf2c9e1592b80c930660f91c1250a40bb 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/LargeFireball.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/LargeFireball.java
+@@ -23,20 +23,20 @@ public class LargeFireball extends Fireball {
+ 
+     public LargeFireball(EntityType<? extends LargeFireball> type, Level world) {
+         super(type, world);
+-        this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); // CraftBukkit
++        this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER); // CraftBukkit // KioCG
+     }
+ 
+     public LargeFireball(Level world, LivingEntity owner, Vec3 velocity, int explosionPower) {
+         super(EntityType.FIREBALL, owner, velocity, world);
+         this.explosionPower = explosionPower;
+-        this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); // CraftBukkit
++        this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER); // CraftBukkit // KioCG
+     }
+ 
+     @Override
+     protected void onHit(HitResult hitResult) {
+         super.onHit(hitResult);
+         if (!this.level().isClientSide) {
+-            boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++            boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER); // KioCG
+ 
+             // CraftBukkit start - fire ExplosionPrimeEvent
+             ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index de64de5d1328d3e0826c9990eb7c7eca5088cb9c..e50c4a200a176e513b947af8900a767e90cbe4e5 100644
+index de64de5d1328d3e0826c9990eb7c7eca5088cb9c..55bdcd7ed019acce514c05f83b8a96e14f288d19 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -367,7 +367,7 @@ public abstract class Projectile extends Entity implements TraceableEntity {
@@ -162,23 +367,25 @@ index de64de5d1328d3e0826c9990eb7c7eca5088cb9c..e50c4a200a176e513b947af8900a767e
          Entity entity = this.getOwner();
  
 -        return entity instanceof Player ? entity.mayInteract(world, pos) : entity == null || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-+        return entity instanceof Player ? entity.mayInteract(world, pos) && world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); // KioCG
++        return entity instanceof Player ? entity.mayInteract(world, pos) && world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) : world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER); // KioCG
      }
  
      public boolean mayBreak(Level world) {
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/SmallFireball.java b/src/main/java/net/minecraft/world/entity/projectile/SmallFireball.java
-index 1711ad457e7d1233fd32edc3e9e3b9f1e3be9980..929ed69733919bf8c1b6204a6e7d39b43f48cdb8 100644
+index 1711ad457e7d1233fd32edc3e9e3b9f1e3be9980..fc6bac06cf7fc5f798766c02cfa3ad8750291bef 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/SmallFireball.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/SmallFireball.java
-@@ -29,7 +29,7 @@ public class SmallFireball extends Fireball {
+@@ -29,8 +29,8 @@ public class SmallFireball extends Fireball {
      public SmallFireball(Level world, LivingEntity owner, Vec3 velocity) {
          super(EntityType.SMALL_FIREBALL, owner, velocity, world);
          // CraftBukkit start
 -        if (this.getOwner() != null && this.getOwner() instanceof Mob) {
+-            this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 +        if (true || this.getOwner() != null && this.getOwner() instanceof Mob) { // KioCG
-             this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++            this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER); // KioCG
          }
          // CraftBukkit end
+     }
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raider.java b/src/main/java/net/minecraft/world/entity/raid/Raider.java
 index bbf21ea433f9e3963aac0ede597ed8d3c8e50ed8..40e97c72ec7965a06af7de001747372e8a584f60 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raider.java
@@ -192,8 +399,60 @@ index bbf21ea433f9e3963aac0ede597ed8d3c8e50ed8..40e97c72ec7965a06af7de001747372e
              Raid raid = this.mob.getCurrentRaid();
  
              if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.getLeaderBannerInstance(this.mob.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)))) {
+diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
+index ad57bf49476192dea6a7367cbd0ad3f11e142e1b..8c87fe848e887eb81aeed2186353863f1f98fd60 100644
+--- a/src/main/java/net/minecraft/world/level/Explosion.java
++++ b/src/main/java/net/minecraft/world/level/Explosion.java
+@@ -830,7 +830,7 @@ public class Explosion {
+     }
+ 
+     public boolean canTriggerBlocks() {
+-        return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK && !this.level.isClientSide() ? (this.source != null && this.source.getType() == EntityType.BREEZE_WIND_CHARGE ? this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : true) : false;
++        return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK && !this.level.isClientSide() ? (this.source != null && this.source.getType() == EntityType.BREEZE_WIND_CHARGE ? this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) : true) : false; // KioCG
+     }
+ 
+     public static enum BlockInteraction {
+diff --git a/src/main/java/net/minecraft/world/level/GameRules.java b/src/main/java/net/minecraft/world/level/GameRules.java
+index 89e327bc3a45879fe68887c7aadb077f31a770eb..617acbe6f4a5527df813c2ff649af48f01876322 100644
+--- a/src/main/java/net/minecraft/world/level/GameRules.java
++++ b/src/main/java/net/minecraft/world/level/GameRules.java
+@@ -39,7 +39,7 @@ public class GameRules {
+         return gamerules_gamerulekey.id;
+     }));
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_DOFIRETICK = GameRules.register("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.create(true));
+-    public static final GameRules.Key<GameRules.BooleanValue> RULE_MOBGRIEFING = GameRules.register("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.create(true));
++    public static final GameRules.Key<GameRules.BooleanValue> RULE_MOBGRIEFING_BETTER = GameRules.register("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.create(true)); // KioCG
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_KEEPINVENTORY = GameRules.register("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBSPAWNING = GameRules.register("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.create(true));
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBLOOT = GameRules.register("doMobLoot", GameRules.Category.DROPS, GameRules.BooleanValue.create(true));
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index 4816703560fdc7dc6ad658ed516e5c6ec0f8cca8..1dfa2d15581ad47edb5ffa58b34694c3e971421f 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -1487,7 +1487,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable, ca.spottedl
+                 explosion_effect = this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
+                 break;
+             case 2:
+-                explosion_effect = this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
++                explosion_effect = this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP; // KioCG
+                 break;
+             case 3:
+                 explosion_effect = this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
+diff --git a/src/main/java/net/minecraft/world/level/block/CropBlock.java b/src/main/java/net/minecraft/world/level/block/CropBlock.java
+index 112d2feba5f75a2a873b595617780515945c10e4..55ee9da5bde921d4e509202751d5228f4dbfc5c8 100644
+--- a/src/main/java/net/minecraft/world/level/block/CropBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CropBlock.java
+@@ -179,7 +179,7 @@ public class CropBlock extends BushBlock implements BonemealableBlock {
+     @Override
+     protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(world, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
+-        if (entity instanceof Ravager && CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
++        if (entity instanceof Ravager && CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER))) { // CraftBukkit // KioCG
+             world.destroyBlock(pos, true, entity);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/FarmBlock.java b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
-index d59e33e7326489c6d55d316d0130f22235f4c63c..00706d964cec85f1ddcc8d8e366d905b13b4b106 100644
+index d59e33e7326489c6d55d316d0130f22235f4c63c..c33a777db6a4cffcc21ea92e5a9fca6f9825bbc8 100644
 --- a/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/FarmBlock.java
 @@ -111,7 +111,7 @@ public class FarmBlock extends Block {
@@ -201,7 +460,7 @@ index d59e33e7326489c6d55d316d0130f22235f4c63c..00706d964cec85f1ddcc8d8e366d905b
      public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
          super.fallOn(world, state, pos, entity, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
 -        if (!world.isClientSide && world.random.nextFloat() < fallDistance - 0.5F && entity instanceof LivingEntity && (entity instanceof Player || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) && entity.getBbWidth() * entity.getBbWidth() * entity.getBbHeight() > 0.512F) {
-+        if (!world.isClientSide && world.random.nextFloat() < fallDistance - 0.5F && entity instanceof LivingEntity && (false || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) && entity.getBbWidth() * entity.getBbWidth() * entity.getBbHeight() > 0.512F) { // KioCG
++        if (!world.isClientSide && world.random.nextFloat() < fallDistance - 0.5F && entity instanceof LivingEntity && (false || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) && entity.getBbWidth() * entity.getBbWidth() * entity.getBbHeight() > 0.512F) { // KioCG
              // CraftBukkit start - Interact soil
              org.bukkit.event.Cancellable cancellable;
              if (entity instanceof Player) {
@@ -219,7 +478,7 @@ index 265b4d670f64ccff59acb6eb18ce1e9089fb1cd3..f417cb37268828e421fa63da758e4c19
          if (world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !EnchantmentHelper.hasTag(tool, EnchantmentTags.PREVENTS_INFESTED_SPAWNS)) {
              this.spawnInfestation(world, pos);
 diff --git a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 098fcb24a5174c173c57bfdd9afb5fb8227c4968..4f633c287bcfd817349f702c16808f65a07bad4c 100644
+index 098fcb24a5174c173c57bfdd9afb5fb8227c4968..a09c7813e9d45615111f2c9fdd80967c15d5dff3 100644
 --- a/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/LayeredCauldronBlock.java
 @@ -69,7 +69,7 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
@@ -227,12 +486,25 @@ index 098fcb24a5174c173c57bfdd9afb5fb8227c4968..4f633c287bcfd817349f702c16808f65
          if (!world.isClientSide && entity.isOnFire() && this.isEntityInsideContent(state, pos, entity)) {
              // CraftBukkit start
 -            if ((entity instanceof net.minecraft.world.entity.player.Player || world.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) && entity.mayInteract(world, pos)) { // Paper - Fixes MC-248588
-+            if ((false || world.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) && entity.mayInteract(world, pos)) { // Paper - Fixes MC-248588 // KioCG
++            if ((false || world.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING_BETTER)) && entity.mayInteract(world, pos)) { // Paper - Fixes MC-248588 // KioCG
                  if (!this.handleEntityOnFireInsideWithEvent(state, world, pos, entity)) { // Paper - fix powdered snow cauldron extinguishing entities
                      return;
                  }
+diff --git a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
+index 5f1ec3f69295760b7b8097916c82cbf9ddd49700..b4cf9b3b814d951819b8e7ca07b61a65f9835c94 100644
+--- a/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/PitcherCropBlock.java
+@@ -99,7 +99,7 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
+     @Override
+     public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(world, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
+-        if (entity instanceof Ravager && world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (entity instanceof Ravager && world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) { // KioCG
+             world.destroyBlock(pos, true, entity);
+         }
+ 
 diff --git a/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java b/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java
-index a6e6545402904141ffc6218a0158b0e9c67217c8..6b441f47e9b30aca894a27edc6251391cda9db49 100644
+index a6e6545402904141ffc6218a0158b0e9c67217c8..618566b2b5a67d95864147fe289a0318031f44cd 100644
 --- a/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/PowderSnowBlock.java
 @@ -80,7 +80,7 @@ public class PowderSnowBlock extends Block implements BucketPickup {
@@ -240,12 +512,12 @@ index a6e6545402904141ffc6218a0158b0e9c67217c8..6b441f47e9b30aca894a27edc6251391
              // CraftBukkit start
              if (entity.isOnFire() && entity.mayInteract(world, pos)) {
 -                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !(world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || entity instanceof Player))) {
-+                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !(world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || false))) { // KioCG
++                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !(world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER) || false))) { // KioCG
                      return;
                  }
                  // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java b/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java
-index a6f408e56fa6c9de82fd93555fe21e1b11ce1022..d2c71129e0aa6417be7bcc2711d25139a53db118 100644
+index a6f408e56fa6c9de82fd93555fe21e1b11ce1022..3a012a93d12584d66a160d14f43e10626ac3b556 100644
 --- a/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TurtleEggBlock.java
 @@ -203,6 +203,6 @@ public class TurtleEggBlock extends Block {
@@ -253,6 +525,6 @@ index a6f408e56fa6c9de82fd93555fe21e1b11ce1022..d2c71129e0aa6417be7bcc2711d25139
  
      private boolean canDestroyEgg(Level world, Entity entity) {
 -        return !(entity instanceof Turtle) && !(entity instanceof Bat) ? (!(entity instanceof LivingEntity) ? false : entity instanceof Player || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) : false;
-+        return !(entity instanceof Turtle) && !(entity instanceof Bat) ? (!(entity instanceof LivingEntity) ? false : false || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) : false; // KioCG
++        return !(entity instanceof Turtle) && !(entity instanceof Bat) ? (!(entity instanceof LivingEntity) ? false : false || world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING_BETTER)) : false; // KioCG
      }
  }
