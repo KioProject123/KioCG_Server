@@ -827,14 +827,3 @@ index 2c408fa4abcbe1171c58aee8799c8cf7867d0f0a..d15fb512b4f7d1caf819739ef858ad77
          {
              this.log( "Cannot set " + crop + " growth to zero, defaulting to 100" );
              modifier = 100;
-diff --git a/src/main/resources/data/minecraft/tags/block/maintains_farmland.json b/src/main/resources/data/minecraft/tags/block/maintains_farmland.json
-index fa5c06d3a7255dddb3b559a19083e74117bcf161..03b2f394c4e0052882d3bd8b0b576ead273ce3c6 100644
---- a/src/main/resources/data/minecraft/tags/block/maintains_farmland.json
-+++ b/src/main/resources/data/minecraft/tags/block/maintains_farmland.json
-@@ -1,5 +1,6 @@
- {
-   "values": [
-+    "minecraft:sweet_berry_bush",
-     "minecraft:pumpkin_stem",
-     "minecraft:attached_pumpkin_stem",
-     "minecraft:melon_stem",

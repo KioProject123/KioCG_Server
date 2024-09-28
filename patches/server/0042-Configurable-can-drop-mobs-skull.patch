@@ -64,7 +64,7 @@ index bb2e7cee612dc1fafa042674a0b0d07d7165b54c..98b60652732fcaf3b13a3c093b90a6fa
                  this.spawnAtLocation((ItemLike) Items.WITHER_SKELETON_SKULL);
              }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 8de73725f9121cd9ba79ed7b2020c3ccff684d41..e5eab2c80b86d70ef0783180f3923ed0f74a41a0 100644
+index 169131aef6d598a9c7cbf68b3b836d10806fdbbc..920daea173318634b1bc92c10314644983ad795c 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -663,7 +663,7 @@ public class Zombie extends Monster {
@@ -77,7 +77,7 @@ index 8de73725f9121cd9ba79ed7b2020c3ccff684d41..e5eab2c80b86d70ef0783180f3923ed0
  
                  if (!itemstack.isEmpty()) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index e55b3c44cfb7d71646a5d0b5102f4c4c593b2a52..e1137ed1af882abce0b6c9d1bbbd487ccbeb566c 100644
+index 644159b3a228270043985071d5c5938a90344a4a..c827db71b2133f3302e7c2f1aa058d2078a38919 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 @@ -139,7 +139,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento

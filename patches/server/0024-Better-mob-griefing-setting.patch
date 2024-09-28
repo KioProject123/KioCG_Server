@@ -31,7 +31,7 @@ index 87955d252206816c255fe3c6948876c1d5216863..96028ad24a8221c2da053eeb184ea41a
                      BlockState iblockdata = Blocks.WITHER_ROSE.defaultBlockState();
  
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 20479a80602f53162d141787ae1233ea318d6297..ab5caeae658bd2a8f010bc6cb8a6659bc1c2b110 100644
+index 4a1cd027990cc61ee29c496cb2a1e505eb417952..4492994fb0c7e6bf231b2b1f5f3106ca2992dfd1 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -683,7 +683,7 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -318,7 +318,7 @@ index 860e385fc83f9787dca92efe35d21fd69c4dd635..6a0cc43f535d11cf528085f98638ef8c
                      BlockPos blockposition = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
                      BlockState iblockdata = this.mob.level().getBlockState(blockposition);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index 06cd00d571d583b9b94f3fb703e084fcde67391b..e55b3c44cfb7d71646a5d0b5102f4c4c593b2a52 100644
+index 2ead7a0286a2109656ead0d1ee779b835ddf82c0..644159b3a228270043985071d5c5938a90344a4a 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 @@ -389,7 +389,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento

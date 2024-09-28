@@ -62,7 +62,7 @@ index 60d3319016beb4f60cbc26dde165f64cf7577602..3c0538033b6e2e2dc7994edb3b517969
                      stack.hurtAndBreak(16, worldserver, (ServerPlayer) null, (item) -> {
                      });
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-index 7a61d82039a4793f090c928189c01c4df66a7ede..5acfd92cfd20b60a049e8a4e013339ecf400c707 100644
+index 7cbb0cce42c1a63b10f6e1c3f0c006d747b61c10..19453d199e4b42a2267668462a7a3f9eb0a7f970 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
 +++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
 @@ -21,6 +21,11 @@ public abstract class AgeableMob extends PathfinderMob {

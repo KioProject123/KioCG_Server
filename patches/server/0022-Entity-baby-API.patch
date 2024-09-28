@@ -40,13 +40,15 @@ index ecb9308f9fe17c716c6c7c25b60631785d24d952..353923423da06f514f789ecb08e2fcf1
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/AgeableMob.java b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7a61d82039a4793f090c928189c01c4df66a7ede 100644
+index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7cbb0cce42c1a63b10f6e1c3f0c006d747b61c10 100644
 --- a/src/main/java/net/minecraft/world/entity/AgeableMob.java
 +++ b/src/main/java/net/minecraft/world/entity/AgeableMob.java
-@@ -197,6 +197,7 @@ public abstract class AgeableMob extends PathfinderMob {
+@@ -196,7 +196,8 @@ public abstract class AgeableMob extends PathfinderMob {
+     }
  
      @Override
-     public void setBaby(boolean baby) {
+-    public void setBaby(boolean baby) {
++    public void setBaby1(boolean baby) { // KioCG
 +        if (baby) removeScaleAttributes(); // KioCG
          this.setAge(baby ? -24000 : 0);
      }
@@ -174,14 +176,19 @@ index 9613724b4652227ef7e0806fa6c2ac73e475320d..87955d252206816c255fe3c6948876c1
  
      protected boolean isImmobile() {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 64d4608388f177d7cf4f16b643e6d08a8660000c..20479a80602f53162d141787ae1233ea318d6297 100644
+index 64d4608388f177d7cf4f16b643e6d08a8660000c..4a1cd027990cc61ee29c496cb2a1e505eb417952 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1694,6 +1694,17 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1692,7 +1692,20 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+         return ((Byte) this.entityData.get(Mob.DATA_MOB_FLAGS_ID) & 4) != 0;
+     }
  
-     public void setBaby(boolean baby) {}
- 
+-    public void setBaby(boolean baby) {}
++    public final void setBaby(boolean baby) { this.setBaby1(baby); } // KioCG - final防止直接重写, 便于版本更新检查
++
 +    // KioCG start
++    public void setBaby1(boolean baby) {}
++
 +    public void setScaleSimulate(ScaleSimulate scale) {
 +        switch (scale) {
 +            case BABY -> setBaby(true);
@@ -191,30 +198,46 @@ index 64d4608388f177d7cf4f16b643e6d08a8660000c..20479a80602f53162d141787ae1233ea
 +        super.setScaleSimulate(scale);
 +    }
 +    // KioCG end
-+
-     @Override
-     public HumanoidArm getMainArm() {
-         return this.isLeftHanded() ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
-diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-index fadd341ff398886a4da102eefa1beb95a63bbd6d..4da9c658e367dd2099e0391e1360e3ca56bdc0ed 100644
---- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-+++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-@@ -431,6 +431,7 @@ public class Sniffer extends Animal {
  
      @Override
-     public void setBaby(boolean baby) {
+     public HumanoidArm getMainArm() {
+diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
+index 816977990639ec0559b652fc9666afd5046f0a5d..413abb374ca11479d658b9cd1c94ca9f0d250455 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
++++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
+@@ -256,7 +256,7 @@ public class Frog extends Animal implements VariantHolder<Holder<FrogVariant>> {
+     }
+ 
+     @Override
+-    public void setBaby(boolean baby) {
++    public void setBaby1(boolean baby) { // KioCG
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+index fadd341ff398886a4da102eefa1beb95a63bbd6d..dde0da4c808e10dc942fd8f5f2096597fcc3d678 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -430,7 +430,8 @@ public class Sniffer extends Animal {
+     }
+ 
+     @Override
+-    public void setBaby(boolean baby) {
++    public void setBaby1(boolean baby) { // KioCG
 +        if (baby) removeScaleAttributes(); // KioCG
          this.setAge(baby ? -48000 : 0);
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
-index aa458ede5bd645ebf524238179edb33f41bd683f..3c36037bb856720acaf951a83fe1f64a465c77e5 100644
+index aa458ede5bd645ebf524238179edb33f41bd683f..563e287a5e0b970f5dcfa3a7f20bf939262e54c4 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
-@@ -241,10 +241,16 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
+@@ -240,11 +240,17 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
+     }
  
      @Override
-     public void setBaby(boolean baby) {
+-    public void setBaby(boolean baby) {
++    public void setBaby1(boolean baby) { // KioCG
 +        if (baby) removeScaleAttributes(); // KioCG
          this.getEntityData().set(DATA_BABY_ID, baby);
          if (!this.level().isClientSide && baby) {
@@ -229,25 +252,29 @@ index aa458ede5bd645ebf524238179edb33f41bd683f..3c36037bb856720acaf951a83fe1f64a
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 892f02475976203abdd472aa02b80a9bfe48f752..8c180d6286cda99a7fd656eab588f55584e6e10f 100644
+index 892f02475976203abdd472aa02b80a9bfe48f752..c7f445ec7ec07f09ebf4b33369a68affe20455eb 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-@@ -190,6 +190,7 @@ public class Zombie extends Monster {
+@@ -189,7 +189,8 @@ public class Zombie extends Monster {
+     }
  
      @Override
-     public void setBaby(boolean baby) {
+-    public void setBaby(boolean baby) {
++    public void setBaby1(boolean baby) { // KioCG
 +        if (baby) removeScaleAttributes(); // KioCG
          this.getEntityData().set(Zombie.DATA_BABY_ID, baby);
          if (this.level() != null && !this.level().isClientSide) {
              AttributeInstance attributemodifiable = this.getAttribute(Attributes.MOVEMENT_SPEED);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-index bc58323801ee16fe9b63c21332144ec002a902f2..06cd00d571d583b9b94f3fb703e084fcde67391b 100644
+index bc58323801ee16fe9b63c21332144ec002a902f2..2ead7a0286a2109656ead0d1ee779b835ddf82c0 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -267,6 +267,7 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+@@ -266,7 +266,8 @@ public class Piglin extends AbstractPiglin implements CrossbowAttackMob, Invento
+     }
  
      @Override
-     public void setBaby(boolean baby) {
+-    public void setBaby(boolean baby) {
++    public void setBaby1(boolean baby) { // KioCG
 +        if (baby) removeScaleAttributes(); // KioCG
          this.getEntityData().set(Piglin.DATA_BABY_ID, baby);
          if (!this.level().isClientSide) {
