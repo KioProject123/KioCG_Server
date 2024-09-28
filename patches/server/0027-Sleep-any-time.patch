@@ -5,7 +5,7 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index b794082637e762c7d11818780da71b9b68ad0ba5..8740bc276a4f5d802201fb0f2fdcda8805d4ccd7 100644
+index c09003af3db60b3873a6223d7eb1e24c3c7e4dc4..5e15008808d32c557022a4b6c83b4adc30e78d78 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -636,6 +636,9 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -47,10 +47,10 @@ index 14fd6be798f4f3a388dc72dc1690de2b3671d766..4989d2a6ddec45315e1f1c6c651efdb2
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 8a26ee52ee38137a5258e5ae3642808bd646eeb5..1676127fd6f918efdf26d2e0e6c61ef4b7329da3 100644
+index 8146dfc1d5e0cdd78c69623deeab405d73f83154..64103f159d7c1894f15036f84060f07b36859d80 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1512,7 +1512,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1525,7 +1525,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                  return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.OBSTRUCTED);
              } else {
                  this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -59,7 +59,7 @@ index 8a26ee52ee38137a5258e5ae3642808bd646eeb5..1676127fd6f918efdf26d2e0e6c61ef4
                      return Either.left(net.minecraft.world.entity.player.Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
                  } else {
                      if (!this.isCreative()) {
-@@ -1562,7 +1562,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1575,7 +1575,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                          CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                      });
  
@@ -68,7 +68,7 @@ index 8a26ee52ee38137a5258e5ae3642808bd646eeb5..1676127fd6f918efdf26d2e0e6c61ef4
                          this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                      }
  
-@@ -2546,7 +2546,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -2559,7 +2559,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent

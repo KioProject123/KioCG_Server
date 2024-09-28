@@ -221,11 +221,11 @@ index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 76f45ef5690c54b704b1916d1304db88c5dc70e9..1e44afe78f270dbc31525c4c49cd98af427acc76 100644
+index ea2fe058bd8a3615b5882ab7690db245081ddefa..52e642b1302d9e3c62df794fea94064bd35294e2 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -583,6 +583,35 @@ public class WorldConfiguration extends ConfigurationPart {
-         public boolean deathOnlyDropsStoredItems = true;
+         public boolean deathKeepHotbarAndArmorItems = true;
          public boolean deathItemsOnlyPickupByOneself = true;
          public boolean removeAutomationGameplay = true;
 +
@@ -261,7 +261,7 @@ index 76f45ef5690c54b704b1916d1304db88c5dc70e9..1e44afe78f270dbc31525c4c49cd98af
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index de8f989122d26d220051858cf6159e8ee0184f05..8a26ee52ee38137a5258e5ae3642808bd646eeb5 100644
+index ceb9c2ebff2a2b0cee7cecf5a765ba0adfa99fc0..8146dfc1d5e0cdd78c69623deeab405d73f83154 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -891,7 +891,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -273,7 +273,7 @@ index de8f989122d26d220051858cf6159e8ee0184f05..8a26ee52ee38137a5258e5ae3642808b
                  this.lastSentExp = this.totalExperience;
                  this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
              }
-@@ -2937,6 +2937,8 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -2950,6 +2950,8 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new FoodData(this);

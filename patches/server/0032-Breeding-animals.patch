@@ -5,7 +5,7 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 230d0337ce7d7ee4266e30004b4726c1e6463b59..81d9331c1e9e116df21d18c22480a41452349e00 100644
+index ce92db1f321645b7d759a7ecca7409a79f235e75..50ac03160a69e4eead36eb194151c75b2ac3f13b 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -636,6 +636,12 @@ public class WorldConfiguration extends ConfigurationPart {

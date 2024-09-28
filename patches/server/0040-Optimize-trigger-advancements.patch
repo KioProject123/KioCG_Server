@@ -17,7 +17,7 @@ index 9a24249fe868e6a574ed365ff31253b490593272..96a9a37c76e26d516b00e87a1bc42245
      public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
      public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index e7985062d8dd81219baf5242203c03fa0fb4dbc4..a63a6594d0458b1f6a6428822b5d140a742fb689 100644
+index 8bf908646bc0d7c6b1ffc23e5ef8921c05db0150..d8d617c25d2505e2b4d82439f52aa49195698a6d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -750,6 +750,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple

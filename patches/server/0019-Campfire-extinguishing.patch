@@ -5,7 +5,7 @@ Subject: [PATCH] Campfire extinguishing
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 1e44afe78f270dbc31525c4c49cd98af427acc76..791466b14e8baaab7ef8a3c03560df290f324535 100644
+index 52e642b1302d9e3c62df794fea94064bd35294e2..255a996d5e9a9f95056254dbe8704f07d8ead179 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -611,6 +611,9 @@ public class WorldConfiguration extends ConfigurationPart {

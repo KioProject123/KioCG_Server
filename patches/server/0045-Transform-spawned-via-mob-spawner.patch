@@ -5,7 +5,7 @@ Subject: [PATCH] Transform spawned via mob spawner
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index b6045bf89f3b4d4e04664ab4f0e0ca592e6d63c3..ae09b77db91184553ee1a7d40fad461671512896 100644
+index 6a59ff04056586ac91e25d65b49f3aa3857cbfac..594f8d0ff9caf5af269a66b125faaa86d93aba94 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -620,6 +620,7 @@ public class CraftEventFactory {
@@ -16,7 +16,7 @@ index b6045bf89f3b4d4e04664ab4f0e0ca592e6d63c3..ae09b77db91184553ee1a7d40fad4616
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1352,6 +1353,7 @@ public class CraftEventFactory {
+@@ -1358,6 +1359,7 @@ public class CraftEventFactory {
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {
          ((net.minecraft.world.entity.LivingEntity) pigzombie).transformScaleSimulate((net.minecraft.world.entity.LivingEntity) pig); // KioCG
@@ -24,7 +24,7 @@ index b6045bf89f3b4d4e04664ab4f0e0ca592e6d63c3..ae09b77db91184553ee1a7d40fad4616
          PigZapEvent event = new PigZapEvent((Pig) pig.getBukkitEntity(), (LightningStrike) lightning.getBukkitEntity(), (PigZombie) pigzombie.getBukkitEntity());
          pig.getBukkitEntity().getServer().getPluginManager().callEvent(event);
          return event;
-@@ -1365,6 +1367,7 @@ public class CraftEventFactory {
+@@ -1371,6 +1373,7 @@ public class CraftEventFactory {
  
      // Paper start
      public static com.destroystokyo.paper.event.entity.EntityZapEvent callEntityZapEvent(Entity entity, Entity lightning, Entity changedEntity) {

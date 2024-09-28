@@ -5,7 +5,7 @@ Subject: [PATCH] Saplings withered
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index f0ef7e01594207c0af8f6fca2ace7d3cd40e1318..447b80e0982971e036306dfe95506d1e4e3dcec9 100644
+index 54cec657c5642497e65a0da9cabf50fbbbde7b61..ea0cda73ebe0d77173de0ec9379771840df4c9f8 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -644,6 +644,7 @@ public class WorldConfiguration extends ConfigurationPart {

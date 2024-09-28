@@ -5,7 +5,7 @@ Subject: [PATCH] Ladder survive dangling
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index e47a3467a40fc78a9c8bda2594cdb0e7b8b4ec61..21d181c1d8f33342f2d7da2a2a5a9807d7ca9446 100644
+index 1acb774ba5e1d45e74455f32483a7921e4ef0197..6df48f066edf134f4516be8519e7abfde1b22cfb 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -672,6 +672,8 @@ public class WorldConfiguration extends ConfigurationPart {

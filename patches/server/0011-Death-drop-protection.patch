@@ -5,7 +5,7 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9c1220f57a9bfe8729316c722976342f882dccf2..4efee4dac6fe59b3809952fb3c909afaf3db1e6f 100644
+index 9c1220f57a9bfe8729316c722976342f882dccf2..183b2c46c1a95f1d3fb4cdf59c9dffae7f8a51aa 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -580,7 +580,8 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -13,37 +13,61 @@ index 9c1220f57a9bfe8729316c722976342f882dccf2..4efee4dac6fe59b3809952fb3c909afa
  
      public class KiocgConfig extends ConfigurationPart {
 -
-+        public boolean deathOnlyDropsStoredItems = true;
++        public boolean deathKeepHotbarAndArmorItems = true;
 +        public boolean deathItemsOnlyPickupByOneself = true;
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index dd329aa9f07303ebd4aaa94fa343da8816c7ca03..de8f989122d26d220051858cf6159e8ee0184f05 100644
+index dd329aa9f07303ebd4aaa94fa343da8816c7ca03..ceb9c2ebff2a2b0cee7cecf5a765ba0adfa99fc0 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1026,9 +1026,17 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1023,12 +1023,33 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+             return;
+         }
+         List<DefaultDrop> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // Paper - Restore vanilla drops behavior
++        List<org.bukkit.inventory.ItemStack> deathKeeps = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // KioCG
          boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
  
          if (!keepInventory) {
--            for (ItemStack item : this.getInventory().getContents()) {
-+            for (ItemStack item : this.level().paperConfig().kiocgConfig.deathOnlyDropsStoredItems ? this.getInventory().getContentsOnlyStorage() : this.getInventory().getContents()) { // KioCG
++            // KioCG start
++            List<ItemStack> deathDropContents = null;
++            if (this.level().paperConfig().kiocgConfig.deathKeepHotbarAndArmorItems) {
++                deathDropContents = this.getInventory().getDeathDropContents();
++            }
++            // KioCG end
++
+             for (ItemStack item : this.getInventory().getContents()) {
                  if (!item.isEmpty() && !EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
 -                    loot.add(new DefaultDrop(item, stack -> this.drop(stack, true, false, false))); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
 +                    // KioCG start
++                    if (deathDropContents != null && !deathDropContents.contains(item)) {
++                        deathKeeps.add(item.getBukkitStack());
++                        continue;
++                    }
++
 +                    loot.add(new DefaultDrop(item, stack -> {
 +                        ItemEntity droped = this.drop(stack, true, false, false);
 +                        if (droped != null) {
 +                            if (this.level().paperConfig().kiocgConfig.deathItemsOnlyPickupByOneself) droped.setTarget(this.getUUID());
-+                            droped.age = -32767;
++                            droped.age = -32767; // -32768代表无限生命周期
 +                        }
 +                    })); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
 +                    // KioCG end
                  }
              }
          }
+@@ -1045,7 +1066,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+ 
+         String deathmessage = defaultMessage.getString();
+         this.keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
+-        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, damageSource, loot, PaperAdventure.asAdventure(defaultMessage), keepInventory); // Paper - Adventure
++        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, damageSource, loot, deathKeeps, PaperAdventure.asAdventure(defaultMessage), keepInventory); // Paper - Adventure // KioCG
+         // Paper start - cancellable death event
+         if (event.isCancelled()) {
+             // make compatible with plugins that might have already set the health in an event listener
 diff --git a/src/main/java/net/minecraft/world/entity/player/Inventory.java b/src/main/java/net/minecraft/world/entity/player/Inventory.java
-index 6e66141dca61f777b354854b5d0bac2570b8bf3b..44b2bb65c916b2692b056efd7c6f1f790e641b02 100644
+index 6e66141dca61f777b354854b5d0bac2570b8bf3b..d60c29663532a4e0e9f5201f72c13e16118dc9c4 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Inventory.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Inventory.java
 @@ -59,6 +59,19 @@ public class Inventory implements Container, Nameable {
@@ -51,7 +75,7 @@ index 6e66141dca61f777b354854b5d0bac2570b8bf3b..44b2bb65c916b2692b056efd7c6f1f79
      }
  
 +    // KioCG start
-+    public List<ItemStack> getContentsOnlyStorage() {
++    public List<ItemStack> getDeathDropContents() {
 +        List<ItemStack> combined = new ArrayList<ItemStack>(this.items.size());
 +        for (int i = 0; i < this.items.size(); ++i) {
 +            if (!Inventory.isHotbarSlot(i)) {
@@ -66,3 +90,24 @@ index 6e66141dca61f777b354854b5d0bac2570b8bf3b..44b2bb65c916b2692b056efd7c6f1f79
      public List<ItemStack> getArmorContents() {
          return this.armor;
      }
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 77ef27f9254235180a8596c6c8c4af750dc759d1..4062df9d0e2ad68b2f0bc7b6ed92c4dab64272c5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -1021,10 +1021,16 @@ public class CraftEventFactory {
+     }
+ 
+     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean keepInventory) { // Paper - Adventure & Restore vanilla drops behavior
++        // KioCG start
++        return callPlayerDeathEvent(victim, damageSource, drops, List.of(), deathMessage, keepInventory);
++    }
++    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, List<org.bukkit.inventory.ItemStack> keeps, net.kyori.adventure.text.Component deathMessage, boolean keepInventory) { // Paper - Adventure & Restore vanilla drops behavior
++        // KioCG end
+         CraftPlayer entity = victim.getBukkitEntity();
+         CraftDamageSource bukkitDamageSource = new CraftDamageSource(damageSource);
+         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(damageSource.getEntity()), 0, deathMessage); // Paper - Restore vanilla drops behavior
+         event.setKeepInventory(keepInventory);
++        event.getItemsToKeep().addAll(keeps); // KioCG
+         event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
+         populateFields(victim, event); // Paper - make cancellable
+         Bukkit.getServer().getPluginManager().callEvent(event);

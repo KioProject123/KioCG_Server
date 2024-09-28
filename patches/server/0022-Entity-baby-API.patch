@@ -17,7 +17,7 @@ index 1029b6de6f36b08bf634b4056ef5701383f6f258..16d8ae74f535614b21366244eb741551
                      .register(DespawnRange.class, DespawnRange.SERIALIZER)
                      .register(StringRepresentableSerializer::isValidFor, new StringRepresentableSerializer())
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index ecb9308f9fe17c716c6c7c25b60631785d24d952..353923423da06f514f789ecb08e2fcf163261303 100644
+index 3e1fe24715365486ec13fcb0feaa98cda269190b..dbe5ef4305b853711b4ec5840c702bf8483fb6f4 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -616,6 +616,18 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -333,7 +333,7 @@ index beb6ad312028adb14053e3f019a4fcf6c9149373..3400312af794b6f7b782047a0862781b
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 77ef27f9254235180a8596c6c8c4af750dc759d1..b6045bf89f3b4d4e04664ab4f0e0ca592e6d63c3 100644
+index 4062df9d0e2ad68b2f0bc7b6ed92c4dab64272c5..6a59ff04056586ac91e25d65b49f3aa3857cbfac 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -619,6 +619,7 @@ public class CraftEventFactory {
@@ -344,7 +344,7 @@ index 77ef27f9254235180a8596c6c8c4af750dc759d1..b6045bf89f3b4d4e04664ab4f0e0ca59
              list.add(entityLiving.getBukkitEntity());
          }
  
-@@ -1350,6 +1351,7 @@ public class CraftEventFactory {
+@@ -1356,6 +1357,7 @@ public class CraftEventFactory {
      }
  
      public static PigZapEvent callPigZapEvent(Entity pig, Entity lightning, Entity pigzombie) {

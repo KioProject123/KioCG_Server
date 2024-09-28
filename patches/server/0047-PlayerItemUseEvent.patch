@@ -157,7 +157,7 @@ index f1dda687a9301d11e12694de76e02e3f93345b42..74f4cc5c6f1bcf4349513958bbb67b51
              if (enuminteractionresult.shouldSwing()) {
                  this.player.swing(enumhand, true);
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index ae09b77db91184553ee1a7d40fad461671512896..e63474cc560d65e09fa9cacb7aba42f7655d8ce0 100644
+index 594f8d0ff9caf5af269a66b125faaa86d93aba94..16373b4727e87c9db2f922f66bfca642e3e88d10 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -606,6 +606,41 @@ public class CraftEventFactory {

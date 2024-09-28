@@ -228,7 +228,7 @@ index a0c15381b6082cdd6e278e4c6e1136721e70d6de..c978c990f2ae2d616e12c495e2bfaa3a
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9b3dbae10cea7b632560783879a5cc81700d889e..2fdebaeb0b0c1534244ab07389b8c6f68534294a 100644
+index 78f1c2fdc5a27a9883e6ee3e0b0ff68b6275c35f..2ea752ed4730138c8aba00a218ac2aa25d6359e9 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 @@ -653,6 +653,14 @@ public class WorldConfiguration extends ConfigurationPart {
@@ -361,7 +361,7 @@ index 71d5aa4b9c0252e4eb8efce944077f14afd73022..6288803155d97d3b625d65d2d177a41f
  
      @Override
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 1676127fd6f918efdf26d2e0e6c61ef4b7329da3..e7985062d8dd81219baf5242203c03fa0fb4dbc4 100644
+index 64103f159d7c1894f15036f84060f07b36859d80..8bf908646bc0d7c6b1ffc23e5ef8921c05db0150 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,6 +303,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
