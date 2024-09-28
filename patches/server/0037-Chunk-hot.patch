@@ -228,10 +228,10 @@ index a0c15381b6082cdd6e278e4c6e1136721e70d6de..c978c990f2ae2d616e12c495e2bfaa3a
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 992adeba9d06d5034378167dab1d7dec3beb60b9..6e6d92fbf4fa3f5aa5bcce17d6414ce11c3f0673 100644
+index 9b3dbae10cea7b632560783879a5cc81700d889e..2fdebaeb0b0c1534244ab07389b8c6f68534294a 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -652,6 +652,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -653,6 +653,14 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20.0;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;
@@ -361,7 +361,7 @@ index 71d5aa4b9c0252e4eb8efce944077f14afd73022..6288803155d97d3b625d65d2d177a41f
  
      @Override
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 77e1dd00211fc2cad64b17478e0b943795c13392..98cac77e90e0fd42c0d89d07d7a798490ab25d77 100644
+index 1676127fd6f918efdf26d2e0e6c61ef4b7329da3..e7985062d8dd81219baf5242203c03fa0fb4dbc4 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,6 +303,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple

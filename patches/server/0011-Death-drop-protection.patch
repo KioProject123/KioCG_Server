@@ -5,32 +5,36 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9c1220f57a9bfe8729316c722976342f882dccf2..4d9e24d183e04239323f008307bab01e0f8f573c 100644
+index 9c1220f57a9bfe8729316c722976342f882dccf2..4efee4dac6fe59b3809952fb3c909afaf3db1e6f 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -580,7 +580,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -580,7 +580,8 @@ public class WorldConfiguration extends ConfigurationPart {
      public KiocgConfig kiocgConfig;
  
      public class KiocgConfig extends ConfigurationPart {
 -
-+        public boolean deathItemsOnlyPickedUpByOneself = true;
++        public boolean deathOnlyDropsStoredItems = true;
++        public boolean deathItemsOnlyPickupByOneself = true;
      }
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index dd329aa9f07303ebd4aaa94fa343da8816c7ca03..efbbf9f9b078b0faaf20c980142a1e5404b934f6 100644
+index dd329aa9f07303ebd4aaa94fa343da8816c7ca03..de8f989122d26d220051858cf6159e8ee0184f05 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1028,7 +1028,15 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -1026,9 +1026,17 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+         boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
+ 
          if (!keepInventory) {
-             for (ItemStack item : this.getInventory().getContents()) {
+-            for (ItemStack item : this.getInventory().getContents()) {
++            for (ItemStack item : this.level().paperConfig().kiocgConfig.deathOnlyDropsStoredItems ? this.getInventory().getContentsOnlyStorage() : this.getInventory().getContents()) { // KioCG
                  if (!item.isEmpty() && !EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
 -                    loot.add(new DefaultDrop(item, stack -> this.drop(stack, true, false, false))); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
 +                    // KioCG start
 +                    loot.add(new DefaultDrop(item, stack -> {
 +                        ItemEntity droped = this.drop(stack, true, false, false);
 +                        if (droped != null) {
-+                            if (this.level().paperConfig().kiocgConfig.deathItemsOnlyPickedUpByOneself) droped.setTarget(this.getUUID());
++                            if (this.level().paperConfig().kiocgConfig.deathItemsOnlyPickupByOneself) droped.setTarget(this.getUUID());
 +                            droped.age = -32767;
 +                        }
 +                    })); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
@@ -38,3 +42,27 @@ index dd329aa9f07303ebd4aaa94fa343da8816c7ca03..efbbf9f9b078b0faaf20c980142a1e54
                  }
              }
          }
+diff --git a/src/main/java/net/minecraft/world/entity/player/Inventory.java b/src/main/java/net/minecraft/world/entity/player/Inventory.java
+index 6e66141dca61f777b354854b5d0bac2570b8bf3b..44b2bb65c916b2692b056efd7c6f1f790e641b02 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Inventory.java
++++ b/src/main/java/net/minecraft/world/entity/player/Inventory.java
+@@ -59,6 +59,19 @@ public class Inventory implements Container, Nameable {
+         return combined;
+     }
+ 
++    // KioCG start
++    public List<ItemStack> getContentsOnlyStorage() {
++        List<ItemStack> combined = new ArrayList<ItemStack>(this.items.size());
++        for (int i = 0; i < this.items.size(); ++i) {
++            if (!Inventory.isHotbarSlot(i)) {
++                combined.add(this.items.get(i));
++            }
++        }
++
++        return combined;
++    }
++    // KioCG end
++
+     public List<ItemStack> getArmorContents() {
+         return this.armor;
+     }

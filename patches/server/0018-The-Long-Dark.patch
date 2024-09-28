@@ -221,12 +221,12 @@ index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9a90cb9932a8223c4593e28a6394edbd7dbee849..95280590b995174f9ae6136bcfc67aad65006656 100644
+index 76f45ef5690c54b704b1916d1304db88c5dc70e9..1e44afe78f270dbc31525c4c49cd98af427acc76 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -582,6 +582,35 @@ public class WorldConfiguration extends ConfigurationPart {
-     public class KiocgConfig extends ConfigurationPart {
-         public boolean deathItemsOnlyPickedUpByOneself = true;
+@@ -583,6 +583,35 @@ public class WorldConfiguration extends ConfigurationPart {
+         public boolean deathOnlyDropsStoredItems = true;
+         public boolean deathItemsOnlyPickupByOneself = true;
          public boolean removeAutomationGameplay = true;
 +
 +        public TheLongDark theLongDark;
@@ -261,7 +261,7 @@ index 9a90cb9932a8223c4593e28a6394edbd7dbee849..95280590b995174f9ae6136bcfc67aad
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index efbbf9f9b078b0faaf20c980142a1e5404b934f6..dc6552fb554c831e6ae76a6a86bbae9a225f7f40 100644
+index de8f989122d26d220051858cf6159e8ee0184f05..8a26ee52ee38137a5258e5ae3642808bd646eeb5 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -891,7 +891,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple

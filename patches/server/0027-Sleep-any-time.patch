@@ -5,10 +5,10 @@ Subject: [PATCH] Sleep any time
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index ae6c6b3a32ceddcb6636941ce827e78b9d4fc6bf..29f1a8e24e643b6f68aa381d2ad3040fb452d083 100644
+index b794082637e762c7d11818780da71b9b68ad0ba5..8740bc276a4f5d802201fb0f2fdcda8805d4ccd7 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -635,6 +635,9 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -636,6 +636,9 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean babyZombieJockey = true;
              }
          }
@@ -47,7 +47,7 @@ index 14fd6be798f4f3a388dc72dc1690de2b3671d766..4989d2a6ddec45315e1f1c6c651efdb2
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index dc6552fb554c831e6ae76a6a86bbae9a225f7f40..77e1dd00211fc2cad64b17478e0b943795c13392 100644
+index 8a26ee52ee38137a5258e5ae3642808bd646eeb5..1676127fd6f918efdf26d2e0e6c61ef4b7329da3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1512,7 +1512,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple

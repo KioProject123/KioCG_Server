@@ -5,10 +5,10 @@ Subject: [PATCH] Campfire extinguishing
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 95280590b995174f9ae6136bcfc67aad65006656..52c59aea085ca5a0fadd7514fa1caf821450cb2e 100644
+index 1e44afe78f270dbc31525c4c49cd98af427acc76..791466b14e8baaab7ef8a3c03560df290f324535 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -610,6 +610,9 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -611,6 +611,9 @@ public class WorldConfiguration extends ConfigurationPart {
                  public double thirstRegainMultiplierFood = 2.0;
                  public double highTemperatureBiomeThirst = 0.02;
              }

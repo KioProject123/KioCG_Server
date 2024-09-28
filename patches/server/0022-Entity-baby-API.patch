@@ -17,10 +17,10 @@ index 1029b6de6f36b08bf634b4056ef5701383f6f258..16d8ae74f535614b21366244eb741551
                      .register(DespawnRange.class, DespawnRange.SERIALIZER)
                      .register(StringRepresentableSerializer::isValidFor, new StringRepresentableSerializer())
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index a2b838cccfceb98279d58179cb78cc091c4eb29d..5000a16c7e4647b5aa5be7e2190077bb4448d363 100644
+index ecb9308f9fe17c716c6c7c25b60631785d24d952..353923423da06f514f789ecb08e2fcf163261303 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -615,6 +615,18 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -616,6 +616,18 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingTwo = -1;
              public int campfireBoilingWaterTime = 600;
          }

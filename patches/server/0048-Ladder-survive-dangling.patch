@@ -5,10 +5,10 @@ Subject: [PATCH] Ladder survive dangling
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9bc1b34253d69c881d74c8d090dcf5db16954575..c019f3a24df25d3689f6804a77595ac06fb5bb23 100644
+index e47a3467a40fc78a9c8bda2594cdb0e7b8b4ec61..21d181c1d8f33342f2d7da2a2a5a9807d7ca9446 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -671,6 +671,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -672,6 +672,8 @@ public class WorldConfiguration extends ConfigurationPart {
              public String phaseOneMessage = "<red><i>这片区域令你感到不适";
              public String phaseTwoMessage = "<dark_red><i><b>古神在你耳边窃窃私语";
          }
