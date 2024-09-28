@@ -53,7 +53,7 @@ index 96028ad24a8221c2da053eeb184ea41a704d7775..e1a93efc32a716c07bf4c7e81ba5eab7
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
 diff --git a/src/main/java/net/minecraft/world/entity/TamableAnimal.java b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
-index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c2780486b 100644
+index 9aee0569447d351729c26eedbe24d5defe620162..fc0f5fb362253841fffeb6af192bc970e73b9b10 100644
 --- a/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 +++ b/src/main/java/net/minecraft/world/entity/TamableAnimal.java
 @@ -41,6 +41,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
@@ -80,53 +80,33 @@ index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c
      }
  
      @Override
-@@ -258,11 +261,59 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -258,11 +261,39 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
          super.die(damageSource);
      }
  
 +    // KioCG start
-+    public boolean onTheVergeOfDeath() {
++    public boolean nearDeath() {
 +        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dontKillMyPet && this.isTame() && this.getHealth() == Float.MIN_VALUE;
 +    }
 +
 +    @Override
 +    public boolean canBeSeenAsEnemy() {
-+        return !this.onTheVergeOfDeath() && super.canBeSeenAsEnemy();
++        return !this.nearDeath() && super.canBeSeenAsEnemy();
 +    }
 +
 +    @Override
 +    public boolean hurt(DamageSource source, float amount) {
-+        return (amount == Float.MAX_VALUE || !onTheVergeOfDeath()) && super.hurt(source, amount);
++        return (amount == Float.MAX_VALUE || source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY) || !nearDeath()) && super.hurt(source, amount);
 +    }
 +
 +    @Override
 +    public void tick() {
 +        super.tick();
-+        if (this.helpDisplay != null && this.helpDisplay.isRemoved()) {
-+            this.helpDisplay = null;
-+        }
 +    }
 +
-+    @Nullable protected Display helpDisplay = null;
-+
-+    public void addHelpDisplay() {
-+        if (helpDisplay == null) {
-+            final Display.ItemDisplay itemDisplay = this.addRiderDisplay(EntityType.ITEM_DISPLAY, 99, display -> {
-+                display.setItemStack(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BARRIER));
-+                display.setItemTransform(net.minecraft.world.item.ItemDisplayContext.GROUND);
-+                display.setBillboardConstraints(Display.BillboardConstraints.VERTICAL);
-+                display.setTransformation(new com.mojang.math.Transformation(new org.joml.Vector3f(0.0F, 0.5F, 0.0F), null, null, null));
-+            });
-+
-+            if (itemDisplay != null) {
-+                helpDisplay = itemDisplay;
-+            }
-+        }
-+    }
-+
-+    public void removeHelpDisplay() {
-+        if (helpDisplay != null) {
-+            helpDisplay.discard();
++    public void addNearDeathParticles() {
++        if (this.tickCount % 5 == 0) {
++            ((net.minecraft.server.level.ServerLevel) this.level()).sendParticles(ParticleTypes.SOUL, this.getX(), this.getEyeY(), this.getZ(), 1, this.getBbWidth() / 2, this.getBbHeight() / 2, this.getBbWidth() / 2, 0.0);
 +        }
 +    }
 +    // KioCG end
@@ -136,11 +116,11 @@ index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c
      }
  
      public void setOrderedToSit(boolean sitting) {
-+        if (!sitting && onTheVergeOfDeath()) return; // KioCG
++        if (!sitting && nearDeath()) return; // KioCG
          this.orderedToSit = sitting;
      }
  
-@@ -278,7 +329,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -278,7 +309,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
      public boolean shouldTryTeleportToOwner() {
          LivingEntity entityliving = this.getOwner();
  
@@ -149,7 +129,7 @@ index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c
      }
  
      private void teleportToAroundBlockPos(BlockPos pos) {
-@@ -333,6 +384,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -333,6 +364,7 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
      }
  
      public final boolean unableToMoveToOwner() {
@@ -157,14 +137,14 @@ index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c
          return this.isOrderedToSit() || this.isPassenger() || this.mayBeLeashed() || this.getOwner() != null && this.getOwner().isSpectator();
      }
  
-@@ -350,6 +402,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+@@ -350,6 +382,13 @@ public abstract class TamableAnimal extends Animal implements OwnableEntity {
              super(TamableAnimal.this, d0);
          }
  
 +        // KioCG start
 +        @Override
 +        public boolean shouldPanic() {
-+            return !((TamableAnimal) this.mob).onTheVergeOfDeath() && super.shouldPanic();
++            return !((TamableAnimal) this.mob).nearDeath() && super.shouldPanic();
 +        }
 +        // KioCG end
 +
@@ -172,7 +152,7 @@ index 9aee0569447d351729c26eedbe24d5defe620162..dfdcaaabee9767d15ef1f90d12af6a3c
          public void tick() {
              if (!TamableAnimal.this.unableToMoveToOwner() && TamableAnimal.this.shouldTryTeleportToOwner()) {
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
-index 508d4f391fe563453d7bf6782b3082741c358006..fa58ec8288952f7dd546ad979fcff72dd10ed2aa 100644
+index 508d4f391fe563453d7bf6782b3082741c358006..589e925c9c20dc8847201f98e34d15fbae4de22e 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
 @@ -53,7 +53,7 @@ public class StopAttackingIfTargetInvalid {
@@ -180,7 +160,7 @@ index 508d4f391fe563453d7bf6782b3082741c358006..fa58ec8288952f7dd546ad979fcff72d
                          } else if (shouldForgetIfTargetUnreachable && StopAttackingIfTargetInvalid.isTiredOfTryingToReachTarget(entityinsentient, behaviorbuilder_b.tryGet(memoryaccessor1))) {
                              reason = EntityTargetEvent.TargetReason.FORGOT_TARGET;
 -                        } else if (!entityliving.isAlive()) {
-+                        } else if (!entityliving.isAlive() || entityliving instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.onTheVergeOfDeath()) { // KioCG
++                        } else if (!entityliving.isAlive() || entityliving instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.nearDeath()) { // KioCG
                              reason = EntityTargetEvent.TargetReason.TARGET_DIED;
                          } else if (entityliving.level() != entityinsentient.level()) {
                              reason = EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;
@@ -230,7 +210,7 @@ index 15d7be9ed4a973044dd4399db46aaa244730b836..2f98152fdea3349ffe9e15ff6d400118
          if (!bl) {
              if (this.tamable.distanceToSqr(this.owner) <= 16 * 16) this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float)this.tamable.getMaxHeadXRot()); // Paper - Limit pet look distance
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
-index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c2e784b73 100644
+index d59e0044db03ba30d5bab9a8c126b597b7659015..11428cf840d62d709139c755211802c545b68aad 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 @@ -39,7 +39,7 @@ public class MeleeAttackGoal extends Goal {
@@ -238,7 +218,7 @@ index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c
              if (livingEntity == null) {
                  return false;
 -            } else if (!livingEntity.isAlive()) {
-+            } else if (!livingEntity.isAlive() || livingEntity instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.onTheVergeOfDeath()) { // KioCG
++            } else if (!livingEntity.isAlive() || livingEntity instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.nearDeath()) { // KioCG
                  return false;
              } else {
                  this.path = this.mob.getNavigation().createPath(livingEntity, 0);
@@ -247,12 +227,12 @@ index d59e0044db03ba30d5bab9a8c126b597b7659015..95696b7a81ea5454f6b571151ab1149c
          if (livingEntity == null) {
              return false;
 -        } else if (!livingEntity.isAlive()) {
-+        } else if (!livingEntity.isAlive() || livingEntity instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.onTheVergeOfDeath()) { // KioCG
++        } else if (!livingEntity.isAlive() || livingEntity instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal && tamableAnimal.nearDeath()) { // KioCG
              return false;
          } else {
              return !this.followingTargetEvenIfNotSeen
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
-index 5633c5ee29938c0b61121c921cb82342d01329e3..199f939bb6f01370fc8466b12f6c73cc821b2699 100644
+index 5633c5ee29938c0b61121c921cb82342d01329e3..19bf651cf1cb4bc0171b14b45356afb180d649ec 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal.java
 @@ -46,7 +46,7 @@ public class RangedCrossbowAttackGoal<T extends Monster & RangedAttackMob & Cros
@@ -260,32 +240,30 @@ index 5633c5ee29938c0b61121c921cb82342d01329e3..199f939bb6f01370fc8466b12f6c73cc
  
      private boolean isValidTarget() {
 -        return this.mob.getTarget() != null && this.mob.getTarget().isAlive();
-+        return this.mob.getTarget() != null && this.mob.getTarget().isAlive() && (!(this.mob.getTarget() instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal) || !tamableAnimal.onTheVergeOfDeath()); // KioCG
++        return this.mob.getTarget() != null && this.mob.getTarget().isAlive() && (!(this.mob.getTarget() instanceof net.minecraft.world.entity.TamableAnimal tamableAnimal) || !tamableAnimal.nearDeath()); // KioCG
      }
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Cat.java b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-index 797ae2cf1978e224ae5b07ffb889b1786327bf75..12c8c5dad4edcf0429f5f2d6c583878fee8a0865 100644
+index 797ae2cf1978e224ae5b07ffb889b1786327bf75..5163233f2c0a6dcada30ffec19e7ea5bba9ec41c 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Cat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Cat.java
-@@ -269,6 +269,16 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+@@ -269,6 +269,14 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
          }
  
          this.handleLieDown();
 +        // KioCG start
-+        if (this.onTheVergeOfDeath()) {
-+            addHelpDisplay();
++        if (this.nearDeath()) {
++            addNearDeathParticles();
 +            if (!this.isOrderedToSit()) {
 +                this.setOrderedToSit(true);
 +            }
-+        } else {
-+            removeHelpDisplay();
 +        }
 +        // KioCG end
      }
  
      private void handleLieDown() {
-@@ -409,6 +419,18 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
+@@ -409,6 +417,18 @@ public class Cat extends TamableAnimal implements VariantHolder<Holder<CatVarian
                      }
  
                      return InteractionResult.sidedSuccess(this.level().isClientSide());
@@ -305,10 +283,10 @@ index 797ae2cf1978e224ae5b07ffb889b1786327bf75..12c8c5dad4edcf0429f5f2d6c583878f
  
                  enuminteractionresult = super.mobInteract(player, hand);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Parrot.java b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..32e5bdf96439b4e8581e9085251c328c8fa684db 100644
+index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..3169583c4624cc832a458b37daf57605bb235df6 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Parrot.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Parrot.java
-@@ -201,6 +201,21 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -201,6 +201,19 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
          this.calculateFlapping();
      }
  
@@ -316,13 +294,11 @@ index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..32e5bdf96439b4e8581e9085251c328c
 +    @Override
 +    public void tick() {
 +        super.tick();
-+        if (this.onTheVergeOfDeath()) {
-+            addHelpDisplay();
++        if (this.nearDeath()) {
++            addNearDeathParticles();
 +            if (!this.isOrderedToSit()) {
 +                this.setOrderedToSit(true);
 +            }
-+        } else {
-+            removeHelpDisplay();
 +        }
 +    }
 +    // KioCG end
@@ -330,7 +306,7 @@ index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..32e5bdf96439b4e8581e9085251c328c
      @Override
      public void setRecordPlayingNearby(BlockPos songPosition, boolean playing) {
          this.jukebox = songPosition;
-@@ -271,7 +286,7 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
+@@ -271,7 +284,7 @@ public class Parrot extends ShoulderRidingEntity implements VariantHolder<Parrot
              }
  
              return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -340,29 +316,27 @@ index b87dfc9e103e78a3a576c8ef2d8bc455c75278d7..32e5bdf96439b4e8581e9085251c328c
                  if (!this.level().isClientSide) {
                      this.setOrderedToSit(!this.isOrderedToSit());
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-index 0c51106537876f704e382a9afbcd2d7e083cb480..d33288338237d999f53cf94adf841e52d306714b 100644
+index 0c51106537876f704e382a9afbcd2d7e083cb480..b573b24fc014c44b2117d71214151606517a4394 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
-@@ -335,6 +335,18 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -335,6 +335,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
                  }
              }
  
 +            // KioCG start
-+            if (this.onTheVergeOfDeath()) {
-+                addHelpDisplay();
++            if (this.nearDeath()) {
++                addNearDeathParticles();
 +                if (!this.isOrderedToSit()) {
 +                    this.navigation.stop();
 +                    this.setTarget((LivingEntity) null);
 +                    this.setOrderedToSit(true);
 +                }
-+            } else {
-+                removeHelpDisplay();
 +            }
 +            // KioCG end
          }
      }
  
-@@ -470,6 +482,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
+@@ -470,6 +480,16 @@ public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Hol
  
                  this.heal(2.0F * f, EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
                  return InteractionResult.sidedSuccess(this.level().isClientSide());
