@@ -5,7 +5,7 @@ Subject: [PATCH] The Long Dark
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index c3c332d8de70018bbe80555c07b0046287862712..e086eec475174d8b804c91d617ed5c9149ec556f 100644
+index 47e2ea0c2f6c760f131db13dea37b36e75406df4..54f2446891f1863f871dcb5337b08f6fe18759af 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -3857,6 +3857,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM

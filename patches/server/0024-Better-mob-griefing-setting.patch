@@ -18,7 +18,7 @@ index 1b2d41a6c6f149701c8a78f3d345f45069f1f857..8490631bdf9a7900d5631d501426e435
          }
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 87955d252206816c255fe3c6948876c1d5216863..96028ad24a8221c2da053eeb184ea41a704d7775 100644
+index a37ab1103ad00965c3f36d8b49f4fb8fd78e5d07..0b348c24742559aa5f0250d416e4f2101522f66b 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1911,7 +1911,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -359,10 +359,10 @@ index 28a65f2a9ef441ae96a7a635e0695b14ce2ee367..1e860edbf2c9e1592b80c930660f91c1
              // CraftBukkit start - fire ExplosionPrimeEvent
              ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index de64de5d1328d3e0826c9990eb7c7eca5088cb9c..55bdcd7ed019acce514c05f83b8a96e14f288d19 100644
+index 10ade433c083851d9ea4797c6ec618db122229f9..2663981e5c7c1edb1b2918b5e2d6a28ceb66b173 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -367,7 +367,7 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -364,7 +364,7 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      public boolean mayInteract(Level world, BlockPos pos) {
          Entity entity = this.getOwner();
  
@@ -400,10 +400,10 @@ index bbf21ea433f9e3963aac0ede597ed8d3c8e50ed8..40e97c72ec7965a06af7de001747372e
  
              if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.getLeaderBannerInstance(this.mob.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)))) {
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index ad57bf49476192dea6a7367cbd0ad3f11e142e1b..8c87fe848e887eb81aeed2186353863f1f98fd60 100644
+index f696afd7e241bf1966a2d505b5d59bff824b43e4..e2d83c8895193f2e8759ad0a016b82338a87a5e5 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
-@@ -830,7 +830,7 @@ public class Explosion {
+@@ -831,7 +831,7 @@ public class Explosion {
      }
  
      public boolean canTriggerBlocks() {
@@ -426,10 +426,10 @@ index 89e327bc3a45879fe68887c7aadb077f31a770eb..617acbe6f4a5527df813c2ff649af48f
      public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBSPAWNING = GameRules.register("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.create(true));
      public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBLOOT = GameRules.register("doMobLoot", GameRules.Category.DROPS, GameRules.BooleanValue.create(true));
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 4816703560fdc7dc6ad658ed516e5c6ec0f8cca8..1dfa2d15581ad47edb5ffa58b34694c3e971421f 100644
+index 7851ce4fc20e6773957fdb99c1c9e17a0f40289c..8ed9cf1f11efe4e35b5a608a271b611653da101b 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -1487,7 +1487,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable, ca.spottedl
+@@ -1503,7 +1503,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable, ca.spottedl
                  explosion_effect = this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
                  break;
              case 2:

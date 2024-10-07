@@ -193,7 +193,7 @@ index cff1b5e0e3fd32d82157d5f13d83d4abdfad7378..35501b3cca40dbe40ce4eed0edaf4a58
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 2280004638fd19ed018cb3e77d53a018b34ec516..892f02475976203abdd472aa02b80a9bfe48f752 100644
+index 2b43337ac63d051718a2074fcc46e128a1d65129..64be06ad25b0b2af3b5b18fc2aa9c1e3b39a328f 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -118,13 +118,13 @@ public class Zombie extends Monster {

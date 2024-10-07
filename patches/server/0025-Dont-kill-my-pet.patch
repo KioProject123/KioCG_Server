@@ -5,10 +5,10 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 6731c73a20d1ff90311754c5332940288eea428b..2b9642316916a273cb3b1241db0c6f27e7deb139 100644
+index 8bb51312cc6f63b5d85c2e0cd494af89e61850b1..a914bc20ddaf801b29a0e9c6a44a985ce41de8d2 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -435,6 +435,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -442,6 +442,10 @@ public class GlobalConfiguration extends ConfigurationPart {
              public boolean repairNoLevelCost = true;
              public boolean renameNoLevelCost = true;
          }
@@ -32,7 +32,7 @@ index f56e5c0f53f9b52a9247b9be9265b949494fc924..b622a82986efd7a6d7cd5491f3ba2569
      public static <T> TicketType<T> create(String name, Comparator<T> argumentComparator) {
          return new TicketType<>(name, argumentComparator, 0L);
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 96028ad24a8221c2da053eeb184ea41a704d7775..e1a93efc32a716c07bf4c7e81ba5eab74c0659e5 100644
+index 0b348c24742559aa5f0250d416e4f2101522f66b..dfdbff414d2ed50b59b8d31f150fe800a7919d1c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2495,7 +2495,15 @@ public abstract class LivingEntity extends Entity implements Attackable {

@@ -31,10 +31,10 @@ index e3a5f1ec376319bdfda87fa27ae217bff3914292..26c6a95966a7751cc22e25092bd6cced
  
      @Override
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 690086adcb1f87adc0b3ab664fde735ad3e1093a..e38bd355023b2b0f2326f79ecf039f555ccba55a 100644
+index a9dd0e5216e95afd98fd2200d110e2cc0b1b0dca..f48ff489ee78f06b342d60ccbebbba45f3816ca3 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -357,4 +357,12 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -364,4 +364,12 @@ public class GlobalConfiguration extends ConfigurationPart {
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
@@ -48,10 +48,10 @@ index 690086adcb1f87adc0b3ab664fde735ad3e1093a..e38bd355023b2b0f2326f79ecf039f55
 +    // KioCG end
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 790e3167cfa2511ef2fc707d9b9aa681a78d8ba0..9c1220f57a9bfe8729316c722976342f882dccf2 100644
+index fd3b1c10695634f65c7291016bf671c084bc4d57..de703d6b99bedee7d733561428c9157942c28b2e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +575,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -578,4 +578,12 @@ public class WorldConfiguration extends ConfigurationPart {
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -87,10 +87,10 @@ index dd56c8e041116ef3602a9f89c998c8208ab89b51..c5592d288325e35f4c7150a8b2696954
              DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 7267591a31bcfc4a42d5bca99b1f2677bd1253cc..5335907c1d28ae27c9c00032d10a4db680e274f2 100644
+index 5e2c4969e77c669acbb4a13c07033cb267c3d586..c81e9208a40e9b22d46fb144dfa9149b28833230 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1389,7 +1389,7 @@ public abstract class PlayerList {
+@@ -1395,7 +1395,7 @@ public abstract class PlayerList {
          // Paper end
          boolean flag = this.verifyChatTrusted(message);
  

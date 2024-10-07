@@ -5,10 +5,10 @@ Subject: [PATCH] Campfire boiling water
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 255a996d5e9a9f95056254dbe8704f07d8ead179..3e1fe24715365486ec13fcb0feaa98cda269190b 100644
+index b677db8422b291c5d88f9a525584c0e89db73226..0bb261af69004df183ab6bfb7389aaf726c86fa7 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -614,6 +614,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -617,6 +617,7 @@ public class WorldConfiguration extends ConfigurationPart {
  
              public int campfireExtinguishingOne = -1;
              public int campfireExtinguishingTwo = -1;

@@ -5,10 +5,10 @@ Subject: [PATCH] Vanilla recipe excludes model items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index e38bd355023b2b0f2326f79ecf039f555ccba55a..d3bc26a8f4ffb26c73d5b2079806e2dad0cc8433 100644
+index f48ff489ee78f06b342d60ccbebbba45f3816ca3..0b224fe0485f866de9191f035e58e98f010bbf6c 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -363,6 +363,66 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -370,6 +370,66 @@ public class GlobalConfiguration extends ConfigurationPart {
  
      public class KiocgConfig extends ConfigurationPart {
          public String feedbackForwardingSenderName = "MOSS";
@@ -172,10 +172,10 @@ index b93c118d957f0a2f40e2f31fd6400bd69438cf72..7973578e3a2b53ecd1d0f0024eb69289
          }
  
 diff --git a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-index eb2cdb36366e376b4e91aea847170b82ca26d274..925b9de4de9f3f91c62dcdc460c6fe74a36f2569 100644
+index 6ec207e91f93b3ab625515dc75367ba399818876..f1d0bf7075e9c54a441134f7f5668ebc0db3bcb8 100644
 --- a/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/BrewingStandMenu.java
-@@ -177,6 +177,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+@@ -190,6 +190,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
          }
  
          public static boolean mayPlaceItem(ItemStack stack, PotionBrewing potionBrewing) { // Paper - custom potion mixes
@@ -183,7 +183,7 @@ index eb2cdb36366e376b4e91aea847170b82ca26d274..925b9de4de9f3f91c62dcdc460c6fe74
              return stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE) || potionBrewing.isCustomInput(stack); // Paper - Custom Potion Mixes
          }
      }
-@@ -192,6 +193,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+@@ -205,6 +206,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
  
          @Override
          public boolean mayPlace(ItemStack stack) {
@@ -191,7 +191,7 @@ index eb2cdb36366e376b4e91aea847170b82ca26d274..925b9de4de9f3f91c62dcdc460c6fe74
              return this.potionBrewing.isIngredient(stack);
          }
      }
-@@ -208,6 +210,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
+@@ -221,6 +223,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
          }
  
          public static boolean mayPlaceItem(ItemStack stack) {
@@ -453,10 +453,10 @@ index 2ddf349fde5b310ec3f74baee1f3d33e09d5286c..795bf8229113a090fb2a5540103d7e61
      @Override
      public org.bukkit.Location getLocation() {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index a2fafef89d5354e2cb02f5672810909950a57777..0026bee282e49ce983563b58c3117eee01846b66 100644
+index 0a93bacd62249bae1800ff306b8a7c765b0e5a8b..114f909c3fcdc90ea9187a9209203f4514fc08b2 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -239,6 +239,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -249,6 +249,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
                  ItemStack itemstack1 = (ItemStack) slots.get(i);
  
                  if (!itemstack1.isEmpty() && brewingRecipeRegistry.hasMix(itemstack1, itemstack)) {
@@ -464,7 +464,7 @@ index a2fafef89d5354e2cb02f5672810909950a57777..0026bee282e49ce983563b58c3117eee
                      return true;
                  }
              }
-@@ -255,7 +256,11 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -265,7 +266,11 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          InventoryHolder owner = tileentitybrewingstand.getOwner();
          List<org.bukkit.inventory.ItemStack> brewResults = new ArrayList<>(3);
          for (int i = 0; i < 3; ++i) {
@@ -477,7 +477,7 @@ index a2fafef89d5354e2cb02f5672810909950a57777..0026bee282e49ce983563b58c3117eee
          }
  
          if (owner != null) {
-@@ -317,9 +322,10 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -327,9 +332,10 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
      public boolean canPlaceItem(int slot, ItemStack stack) {
          PotionBrewing potionbrewer = this.level != null ? this.level.potionBrewing() : PotionBrewing.EMPTY; // Paper - move up
          if (slot == 3) {

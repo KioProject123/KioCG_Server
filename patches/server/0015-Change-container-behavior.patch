@@ -178,10 +178,10 @@ index fb4f57b2ed17ff9b4853e1ba2aac7a002989e5c8..a394e06d24cd99f672f762f75260c743
      @Override
      protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 0063bb973e77248bdfc541336e11b0d0f25cb7d2..5dc07c3d434858b997341102c19522c73d72d17e 100644
+index 4c215a3b599d778471ade29ad199bb6b0f455593..17a2ab09dd3780fa09bebfec540d639186eaea32 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -86,7 +86,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -87,7 +87,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      public BrewingStandBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.BREWING_STAND, pos, state);
@@ -190,7 +190,7 @@ index 0063bb973e77248bdfc541336e11b0d0f25cb7d2..5dc07c3d434858b997341102c19522c7
          this.dataAccess = new ContainerData() {
              @Override
              public int get(int index) {
-@@ -150,6 +150,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -161,6 +161,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          if (blockEntity.brewTime <= 0 && !blockEntity.shouldTick) return; else blockEntity.shouldTick = false; // KioCG - 优化未燃烧的tick
          ItemStack itemstack = (ItemStack) blockEntity.items.get(4);
  
@@ -198,7 +198,7 @@ index 0063bb973e77248bdfc541336e11b0d0f25cb7d2..5dc07c3d434858b997341102c19522c7
          if (blockEntity.fuel <= 0 && itemstack.is(Items.BLAZE_POWDER)) {
              // CraftBukkit start
              BrewingStandFuelEvent event = new BrewingStandFuelEvent(CraftBlock.at(world, pos), CraftItemStack.asCraftMirror(itemstack), 20);
-@@ -275,9 +276,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -285,9 +286,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          }
          // CraftBukkit end
  
@@ -221,7 +221,7 @@ index 0063bb973e77248bdfc541336e11b0d0f25cb7d2..5dc07c3d434858b997341102c19522c7
                  nonnulllist.set(i, CraftItemStack.asNMSCopy(brewResults.get(i)));
              } else {
                  nonnulllist.set(i, ItemStack.EMPTY);
-@@ -285,21 +299,41 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -295,21 +309,41 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
              // CraftBukkit end
          }
  
@@ -266,7 +266,7 @@ index 0063bb973e77248bdfc541336e11b0d0f25cb7d2..5dc07c3d434858b997341102c19522c7
      @Override
      protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
          super.loadAdditional(nbt, registryLookup);
-@@ -343,6 +377,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -353,6 +387,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
      @Override
      public int[] getSlotsForFace(Direction side) {

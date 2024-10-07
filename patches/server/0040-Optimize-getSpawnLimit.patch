@@ -5,7 +5,7 @@ Subject: [PATCH] Optimize getSpawnLimit
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 404d277f34052a82e3c8d4d3ccff8578a3dba4fd..89d94915caf5c8905a6b229f10a2c47d74dcabcb 100644
+index 164d5f0729b680b11c602525a51c51a4c48ca181..181a9625c38992db3388ac75b865bd2bb0eff4a3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -289,7 +289,7 @@ public final class CraftServer implements Server {
@@ -18,7 +18,7 @@ index 404d277f34052a82e3c8d4d3ccff8578a3dba4fd..89d94915caf5c8905a6b229f10a2c47d
      private WarningState warningState = WarningState.DEFAULT;
      public ApiVersion minimumAPI;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index cd3381d8225e0322b3e285b3c4aa0a1265a91cc0..249548693591f684b2e3b91e74901a9e4cde7f22 100644
+index 33e4818ba5a90d78d69baad9f6b1be1b1382e9f3..0d2417b18d8719ee458a81de0738a50dccf127f8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -160,7 +160,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
@@ -29,4 +29,4 @@ index cd3381d8225e0322b3e285b3c4aa0a1265a91cc0..249548693591f684b2e3b91e74901a9e
 +    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
      private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
- 
+     // Paper start - void damage configuration

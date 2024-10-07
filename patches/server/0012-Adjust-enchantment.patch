@@ -5,10 +5,10 @@ Subject: [PATCH] Adjust enchantment
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index d3bc26a8f4ffb26c73d5b2079806e2dad0cc8433..337123deeb20f561e176ba92f41929a908bc4b6e 100644
+index 0b224fe0485f866de9191f035e58e98f010bbf6c..fef19857b670319613f9183de680dd23d6d1a0e8 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -423,6 +423,11 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -430,6 +430,11 @@ public class GlobalConfiguration extends ConfigurationPart {
                  }
              }
          }

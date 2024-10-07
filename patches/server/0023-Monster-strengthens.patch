@@ -5,10 +5,10 @@ Subject: [PATCH] Monster strengthens
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index dbe5ef4305b853711b4ec5840c702bf8483fb6f4..c09003af3db60b3873a6223d7eb1e24c3c7e4dc4 100644
+index efc8eae7a81c0746cadb56302fee009a8fbbc595..5dde031a7bb96feb473eed28b42164abc5cd6c21 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -627,6 +627,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -630,6 +630,14 @@ public class WorldConfiguration extends ConfigurationPart {
                  map.defaultReturnValue(1.5);
                  map.put(EntityType.SKELETON, 1.5);
              });
@@ -69,7 +69,7 @@ index a30fb47559eb74b7fe634678e63a85e7e2cad9a4..de9f64f8e7247fe27b960b55b9d9837a
  
          @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index c7f445ec7ec07f09ebf4b33369a68affe20455eb..169131aef6d598a9c7cbf68b3b836d10806fdbbc 100644
+index 01cdca299beed6ef8b9e39cb4eeb4b78ad3c56ba..c13f48e3db6726aacd07700cc07127ec4c0e8561 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -117,6 +117,16 @@ public class Zombie extends Monster {
@@ -89,7 +89,7 @@ index c7f445ec7ec07f09ebf4b33369a68affe20455eb..169131aef6d598a9c7cbf68b3b836d10
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0D, false));
          // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, true, 4, this::canBreakDoors)); // KioCG - 优化实体行为
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-@@ -308,6 +318,61 @@ public class Zombie extends Monster {
+@@ -305,6 +315,61 @@ public class Zombie extends Monster {
  
      }
  

@@ -5,10 +5,10 @@ Subject: [PATCH] Death drop protection
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 9c1220f57a9bfe8729316c722976342f882dccf2..183b2c46c1a95f1d3fb4cdf59c9dffae7f8a51aa 100644
+index de703d6b99bedee7d733561428c9157942c28b2e..e1fcb9a2464001a9e97ca3baa888f93a3f9a8946 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -580,7 +580,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -583,7 +583,8 @@ public class WorldConfiguration extends ConfigurationPart {
      public KiocgConfig kiocgConfig;
  
      public class KiocgConfig extends ConfigurationPart {
@@ -91,7 +91,7 @@ index 6e66141dca61f777b354854b5d0bac2570b8bf3b..d60c29663532a4e0e9f5201f72c13e16
          return this.armor;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 77ef27f9254235180a8596c6c8c4af750dc759d1..4062df9d0e2ad68b2f0bc7b6ed92c4dab64272c5 100644
+index 4632eb883e9f5efde520ee543bcad25827c0da2c..f5408c4bc12e87d80d7137f0a7c719417ba68591 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -1021,10 +1021,16 @@ public class CraftEventFactory {

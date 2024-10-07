@@ -5,10 +5,10 @@ Subject: [PATCH] Fixed cumulative cost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 337123deeb20f561e176ba92f41929a908bc4b6e..6731c73a20d1ff90311754c5332940288eea428b 100644
+index fef19857b670319613f9183de680dd23d6d1a0e8..8bb51312cc6f63b5d85c2e0cd494af89e61850b1 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -428,6 +428,13 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -435,6 +435,13 @@ public class GlobalConfiguration extends ConfigurationPart {
          public class Enchant extends ConfigurationPart {
              public boolean allowUnsafeCommand = true;
          }

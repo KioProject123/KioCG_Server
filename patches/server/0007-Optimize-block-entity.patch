@@ -66,10 +66,10 @@ index 4546b7d36d031647098db967c675579fcbe86c5c..d3a451158dd46be0d58150a1c956dc8c
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 0026bee282e49ce983563b58c3117eee01846b66..0063bb973e77248bdfc541336e11b0d0f25cb7d2 100644
+index 114f909c3fcdc90ea9187a9209203f4514fc08b2..4c215a3b599d778471ade29ad199bb6b0f455593 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -145,7 +145,9 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -156,7 +156,9 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          this.items = inventory;
      }
  
@@ -79,15 +79,15 @@ index 0026bee282e49ce983563b58c3117eee01846b66..0063bb973e77248bdfc541336e11b0d0
          ItemStack itemstack = (ItemStack) blockEntity.items.get(4);
  
          if (blockEntity.fuel <= 0 && itemstack.is(Items.BLAZE_POWDER)) {
-@@ -175,6 +177,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -184,6 +186,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
  
          if (flag1) {
-             blockEntity.brewTime -= elapsedTicks;
+             --blockEntity.brewTime; // Paper - remove anti tick skipping measures / wall time - revert to vanilla
 +            blockEntity.shouldTick = true; // KioCG
              boolean flag2 = blockEntity.brewTime <= 0; // == -> <=
              // CraftBukkit end
  
-@@ -318,6 +321,14 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -328,6 +331,14 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          nbt.putByte("Fuel", (byte) this.fuel);
      }
  

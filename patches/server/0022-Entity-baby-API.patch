@@ -17,10 +17,10 @@ index 1029b6de6f36b08bf634b4056ef5701383f6f258..16d8ae74f535614b21366244eb741551
                      .register(DespawnRange.class, DespawnRange.SERIALIZER)
                      .register(StringRepresentableSerializer::isValidFor, new StringRepresentableSerializer())
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 3e1fe24715365486ec13fcb0feaa98cda269190b..dbe5ef4305b853711b4ec5840c702bf8483fb6f4 100644
+index 0bb261af69004df183ab6bfb7389aaf726c86fa7..efc8eae7a81c0746cadb56302fee009a8fbbc595 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -616,6 +616,18 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -619,6 +619,18 @@ public class WorldConfiguration extends ConfigurationPart {
              public int campfireExtinguishingTwo = -1;
              public int campfireBoilingWaterTime = 600;
          }
@@ -54,7 +54,7 @@ index 3dc3609d13a7b823d15384d1c385b68eeb933d26..7cbb0cce42c1a63b10f6e1c3f0c006d7
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 9613724b4652227ef7e0806fa6c2ac73e475320d..87955d252206816c255fe3c6948876c1d5216863 100644
+index 91176b3f928de7db98e69bde28e4db144c7c0775..a37ab1103ad00965c3f36d8b49f4fb8fd78e5d07 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -286,6 +286,11 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -252,7 +252,7 @@ index aa458ede5bd645ebf524238179edb33f41bd683f..563e287a5e0b970f5dcfa3a7f20bf939
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zombie.java b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
-index 892f02475976203abdd472aa02b80a9bfe48f752..c7f445ec7ec07f09ebf4b33369a68affe20455eb 100644
+index 64be06ad25b0b2af3b5b18fc2aa9c1e3b39a328f..01cdca299beed6ef8b9e39cb4eeb4b78ad3c56ba 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zombie.java
 @@ -189,7 +189,8 @@ public class Zombie extends Monster {
@@ -297,10 +297,10 @@ index 9cea8da84f39bb3f687139ef213ccea358724dee..4e4a7c346359468c0754285a023bbf67
                  } else {
                      ((Mob) object).moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-index beb6ad312028adb14053e3f019a4fcf6c9149373..3400312af794b6f7b782047a0862781b1660c032 100644
+index 4750df7354ccb5afd0910efe0415f3a2eb19a546..04e6db8e850464f98e1ab985ae15d1026f736d08 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -1163,4 +1163,31 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+@@ -1192,4 +1192,31 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
          return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
      }
      // Paper end - Expose canUseSlot
@@ -333,7 +333,7 @@ index beb6ad312028adb14053e3f019a4fcf6c9149373..3400312af794b6f7b782047a0862781b
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 4062df9d0e2ad68b2f0bc7b6ed92c4dab64272c5..6a59ff04056586ac91e25d65b49f3aa3857cbfac 100644
+index f5408c4bc12e87d80d7137f0a7c719417ba68591..6e0d87d695aa7ee301124f163dcc9ed77e5ff915 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 @@ -619,6 +619,7 @@ public class CraftEventFactory {
