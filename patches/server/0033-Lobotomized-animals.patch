@@ -64,10 +64,10 @@ index 0000000000000000000000000000000000000000..bea567c860da763af2fd43001aa785f4
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 184ad996d84d4c762849381c2e16fd194891076b..9a4047657cd25705f19ef5adff1050eb35b9a8f6 100644
+index 5b648cb31441aee52fa82a6f9db70eac39e6a423..e62f9d9151a58e63292a11bb1e8ed54469aa1f1e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -641,6 +641,7 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -640,6 +640,7 @@ public class WorldConfiguration extends ConfigurationPart {
              public class Animal extends ConfigurationPart {
                  public boolean villagerCanBreed = false;
                  public double feedingHugeChance = 0.01;

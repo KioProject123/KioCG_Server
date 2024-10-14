@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Wed, 5 Jun 2024 15:58:27 +0800
-Subject: [PATCH] Configurable persistent when picked up items
+Subject: [PATCH] Monster persistent when picked up items
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index c793628e1729a9a647106a9667c4d38d2e18f0b3..169b3756317e4f62e411d359204131b359a80d5c 100644
+index dd0386b9f8d3e9b9e524d71f011b49ea42b8169b..4b0a2a121e3262d7ee02f83150b7d5445bc72fe0 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -644,6 +644,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -643,6 +643,8 @@ public class WorldConfiguration extends ConfigurationPart {
                      public boolean canDropZombieSkull = true;
                      public boolean canDropPiglinSkull = true;
                  }

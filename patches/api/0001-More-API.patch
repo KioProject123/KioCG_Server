@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Fri, 26 Jul 2024 22:23:36 +0800
-Subject: [PATCH] Override upstream patches
+Subject: [PATCH] More API
 
 
 diff --git a/src/main/java/org/bukkit/NamespacedKey.java b/src/main/java/org/bukkit/NamespacedKey.java
@@ -30,3 +30,16 @@ index 52a2763773b234c581b2dcc6f0584f8d8b0fbc60..d429e15d5915ca7af2cefa3b7a404dc9
      /**
       * Get a NamespacedKey from the supplied string with a default namespace if
       * a namespace is not defined. This is a utility method meant to fetch a
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 6246251caf2c6f025c824b8e7a944b8d48751fa1..dff5f92149a6c7903b6908efbc970de834b17ce1 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -626,6 +626,8 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+     @NotNull
+     public List<Player> matchPlayer(@NotNull String name);
+ 
++    public boolean isValidPlayerName(@NotNull String name); // KioCG
++
+     /**
+      * Gets the player with the given UUID.
+      *

@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Sat, 23 Mar 2024 11:28:48 +0800
+Subject: [PATCH] Block property adjustment
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/Blocks.java b/src/main/java/net/minecraft/world/level/block/Blocks.java
+index 223259e7a09ada681b6181c898f6857888594f85..b7eecd75eeb741dacde2e29c5a946c5bfa29e3af 100644
+--- a/src/main/java/net/minecraft/world/level/block/Blocks.java
++++ b/src/main/java/net/minecraft/world/level/block/Blocks.java
+@@ -736,6 +736,7 @@ public class Blocks {
+         "note_block",
+         new NoteBlock(
+             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).sound(SoundType.WOOD).strength(0.8F).ignitedByLava()
++            .pushReaction(PushReaction.BLOCK) // KioCG
+         )
+     );
+     public static final Block WHITE_BED = register("white_bed", bed(DyeColor.WHITE));
+@@ -2582,6 +2583,7 @@ public class Blocks {
+         "brown_mushroom_block",
+         new HugeMushroomBlock(
+             BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).instrument(NoteBlockInstrument.BASS).strength(0.2F).sound(SoundType.WOOD).ignitedByLava()
++            .pushReaction(PushReaction.BLOCK) // KioCG
+         )
+     );
+     public static final Block RED_MUSHROOM_BLOCK = register(
+@@ -2593,12 +2595,14 @@ public class Blocks {
+                 .strength(0.2F)
+                 .sound(SoundType.WOOD)
+                 .ignitedByLava()
++                .pushReaction(PushReaction.BLOCK) // KioCG
+         )
+     );
+     public static final Block MUSHROOM_STEM = register(
+         "mushroom_stem",
+         new HugeMushroomBlock(
+             BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).instrument(NoteBlockInstrument.BASS).strength(0.2F).sound(SoundType.WOOD).ignitedByLava()
++            .pushReaction(PushReaction.BLOCK) // KioCG
+         )
+     );
+     public static final Block IRON_BARS = register(
+@@ -2778,7 +2782,7 @@ public class Blocks {
+         )
+     );
+     public static final Block CAULDRON = register(
+-        "cauldron", new CauldronBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0F).noOcclusion())
++        "cauldron", new CauldronBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0F).noOcclusion().pushReaction(PushReaction.BLOCK)) // KioCG
+     );
+     public static final Block WATER_CAULDRON = register(
+         "water_cauldron", new LayeredCauldronBlock(Biome.Precipitation.RAIN, CauldronInteraction.WATER, BlockBehaviour.Properties.ofLegacyCopy(CAULDRON))

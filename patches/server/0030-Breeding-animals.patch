@@ -5,10 +5,10 @@ Subject: [PATCH] Breeding animals
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 555055c897e40eb4431a78772168212d1612c405..184ad996d84d4c762849381c2e16fd194891076b 100644
+index 0c11638c12a36966cb858fd83a0bf318e67a31e8..5b648cb31441aee52fa82a6f9db70eac39e6a423 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -637,6 +637,12 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -636,6 +636,12 @@ public class WorldConfiguration extends ConfigurationPart {
                  public boolean babyZombieJockey = true;
              }
  
