@@ -5,13 +5,14 @@ Subject: [PATCH] Campfire boiling water
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index b677db8422b291c5d88f9a525584c0e89db73226..0bb261af69004df183ab6bfb7389aaf726c86fa7 100644
+index 40a4317a8ee4d8c98e2801d706661980afa29c9c..127f0369f70cd2b80bd8f69ff43f99e929389698 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -617,6 +617,7 @@ public class WorldConfiguration extends ConfigurationPart {
- 
-             public int campfireExtinguishingOne = -1;
-             public int campfireExtinguishingTwo = -1;
+@@ -614,6 +614,8 @@ public class WorldConfiguration extends ConfigurationPart {
+                 public double thirstRegainMultiplierFood = 2.0;
+                 public double highTemperatureBiomeThirst = 0.02;
+             }
++
 +            public int campfireBoilingWaterTime = 600;
          }
      }
@@ -41,26 +42,18 @@ index 66dabb34eb4dfdd526ee1800d04aeda0cc99fcda..098fcb24a5174c173c57bfdd9afb5fb8
          if (sendGameEvent) world.gameEvent((Holder) GameEvent.BLOCK_CHANGE, blockposition, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
          return true;
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-index 4d29c609c44fe2100c132cbac8abfdef4d0b201f..21701477e2cd0b24301bd8f4b268d035b95caf36 100644
+index 20d4cda6396601621b684f6048afffba650598bf..59b948e68dac37856eaf66572fed3842d95d8419 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -48,6 +48,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -47,6 +47,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+     public final int[] cookingTime;
      private final RecipeManager.CachedCheck<SingleRecipeInput, CampfireCookingRecipe> quickCheck;
      public final boolean[] stopCooking; // Paper - Add more Campfire API
-     private int litTicks = 0; // KioCG
 +    private int cauldronTemperature = 0; // KioCG
  
      public CampfireBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.CAMPFIRE, pos, state);
-@@ -76,6 +77,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
-                 System.arraycopy(campfire.cookingProgress, 0, soulCampfire.cookingProgress, 0, campfire.cookingProgress.length);
-                 System.arraycopy(campfire.cookingTime, 0, soulCampfire.cookingTime, 0, campfire.cookingTime.length);
-                 System.arraycopy(campfire.stopCooking, 0, soulCampfire.stopCooking, 0, campfire.stopCooking.length);
-+                soulCampfire.cauldronTemperature = campfire.cauldronTemperature;
-             } else {
-                 world.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
-             }
-@@ -157,6 +159,32 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -134,6 +135,35 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
              }
          }
  
@@ -87,13 +80,16 @@ index 4d29c609c44fe2100c132cbac8abfdef4d0b201f..21701477e2cd0b24301bd8f4b268d035
 +                double z = (double) above.getZ() + 0.5;
 +                ((net.minecraft.server.level.ServerLevel) world).sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 10, 0.25, 0.1, 0.25, 1.0);
 +            }
++        } else if (campfire.cauldronTemperature > 0) {
++            campfire.cauldronTemperature = 0;
++            flag = true;
 +        }
 +        // KioCG end
 +
          if (flag) {
              setChanged(world, pos, state);
          }
-@@ -172,6 +200,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -149,6 +179,12 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                  campfire.cookingProgress[i] = Mth.clamp(campfire.cookingProgress[i] - 2, 0, campfire.cookingTime[i]);
              }
          }
@@ -106,7 +102,7 @@ index 4d29c609c44fe2100c132cbac8abfdef4d0b201f..21701477e2cd0b24301bd8f4b268d035
  
          if (flag) {
              setChanged(world, pos, state);
-@@ -189,12 +223,27 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -166,12 +202,27 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
                  campfire.cookingProgress[i] = (int) 0;
              }
          }
@@ -134,18 +130,19 @@ index 4d29c609c44fe2100c132cbac8abfdef4d0b201f..21701477e2cd0b24301bd8f4b268d035
      // KioCG end
  
      public static void particleTick(Level world, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
-@@ -258,6 +307,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -233,6 +284,8 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+             System.arraycopy(cookingState, 0, this.stopCooking, 0, Math.min(this.stopCooking.length, abyte.length));
+         }
          // Paper end - Add more Campfire API
- 
-         if (nbt.contains("KioCG.LitTicks", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) litTicks = nbt.getInt("KioCG.LitTicks"); // KioCG
++
 +        if (nbt.contains("KioCG.CauldronTemperature", org.bukkit.craftbukkit.util.CraftMagicNumbers.NBT.TAG_INT)) cauldronTemperature = nbt.getInt("KioCG.CauldronTemperature"); // KioCG
      }
  
      @Override
-@@ -274,6 +324,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+@@ -248,6 +301,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+         }
          nbt.putByteArray("Paper.StopCooking", cookingState);
          // Paper end - Add more Campfire API
-         nbt.putInt("KioCG.LitTicks", litTicks); // KioCG
 +        nbt.putInt("KioCG.CauldronTemperature", cauldronTemperature); // KioCG
      }
  

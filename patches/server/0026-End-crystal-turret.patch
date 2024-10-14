@@ -5,10 +5,10 @@ Subject: [PATCH] End crystal turret
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index 501ed9e78f297454e2907d2060e791a386f57bd5..5a48830ab9d63e3412d421cf027cb144d4e5b950 100644
+index 5acf032be04798b16dff06a7cbaf282bb6345fca..692fc3394eea003fb4338f14ea326cb26fd7dfe3 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -638,6 +638,11 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -636,6 +636,11 @@ public class WorldConfiguration extends ConfigurationPart {
                  public double zombiesSkinnedChance = 0.25;
                  public boolean babyZombieJockey = true;
              }
