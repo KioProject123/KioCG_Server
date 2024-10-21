@@ -5,10 +5,10 @@ Subject: [PATCH] Campfire boiling water
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index e16128b964171d299d78045b94627ae3fbf2db31..3be0c10c28b5dd5af8fa865692bbc626cf522c78 100644
+index 9831a7a99da3017f228bfb3bf2df5a42ab81291e..24df989d2eea5bb445349e59929a1645703c1ded 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -613,6 +613,8 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -615,6 +615,8 @@ public class WorldConfiguration extends ConfigurationPart {
                  public double thirstRegainMultiplierFood = 2.0;
                  public double highTemperatureBiomeThirst = 0.02;
              }

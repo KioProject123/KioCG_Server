@@ -228,10 +228,10 @@ index 62aca0263aee6d1bd337cda44e27b57c6471389f..1800a0cc9d32ff9117b9b753070e5630
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
          public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index e62f9d9151a58e63292a11bb1e8ed54469aa1f1e..9076231c0470b7375a71c28e115e77d0cbbfe943 100644
+index 949c821c42c8706864bdc3d3aaaece08645a3fd3..58bfd001aa7e523515e59fa5c214656132d37dea 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -653,6 +653,14 @@ public class WorldConfiguration extends ConfigurationPart {
+@@ -655,6 +655,14 @@ public class WorldConfiguration extends ConfigurationPart {
          public double sleepHealingRegenRate = 20.0;
          public double saplingsWitheredChance = 0.025;
          public boolean flowersAndGrassesSpreadNaturally = true;

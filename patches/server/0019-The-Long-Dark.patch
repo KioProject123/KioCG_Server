@@ -221,13 +221,13 @@ index 0000000000000000000000000000000000000000..c684e63291e85bdd30bd4ba72bbc006f
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-index e1fcb9a2464001a9e97ca3baa888f93a3f9a8946..e16128b964171d299d78045b94627ae3fbf2db31 100644
+index 1836144ef13a2355204fe5dc67cc462b0206337f..9831a7a99da3017f228bfb3bf2df5a42ab81291e 100644
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -585,6 +585,35 @@ public class WorldConfiguration extends ConfigurationPart {
-     public class KiocgConfig extends ConfigurationPart {
-         public boolean deathKeepHotbarAndArmorItems = true;
+@@ -587,6 +587,35 @@ public class WorldConfiguration extends ConfigurationPart {
          public boolean deathItemsOnlyPickupByOneself = true;
+         public boolean hopperPullsLockedContainer = false;
+         public boolean hopperPullsEntityOwnedItem = false;
 +
 +        public TheLongDark theLongDark;
 +        public class TheLongDark extends ConfigurationPart {
