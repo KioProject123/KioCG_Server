@@ -5,13 +5,13 @@ Subject: [PATCH] Expand container rows
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index d7decf1a0fbf641dccce7b29b26b5e7d8fbd9735..8b84a5f2c3419ec3a1de653d80937cc52e232fb8 100644
+index e422b5a178c749c183e924ea461be25da6b62db1..028f8e4dabc2b4762061fb6674fa04e14671b18e 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -199,6 +199,7 @@ public abstract class Player extends LivingEntity {
-     private int currentImpulseContextResetGraceTime;
+@@ -200,6 +200,7 @@ public abstract class Player extends LivingEntity {
      public boolean affectsSpawning = true; // Paper - Affects Spawning API
      public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
+     public int campfireHealTick; // KioCG
 +    public int enderchestRows; // KioCG
  
      // CraftBukkit start

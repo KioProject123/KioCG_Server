@@ -1,0 +1,165 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Joket_abc <15005771700@qq.com>
+Date: Tue, 22 Oct 2024 13:10:55 +0800
+Subject: [PATCH] Campfire healing
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
+index 97404a624465a369737eff635718f0f65d8e7866..acf254ee3986950a586e2cba06c23ef62b28b829 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Player.java
++++ b/src/main/java/net/minecraft/world/entity/player/Player.java
+@@ -199,6 +199,7 @@ public abstract class Player extends LivingEntity {
+     private int currentImpulseContextResetGraceTime;
+     public boolean affectsSpawning = true; // Paper - Affects Spawning API
+     public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
++    public int campfireHealTick; // KioCG
+ 
+     // CraftBukkit start
+     public boolean fauxSleeping;
+diff --git a/src/main/java/net/minecraft/world/level/block/CampfireBlock.java b/src/main/java/net/minecraft/world/level/block/CampfireBlock.java
+index 3a1fd5a00bd091a4caf7357809ae35f1410ab8ad..1ee29cb636356be840ae79c51c378d35db15d10c 100644
+--- a/src/main/java/net/minecraft/world/level/block/CampfireBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CampfireBlock.java
+@@ -109,6 +109,15 @@ public class CampfireBlock extends BaseEntityBlock implements SimpleWaterloggedB
+             entity.hurt(world.damageSources().campfire().directBlock(world, pos), (float) this.fireDamage); // CraftBukkit
+         }
+ 
++        // KioCG start
++        if ((Boolean) state.getValue(CampfireBlock.LIT)) {
++            BlockEntity blockEntity = world.getBlockEntity(pos);
++            if (blockEntity instanceof CampfireBlockEntity) {
++                CampfireBlockEntity.entityInside(world, pos, state, entity, (CampfireBlockEntity) blockEntity);
++            }
++        }
++        // KioCG end
++
+         super.entityInside(state, world, pos, entity);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+index 844d7aaf3848d8e5799085374fd6476f2a4ebeb4..13c0c3d4fd19f04174b3997144b05efd915ec10c 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -257,7 +257,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+         return item.builtInRegistryHolder().is(ItemTags.NON_FLAMMABLE_WOOD);
+     }
+ 
+-    private static void add(Map<Item, Integer> fuelTimes, TagKey<Item> tag, int fuelTime) {
++    public static void add(Map<Item, Integer> fuelTimes, TagKey<Item> tag, int fuelTime) { // KioCG - private -> public
+         Iterator iterator = BuiltInRegistries.ITEM.getTagOrEmpty(tag).iterator();
+ 
+         while (iterator.hasNext()) {
+@@ -270,7 +270,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+ 
+     }
+ 
+-    private static void add(Map<Item, Integer> fuelTimes, ItemLike item, int fuelTime) {
++    public static void add(Map<Item, Integer> fuelTimes, ItemLike item, int fuelTime) { // KioCG - private -> public
+         Item item1 = item.asItem();
+ 
+         if (AbstractFurnaceBlockEntity.isNeverAFurnaceFuel(item1)) {
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+index 20d4cda6396601621b684f6048afffba650598bf..ce0a4f08ae39edd2cb109650c7d13806e69a619f 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -47,6 +47,7 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+     public final int[] cookingTime;
+     private final RecipeManager.CachedCheck<SingleRecipeInput, CampfireCookingRecipe> quickCheck;
+     public final boolean[] stopCooking; // Paper - Add more Campfire API
++    private int healTime; // KioCG
+ 
+     public CampfireBlockEntity(BlockPos pos, BlockState state) {
+         super(BlockEntityType.CAMPFIRE, pos, state);
+@@ -134,12 +135,92 @@ public class CampfireBlockEntity extends BlockEntity implements Clearable {
+             }
+         }
+ 
++        // KioCG start
++        if (campfire.healTime > 0) {
++            --campfire.healTime;
++            if (world.getGameTime() % 20L == 0L) {
++                CampfireBlockEntity.healingNearbyPlayers(world, pos);
++            }
++            if (world.getGameTime() % 5L == 0L) {
++                double x = (double) pos.getX() + 0.5;
++                double y = (double) pos.getY() + 1.0;
++                double z = (double) pos.getZ() + 0.5;
++                ((net.minecraft.server.level.ServerLevel) world).sendParticles(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION).getParticleOptions(), x, y, z, 2, 0.25, 0.1, 0.25, 1.0);
++            }
++        }
++        // KioCG end
++
+         if (flag) {
+             setChanged(world, pos, state);
+         }
+ 
+     }
+ 
++    // KioCG start
++    private static void healingNearbyPlayers(Level world, BlockPos pos) {
++        net.minecraft.world.phys.AABB axisalignedbb = (new net.minecraft.world.phys.AABB(pos)).inflate(10, 5, 10);
++        java.util.List<net.minecraft.world.entity.player.Player> list = world.getEntitiesOfClass(net.minecraft.world.entity.player.Player.class, axisalignedbb);
++        for (net.minecraft.world.entity.player.Player player : list) {
++            if (player.isHurt() && player.campfireHealTick != player.tickCount) {
++                player.campfireHealTick = player.tickCount;
++
++                final float health = player.getHealth();
++                player.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
++                player.causeFoodExhaustion(player.level().spigotConfig.regenExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
++                if (player.getHealth() > health) {
++                    ((net.minecraft.server.level.ServerLevel) world).sendParticles(
++                            (net.minecraft.server.level.ServerPlayer) player,
++                            net.minecraft.core.particles.ParticleTypes.HEART,
++                            player.getX(), player.getY(), player.getZ(),
++                            5,
++                            0.3, 0.3, 0.3,
++                            1.0,
++                            false);
++                }
++            }
++        }
++    }
++
++    public static void entityInside(Level world, BlockPos pos, BlockState state, net.minecraft.world.entity.Entity entity, CampfireBlockEntity blockEntity) {
++        if (entity instanceof net.minecraft.world.entity.item.ItemEntity entityitem) {
++            ItemStack item = entityitem.getItem();
++            int burnDuration = blockEntity.getBurnDuration(item);
++            if (burnDuration > 0) {
++                blockEntity.healTime = Math.min(blockEntity.healTime + burnDuration * item.getCount(), 1200);
++                entityitem.setItem(ItemStack.EMPTY);
++                entityitem.discard();
++
++                RandomSource randomsource = world.getRandom();
++                world.playSound(null, pos, net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, (randomsource.nextFloat() - randomsource.nextFloat()) * 0.2F + 1.0F);
++            }
++        }
++
++    }
++
++    protected int getBurnDuration(ItemStack fuel) {
++        if (fuel.isEmpty()) {
++            return 0;
++        } else {
++            net.minecraft.world.item.Item item = fuel.getItem();
++
++            return (Integer) CampfireBlockEntity.getFuel().getOrDefault(item, 0);
++        }
++    }
++
++    public static java.util.Map<net.minecraft.world.item.Item, Integer> getFuel() {
++        java.util.Map<net.minecraft.world.item.Item, Integer> map1 = com.google.common.collect.Maps.newLinkedHashMap();
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.tags.ItemTags.LOGS, 300);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.tags.ItemTags.BAMBOO_BLOCKS, 300);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.tags.ItemTags.PLANKS, 300);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.world.level.block.Blocks.BAMBOO_MOSAIC, 300);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.world.item.Items.STICK, 100);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.world.level.block.Blocks.BAMBOO, 50);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.world.level.block.Blocks.DEAD_BUSH, 100);
++        AbstractFurnaceBlockEntity.add(map1, net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS, 300);
++        return map1;
++    }
++    // KioCG end
++
+     public static void cooldownTick(Level world, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
+         boolean flag = false;
+ 

@@ -78,10 +78,10 @@ index 8146dfc1d5e0cdd78c69623deeab405d73f83154..64103f159d7c1894f15036f84060f07b
  
              this.respawnPosition = pos;
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 97404a624465a369737eff635718f0f65d8e7866..d7decf1a0fbf641dccce7b29b26b5e7d8fbd9735 100644
+index acf254ee3986950a586e2cba06c23ef62b28b829..e422b5a178c749c183e924ea461be25da6b62db1 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -276,7 +276,7 @@ public abstract class Player extends LivingEntity {
+@@ -277,7 +277,7 @@ public abstract class Player extends LivingEntity {
                  this.sleepCounter = 100;
              }
  
@@ -91,7 +91,7 @@ index 97404a624465a369737eff635718f0f65d8e7866..d7decf1a0fbf641dccce7b29b26b5e7d
              }
          } else if (this.sleepCounter > 0) {
 diff --git a/src/main/java/net/minecraft/world/food/FoodData.java b/src/main/java/net/minecraft/world/food/FoodData.java
-index b45e4a9793ddcc1e6d090c6a18f99e3b9bc35635..8e65c2de9d71869b0c3945f16eeb0e5a4f0dff60 100644
+index b45e4a9793ddcc1e6d090c6a18f99e3b9bc35635..3d8a87d6c7214a2a8d62f7ba5be0819ed2b63004 100644
 --- a/src/main/java/net/minecraft/world/food/FoodData.java
 +++ b/src/main/java/net/minecraft/world/food/FoodData.java
 @@ -84,6 +84,27 @@ public class FoodData {
@@ -99,7 +99,7 @@ index b45e4a9793ddcc1e6d090c6a18f99e3b9bc35635..8e65c2de9d71869b0c3945f16eeb0e5a
          boolean flag = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
  
 +        // KioCG start
-+        if (player.level().paperConfig().kiocgConfig.sleepHealingRegenRate >= 0 && this.foodLevel > 6 && player.isSleeping() && player.isHurt()) {
++        if (player.level().paperConfig().kiocgConfig.sleepHealingRegenRate >= 0 && this.foodLevel > 6 && player.isSleepingLongEnough() && player.isHurt()) {
 +            ++this.tickTimer;
 +            if (this.tickTimer >= player.level().paperConfig().kiocgConfig.sleepHealingRegenRate) {
 +                final float health = player.getHealth();

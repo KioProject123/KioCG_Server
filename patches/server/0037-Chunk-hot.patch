@@ -515,10 +515,10 @@ index 9323e2c92f4fe1268352121c960e2507de8c7aed..c7694429755160edcf8ef293d29e6dcd
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 8b84a5f2c3419ec3a1de653d80937cc52e232fb8..e011d5b281b49b0b384ec08a9227f3f6ae021678 100644
+index 028f8e4dabc2b4762061fb6674fa04e14671b18e..4611e5f7d47c071655e3e0f367e1697e29cf6d00 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -2521,4 +2521,11 @@ public abstract class Player extends LivingEntity {
+@@ -2522,4 +2522,11 @@ public abstract class Player extends LivingEntity {
              return this.message;
          }
      }
