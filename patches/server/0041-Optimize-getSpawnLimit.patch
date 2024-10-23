@@ -18,7 +18,7 @@ index 164d5f0729b680b11c602525a51c51a4c48ca181..181a9625c38992db3388ac75b865bd2b
      private WarningState warningState = WarningState.DEFAULT;
      public ApiVersion minimumAPI;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 33e4818ba5a90d78d69baad9f6b1be1b1382e9f3..0d2417b18d8719ee458a81de0738a50dccf127f8 100644
+index e4380d8ea5cbe80043ea009e2af162f05e567b6b..85416586cc7324cda192c7a58f409000ebad82ae 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -160,7 +160,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
@@ -28,5 +28,5 @@ index 33e4818ba5a90d78d69baad9f6b1be1b1382e9f3..0d2417b18d8719ee458a81de0738a50d
 -    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
 +    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
+     public final java.util.Map<org.bukkit.NamespacedKey, Object> temporaryMeta = new java.util.HashMap<>(0); // KioCG
      private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
-     // Paper start - void damage configuration

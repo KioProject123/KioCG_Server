@@ -631,7 +631,7 @@ index d0109633e8bdf109cfc9178963d7b6cf92f8b189..515eac1d14840ce79672a7ff5772012d
              this.getBlock().entityInside(this.asState(), world, pos, entity);
          }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
-index 75c8125e20b70433fe9d143a3193d821043327c3..d3803ca4f380bf3b1dbdf102e139a55edd40f7ea 100644
+index 1b151d6556e49e54229abc118bd7817fb2ce6235..7dd348d71f9734ee18a404a665e25d02871a6a06 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
 @@ -67,6 +67,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
@@ -642,7 +642,7 @@ index 75c8125e20b70433fe9d143a3193d821043327c3..d3803ca4f380bf3b1dbdf102e139a55e
      /** @deprecated */
      @Nullable
      @Deprecated
-@@ -141,13 +142,14 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+@@ -142,13 +143,14 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
      private final int maxSection;
      // Paper end - get block chunk optimisation
  

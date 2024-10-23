@@ -4,6 +4,36 @@ Date: Mon, 5 Aug 2024 12:14:08 +0800
 Subject: [PATCH] More API
 
 
+diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
+index 75c8125e20b70433fe9d143a3193d821043327c3..1b151d6556e49e54229abc118bd7817fb2ce6235 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
++++ b/src/main/java/net/minecraft/world/level/chunk/ChunkAccess.java
+@@ -88,6 +88,7 @@ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiom
+     // CraftBukkit start - SPIGOT-6814: move to IChunkAccess to account for 1.17 to 1.18 chunk upgrading.
+     private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
+     public org.bukkit.craftbukkit.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.DirtyCraftPersistentDataContainer(ChunkAccess.DATA_TYPE_REGISTRY);
++    public final java.util.Map<org.bukkit.NamespacedKey, Object> temporaryMeta = new java.util.HashMap<>(0); // KioCG
+     // CraftBukkit end
+ 
+     // Paper start - rewrite chunk system
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+index 45e262308aebafa377a2353661acdd122933b99e..6ef9be449892a36e20b41ef712057af116999a76 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -356,6 +356,13 @@ public class CraftChunk implements Chunk {
+         return this.getHandle(ChunkStatus.STRUCTURE_STARTS).persistentDataContainer;
+     }
+ 
++    // KioCG start
++    @Override
++    public java.util.Map<org.bukkit.NamespacedKey, Object> getTemporaryMeta() {
++        return this.getHandle(ChunkStatus.STRUCTURE_STARTS).temporaryMeta;
++    }
++    // KioCG end
++
+     @Override
+     public LoadLevel getLoadLevel() {
+         net.minecraft.world.level.chunk.LevelChunk chunk = this.worldServer.getChunkIfLoaded(this.getX(), this.getZ());
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 index b7af2d4300facf41a025c8ca322bf6541949b3ab..164d5f0729b680b11c602525a51c51a4c48ca181 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
@@ -22,3 +52,55 @@ index b7af2d4300facf41a025c8ca322bf6541949b3ab..164d5f0729b680b11c602525a51c51a4
      @Override
      public Player getPlayer(UUID id) {
          Preconditions.checkArgument(id != null, "UUID id cannot be null");
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 33e4818ba5a90d78d69baad9f6b1be1b1382e9f3..e4380d8ea5cbe80043ea009e2af162f05e567b6b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -162,6 +162,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+     private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
+     private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
++    public final java.util.Map<org.bukkit.NamespacedKey, Object> temporaryMeta = new java.util.HashMap<>(0); // KioCG
+     private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
+     // Paper start - void damage configuration
+     private boolean voidDamageEnabled;
+@@ -2415,6 +2416,13 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+         return this.persistentDataContainer;
+     }
+ 
++    // KioCG start
++    @Override
++    public java.util.Map<org.bukkit.NamespacedKey, Object> getTemporaryMeta() {
++        return this.temporaryMeta;
++    }
++    // KioCG end
++
+     // Paper - replace feature flag API
+ 
+     public void storeBukkitValues(CompoundTag c) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 89c8713d2c2206d1b0d8c0a392c9d13b3e736f0c..f55412537e61e786651edf33939734505d03a40c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -69,6 +69,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     private final EntityType entityType;
+     private EntityDamageEvent lastDamageEvent;
+     private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftEntity.DATA_TYPE_REGISTRY);
++    public final java.util.Map<org.bukkit.NamespacedKey, Object> temporaryMeta = new java.util.HashMap<>(0); // KioCG
+     protected net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
+     // Paper start - Folia shedulers
+     public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
+@@ -895,6 +896,13 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return this.persistentDataContainer;
+     }
+ 
++    // KioCG start
++    @Override
++    public java.util.Map<org.bukkit.NamespacedKey, Object> getTemporaryMeta() {
++        return this.temporaryMeta;
++    }
++    // KioCG end
++
+     @Override
+     public Pose getPose() {
+         return Pose.values()[this.getHandle().getPose().ordinal()];

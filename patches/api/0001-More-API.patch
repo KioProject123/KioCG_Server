@@ -4,6 +4,36 @@ Date: Fri, 26 Jul 2024 22:23:36 +0800
 Subject: [PATCH] More API
 
 
+diff --git a/src/main/java/com/kiocg/meta/TemporaryDataHolder.java b/src/main/java/com/kiocg/meta/TemporaryDataHolder.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8493cab5d1eeb771bcc0d5e36ec8b03cd8696ff0
+--- /dev/null
++++ b/src/main/java/com/kiocg/meta/TemporaryDataHolder.java
+@@ -0,0 +1,11 @@
++package com.kiocg.meta;
++
++import org.bukkit.NamespacedKey;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.Map;
++
++public interface TemporaryDataHolder {
++    @NotNull
++    Map<NamespacedKey, Object> getTemporaryMeta();
++}
+diff --git a/src/main/java/org/bukkit/Chunk.java b/src/main/java/org/bukkit/Chunk.java
+index bc8b5bc17706250b8535b1b309134843d2ce2bb1..3e74283e873a0925821950a6a4e29b254bf88927 100644
+--- a/src/main/java/org/bukkit/Chunk.java
++++ b/src/main/java/org/bukkit/Chunk.java
+@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
+  * then the chunk will only be generated as far as it needs to provide the
+  * requested data.
+  */
+-public interface Chunk extends PersistentDataHolder {
++public interface Chunk extends PersistentDataHolder, com.kiocg.meta.TemporaryDataHolder { // KioCG
+ 
+     /**
+      * Gets the X-coordinate of this chunk
 diff --git a/src/main/java/org/bukkit/NamespacedKey.java b/src/main/java/org/bukkit/NamespacedKey.java
 index 52a2763773b234c581b2dcc6f0584f8d8b0fbc60..d429e15d5915ca7af2cefa3b7a404dc91b8f9361 100644
 --- a/src/main/java/org/bukkit/NamespacedKey.java
@@ -43,3 +73,29 @@ index 6246251caf2c6f025c824b8e7a944b8d48751fa1..dff5f92149a6c7903b6908efbc970de8
      /**
       * Gets the player with the given UUID.
       *
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index ef32a937e6faf1e8a5d6b1207986715bae5a246c..169592f67246e2d31c87c3e65d2c8af46b7e1f59 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -50,7 +50,7 @@ import org.jetbrains.annotations.Nullable;
+ /**
+  * Represents a world, which may contain entities, chunks and blocks
+  */
+-public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, Keyed, net.kyori.adventure.audience.ForwardingAudience { // Paper
++public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, com.kiocg.meta.TemporaryDataHolder, Keyed, net.kyori.adventure.audience.ForwardingAudience { // Paper // KioCG
+ 
+     // Paper start - void damage configuration
+     /**
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index d0ae8a94db20281d3664d74718c65234eb2e5f83..99031441555cc2c316646e5c3a77c16abb4545a7 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
+  * Not all methods are guaranteed to work/may have side effects when
+  * {@link #isInWorld()} is false.
+  */
+-public interface Entity extends Metadatable, CommandSender, Nameable, PersistentDataHolder, net.kyori.adventure.text.event.HoverEventSource<net.kyori.adventure.text.event.HoverEvent.ShowEntity>, net.kyori.adventure.sound.Sound.Emitter { // Paper
++public interface Entity extends Metadatable, CommandSender, Nameable, PersistentDataHolder, com.kiocg.meta.TemporaryDataHolder, net.kyori.adventure.text.event.HoverEventSource<net.kyori.adventure.text.event.HoverEvent.ShowEntity>, net.kyori.adventure.sound.Sound.Emitter { // Paper // KioCG
+ 
+     /**
+      * Gets the entity's current position
