@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Wed, 28 Feb 2024 22:31:18 +0800
-Subject: [PATCH] Override upstream patches
+Subject: [PATCH] Server patches
 
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
@@ -64,6 +64,37 @@ index fd3b1c10695634f65c7291016bf671c084bc4d57..de703d6b99bedee7d733561428c91579
 +    }
 +    // KioCG end
  }
+diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
+index 581bd217304e0f9e0b2113c335694805dfb4e2a1..b30d7e3606d9a1cf8d766b81db3d714e8910e265 100644
+--- a/src/main/java/net/minecraft/server/Main.java
++++ b/src/main/java/net/minecraft/server/Main.java
+@@ -130,7 +130,7 @@ public class Main {
+             dedicatedserversettings.forceSave();
+             RegionFileVersion.configure(dedicatedserversettings.getProperties().regionFileComression);
+             Path path2 = Paths.get("eula.txt");
+-            Eula eula = new Eula(path2);
++            // Eula eula = new Eula(path2); // KioCG - 不要创建Eula文件
+             // Paper start - load config files early for access below if needed
+             org.bukkit.configuration.file.YamlConfiguration bukkitConfiguration = io.papermc.paper.configuration.PaperConfigurations.loadLegacyConfigFile((File) optionset.valueOf("bukkit-settings"));
+             org.bukkit.configuration.file.YamlConfiguration spigotConfiguration = io.papermc.paper.configuration.PaperConfigurations.loadLegacyConfigFile((File) optionset.valueOf("spigot-settings"));
+@@ -154,6 +154,8 @@ public class Main {
+                 return;
+             }
+ 
++            // KioCG start
++            /*
+             // Spigot Start
+             boolean eulaAgreed = Boolean.getBoolean( "com.mojang.eula.agree" );
+             if ( eulaAgreed )
+@@ -167,6 +169,8 @@ public class Main {
+                 Main.LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+                 return;
+             }
++            */
++            // KioCG end
+ 
+             // Paper start - Detect headless JRE
+             String awtException = io.papermc.paper.util.ServerEnvironment.awtDependencyCheck();
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 index dd56c8e041116ef3602a9f89c998c8208ab89b51..c5592d288325e35f4c7150a8b2696954eafbf5a6 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
