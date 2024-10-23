@@ -280,10 +280,10 @@ index bc58323801ee16fe9b63c21332144ec002a902f2..2ead7a0286a2109656ead0d1ee779b83
          if (!this.level().isClientSide) {
              AttributeInstance attributemodifiable = this.getAttribute(Attributes.MOVEMENT_SPEED);
 diff --git a/src/main/java/net/minecraft/world/item/SpawnEggItem.java b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
-index 9cea8da84f39bb3f687139ef213ccea358724dee..4e4a7c346359468c0754285a023bbf677411a8d9 100644
+index f6db7974b08091b5cf508b7008e61e71821379aa..c45dde1729132e32502e16e0f32c0d7dcf3bbfde 100644
 --- a/src/main/java/net/minecraft/world/item/SpawnEggItem.java
 +++ b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
-@@ -174,8 +174,10 @@ public class SpawnEggItem extends Item {
+@@ -175,8 +175,10 @@ public class SpawnEggItem extends Item {
              if (object == null) {
                  return Optional.empty();
              } else {

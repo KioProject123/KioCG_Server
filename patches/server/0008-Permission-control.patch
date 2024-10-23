@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Sun, 3 Mar 2024 05:19:13 +0800
-Subject: [PATCH] Add permission to bypass reducedDebugInfo gamerule
+Subject: [PATCH] Permission control
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
@@ -26,3 +26,15 @@ index c81e9208a40e9b22d46fb144dfa9149b28833230..ec596909dd6b67420136d735c893c4b1
          player.connection.send(new ClientboundEntityEventPacket(player, (byte) i));
          float immediateRespawn = player.level().getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0F: 0.0F;
          player.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.IMMEDIATE_RESPAWN, immediateRespawn));
+diff --git a/src/main/java/net/minecraft/world/item/SpawnEggItem.java b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
+index 9cea8da84f39bb3f687139ef213ccea358724dee..f6db7974b08091b5cf508b7008e61e71821379aa 100644
+--- a/src/main/java/net/minecraft/world/item/SpawnEggItem.java
++++ b/src/main/java/net/minecraft/world/item/SpawnEggItem.java
+@@ -69,6 +69,7 @@ public class SpawnEggItem extends Item {
+             EntityType entitytypes;
+ 
+             if (tileentity instanceof Spawner) {
++                if (!context.getPlayer().canUseGameMasterBlocks()) // KioCG
+                 if (world.paperConfig().entities.spawning.disableMobSpawnerSpawnEggTransformation) return InteractionResult.FAIL; // Paper - Allow disabling mob spawner spawn egg transformation
+ 
+                 Spawner spawner = (Spawner) tileentity;
