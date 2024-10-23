@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Sun, 17 Mar 2024 01:33:14 +0800
-Subject: [PATCH] Fixed cumulative cost
+Subject: [PATCH] Max cumulative cost
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index fef19857b670319613f9183de680dd23d6d1a0e8..8bb51312cc6f63b5d85c2e0cd494af89e61850b1 100644
+index fef19857b670319613f9183de680dd23d6d1a0e8..bcd27313a5932f229806d4233a4c8c1fe5f62e0c 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -435,6 +435,13 @@ public class GlobalConfiguration extends ConfigurationPart {
@@ -15,7 +15,7 @@ index fef19857b670319613f9183de680dd23d6d1a0e8..8bb51312cc6f63b5d85c2e0cd494af89
 +
 +        public Anvil anvil;
 +        public class Anvil extends ConfigurationPart {
-+            public int fixedCumulativeCost = 4;
++            public int maxCumulativeCost = 31;
 +            public boolean repairNoLevelCost = true;
 +            public boolean renameNoLevelCost = true;
 +        }
@@ -23,10 +23,10 @@ index fef19857b670319613f9183de680dd23d6d1a0e8..8bb51312cc6f63b5d85c2e0cd494af89
      // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-index 2854ecc3598364a86ff1104e9bc8dad90caedce4..e1d645a9fa00b42b3c3c3eb5e44cc440f067af5e 100644
+index 2854ecc3598364a86ff1104e9bc8dad90caedce4..88025f48b51bd70357e8f748c523e5cb405becce 100644
 --- a/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/src/main/java/net/minecraft/world/inventory/AnvilMenu.java
-@@ -142,17 +142,21 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -142,6 +142,7 @@ public class AnvilMenu extends ItemCombinerMenu {
          int i = 0;
          long j = 0L;
          byte b0 = 0;
@@ -34,21 +34,15 @@ index 2854ecc3598364a86ff1104e9bc8dad90caedce4..e1d645a9fa00b42b3c3c3eb5e44cc440
  
          if (!itemstack.isEmpty() && EnchantmentHelper.canStoreEnchantments(itemstack)) {
              ItemStack itemstack1 = itemstack.copy();
-             ItemStack itemstack2 = this.inputSlots.getItem(1);
+@@ -149,6 +150,7 @@ public class AnvilMenu extends ItemCombinerMenu {
              ItemEnchantments.Mutable itemenchantments_a = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemstack1));
  
-+            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost >= 0) j += io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost; else // KioCG
              j += (long) (Integer) itemstack.getOrDefault(DataComponents.REPAIR_COST, 0) + (long) (Integer) itemstack2.getOrDefault(DataComponents.REPAIR_COST, 0);
++            j = Math.max(j, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.maxCumulativeCost); // KioCG
              this.repairItemCountCost = 0;
              int k;
  
-             if (!itemstack2.isEmpty()) {
-+                if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost >= 0) j += io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.fixedCumulativeCost; // KioCG
-+
-                 boolean flag = itemstack2.has(DataComponents.STORED_ENCHANTMENTS);
-                 int l;
-                 int i1;
-@@ -170,6 +174,12 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -170,6 +172,12 @@ public class AnvilMenu extends ItemCombinerMenu {
                      for (i1 = 0; k > 0 && i1 < itemstack2.getCount(); ++i1) {
                          l = itemstack1.getDamageValue() - k;
                          itemstack1.setDamageValue(l);
@@ -61,7 +55,7 @@ index 2854ecc3598364a86ff1104e9bc8dad90caedce4..e1d645a9fa00b42b3c3c3eb5e44cc440
                          ++i;
                          k = Math.min(itemstack1.getDamageValue(), itemstack1.getMaxDamage() / 4);
                      }
-@@ -264,11 +274,23 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -264,11 +272,23 @@ public class AnvilMenu extends ItemCombinerMenu {
              if (this.itemName != null && !StringUtil.isBlank(this.itemName)) {
                  if (!this.itemName.equals(itemstack.getHoverName().getString())) {
                      b0 = 1;
@@ -85,7 +79,7 @@ index 2854ecc3598364a86ff1104e9bc8dad90caedce4..e1d645a9fa00b42b3c3c3eb5e44cc440
                  i += b0;
                  itemstack1.remove(DataComponents.CUSTOM_NAME);
              }
-@@ -277,6 +299,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -277,6 +297,7 @@ public class AnvilMenu extends ItemCombinerMenu {
  
              this.cost.set(k2);
              if (i <= 0) {
@@ -93,7 +87,7 @@ index 2854ecc3598364a86ff1104e9bc8dad90caedce4..e1d645a9fa00b42b3c3c3eb5e44cc440
                  itemstack1 = ItemStack.EMPTY;
              }
  
-@@ -295,6 +318,7 @@ public class AnvilMenu extends ItemCombinerMenu {
+@@ -295,6 +316,7 @@ public class AnvilMenu extends ItemCombinerMenu {
                  }
  
                  if (b0 != i || b0 == 0) {

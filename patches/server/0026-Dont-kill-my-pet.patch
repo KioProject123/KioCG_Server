@@ -5,7 +5,7 @@ Subject: [PATCH] Dont kill my pet
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 8bb51312cc6f63b5d85c2e0cd494af89e61850b1..a914bc20ddaf801b29a0e9c6a44a985ce41de8d2 100644
+index bcd27313a5932f229806d4233a4c8c1fe5f62e0c..72c9e9db725c5fd7b0b155bb01b62e680364d54b 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -442,6 +442,10 @@ public class GlobalConfiguration extends ConfigurationPart {

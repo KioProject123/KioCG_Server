@@ -215,7 +215,7 @@ index 3c44d94ba77a24023e77ef4c778b181736ff5f98..ae3ebd432a89f63b5f6277ba66df898d
          TPS, MSPT, PING
      }
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 62aca0263aee6d1bd337cda44e27b57c6471389f..1800a0cc9d32ff9117b9b753070e563029afc9bc 100644
+index 49ddc08acf3db6565c5f9d3e26dfee47d1cb0e96..d6b22c13c9b8807025503d8bce079257f1d1b014 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -447,7 +447,7 @@ public class GlobalConfiguration extends ConfigurationPart {
