@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
 Date: Sat, 23 Mar 2024 11:28:48 +0800
-Subject: [PATCH] Block property adjustment
+Subject: [PATCH] Adjust block property
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/Blocks.java b/src/main/java/net/minecraft/world/level/block/Blocks.java

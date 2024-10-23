@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Joket_abc <15005771700@qq.com>
-Date: Sun, 17 Mar 2024 01:33:14 +0800
-Subject: [PATCH] Max cumulative cost
+Date: Mon, 8 Jul 2024 12:56:35 +0800
+Subject: [PATCH] Adjust anvil mechanics
 
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
@@ -95,3 +95,85 @@ index 2854ecc3598364a86ff1104e9bc8dad90caedce4..88025f48b51bd70357e8f748c523e5cb
                      k = AnvilMenu.calculateIncreasedRepairCost(k);
                  }
  
+diff --git a/src/main/java/net/minecraft/world/item/BowItem.java b/src/main/java/net/minecraft/world/item/BowItem.java
+index 6eb5c0f23d9dc61e69ad5ad493c89602a9dcd4b5..5f31c923b250cdc46005a2e5f8d00fd8f5c88f2a 100644
+--- a/src/main/java/net/minecraft/world/item/BowItem.java
++++ b/src/main/java/net/minecraft/world/item/BowItem.java
+@@ -99,4 +99,11 @@ public class BowItem extends ProjectileWeaponItem {
+     public int getDefaultProjectileRange() {
+         return 15;
+     }
++
++    // KioCG start
++    @Override
++    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
++        return ingredient.is(Items.STRING) || super.isValidRepairItem(stack, ingredient);
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/item/BrushItem.java b/src/main/java/net/minecraft/world/item/BrushItem.java
+index 2c75c33af46b4e8be4cfadc6de7f1760f69022fa..19473423efd501f83d193ac0ba15bc72169c4847 100644
+--- a/src/main/java/net/minecraft/world/item/BrushItem.java
++++ b/src/main/java/net/minecraft/world/item/BrushItem.java
+@@ -121,6 +121,13 @@ public class BrushItem extends Item {
+         }
+     }
+ 
++    // KioCG start
++    @Override
++    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
++        return ingredient.is(Items.FEATHER) || super.isValidRepairItem(stack, ingredient);
++    }
++    // KioCG end
++
+     static record DustParticlesDelta(double xd, double yd, double zd) {
+         private static final double ALONG_SIDE_DELTA = 1.0;
+         private static final double OUT_FROM_SIDE_DELTA = 0.1;
+diff --git a/src/main/java/net/minecraft/world/item/FishingRodItem.java b/src/main/java/net/minecraft/world/item/FishingRodItem.java
+index efb21967fdd2c3b4cb35db6faf213d55da5fc30e..26e217c1ffeee0f427ec595238289554a31184a5 100644
+--- a/src/main/java/net/minecraft/world/item/FishingRodItem.java
++++ b/src/main/java/net/minecraft/world/item/FishingRodItem.java
+@@ -69,4 +69,11 @@ public class FishingRodItem extends Item {
+     public int getEnchantmentValue() {
+         return 1;
+     }
++
++    // KioCG start
++    @Override
++    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
++        return ingredient.is(Items.STRING) || super.isValidRepairItem(stack, ingredient);
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/item/FlintAndSteelItem.java b/src/main/java/net/minecraft/world/item/FlintAndSteelItem.java
+index 7e1ad8dd734f5066101384e83d1f9519434a84e6..09fca8bd146869f5d0eb356ecefba237c77d3cef 100644
+--- a/src/main/java/net/minecraft/world/item/FlintAndSteelItem.java
++++ b/src/main/java/net/minecraft/world/item/FlintAndSteelItem.java
+@@ -76,4 +76,11 @@ public class FlintAndSteelItem extends Item {
+             return InteractionResult.sidedSuccess(world.isClientSide());
+         }
+     }
++
++    // KioCG start
++    @Override
++    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
++        return ingredient.is(Items.FLINT) || super.isValidRepairItem(stack, ingredient);
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/net/minecraft/world/item/ShearsItem.java b/src/main/java/net/minecraft/world/item/ShearsItem.java
+index cb809796372a4658aa617404f9fddffff9b45cb7..84f34307435dc0bb13f012d7d77d9f3b24d61cef 100644
+--- a/src/main/java/net/minecraft/world/item/ShearsItem.java
++++ b/src/main/java/net/minecraft/world/item/ShearsItem.java
+@@ -79,4 +79,11 @@ public class ShearsItem extends Item {
+ 
+         return super.useOn(context);
+     }
++
++    // KioCG start
++    @Override
++    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
++        return ingredient.is(Items.IRON_INGOT) || super.isValidRepairItem(stack, ingredient);
++    }
++    // KioCG end
+ }

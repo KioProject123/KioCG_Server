@@ -35,7 +35,7 @@ index 45e262308aebafa377a2353661acdd122933b99e..6ef9be449892a36e20b41ef712057af1
      public LoadLevel getLoadLevel() {
          net.minecraft.world.level.chunk.LevelChunk chunk = this.worldServer.getChunkIfLoaded(this.getX(), this.getZ());
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b7af2d4300facf41a025c8ca322bf6541949b3ab..164d5f0729b680b11c602525a51c51a4c48ca181 100644
+index c47e278ca6e5ff14e37a9031d969b3969c24c186..181a9625c38992db3388ac75b865bd2bb0eff4a3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -705,6 +705,13 @@ public final class CraftServer implements Server {
@@ -53,12 +53,12 @@ index b7af2d4300facf41a025c8ca322bf6541949b3ab..164d5f0729b680b11c602525a51c51a4
      public Player getPlayer(UUID id) {
          Preconditions.checkArgument(id != null, "UUID id cannot be null");
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 33e4818ba5a90d78d69baad9f6b1be1b1382e9f3..e4380d8ea5cbe80043ea009e2af162f05e567b6b 100644
+index 0d2417b18d8719ee458a81de0738a50dccf127f8..85416586cc7324cda192c7a58f409000ebad82ae 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -162,6 +162,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
      private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
-     private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
+     private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
 +    public final java.util.Map<org.bukkit.NamespacedKey, Object> temporaryMeta = new java.util.HashMap<>(0); // KioCG
      private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers

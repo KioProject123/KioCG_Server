@@ -64,6 +64,19 @@ index fd3b1c10695634f65c7291016bf671c084bc4d57..de703d6b99bedee7d733561428c91579
 +    }
 +    // KioCG end
  }
+diff --git a/src/main/java/net/minecraft/nbt/NbtIo.java b/src/main/java/net/minecraft/nbt/NbtIo.java
+index 9f659af04a5362ae3645d072caa090682760dc9f..7cba4d42ffa58ad15aca272687afaeaf865f4c90 100644
+--- a/src/main/java/net/minecraft/nbt/NbtIo.java
++++ b/src/main/java/net/minecraft/nbt/NbtIo.java
+@@ -26,7 +26,7 @@ import net.minecraft.util.FastBufferedInputStream;
+ 
+ public class NbtIo {
+ 
+-    private static final OpenOption[] SYNC_OUTPUT_OPTIONS = new OpenOption[]{StandardOpenOption.SYNC, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING};
++    private static final OpenOption[] SYNC_OUTPUT_OPTIONS = new OpenOption[]{StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING}; // KioCG - Async write
+ 
+     public NbtIo() {}
+ 
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
 index 581bd217304e0f9e0b2113c335694805dfb4e2a1..b30d7e3606d9a1cf8d766b81db3d714e8910e265 100644
 --- a/src/main/java/net/minecraft/server/Main.java
@@ -130,3 +143,29 @@ index 5e2c4969e77c669acbb4a13c07033cb267c3d586..c81e9208a40e9b22d46fb144dfa9149b
          OutgoingChatMessage outgoingchatmessage = OutgoingChatMessage.create(message);
          boolean flag1 = false;
  
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index b7af2d4300facf41a025c8ca322bf6541949b3ab..c47e278ca6e5ff14e37a9031d969b3969c24c186 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -289,7 +289,7 @@ public final class CraftServer implements Server {
+     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
+     private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
+     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
+-    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
++    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
+     private File container;
+     private WarningState warningState = WarningState.DEFAULT;
+     public ApiVersion minimumAPI;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 33e4818ba5a90d78d69baad9f6b1be1b1382e9f3..0d2417b18d8719ee458a81de0738a50dccf127f8 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -160,7 +160,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+     private final BiomeProvider biomeProvider;
+     private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
+     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+-    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
++    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
+     private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
+     private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
+     // Paper start - void damage configuration
