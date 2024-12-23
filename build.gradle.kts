@@ -8,27 +8,27 @@ plugins {
 
 paperweight {
     upstreams.paper {
-        ref = "54debf494f467a71c561cf8765c4f21725c99dd8"
+        ref = providers.gradleProperty("paperRef")
 
         patchFile {
             path = "paper-server/build.gradle.kts"
-            outputFile = file("fork-server/build.gradle.kts")
-            patchFile = file("fork-server/build.gradle.kts.patch")
+            outputFile = file("kiocg-server/build.gradle.kts")
+            patchFile = file("kiocg-server/build.gradle.kts.patch")
         }
         patchFile {
             path = "paper-api/build.gradle.kts"
-            outputFile = file("fork-api/build.gradle.kts")
-            patchFile = file("fork-api/build.gradle.kts.patch")
+            outputFile = file("kiocg-api/build.gradle.kts")
+            patchFile = file("kiocg-api/build.gradle.kts.patch")
         }
         patchDir("paperApi") {
             upstreamPath = "paper-api"
             excludes = setOf("build.gradle.kts")
-            patchesDir = file("fork-api/paper-patches")
+            patchesDir = file("kiocg-api/paper-patches")
             outputDir = file("paper-api")
         }
         patchDir("paperApiGenerator") {
             upstreamPath = "paper-api-generator"
-            patchesDir = file("fork-api-generator/paper-patches")
+            patchesDir = file("kiocg-api-generator/paper-patches")
             outputDir = file("paper-api-generator")
         }
     }

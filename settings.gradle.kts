@@ -10,7 +10,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
-rootProject.name = "fork"
+rootProject.name = "KioCG_Server"
 
-include("fork-api")
-include("fork-server")
+include("kiocg-api")
+include("kiocg-server")
