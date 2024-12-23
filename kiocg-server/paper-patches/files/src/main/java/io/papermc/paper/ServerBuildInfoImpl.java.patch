@@ -1,0 +1,11 @@
+--- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+@@ -44,7 +_,7 @@
+                 .map(Key::key)
+                 .orElse(BRAND_PAPER_ID),
+             getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
+-                .orElse(BRAND_PAPER_NAME),
++                .orElse("KioCG"), // KioCG - rebrand
+             SharedConstants.getCurrentVersion().getId(),
+             SharedConstants.getCurrentVersion().getName(),
+             getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
