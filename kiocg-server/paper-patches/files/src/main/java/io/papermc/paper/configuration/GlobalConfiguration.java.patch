@@ -1,0 +1,15 @@
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -354,4 +_,12 @@
+         public boolean disableChorusPlantUpdates = false;
+         public boolean disableMushroomBlockUpdates = false;
+     }
++
++    // KioCG start
++    public KiocgConfig kiocgConfig;
++
++    public class KiocgConfig extends ConfigurationPart {
++        public String feedbackForwardingSenderName = "MOSS";
++    }
++    // KioCG end
+ }
