@@ -1,0 +1,46 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+@@ -261,19 +_,41 @@
+     }
+ 
+     private int firstPartial(ItemStack item) {
+-        ItemStack[] inventory = this.getStorageContents();
++        // ItemStack[] inventory = this.getStorageContents(); // KioCG - add items vanilla-like - 下移
+         ItemStack filteredItem = CraftItemStack.asCraftCopy(item);
+         if (item == null) {
+             return -1;
+         }
++
++        // KioCG start - add items vanilla-like
++        if (this instanceof CraftInventoryPlayer craftInventoryPlayer) {
++            ItemStack cItem = craftInventoryPlayer.getItemInHand();
++            if (hasRemainingSpaceForItem(cItem, filteredItem)) {
++                return craftInventoryPlayer.getHeldItemSlot();
++            }
++
++            cItem = craftInventoryPlayer.getItemInOffHand();
++            if (hasRemainingSpaceForItem(cItem, filteredItem)) {
++                return net.minecraft.world.entity.player.Inventory.SLOT_OFFHAND;
++            }
++        }
++
++        ItemStack[] inventory = this.getStorageContents();
++        // KioCG end - add items vanilla-like
+         for (int i = 0; i < inventory.length; i++) {
+             ItemStack cItem = inventory[i];
+-            if (cItem != null && cItem.getAmount() < this.getMaxItemStack(cItem) && cItem.isSimilar(filteredItem)) {
++            if (hasRemainingSpaceForItem(cItem, filteredItem)) { // KioCG - add items vanilla-like - 提取方法
+                 return i;
+             }
+         }
+         return -1;
+     }
++
++    // KioCG start - add items vanilla-like - 提取方法
++    private boolean hasRemainingSpaceForItem(ItemStack cItem, ItemStack filteredItem) {
++        return cItem != null && cItem.getAmount() < this.getMaxItemStack(cItem) && cItem.isSimilar(filteredItem);
++    }
++    // KioCG end - add items vanilla-like - 提取方法
+ 
+     @Override
+     public HashMap<Integer, ItemStack> addItem(ItemStack... items) {

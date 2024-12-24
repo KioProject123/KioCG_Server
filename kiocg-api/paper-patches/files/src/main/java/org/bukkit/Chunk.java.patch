@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/Chunk.java
++++ b/src/main/java/org/bukkit/Chunk.java
+@@ -20,7 +_,7 @@
+  * then the chunk will only be generated as far as it needs to provide the
+  * requested data.
+  */
+-public interface Chunk extends PersistentDataHolder {
++public interface Chunk extends PersistentDataHolder, com.kiocg.meta.TemporaryDataHolder { // KioCG - temporary meta
+ 
+     /**
+      * Gets the X-coordinate of this chunk

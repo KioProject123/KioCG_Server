@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/block/TileState.java
++++ b/src/main/java/org/bukkit/block/TileState.java
+@@ -15,7 +_,7 @@
+  * After modifying the data provided by a TileState, {@link #update()} needs to
+  * be called to store the data.
+  */
+-public interface TileState extends BlockState, PersistentDataHolder {
++public interface TileState extends BlockState, PersistentDataHolder, com.kiocg.meta.TemporaryDataHolder { // KioCG - temporary meta
+ 
+     /**
+      * Returns a custom tag container capable of storing tags on the object.

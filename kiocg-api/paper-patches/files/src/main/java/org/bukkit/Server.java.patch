@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -626,6 +_,8 @@
+     @NotNull
+     public List<Player> matchPlayer(@NotNull String name);
+ 
++    public boolean isValidPlayerName(@NotNull String name); // KioCG - more api
++
+     /**
+      * Gets the player with the given UUID.
+      *

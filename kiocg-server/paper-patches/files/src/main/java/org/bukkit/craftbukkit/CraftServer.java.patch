@@ -9,3 +9,17 @@
      private File container;
      private WarningState warningState = WarningState.DEFAULT;
      public ApiVersion minimumAPI;
+@@ -719,6 +_,13 @@
+         ServerPlayer player = this.playerList.getPlayerByName(name);
+         return (player != null) ? player.getBukkitEntity() : null;
+     }
++
++    // KioCG start - more api
++    @Override
++    public boolean isValidPlayerName(String name) {
++        return net.minecraft.util.StringUtil.isReasonablePlayerName(name);
++    }
++    // KioCG end - more api
+ 
+     @Override
+     public Player getPlayer(UUID id) {

@@ -1,0 +1,16 @@
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
+@@ -203,6 +_,13 @@
+         return this.getSnapshot().persistentDataContainer;
+     }
+ 
++    // KioCG start - temporary meta
++    @Override
++    public java.util.Map<String, Object> getTemporaryMeta() {
++        return this.getSnapshot().temporaryMeta;
++    }
++    // KioCG end - temporary meta
++
+     @Nullable
+     public Packet<ClientGamePacketListener> getUpdatePacket(@NotNull Location location) {
+         return new ClientboundBlockEntityDataPacket(CraftLocation.toBlockPosition(location), this.snapshot.getType(), this.getUpdateNBT());

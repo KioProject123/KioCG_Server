@@ -1,0 +1,174 @@
+--- a/src/main/java/org/bukkit/persistence/PersistentDataType.java
++++ b/src/main/java/org/bukkit/persistence/PersistentDataType.java
+@@ -82,6 +_,15 @@
+     PersistentDataType<int[], int[]> INTEGER_ARRAY = new PrimitivePersistentDataType<>(int[].class);
+     PersistentDataType<long[], long[]> LONG_ARRAY = new PrimitivePersistentDataType<>(long[].class);
+ 
++    // KioCG start - more api
++    PersistentDataType<String, java.util.UUID> UUID = new UUIDPersistentDataType();
++    PersistentDataType<PersistentDataContainer, org.bukkit.Location> LOCATION = new LocationPersistentDataType();
++    PersistentDataType<String, org.bukkit.inventory.ItemStack> ITEM_STACK = new ItemStackPersistentDataType();
++    PersistentDataType<String, org.bukkit.inventory.ItemStack[]> ITEM_STACK_ARRAY = new ItemStackArrayPersistentDataType();
++    @Deprecated
++    PersistentDataType<String, org.bukkit.entity.Entity> ENTITY = new EntityPersistentDataType(org.bukkit.Bukkit.getWorlds().getFirst(), false);
++    // KioCG end - more api
++
+     /*
+         Complex Arrays.
+      */
+@@ -224,4 +_,155 @@
+             return primitive != 0;
+         }
+     }
++
++    // KioCG start - more api
++    class UUIDPersistentDataType implements PersistentDataType<String, java.util.UUID> {
++
++        @NotNull
++        @Override
++        public Class<String> getPrimitiveType() {
++            return String.class;
++        }
++
++        @NotNull
++        @Override
++        public Class<java.util.UUID> getComplexType() {
++            return java.util.UUID.class;
++        }
++
++        @NotNull
++        @Override
++        public String toPrimitive(java.util.UUID complex, PersistentDataAdapterContext context) {
++            return complex.toString();
++        }
++
++        @NotNull
++        @Override
++        public java.util.UUID fromPrimitive(String primitive, PersistentDataAdapterContext context) {
++            return java.util.UUID.fromString(primitive);
++        }
++    }
++
++    class LocationPersistentDataType implements PersistentDataType<PersistentDataContainer, org.bukkit.Location> {
++
++        @NotNull
++        @Override
++        public Class<PersistentDataContainer> getPrimitiveType() {
++            return PersistentDataContainer.class;
++        }
++
++        @NotNull
++        @Override
++        public Class<org.bukkit.Location> getComplexType() {
++            return org.bukkit.Location.class;
++        }
++
++        @NotNull
++        @Override
++        public PersistentDataContainer toPrimitive(@NotNull org.bukkit.Location complex, @NotNull PersistentDataAdapterContext context) {
++            PersistentDataContainer container = context.newPersistentDataContainer();
++            container.set(org.bukkit.NamespacedKey.kiocg("world"), PersistentDataType.STRING, complex.getWorld().getName());
++            container.set(org.bukkit.NamespacedKey.kiocg("pos"), PersistentDataType.LIST.doubles(), java.util.Arrays.asList(complex.getX(), complex.getY(), complex.getZ()));
++            container.set(org.bukkit.NamespacedKey.kiocg("rotation"), PersistentDataType.LIST.floats(), java.util.Arrays.asList(complex.getYaw(), complex.getPitch()));
++            return container;
++        }
++
++        @NotNull
++        @Override
++        public org.bukkit.Location fromPrimitive(@NotNull PersistentDataContainer primitive, @NotNull PersistentDataAdapterContext context) {
++            String world = java.util.Objects.requireNonNull(primitive.get(org.bukkit.NamespacedKey.kiocg("world"), PersistentDataType.STRING));
++            java.util.List<Double> pos = java.util.Objects.requireNonNull(primitive.get(org.bukkit.NamespacedKey.kiocg("pos"), PersistentDataType.LIST.doubles()));
++            java.util.List<Float> rotation = java.util.Objects.requireNonNull(primitive.get(org.bukkit.NamespacedKey.kiocg("rotation"), PersistentDataType.LIST.floats()));
++            return new org.bukkit.Location(org.bukkit.Bukkit.getWorld(world), pos.get(1), pos.get(2), pos.get(3), rotation.get(1), rotation.get(2));
++        }
++    }
++
++    class ItemStackPersistentDataType implements PersistentDataType<String, org.bukkit.inventory.ItemStack> {
++
++        @NotNull
++        @Override
++        public Class<String> getPrimitiveType() {
++            return String.class;
++        }
++
++        @NotNull
++        @Override
++        public Class<org.bukkit.inventory.ItemStack> getComplexType() {
++            return org.bukkit.inventory.ItemStack.class;
++        }
++
++        @NotNull
++        @Override
++        public String toPrimitive(@NotNull org.bukkit.inventory.ItemStack complex, @NotNull PersistentDataAdapterContext context) {
++            return java.util.Base64.getEncoder().encodeToString(complex.serializeAsBytes());
++        }
++
++        @NotNull
++        @Override
++        public org.bukkit.inventory.ItemStack fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
++            return org.bukkit.inventory.ItemStack.deserializeBytes(java.util.Base64.getDecoder().decode(primitive));
++        }
++    }
++
++    class ItemStackArrayPersistentDataType implements PersistentDataType<String, org.bukkit.inventory.ItemStack[]> {
++
++        @NotNull
++        @Override
++        public Class<String> getPrimitiveType() {
++            return String.class;
++        }
++
++        @NotNull
++        @Override
++        public Class<org.bukkit.inventory.ItemStack[]> getComplexType() {
++            return org.bukkit.inventory.ItemStack[].class;
++        }
++
++        @NotNull
++        @Override
++        public String toPrimitive(@NotNull org.bukkit.inventory.ItemStack[] complex, @NotNull PersistentDataAdapterContext context) {
++            return java.util.Base64.getEncoder().encodeToString(org.bukkit.inventory.ItemStack.serializeItemsAsBytes(complex));
++        }
++
++        @NotNull
++        @Override
++        public org.bukkit.inventory.ItemStack[] fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
++            return org.bukkit.inventory.ItemStack.deserializeItemsFromBytes(java.util.Base64.getDecoder().decode(primitive));
++        }
++    }
++
++    class EntityPersistentDataType implements PersistentDataType<String, org.bukkit.entity.Entity> {
++        org.bukkit.World world;
++        boolean preserveUUID;
++
++        public EntityPersistentDataType(org.bukkit.World world, boolean preserveUUID) {
++            this.world = world;
++            this.preserveUUID = preserveUUID;
++        }
++
++        @NotNull
++        @Override
++        public Class<String> getPrimitiveType() {
++            return String.class;
++        }
++
++        @NotNull
++        @Override
++        public Class<org.bukkit.entity.Entity> getComplexType() {
++            return org.bukkit.entity.Entity.class;
++        }
++
++        @NotNull
++        @Override
++        public String toPrimitive(@NotNull org.bukkit.entity.Entity complex, @NotNull PersistentDataAdapterContext context) {
++            return java.util.Base64.getEncoder().encodeToString(org.bukkit.Bukkit.getUnsafe().serializeEntity(complex));
++        }
++
++        @NotNull
++        @Override
++        public org.bukkit.entity.Entity fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
++            return org.bukkit.Bukkit.getUnsafe().deserializeEntity(java.util.Base64.getDecoder().decode(primitive), this.world, this.preserveUUID);
++        }
++    }
++    // KioCG end - more api
+ }

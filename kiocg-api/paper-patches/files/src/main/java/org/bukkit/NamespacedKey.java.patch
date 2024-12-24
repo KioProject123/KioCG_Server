@@ -1,0 +1,24 @@
+--- a/src/main/java/org/bukkit/NamespacedKey.java
++++ b/src/main/java/org/bukkit/NamespacedKey.java
+@@ -30,6 +_,7 @@
+      * compatibility measures.
+      */
+     public static final String BUKKIT = "bukkit";
++    public static final String KIOCG = "kiocg"; // KioCG - more api
+     //
+     private final String namespace;
+     private final String key;
+@@ -180,6 +_,13 @@
+     public static NamespacedKey minecraft(@NotNull String key) {
+         return new NamespacedKey(MINECRAFT, key);
+     }
++
++    // KioCG start - more api
++    @NotNull
++    public static NamespacedKey kiocg(@NotNull String key) {
++        return new NamespacedKey(KIOCG, key);
++    }
++    // KioCG end - more api
+ 
+     /**
+      * Get a NamespacedKey from the supplied string with a default namespace if

@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -50,7 +_,7 @@
+ /**
+  * Represents a world, which may contain entities, chunks and blocks
+  */
+-public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, Keyed, net.kyori.adventure.audience.ForwardingAudience { // Paper
++public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient, Metadatable, PersistentDataHolder, com.kiocg.meta.TemporaryDataHolder, Keyed, net.kyori.adventure.audience.ForwardingAudience { // Paper // KioCG - temporary meta
+ 
+     // Paper start - void damage configuration
+     /**

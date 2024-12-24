@@ -1,0 +1,16 @@
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -357,6 +_,13 @@
+         return this.getHandle(ChunkStatus.STRUCTURE_STARTS).persistentDataContainer;
+     }
+ 
++    // KioCG start - temporary meta
++    @Override
++    public java.util.Map<String, Object> getTemporaryMeta() {
++        return this.getHandle(ChunkStatus.STRUCTURE_STARTS).temporaryMeta;
++    }
++    // KioCG end - temporary meta
++
+     @Override
+     public LoadLevel getLoadLevel() {
+         net.minecraft.world.level.chunk.LevelChunk chunk = this.worldServer.getChunkIfLoaded(this.getX(), this.getZ());
