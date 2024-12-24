@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/inventory/AbstractFurnaceMenu.java
++++ b/net/minecraft/world/inventory/AbstractFurnaceMenu.java
+@@ -155,6 +_,7 @@
+     }
+ 
+     protected boolean canSmelt(ItemStack stack) {
++        if (!this.allowModelItem(stack)) return false; // KioCG - vanilla recipe excludes model items
+         return this.acceptedInputs.test(stack);
+     }
+ 

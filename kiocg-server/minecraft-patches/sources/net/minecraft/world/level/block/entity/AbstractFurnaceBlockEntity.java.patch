@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -288,6 +_,13 @@
+             if (itemStack.isEmpty()) {
+                 return false;
+             } else {
++                // KioCG start - vanilla recipe excludes model items
++                if (recipe.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
++                    if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, items.get(0))) {
++                        return false;
++                    }
++                }
++                // KioCG end - vanilla recipe excludes model items
+                 ItemStack itemStack1 = items.get(2);
+                 return itemStack1.isEmpty()
+                     || ItemStack.isSameItemSameComponents(itemStack1, itemStack)
+@@ -430,7 +_,7 @@
+             return true;
+         } else {
+             ItemStack itemStack = this.items.get(1);
+-            return this.level.fuelValues().isFuel(stack) || stack.is(Items.BUCKET) && !itemStack.is(Items.BUCKET);
++            return this.level.fuelValues().isFuel(stack) || stack.is(Items.BUCKET) && !itemStack.is(Items.BUCKET) && net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, stack); // KioCG - vanilla recipe excludes model items
+         }
+     }
+ 

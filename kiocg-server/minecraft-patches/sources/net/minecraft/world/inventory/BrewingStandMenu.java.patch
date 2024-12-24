@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/inventory/BrewingStandMenu.java
++++ b/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -154,7 +_,7 @@
+         }
+ 
+         public static boolean mayPlaceItem(ItemStack itemStack) {
+-            return itemStack.is(ItemTags.BREWING_FUEL);
++            return PotionBrewing.isFuel(itemStack); // KioCG - vanilla recipe excludes model items: 提取方法
+         }
+ 
+         @Override
+@@ -205,7 +_,7 @@
+         }
+ 
+         public static boolean mayPlaceItem(ItemStack stack, PotionBrewing potionBrewing) { // Paper - custom potion mixes
+-            return stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION) || stack.is(Items.GLASS_BOTTLE) || potionBrewing.isCustomInput(stack); // Paper - Custom Potion Mixes
++            return potionBrewing.isPotion(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+         }
+ 
+         @Override

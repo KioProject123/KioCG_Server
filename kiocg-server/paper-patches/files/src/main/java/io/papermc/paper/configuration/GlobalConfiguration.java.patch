@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -354,4 +_,12 @@
+@@ -354,4 +_,86 @@
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
@@ -10,6 +10,80 @@
 +
 +    public class KiocgConfig extends ConfigurationPart {
 +        public String feedbackForwardingSenderName = "MOSS";
++
++        public ModelItems modelItems;
++        public class ModelItems extends ConfigurationPart {
++
++            public VanillaRecipeCanUse vanillaRecipeCanUse;
++            public class VanillaRecipeCanUse extends ConfigurationPart {
++                private java.util.Set<String> anvil = java.util.Set.of();
++                private java.util.Set<String> beacon = java.util.Set.of();
++                private java.util.Set<String> cartographyTable = java.util.Set.of();
++                private java.util.Set<String> crafting = java.util.Set.of();
++                private java.util.Set<String> enchantment = java.util.Set.of();
++                private java.util.Set<String> grindstone = java.util.Set.of();
++                private java.util.Set<String> loom = java.util.Set.of();
++                private java.util.Set<String> smithing = java.util.Set.of();
++                private java.util.Set<String> stonecutter = java.util.Set.of();
++                private java.util.Set<String> furnace = java.util.Set.of();
++                private java.util.Set<String> brewingStand = java.util.Set.of();
++
++                public boolean allowed(net.minecraft.world.inventory.MenuType<?> menuType, net.minecraft.world.item.ItemStack itemStack) {
++                    net.minecraft.world.item.component.CustomModelData customModelData = itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA);
++                    if (customModelData == null) {
++                        return true;
++                    }
++
++                    if (menuType == net.minecraft.world.inventory.MenuType.ANVIL) {
++                        return include(anvil, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.BEACON) {
++                        return include(beacon, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.CARTOGRAPHY_TABLE) {
++                        return include(cartographyTable, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.CRAFTING) {
++                        return include(crafting, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.ENCHANTMENT) {
++                        return include(enchantment, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.GRINDSTONE) {
++                        return include(grindstone, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.LOOM) {
++                        return include(loom, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.SMITHING) {
++                        return include(smithing, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.STONECUTTER) {
++                        return include(stonecutter, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.FURNACE
++                               || menuType == net.minecraft.world.inventory.MenuType.BLAST_FURNACE
++                               || menuType == net.minecraft.world.inventory.MenuType.SMOKER) {
++                        return include(furnace, customModelData);
++                    } else if (menuType == net.minecraft.world.inventory.MenuType.BREWING_STAND) {
++                        return include(brewingStand, customModelData);
++                    } else {
++                        LOGGER.error("无效的面板类型 {}", menuType);
++                        return false;
++                    }
++                }
++
++                private boolean include(java.util.Set<String> set, net.minecraft.world.item.component.CustomModelData customModelData) {
++                    final Boolean aBoolean = customModelData.getBoolean(0);
++                    if (aBoolean != null && set.contains(aBoolean.toString())) {
++                        return true;
++                    }
++
++                    final Float aFloat = customModelData.getFloat(0);
++                    if (aFloat != null && set.contains(String.valueOf(aFloat.intValue()))) {
++                        return true;
++                    }
++
++                    final String string = customModelData.getString(0);
++                    if (string != null && set.contains(string)) {
++                        return true;
++                    }
++
++                    return false;
++                }
++            }
++        }
 +    }
 +    // KioCG end
  }

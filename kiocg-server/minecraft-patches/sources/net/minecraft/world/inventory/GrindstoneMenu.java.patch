@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/inventory/GrindstoneMenu.java
++++ b/net/minecraft/world/inventory/GrindstoneMenu.java
+@@ -159,6 +_,7 @@
+             boolean flag1 = !inputItem.isEmpty() && !additionalItem.isEmpty();
+             if (!flag1) {
+                 ItemStack itemStack = !inputItem.isEmpty() ? inputItem : additionalItem;
++                if (!this.allowModelItem(itemStack)) return ItemStack.EMPTY; // KioCG - vanilla recipe excludes model items
+                 return !EnchantmentHelper.hasAnyEnchantments(itemStack) ? ItemStack.EMPTY : this.removeNonCursesFrom(itemStack.copy());
+             } else {
+                 return this.mergeItems(inputItem, additionalItem);
+@@ -172,6 +_,7 @@
+         if (!inputItem.is(additionalItem.getItem())) {
+             return ItemStack.EMPTY;
+         } else {
++            if (!this.allowModelItem(inputItem) || !this.allowModelItem(additionalItem)) return ItemStack.EMPTY; // KioCG - vanilla recipe excludes model items
+             int max = Math.max(inputItem.getMaxDamage(), additionalItem.getMaxDamage());
+             int i = inputItem.getMaxDamage() - inputItem.getDamageValue();
+             int i1 = additionalItem.getMaxDamage() - additionalItem.getDamageValue();

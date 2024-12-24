@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/inventory/AbstractContainerMenu.java
++++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -931,6 +_,16 @@
+         return this.stateId;
+     }
+ 
++    // KioCG start - vanilla recipe excludes model items
++    boolean allowModelItem(ItemStack itemStack) {
++        return allowModelItem(getType(), itemStack);
++    }
++
++    public static boolean allowModelItem(MenuType<?> menuType, ItemStack itemStack) {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(menuType, itemStack);
++    }
++    // KioCG end - vanilla recipe excludes model items
++
+     // Paper start - Add missing InventoryHolders
+     // The reason this is a supplier, is that the createHolder method uses the bukkit InventoryView#getTopInventory to get the inventory in question
+     // and that can't be obtained safely until the AbstractContainerMenu has been fully constructed. Using a supplier lazily

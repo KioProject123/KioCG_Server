@@ -1,0 +1,77 @@
+--- a/net/minecraft/world/inventory/CartographyTableMenu.java
++++ b/net/minecraft/world/inventory/CartographyTableMenu.java
+@@ -80,13 +_,13 @@
+         this.addSlot(new Slot(this.container, 0, 15, 15) {
+             @Override
+             public boolean mayPlace(ItemStack stack) {
+-                return stack.has(DataComponents.MAP_ID);
++                return hasMapID(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+         });
+         this.addSlot(new Slot(this.container, 1, 15, 52) {
+             @Override
+             public boolean mayPlace(ItemStack stack) {
+-                return stack.is(Items.PAPER) || stack.is(Items.MAP) || stack.is(Items.GLASS_PANE);
++                return isPaper(stack) || isMap(stack) || isGlassPane(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+         });
+         this.addSlot(new Slot(this.resultContainer, 2, 145, 39) {
+@@ -114,6 +_,24 @@
+         this.player = (org.bukkit.entity.Player) playerInventory.player.getBukkitEntity(); // CraftBukkit
+     }
+ 
++    // KioCG start - vanilla recipe excludes model items
++    boolean hasMapID(ItemStack stack) {
++        return stack.has(DataComponents.MAP_ID) && this.allowModelItem(stack);
++    }
++
++    boolean isPaper(ItemStack stack) {
++        return stack.is(Items.PAPER) && this.allowModelItem(stack);
++    }
++
++    boolean isMap(ItemStack stack) {
++        return stack.is(Items.MAP) && this.allowModelItem(stack);
++    }
++
++    boolean isGlassPane(ItemStack stack) {
++        return stack.is(Items.GLASS_PANE) && this.allowModelItem(stack);
++    }
++    // KioCG end - vanilla recipe excludes model items
++
+     @Override
+     public boolean stillValid(Player player) {
+         if (!this.checkReachable) return true; // CraftBukkit
+@@ -140,16 +_,16 @@
+             MapItemSavedData savedData = MapItem.getSavedData(map, level);
+             if (savedData != null) {
+                 ItemStack itemStack;
+-                if (firstSlotStack.is(Items.PAPER) && !savedData.locked && savedData.scale < 4) {
++                if (isPaper(firstSlotStack) && !savedData.locked && savedData.scale < 4) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     itemStack = map.copyWithCount(1);
+                     itemStack.set(DataComponents.MAP_POST_PROCESSING, MapPostProcessing.SCALE);
+                     this.broadcastChanges();
+-                } else if (firstSlotStack.is(Items.GLASS_PANE) && !savedData.locked) {
++                } else if (isGlassPane(firstSlotStack) && !savedData.locked) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     itemStack = map.copyWithCount(1);
+                     itemStack.set(DataComponents.MAP_POST_PROCESSING, MapPostProcessing.LOCK);
+                     this.broadcastChanges();
+                 } else {
+-                    if (!firstSlotStack.is(Items.MAP)) {
++                    if (!isMap(firstSlotStack)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                         this.resultContainer.removeItemNoUpdate(2);
+                         this.broadcastChanges();
+                         return;
+@@ -187,11 +_,11 @@
+ 
+                 slot.onQuickCraft(item, itemStack);
+             } else if (index != 1 && index != 0) {
+-                if (item.has(DataComponents.MAP_ID)) {
++                if (hasMapID(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     if (!this.moveItemStackTo(item, 0, 1, false)) {
+                         return ItemStack.EMPTY;
+                     }
+-                } else if (!item.is(Items.PAPER) && !item.is(Items.MAP) && !item.is(Items.GLASS_PANE)) {
++                } else if (!isPaper(item) && !isMap(item) && !isGlassPane(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     if (index >= 3 && index < 30) {
+                         if (!this.moveItemStackTo(item, 30, 39, false)) {
+                             return ItemStack.EMPTY;

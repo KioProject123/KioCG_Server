@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/inventory/AnvilMenu.java
++++ b/net/minecraft/world/inventory/AnvilMenu.java
+@@ -134,12 +_,21 @@
+         int i1 = 0;
+         if (!item.isEmpty() && EnchantmentHelper.canStoreEnchantments(item)) {
+             ItemStack itemStack = item.copy();
+-            ItemStack item1 = this.inputSlots.getItem(1);
++            ItemStack item1 = this.inputSlots.getItem(1); ItemStack itemAtSlot2 = item1; // KioCG - OBFHELPER
+             ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemStack));
+             l += (long)item.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue()
+                 + item1.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue();
+             this.repairItemCountCost = 0;
+             if (!item1.isEmpty()) {
++                // KioCG start - vanilla recipe excludes model items
++                if (!this.allowModelItem(itemAtSlot2)) {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++                    this.cost.set(AnvilMenu.DEFAULT_DENIED_COST); // CraftBukkit - use a variable for set a cost for denied item
++                    sendAllDataToRemote();
++                    return;
++                }
++                // KioCG end - vanilla recipe excludes model items
++
+                 boolean hasStoredEnchantments = item1.has(DataComponents.STORED_ENCHANTMENTS);
+                 if (itemStack.isDamageableItem() && item.isValidRepairItem(item1)) {
+                     int min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);

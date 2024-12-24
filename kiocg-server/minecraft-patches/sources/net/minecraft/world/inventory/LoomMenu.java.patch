@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/inventory/LoomMenu.java
++++ b/net/minecraft/world/inventory/LoomMenu.java
+@@ -88,19 +_,19 @@
+         this.bannerSlot = this.addSlot(new Slot(this.inputContainer, 0, 13, 26) {
+             @Override
+             public boolean mayPlace(ItemStack stack) {
+-                return stack.getItem() instanceof BannerItem;
++                return isBannerItem(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+         });
+         this.dyeSlot = this.addSlot(new Slot(this.inputContainer, 1, 33, 26) {
+             @Override
+             public boolean mayPlace(ItemStack stack) {
+-                return stack.getItem() instanceof DyeItem;
++                return isDyeItem(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+         });
+         this.patternSlot = this.addSlot(new Slot(this.inputContainer, 2, 23, 45) {
+             @Override
+             public boolean mayPlace(ItemStack stack) {
+-                return stack.getItem() instanceof BannerPatternItem;
++                return isBannerPatternItem(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+         });
+         this.resultSlot = this.addSlot(new Slot(this.outputContainer, 0, 143, 57) {
+@@ -133,6 +_,20 @@
+         this.player = (org.bukkit.entity.Player) playerInventory.player.getBukkitEntity(); // CraftBukkit
+     }
+ 
++    // KioCG start - vanilla recipe excludes model items
++    boolean isBannerItem(ItemStack stack) {
++        return stack.getItem() instanceof BannerItem && this.allowModelItem(stack);
++    }
++
++    boolean isDyeItem(ItemStack stack) {
++        return stack.getItem() instanceof DyeItem && this.allowModelItem(stack);
++    }
++
++    boolean isBannerPatternItem(ItemStack stack) {
++        return stack.getItem() instanceof BannerPatternItem && this.allowModelItem(stack);
++    }
++    // KioCG end - vanilla recipe excludes model items
++
+     @Override
+     public boolean stillValid(Player player) {
+         if (!this.checkReachable) return true; // CraftBukkit
+@@ -265,15 +_,15 @@
+ 
+                 slot.onQuickCraft(item, itemStack);
+             } else if (index != this.dyeSlot.index && index != this.bannerSlot.index && index != this.patternSlot.index) {
+-                if (item.getItem() instanceof BannerItem) {
++                if (isBannerItem(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     if (!this.moveItemStackTo(item, this.bannerSlot.index, this.bannerSlot.index + 1, false)) {
+                         return ItemStack.EMPTY;
+                     }
+-                } else if (item.getItem() instanceof DyeItem) {
++                } else if (isDyeItem(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     if (!this.moveItemStackTo(item, this.dyeSlot.index, this.dyeSlot.index + 1, false)) {
+                         return ItemStack.EMPTY;
+                     }
+-                } else if (item.getItem() instanceof BannerPatternItem) {
++                } else if (isBannerPatternItem(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                     if (!this.moveItemStackTo(item, this.patternSlot.index, this.patternSlot.index + 1, false)) {
+                         return ItemStack.EMPTY;
+                     }

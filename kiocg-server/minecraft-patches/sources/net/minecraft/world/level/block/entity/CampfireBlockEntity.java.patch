@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -77,9 +_,19 @@
+                             result,
+                             (org.bukkit.inventory.CookingRecipe<?>) optionalCookingRecipe.map(RecipeHolder::toBukkitRecipe).orElse(null) // Paper -Add recipe to cook events
+                         );
++                        // KioCG start - vanilla recipe excludes model items
++                        if (optionalCookingRecipe.isPresent() && optionalCookingRecipe.get().id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
++                            if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, itemStack)) {
++                                blockCookEvent.setCancelled(true);
++                            }
++                        }
++                        // KioCG end - vanilla recipe excludes model items
+ 
+                         if (!blockCookEvent.callEvent()) {
+-                            return;
++                            // KioCG start - fix event when cancelled
++                            campfire.cookingProgress[i] = 0;
++                            continue;
++                            // KioCG end - fix event when cancelled
+                         }
+ 
+                         result = blockCookEvent.getResult();
+@@ -213,6 +_,13 @@
+                 if (recipeFor.isEmpty()) {
+                     return false;
+                 }
++                // KioCG start - vanilla recipe excludes model items
++                if (recipeFor.get().id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
++                    if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, stack)) {
++                        return false;
++                    }
++                }
++                // KioCG end - vanilla recipe excludes model items
+ 
+                 // CraftBukkit start
+                 org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(

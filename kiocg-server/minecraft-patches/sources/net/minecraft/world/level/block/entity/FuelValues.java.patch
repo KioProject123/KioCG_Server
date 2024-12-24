@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/entity/FuelValues.java
++++ b/net/minecraft/world/level/block/entity/FuelValues.java
+@@ -24,6 +_,11 @@
+     }
+ 
+     public boolean isFuel(ItemStack stack) {
++        // KioCG start - vanilla recipe excludes model items
++        if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, stack)) {
++            return false;
++        }
++        // KioCG end - vanilla recipe excludes model items
+         return this.values.containsKey(stack.getItem());
+     }
+ 

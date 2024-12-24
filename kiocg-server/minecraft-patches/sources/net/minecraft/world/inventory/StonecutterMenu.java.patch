@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/inventory/StonecutterMenu.java
++++ b/net/minecraft/world/inventory/StonecutterMenu.java
+@@ -180,7 +_,7 @@
+     @Override
+     public void slotsChanged(Container inventory) {
+         ItemStack item = this.inputSlot.getItem();
+-        if (!item.is(this.input.getItem())) {
++        if (!ItemStack.isSameItemSameComponents(item, this.input)) { // KioCG - 更准确的判断
+             this.input = item.copy();
+             this.setupRecipeList(item);
+         }
+@@ -192,6 +_,11 @@
+         this.resultSlot.set(ItemStack.EMPTY);
+         if (!stack.isEmpty()) {
+             this.recipesForInput = this.level.recipeAccess().stonecutterRecipes().selectByInput(stack);
++            // KioCG start - vanilla recipe excludes model items
++            if (!this.allowModelItem(stack)) {
++                this.recipesForInput.entries().removeIf(recipe -> recipe.recipe().recipe().filter(recipeHolder -> recipeHolder.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)).isPresent());
++            }
++            // KioCG end - vanilla recipe excludes model items
+         } else {
+             this.recipesForInput = SelectableRecipe.SingleInputSet.empty();
+         }

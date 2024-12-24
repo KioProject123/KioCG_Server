@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/inventory/BeaconMenu.java
++++ b/net/minecraft/world/inventory/BeaconMenu.java
+@@ -42,7 +_,7 @@
+         this.beacon = new SimpleContainer(this.createBlockHolder(access), 1) {
+             @Override
+             public boolean canPlaceItem(int slot, ItemStack stack) {
+-                return stack.is(ItemTags.BEACON_PAYMENT_ITEMS);
++                return isBeaconPaymentItems(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+ 
+             @Override
+@@ -67,6 +_,12 @@
+         this.addStandardInventorySlots(container, 36, 137);
+     }
+ 
++    // KioCG start - vanilla recipe excludes model items
++    boolean isBeaconPaymentItems(ItemStack stack) {
++        return stack.is(ItemTags.BEACON_PAYMENT_ITEMS) && this.allowModelItem(stack);
++    }
++    // KioCG end - vanilla recipe excludes model items
++
+     @Override
+     public void removed(Player player) {
+         super.removed(player);
+@@ -195,6 +_,7 @@
+ 
+         @Override
+         public boolean mayPlace(ItemStack stack) {
++            if (true) return this.container.canPlaceItem(PAYMENT_SLOT, stack); // KioCG - vanilla recipe excludes model items
+             return stack.is(ItemTags.BEACON_PAYMENT_ITEMS);
+         }
+ 

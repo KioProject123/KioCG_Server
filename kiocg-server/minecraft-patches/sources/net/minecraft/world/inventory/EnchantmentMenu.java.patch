@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/inventory/EnchantmentMenu.java
++++ b/net/minecraft/world/inventory/EnchantmentMenu.java
+@@ -75,7 +_,7 @@
+         this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
+             @Override
+             public boolean mayPlace(ItemStack stack) {
+-                return stack.is(Items.LAPIS_LAZULI);
++                return isLapisLazuli(stack); // KioCG - vanilla recipe excludes model items: 提取方法
+             }
+ 
+             @Override
+@@ -97,6 +_,12 @@
+         this.player = (org.bukkit.entity.Player) playerInventory.player.getBukkitEntity(); // CraftBukkit
+     }
+ 
++    // KioCG start - vanilla recipe excludes model items
++    boolean isLapisLazuli(ItemStack stack) {
++        return stack.is(Items.LAPIS_LAZULI) && this.allowModelItem(stack);
++    }
++    // KioCG end - vanilla recipe excludes model items
++
+     @Override
+     public void slotsChanged(Container inventory) {
+         if (inventory == this.enchantSlots) {
+@@ -144,6 +_,13 @@
+ 
+                     org.bukkit.event.enchantment.PrepareItemEnchantEvent event = new org.bukkit.event.enchantment.PrepareItemEnchantEvent(this.player, this.getBukkitView(), this.access.getLocation().getBlock(), craftItemStack, offers, i1);
+                     event.setCancelled(!item.isEnchantable());
++                    // KioCG start - vanilla recipe excludes model items
++                    if (!event.isCancelled()) {
++                        if (item.is(Items.BOOK) && !this.allowModelItem(item)) {
++                            event.setCancelled(true);
++                        }
++                    }
++                    // KioCG end - vanilla recipe excludes model items
+                     level.getCraftServer().getPluginManager().callEvent(event);
+ 
+                     if (event.isCancelled()) {
+@@ -316,7 +_,7 @@
+                 if (!this.moveItemStackTo(item, 2, 38, true)) {
+                     return ItemStack.EMPTY;
+                 }
+-            } else if (item.is(Items.LAPIS_LAZULI)) {
++            } else if (isLapisLazuli(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
+                 if (!this.moveItemStackTo(item, 1, 2, true)) {
+                     return ItemStack.EMPTY;
+                 }

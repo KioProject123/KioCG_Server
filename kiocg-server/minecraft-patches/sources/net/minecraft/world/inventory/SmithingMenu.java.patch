@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/inventory/SmithingMenu.java
++++ b/net/minecraft/world/inventory/SmithingMenu.java
+@@ -119,6 +_,13 @@
+         recipeFor.ifPresentOrElse(recipe -> {
+             ItemStack itemStack = recipe.value().assemble(smithingRecipeInput, this.level.registryAccess());
+             this.resultSlots.setRecipeUsed((RecipeHolder<?>)recipe);
++            // KioCG start - vanilla recipe excludes model items
++            if (recipe.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
++                if (this.inputSlots.hasAnyMatching(itemStack0 -> !itemStack0.isEmpty() && !this.allowModelItem(itemStack0))) {
++                    itemStack = ItemStack.EMPTY;
++                }
++            }
++            // KioCG end - vanilla recipe excludes model items
+             // CraftBukkit start
+             org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareSmithingEvent(this.getBukkitView(), itemStack);
+             // CraftBukkit end

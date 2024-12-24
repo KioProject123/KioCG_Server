@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/inventory/CraftingMenu.java
++++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -91,6 +_,13 @@
+                 ItemStack itemStack1 = craftingRecipe.assemble(craftInput, level.registryAccess());
+                 if (itemStack1.isItemEnabled(level.enabledFeatures())) {
+                     itemStack = itemStack1;
++                    // KioCG start - vanilla recipe excludes model items
++                    if (recipeHolder.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
++                        if (craftSlots.hasAnyMatching(itemStack0 -> !itemStack0.isEmpty() && !allowModelItem(MenuType.CRAFTING, itemStack0))) { // 玩家背包的合成栏无法getType()
++                            itemStack = ItemStack.EMPTY;
++                        }
++                    }
++                    // KioCG end - vanilla recipe excludes model items
+                 }
+             }
+         }
