@@ -1,0 +1,110 @@
+--- a/net/minecraft/world/level/storage/PrimaryLevelData.java
++++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
+@@ -51,6 +_,7 @@
+     private float spawnAngle;
+     private long gameTime;
+     private long dayTime;
++    private int days; // KioCG - world data synchronization
+     @Nullable
+     private final CompoundTag loadedPlayerTag;
+     private final int version;
+@@ -123,6 +_,7 @@
+         this.spawnAngle = spawnAngle;
+         this.gameTime = gameTime;
+         this.dayTime = dayTime;
++        this.days = (int) (this.dayTime / 24000L); // KioCG - world data synchronization
+         this.version = version;
+         this.clearWeatherTime = clearWeatherTime;
+         this.rainTime = rainTime;
+@@ -323,9 +_,23 @@
+ 
+     @Override
+     public long getDayTime() {
++        // KioCG start - world data synchronization
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getDayTime();
++        }
++        // KioCG end - world data synchronization
+         return this.dayTime;
+     }
+ 
++    // KioCG start - world data synchronization
++    public int getDays() {
++        if (this != MinecraftServer.getServer().getWorldData()) { // 始终同步天数
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getDays();
++        }
++        return this.days;
++    }
++    // KioCG end - world data synchronization
++
+     @Nullable
+     @Override
+     public CompoundTag getLoadedPlayerTag() {
+@@ -340,6 +_,7 @@
+     @Override
+     public void setDayTime(long time) {
+         this.dayTime = time;
++        this.days = (int) (this.dayTime / 24000L); // KioCG - world data synchronization
+     }
+ 
+     @Override
+@@ -360,6 +_,11 @@
+ 
+     @Override
+     public int getClearWeatherTime() {
++        // KioCG start - world data synchronization
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getClearWeatherTime();
++        }
++        // KioCG end - world data synchronization
+         return this.clearWeatherTime;
+     }
+ 
+@@ -370,6 +_,11 @@
+ 
+     @Override
+     public boolean isThundering() {
++        // KioCG start - world data synchronization
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).isThundering();
++        }
++        // KioCG end - world data synchronization
+         return this.thundering;
+     }
+ 
+@@ -399,6 +_,11 @@
+ 
+     @Override
+     public int getThunderTime() {
++        // KioCG start - world data synchronization
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getThunderTime();
++        }
++        // KioCG end - world data synchronization
+         return this.thunderTime;
+     }
+ 
+@@ -409,6 +_,11 @@
+ 
+     @Override
+     public boolean isRaining() {
++        // KioCG start - world data synchronization
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).isRaining();
++        }
++        // KioCG end - world data synchronization
+         return this.raining;
+     }
+ 
+@@ -439,6 +_,11 @@
+ 
+     @Override
+     public int getRainTime() {
++        // KioCG start - world data synchronization
++        if (this != MinecraftServer.getServer().getWorldData() && this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getRainTime();
++        }
++        // KioCG end - world data synchronization
+         return this.rainTime;
+     }
+ 

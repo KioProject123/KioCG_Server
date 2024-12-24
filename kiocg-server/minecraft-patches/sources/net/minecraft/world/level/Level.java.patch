@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/Level.java
++++ b/net/minecraft/world/level/Level.java
+@@ -1885,6 +_,12 @@
+         return this.levelData.getDayTime();
+     }
+ 
++    // KioCG start - world data synchronization
++    public int getDays() {
++        return ((net.minecraft.world.level.storage.PrimaryLevelData) this.levelData).getDays();
++    }
++    // KioCG end - world data synchronization
++
+     public boolean mayInteract(Player player, BlockPos pos) {
+         return true;
+     }
