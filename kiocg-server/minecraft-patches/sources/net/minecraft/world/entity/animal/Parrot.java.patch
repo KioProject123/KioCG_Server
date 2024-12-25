@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/entity/animal/Parrot.java
++++ b/net/minecraft/world/entity/animal/Parrot.java
+@@ -155,9 +_,23 @@
+         this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
+         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
+         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
+-        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0));
++        // KioCG start - optimize entity behavior
++        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0) {
++            @Override
++            public boolean canUse() {
++                return (!((TamableAnimal) this.mob).isOrderedToSit() || this.mob.isInWaterOrBubble()) && super.canUse();
++            }
++        });
++        // KioCG end - optimize entity behavior
+         this.goalSelector.addGoal(3, new LandOnOwnersShoulderGoal(this));
+-        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F));
++        // KioCG start - optimize entity behavior
++        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F) {
++            @Override
++            public boolean canUse() {
++                return !((TamableAnimal) this.mob).isOrderedToSit() && super.canUse();
++            }
++        });
++        // KioCG end - optimize entity behavior
+     }
+ 
+     public static AttributeSupplier.Builder createAttributes() {

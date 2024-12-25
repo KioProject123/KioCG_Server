@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/entity/animal/Cat.java
++++ b/net/minecraft/world/entity/animal/Cat.java
+@@ -107,7 +_,14 @@
+         this.goalSelector.addGoal(8, new LeapAtTargetGoal(this, 0.3F));
+         this.goalSelector.addGoal(9, new OcelotAttackGoal(this));
+         this.goalSelector.addGoal(10, new BreedGoal(this, 0.8));
+-        this.goalSelector.addGoal(11, new WaterAvoidingRandomStrollGoal(this, 0.8, 1.0000001E-5F));
++        // KioCG start - optimize entity behavior
++        this.goalSelector.addGoal(11, new WaterAvoidingRandomStrollGoal(this, 0.8, 1.0000001E-5F) {
++            @Override
++            public boolean canUse() {
++                return (!((TamableAnimal) this.mob).isOrderedToSit() || this.mob.isInWaterOrBubble()) && super.canUse();
++            }
++        });
++        // KioCG end - optimize entity behavior
+         this.goalSelector.addGoal(12, new LookAtPlayerGoal(this, Player.class, 10.0F));
+         this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Rabbit.class, false, null));
+         this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
+@@ -637,7 +_,7 @@
+ 
+         @Override
+         public boolean canUse() {
+-            return super.canUse() && !this.cat.isTame();
++            return !this.cat.isTame() && super.canUse(); // KioCG - 优化判断顺序
+         }
+     }
+ }

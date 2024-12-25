@@ -1,0 +1,20 @@
+--- a/io/papermc/paper/entity/activation/ActivationRange.java
++++ b/io/papermc/paper/entity/activation/ActivationRange.java
+@@ -203,11 +_,17 @@
+         if ((entity.activationType != ActivationType.WATER && entity.isInWater() && entity.isPushedByFluid())) {
+             return 100;
+         }
++        if (entity instanceof ItemEntity) // KioCG - Check items only. https://github.com/PaperMC/Paper/pull/7644
+         if (!entity.onGround() || entity.getDeltaMovement().horizontalDistanceSqr() > 9.999999747378752E-6D) {
+             return 100;
+         }
+         if (!(entity instanceof final AbstractArrow arrow)) {
+             if ((!entity.onGround() && !(entity instanceof FlyingMob))) {
++                // KioCG start - radical optimization
++                if (!(entity instanceof net.minecraft.world.entity.animal.WaterAnimal) && !(entity instanceof net.minecraft.world.entity.animal.axolotl.Axolotl) && !(entity instanceof net.minecraft.world.entity.animal.Turtle)
++                    && !(entity instanceof net.minecraft.world.entity.animal.FlyingAnimal) && !(entity instanceof net.minecraft.world.entity.animal.allay.Allay)
++                    && !(entity instanceof net.minecraft.world.entity.ambient.Bat))
++                // KioCG end - radical optimization
+                 return 10;
+             }
+         } else if (!arrow.isInGround()) {

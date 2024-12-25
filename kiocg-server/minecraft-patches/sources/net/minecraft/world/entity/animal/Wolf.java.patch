@@ -1,0 +1,53 @@
+--- a/net/minecraft/world/entity/animal/Wolf.java
++++ b/net/minecraft/world/entity/animal/Wolf.java
+@@ -125,17 +_,38 @@
+         this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0, true));
+         this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F));
+         this.goalSelector.addGoal(7, new BreedGoal(this, 1.0));
+-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
++        // KioCG start - optimize entity behavior
++        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0) {
++            @Override
++            public boolean canUse() {
++                return (!((TamableAnimal) this.mob).isOrderedToSit() || this.mob.isInWaterOrBubble()) && super.canUse();
++            }
++        });
++        // KioCG end - optimize entity behavior
+         this.goalSelector.addGoal(9, new BegGoal(this, 8.0F));
+         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+         this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
+-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
++        // KioCG start - optimize entity behavior
++        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt) {
++            @Override
++            public boolean canUse() {
++                return !((TamableAnimal) this.mob).isOrderedToSit() && super.canUse();
++            }
++        });
++        // KioCG end - optimize entity behavior
+         this.targetSelector.addGoal(5, new NonTameRandomTargetGoal<>(this, Animal.class, false, PREY_SELECTOR));
+         this.targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
+-        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false));
++        // KioCG start - optimize entity behavior
++        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false) {
++            @Override
++            public boolean canUse() {
++                return !((TamableAnimal) this.mob).isOrderedToSit() && super.canUse();
++            }
++        });
++        // KioCG end - optimize entity behavior
+         this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
+     }
+ 
+@@ -650,7 +_,7 @@
+ 
+         @Override
+         public boolean canUse() {
+-            return super.canUse() && this.toAvoid instanceof Llama && !this.wolf.isTame() && this.avoidLlama((Llama)this.toAvoid);
++            return !this.wolf.isTame() && super.canUse() && this.toAvoid instanceof Llama && this.avoidLlama((Llama)this.toAvoid); // KioCG - 优化判断顺序
+         }
+ 
+         private boolean avoidLlama(Llama llama) {

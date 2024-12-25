@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
++++ b/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
+@@ -28,7 +_,7 @@
+     public RandomStrollGoal(PathfinderMob mob, double speedModifier, int interval, boolean checkNoActionTime) {
+         this.mob = mob;
+         this.speedModifier = speedModifier;
+-        this.interval = interval;
++        this.interval = interval << 1; // KioCG - 降低生物寻路频率
+         this.checkNoActionTime = checkNoActionTime;
+         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+     }

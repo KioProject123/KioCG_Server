@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/AbstractSkeleton.java
++++ b/net/minecraft/world/entity/monster/AbstractSkeleton.java
+@@ -82,7 +_,7 @@
+         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
++        // this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR)); // KioCG - optimize entity behavior
+     }
+ 
+     public static AttributeSupplier.Builder createAttributes() {
