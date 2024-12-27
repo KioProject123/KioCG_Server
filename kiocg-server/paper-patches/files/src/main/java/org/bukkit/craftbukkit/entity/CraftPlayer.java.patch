@@ -1,0 +1,16 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -3514,6 +_,13 @@
+     }
+     // Paper end
+ 
++    // KioCG start - player in structure api
++    @Override
++    public boolean isInStructure() {
++        return getHandle().inStructure;
++    }
++    // KioCG end - player in structure api
++
+     public Player.Spigot spigot()
+     {
+         return this.spigot;

@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3895,6 +_,12 @@
+@@ -3895,6 +_,14 @@
      boolean isChunkSent(long chunkKey);
      // Paper end
  
@@ -9,6 +9,8 @@
 +        this.getInventory().addItem(items).values().forEach(leftover -> this.getOpenInventory().setItem(-999, leftover));
 +    }
 +    // KioCG end - add items vanilla-like
++
++    boolean isInStructure(); // KioCG - player in structure api
 +
      @NotNull
      @Override

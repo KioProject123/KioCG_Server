@@ -1,0 +1,44 @@
+--- a/net/minecraft/world/level/StructureManager.java
++++ b/net/minecraft/world/level/StructureManager.java
+@@ -172,6 +_,41 @@
+         return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).hasAnyStructureReferences();
+     }
+ 
++    // KioCG start - player in structure api
++    private static final java.util.Set<net.minecraft.world.level.levelgen.structure.StructureType<?>> simpleStructure = new java.util.HashSet<>() {{
++        add(net.minecraft.world.level.levelgen.structure.StructureType.BURIED_TREASURE);
++        add(net.minecraft.world.level.levelgen.structure.StructureType.NETHER_FOSSIL);
++    }};
++
++    public boolean hasAnyStructureAtExact(BlockPos pos) {
++        net.minecraft.world.level.levelgen.structure.BoundingBox boundingBox = new net.minecraft.world.level.levelgen.structure.BoundingBox
++                (pos.getX() - 4, pos.getY() - 4, pos.getZ() - 4, pos.getX() + 4, pos.getY() + 4, pos.getZ() + 4);
++        Map<Structure, LongSet> allStructuresAt = this.getAllStructuresAt(pos);
++        for (Entry<Structure, LongSet> entry : allStructuresAt.entrySet()) {
++            if (simpleStructure.contains(entry.getKey().type())) continue;
++
++            org.apache.commons.lang3.mutable.MutableBoolean mutableBoolean = new org.apache.commons.lang3.mutable.MutableBoolean(false);
++            this.fillStartsForStructure(entry.getKey(), entry.getValue(), structureStart -> {
++                if (mutableBoolean.isFalse() && this.structureHasPieceIntersects(boundingBox, structureStart)) {
++                    mutableBoolean.setTrue();
++                }
++            });
++            if (mutableBoolean.isTrue()) return true;
++        }
++        return false;
++    }
++
++    public boolean structureHasPieceIntersects(net.minecraft.world.level.levelgen.structure.BoundingBox boundingBox, StructureStart structureStart) {
++        for (StructurePiece structurePiece : structureStart.getPieces()) {
++            if (structurePiece.getBoundingBox().intersects(boundingBox)) {
++                return true;
++            }
++        }
++
++        return false;
++    }
++    // KioCG end - player in structure api
++
+     public Map<Structure, LongSet> getAllStructuresAt(BlockPos pos) {
+         SectionPos sectionPos = SectionPos.of(pos);
+         return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
