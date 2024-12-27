@@ -1,14 +1,39 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -129,7 +_,7 @@
+@@ -127,9 +_,24 @@
+         this.items = items;
+     }
  
++    // KioCG start - optimize block entity
++    @Override
++    public void setItem(int slot, ItemStack stack) {
++        super.setItem(slot, stack);
++        this.shouldTick = true;
++    }
++
++    private boolean shouldTick = true;
++    // KioCG end - optimize block entity
      public static void serverTick(Level level, BlockPos pos, BlockState state, BrewingStandBlockEntity blockEntity) {
++        // KioCG start - optimize block entity
++        if (!blockEntity.shouldTick && blockEntity.brewTime <= 0) {
++            return;
++        }
++        blockEntity.shouldTick = false;
++        // KioCG end - optimize block entity
          ItemStack itemStack = blockEntity.items.get(4);
 -        if (blockEntity.fuel <= 0 && itemStack.is(ItemTags.BREWING_FUEL)) {
 +        if (blockEntity.fuel <= 0 && PotionBrewing.isFuel(itemStack)) { // KioCG - vanilla recipe excludes model items: 提取方法
              // CraftBukkit start
              org.bukkit.event.inventory.BrewingStandFuelEvent event = new org.bukkit.event.inventory.BrewingStandFuelEvent(
                  org.bukkit.craftbukkit.block.CraftBlock.at(level, pos),
+@@ -153,6 +_,7 @@
+         ItemStack itemStack1 = blockEntity.items.get(3);
+         if (flag) {
+             blockEntity.brewTime--;
++            blockEntity.shouldTick = true; // KioCG - optimize block entity
+             boolean flag1 = blockEntity.brewTime == 0;
+             if (flag1 && isBrewable) {
+                 doBrew(level, pos, blockEntity.items, blockEntity); // CraftBukkit
 @@ -296,8 +_,8 @@
              return potionBrewing.isIngredient(stack);
          } else {

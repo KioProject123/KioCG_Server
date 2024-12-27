@@ -1,5 +1,33 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -183,11 +_,19 @@
+         tag.put("RecipesUsed", compoundTag);
+     }
+ 
++    private boolean shouldTick = true; // KioCG - optimize block entity
+     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity furnace) {
++        // KioCG start - optimize block entity
++        if (!furnace.shouldTick && !furnace.isLit()) {
++            return;
++        }
++        furnace.shouldTick = false;
++        // KioCG end - optimize block entity
+         boolean isLit = furnace.isLit();
+         boolean flag = false;
+         if (furnace.isLit()) {
+             furnace.litTimeRemaining--;
++            furnace.shouldTick = true; // KioCG - optimize block entity
+         }
+ 
+         ItemStack itemStack = furnace.items.get(1);
+@@ -263,6 +_,7 @@
+             }
+         } else if (!furnace.isLit() && furnace.cookingTimer > 0) {
+             furnace.cookingTimer = Mth.clamp(furnace.cookingTimer - 2, 0, furnace.cookingTotalTime);
++            furnace.shouldTick = true; // KioCG - optimize block entity: 燃烧冷却中
+         }
+ 
+         if (isLit != furnace.isLit()) {
 @@ -288,6 +_,13 @@
              if (itemStack.isEmpty()) {
                  return false;
@@ -14,6 +42,14 @@
                  ItemStack itemStack1 = items.get(2);
                  return itemStack1.isEmpty()
                      || ItemStack.isSameItemSameComponents(itemStack1, itemStack)
+@@ -420,6 +_,7 @@
+             this.cookingTimer = 0;
+             this.setChanged();
+         }
++        this.shouldTick = true; // KioCG - optimize block entity
+     }
+ 
+     @Override
 @@ -430,7 +_,7 @@
              return true;
          } else {

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/vehicle/MinecartHopper.java
++++ b/net/minecraft/world/entity/vehicle/MinecartHopper.java
+@@ -100,6 +_,7 @@
+     }
+ 
+     public boolean suckInItems() {
++        if (HopperBlockEntity.isFullContainer(this, null)) return false; // KioCG - optimize block entity
+         if (HopperBlockEntity.suckInItems(this.level(), this)) {
+             this.immunize(); // Paper
+             return true;

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/CampfireBlock.java
++++ b/net/minecraft/world/level/block/CampfireBlock.java
+@@ -337,6 +_,7 @@
+                     (level1, pos, state1, blockEntity) -> CampfireBlockEntity.cookTick(serverLevel, pos, state1, blockEntity, cachedCheck)
+                 );
+             } else {
++                if (true) return null; // KioCG - optimize block entity
+                 return createTickerHelper(blockEntityType, BlockEntityType.CAMPFIRE, CampfireBlockEntity::cooldownTick);
+             }
+         } else {

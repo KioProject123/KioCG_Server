@@ -21,6 +21,15 @@
                          }
  
                          result = blockCookEvent.getResult();
+@@ -112,7 +_,7 @@
+         for (int i = 0; i < blockEntity.items.size(); i++) {
+             if (blockEntity.cookingProgress[i] > 0) {
+                 flag = true;
+-                blockEntity.cookingProgress[i] = Mth.clamp(blockEntity.cookingProgress[i] - 2, 0, blockEntity.cookingTime[i]);
++                blockEntity.cookingProgress[i] = 0; // KioCG - optimize block entity
+             }
+         }
+ 
 @@ -213,6 +_,13 @@
                  if (recipeFor.isEmpty()) {
                      return false;
@@ -35,3 +44,11 @@
  
                  // CraftBukkit start
                  org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(
+@@ -247,6 +_,7 @@
+     public void dowse() {
+         if (this.level != null) {
+             this.markUpdated();
++            cooldownTick(this.level, this.getBlockPos(), this.getBlockState(), this); // KioCG - optimize block entity
+         }
+     }
+ 
