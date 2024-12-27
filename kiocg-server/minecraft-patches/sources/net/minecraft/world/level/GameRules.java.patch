@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/GameRules.java
++++ b/net/minecraft/world/level/GameRules.java
+@@ -93,6 +_,7 @@
+             byte b = (byte)(value.get() ? 22 : 23);
+ 
+             for (ServerPlayer serverPlayer : level.players()) {
++                if (b != net.minecraft.world.entity.EntityEvent.FULL_DEBUG_INFO && serverPlayer.getBukkitEntity().hasPermission("kiocg.reduced_debug_info.bypass")) b = net.minecraft.world.entity.EntityEvent.FULL_DEBUG_INFO; // KioCG - more permission
+                 serverPlayer.connection.send(new ClientboundEntityEventPacket(serverPlayer, b));
+             }
+         })

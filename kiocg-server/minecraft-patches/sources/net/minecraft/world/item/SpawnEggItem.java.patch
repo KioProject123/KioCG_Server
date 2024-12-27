@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/SpawnEggItem.java
++++ b/net/minecraft/world/item/SpawnEggItem.java
+@@ -55,7 +_,7 @@
+             Direction clickedFace = context.getClickedFace();
+             BlockState blockState = level.getBlockState(clickedPos);
+             if (level.getBlockEntity(clickedPos) instanceof Spawner spawner) {
+-                if (level.paperConfig().entities.spawning.disableMobSpawnerSpawnEggTransformation) return InteractionResult.FAIL; // Paper - Allow disabling mob spawner spawn egg transformation
++                if (level.paperConfig().entities.spawning.disableMobSpawnerSpawnEggTransformation && !context.getPlayer().canUseGameMasterBlocks()) return InteractionResult.FAIL; // Paper - Allow disabling mob spawner spawn egg transformation // KioCG - more permission
+                 EntityType<?> type = this.getType(level.registryAccess(), itemInHand);
+                 spawner.setEntityId(type, level.getRandom());
+                 level.sendBlockUpdated(clickedPos, blockState, blockState, 3);
