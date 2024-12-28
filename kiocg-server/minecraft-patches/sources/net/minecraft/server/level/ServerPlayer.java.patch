@@ -20,3 +20,46 @@
              }
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
+@@ -1065,11 +_,31 @@
+             return;
+         }
+         List<DefaultDrop> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // Paper - Restore vanilla drops behavior
++        List<org.bukkit.inventory.ItemStack> deathKeeps = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // KioCG - death drop protect
+         boolean keepInventory = this.serverLevel().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
+         if (!keepInventory) {
+-            for (ItemStack item : this.getInventory().getContents()) {
++            // KioCG start - death drop protect
++            List<ItemStack> contents = this.getInventory().getContents();
++            for (int i = 0; i < contents.size(); ++i) {
++                ItemStack item = contents.get(i);
++            // KioCG end - death drop protect
+                 if (!item.isEmpty() && !EnchantmentHelper.has(item, net.minecraft.world.item.enchantment.EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
+-                    loot.add(new DefaultDrop(item, stack -> this.drop(stack, true, false, false))); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
++                    // KioCG start - death drop protect
++                    if (this.level().paperConfig().kiocgConfig.deathKeepHotbarAndArmorItems) {
++                        if (i < Inventory.SELECTION_SIZE || i >= Inventory.INVENTORY_SIZE) {
++                            deathKeeps.add(item.getBukkitStack());
++                            continue;
++                        }
++                    }
++
++                    loot.add(new DefaultDrop(item, stack -> {
++                        ItemEntity droped = this.drop(stack, true, false, false);
++                        if (droped != null) {
++                            if (this.level().paperConfig().kiocgConfig.deathItemsOnlyPickupByOneself) droped.setTarget(this.getUUID());
++                            droped.age = -32768 + 1; // -32768代表无限生命周期
++                        }
++                    })); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
++                    // KioCG end - death drop protect
+                 }
+             }
+         }
+@@ -1085,7 +_,7 @@
+ 
+         String deathmessage = defaultMessage.getString();
+         this.keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
+-        org.bukkit.event.entity.PlayerDeathEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerDeathEvent(this, cause, loot, io.papermc.paper.adventure.PaperAdventure.asAdventure(defaultMessage), keepInventory); // Paper - Adventure
++        org.bukkit.event.entity.PlayerDeathEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerDeathEvent(this, cause, loot, deathKeeps, io.papermc.paper.adventure.PaperAdventure.asAdventure(defaultMessage), keepInventory); // Paper - Adventure // KioCG - death drop protect
+         // Paper start - cancellable death event
+         if (event.isCancelled()) {
+             // make compatible with plugins that might have already set the health in an event listener
