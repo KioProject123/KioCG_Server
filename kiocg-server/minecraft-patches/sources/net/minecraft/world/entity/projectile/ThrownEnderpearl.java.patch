@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
++++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
+@@ -29,13 +_,16 @@
+ 
+ public class ThrownEnderpearl extends ThrowableItemProjectile {
+     private long ticketTimer = 0L;
++    private net.minecraft.world.phys.AABB ticketCheck; // KioCG - optimize entity behavior
+ 
+     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> entityType, Level level) {
+         super(entityType, level);
++        ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+     }
+ 
+     public ThrownEnderpearl(Level level, LivingEntity owner, ItemStack item) {
+         super(EntityType.ENDER_PEARL, owner, level, item);
++        ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+     }
+ 
+     @Override
+@@ -207,7 +_,12 @@
+                         || sectionPosZ != SectionPos.blockToSectionCoord(blockPos.getZ())
+                 )
+                 && owner instanceof ServerPlayer serverPlayer1) {
++                // KioCG start - optimize entity behavior
++                if (!this.ticketCheck.contains(blockPos.getX(), blockPos.getY(), blockPos.getZ())) {
++                    this.ticketCheck = this.ticketCheck.minmax(new net.minecraft.world.phys.AABB(blockPos));
++                // KioCG end - optimize entity behavior
+                 this.ticketTimer = serverPlayer1.registerAndUpdateEnderPearlTicket(this);
++                } // KioCG - optimize entity behavior
+             }
+         }
+     }

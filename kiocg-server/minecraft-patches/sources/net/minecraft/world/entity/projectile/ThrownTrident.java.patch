@@ -1,0 +1,152 @@
+--- a/net/minecraft/world/entity/projectile/ThrownTrident.java
++++ b/net/minecraft/world/entity/projectile/ThrownTrident.java
+@@ -29,15 +_,19 @@
+     private static final float WATER_INERTIA = 0.99F;
+     public boolean dealtDamage;
+     public int clientSideReturnTridentTickCount;
++    private long ticketTimer = 0L; // KioCG - adjust enchantment
++    private net.minecraft.world.phys.AABB ticketCheck; // KioCG - optimize entity behavior
+ 
+     public ThrownTrident(EntityType<? extends ThrownTrident> entityType, Level level) {
+         super(entityType, level);
+         this.setBaseDamage(net.minecraft.world.item.TridentItem.BASE_DAMAGE); // Paper - Allow trident custom damage
++        ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+     }
+ 
+     public ThrownTrident(Level level, LivingEntity shooter, ItemStack pickupItemStack) {
+         super(EntityType.TRIDENT, shooter, level, pickupItemStack, null);
+         this.setBaseDamage(net.minecraft.world.item.TridentItem.BASE_DAMAGE); // Paper - Allow trident custom damage
++        ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+         this.entityData.set(ID_LOYALTY, this.getLoyaltyFromItem(pickupItemStack));
+         this.entityData.set(ID_FOIL, pickupItemStack.hasFoil());
+     }
+@@ -45,6 +_,7 @@
+     public ThrownTrident(Level level, double x, double y, double z, ItemStack pickupItemStack) {
+         super(EntityType.TRIDENT, x, y, z, level, pickupItemStack, pickupItemStack);
+         this.setBaseDamage(net.minecraft.world.item.TridentItem.BASE_DAMAGE); // Paper - Allow trident custom damage
++        ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+         this.entityData.set(ID_LOYALTY, this.getLoyaltyFromItem(pickupItemStack));
+         this.entityData.set(ID_FOIL, pickupItemStack.hasFoil());
+     }
+@@ -59,11 +_,17 @@
+     @Override
+     public void tick() {
+         if (this.inGroundTime > 4) {
++            if (!this.dealtDamage) ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+             this.dealtDamage = true;
+         }
+ 
++        // KioCG start - adjust enchantment
++        int sectionPosX = net.minecraft.core.SectionPos.blockToSectionCoord(this.position().x());
++        int sectionPosZ = net.minecraft.core.SectionPos.blockToSectionCoord(this.position().z());
++        // KioCG end - adjust enchantment
++
+         Entity owner = this.getOwner();
+-        int i = this.entityData.get(ID_LOYALTY);
++        int i = this.entityData.get(ID_LOYALTY); int loyalty = i; // KioCG - OBFHELPER
+         if (i > 0 && (this.dealtDamage || this.isNoPhysics()) && owner != null) {
+             if (!this.isAcceptibleReturnOwner()) {
+                 if (this.level() instanceof ServerLevel serverLevel && this.pickup == AbstractArrow.Pickup.ALLOWED) {
+@@ -91,7 +_,57 @@
+         }
+ 
+         super.tick();
+-    }
++
++        // KioCG start - adjust enchantment
++        if (this.isAlive() && loyalty > 0) {
++            net.minecraft.core.BlockPos blockPos = net.minecraft.core.BlockPos.containing(this.position());
++            if ((
++                        --this.ticketTimer <= 0L
++                        || sectionPosX != net.minecraft.core.SectionPos.blockToSectionCoord(blockPos.getX())
++                        || sectionPosZ != net.minecraft.core.SectionPos.blockToSectionCoord(blockPos.getZ())
++                )
++                && owner instanceof ServerPlayer) {
++                // KioCG start - optimize entity behavior
++                if (!this.ticketCheck.contains(blockPos.getX(), blockPos.getY(), blockPos.getZ())) {
++                    this.ticketCheck = this.ticketCheck.minmax(new net.minecraft.world.phys.AABB(blockPos));
++                // KioCG end - optimize entity behavior
++                this.ticketTimer = this.updateTridentTicket();
++                } // KioCG - optimize entity behavior
++            }
++        }
++        // KioCG end - adjust enchantment
++    }
++
++    // KioCG start - adjust enchantment
++    public long updateTridentTicket() {
++        ServerLevel serverLevel = this.serverLevel();
++        net.minecraft.world.level.ChunkPos chunkPos = this.chunkPosition();
++        serverLevel.resetEmptyTime();
++        serverLevel.getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.TRIDENT, chunkPos, 2, chunkPos);
++        return net.minecraft.server.level.TicketType.TRIDENT.timeout() - 1L;
++    }
++
++    @Nullable
++    @Override
++    public Entity teleport(net.minecraft.world.level.portal.TeleportTransition teleportTransition) {
++        Entity entity = super.teleport(teleportTransition);
++        if (entity != null) {
++            entity.placePortalTicket(net.minecraft.core.BlockPos.containing(entity.position()));
++        }
++
++        return entity;
++    }
++
++    @Override
++    protected void onBelowWorld() {
++        if (this.getLoyalty() > 0) {
++            if (!this.dealtDamage) ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
++            this.dealtDamage = true;
++        } else {
++            super.onBelowWorld();
++        }
++    }
++    // KioCG end - adjust enchantment
+ 
+     private boolean isAcceptibleReturnOwner() {
+         Entity owner = this.getOwner();
+@@ -132,6 +_,7 @@
+             f = EnchantmentHelper.modifyDamage(serverLevel, this.getWeaponItem(), entity, damageSource, f);
+         }
+ 
++        if (!this.dealtDamage) ticketCheck = new net.minecraft.world.phys.AABB(this.blockPosition()); // KioCG - optimize entity behavior
+         this.dealtDamage = true;
+         if (entity.hurtOrSimulate(damageSource, f)) {
+             if (entity.getType() == EntityType.ENDERMAN) {
+@@ -142,6 +_,8 @@
+                 EnchantmentHelper.doPostAttackEffectsWithItemSourceOnBreak(
+                     serverLevel, entity, damageSource, this.getWeaponItem(), item -> this.kill(serverLevel)
+                 );
++
++                changeLightningTimes(entity.getX(), entity.getY(), entity.getZ()); // KioCG - adjust enchantment
+             }
+ 
+             if (entity instanceof LivingEntity livingEntity) {
+@@ -168,7 +_,25 @@
+             level.getBlockState(hitResult.getBlockPos()),
+             item -> this.kill(level)
+         );
+-    }
++        changeLightningTimes(vec3.x(), vec3.y(), vec3.z()); // KioCG - adjust enchantment
++    }
++
++    // KioCG start - adjust enchantment
++    private void changeLightningTimes(double x, double y, double z) {
++        if (this.getWeaponItem() != null) {
++            int channeling = this.getWeaponItem().getEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.CHANNELING);
++            if (channeling > 1) {
++                java.util.List<net.minecraft.world.entity.LightningBolt> list = com.google.common.collect.Lists.newArrayList();
++                this.level().getEntities(EntityType.LIGHTNING_BOLT, new net.minecraft.world.phys.AABB(x, y, z, x, y, z).inflate(1.0E-5F), entityLightningBolt -> {
++                    return entityLightningBolt.tickCount == 0 && entityLightningBolt.times == 1;
++                }, list, 1);
++                if (!list.isEmpty()) {
++                    list.getFirst().times = channeling;
++                }
++            }
++        }
++    }
++    // KioCG end - adjust enchantment
+ 
+     @Override
+     public ItemStack getWeaponItem() {

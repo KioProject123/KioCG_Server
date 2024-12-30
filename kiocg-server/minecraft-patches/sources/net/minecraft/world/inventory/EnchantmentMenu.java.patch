@@ -22,6 +22,17 @@
      @Override
      public void slotsChanged(Container inventory) {
          if (inventory == this.enchantSlots) {
+@@ -106,8 +_,9 @@
+                     IdMap<Holder<Enchantment>> holderIdMap = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).asHolderIdMap();
+                     int i1 = 0;
+ 
++                    boolean virtual = !level.getBlockState(blockPos).is(Blocks.ENCHANTING_TABLE); // KioCG - 虚拟附魔台最大等级
+                     for (BlockPos blockPos1 : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
+-                        if (EnchantingTableBlock.isValidBookShelf(level, blockPos, blockPos1)) {
++                        if (virtual || EnchantingTableBlock.isValidBookShelf(level, blockPos, blockPos1)) { // KioCG - 虚拟附魔台最大等级
+                             i1++;
+                         }
+                     }
 @@ -144,6 +_,13 @@
  
                      org.bukkit.event.enchantment.PrepareItemEnchantEvent event = new org.bukkit.event.enchantment.PrepareItemEnchantEvent(this.player, this.getBukkitView(), this.access.getLocation().getBlock(), craftItemStack, offers, i1);

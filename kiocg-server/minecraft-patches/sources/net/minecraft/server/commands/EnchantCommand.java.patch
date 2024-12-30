@@ -1,0 +1,23 @@
+--- a/net/minecraft/server/commands/EnchantCommand.java
++++ b/net/minecraft/server/commands/EnchantCommand.java
+@@ -70,7 +_,7 @@
+ 
+     private static int enchant(CommandSourceStack source, Collection<? extends Entity> targets, Holder<Enchantment> enchantment, int level) throws CommandSyntaxException {
+         Enchantment enchantment1 = enchantment.value();
+-        if (level > enchantment1.getMaxLevel()) {
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand && level > enchantment1.getMaxLevel()) { // KioCG - allow unsafe enchant
+             throw ERROR_LEVEL_TOO_HIGH.create(level, enchantment1.getMaxLevel());
+         } else {
+             int i = 0;
+@@ -80,9 +_,9 @@
+                     LivingEntity livingEntity = (LivingEntity)entity;
+                     ItemStack mainHandItem = livingEntity.getMainHandItem();
+                     if (!mainHandItem.isEmpty()) {
+-                        if (enchantment1.canEnchant(mainHandItem)
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.enchant.allowUnsafeCommand || enchantment1.canEnchant(mainHandItem) // KioCG - allow unsafe enchant
+                             && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantmentsForCrafting(mainHandItem).keySet(), enchantment)) {
+-                            mainHandItem.enchant(enchantment, level);
++                            mainHandItem.setEnchant(enchantment, level); // KioCG - allow unsafe enchant
+                             i++;
+                         } else if (targets.size() == 1) {
+                             throw ERROR_INCOMPATIBLE.create(mainHandItem.getHoverName().getString());

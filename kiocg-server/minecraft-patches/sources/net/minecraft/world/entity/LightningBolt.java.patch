@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/entity/LightningBolt.java
++++ b/net/minecraft/world/entity/LightningBolt.java
+@@ -40,6 +_,7 @@
+     private final Set<Entity> hitEntities = Sets.newHashSet();
+     private int blocksSetOnFire;
+     public boolean isEffect; // Paper - Properly handle lightning effects api
++    public int times = 1; // KioCG - adjust enchantment
+ 
+     public LightningBolt(EntityType<? extends LightningBolt> entityType, Level level) {
+         super(entityType, level);
+@@ -130,6 +_,21 @@
+                         CriteriaTriggers.LIGHTNING_STRIKE.trigger(serverPlayer, this, entities);
+                     }
+                 }
++
++                // KioCG start - adjust enchantment
++                if (times > 1) {
++                    LightningBolt entitylightning = EntityType.LIGHTNING_BOLT.create(this.level(), EntitySpawnReason.TRIGGERED);
++
++                    if (entitylightning != null) {
++                        entitylightning.visualOnly = this.visualOnly;
++                        entitylightning.cause = this.cause;
++                        entitylightning.isEffect = this.isEffect;
++                        entitylightning.times = --this.times;
++                        entitylightning.moveTo(this.position());
++                        this.serverLevel().strikeLightning(entitylightning);
++                    }
++                }
++                // KioCG end - adjust enchantment
+ 
+                 this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+             } else if (this.life < -this.random.nextInt(10)) {

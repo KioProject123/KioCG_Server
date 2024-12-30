@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/item/ItemStack.java
++++ b/net/minecraft/world/item/ItemStack.java
+@@ -1229,6 +_,12 @@
+         EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
+     }
+ 
++    // KioCG start - allow unsafe enchant
++    public void setEnchant(Holder<Enchantment> enchantment, int level) {
++        EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.set(enchantment, level));
++    }
++    // KioCG end - allow unsafe enchant
++
+     public boolean isEnchanted() {
+         return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
+     }
+@@ -1236,6 +_,14 @@
+     public ItemEnchantments getEnchantments() {
+         return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+     }
++
++    // KioCG start - adjust enchantment
++    public int getEnchantmentLevel(net.minecraft.core.RegistryAccess registryManager, net.minecraft.resources.ResourceKey<Enchantment> enchantmentKey) {
++        return registryManager.lookupOrThrow(Registries.ENCHANTMENT).get(enchantmentKey)
++                              .map(reference -> getEnchantments().getLevel(reference))
++                              .orElse(0);
++    }
++    // KioCG end - adjust enchantment
+ 
+     public boolean isFramed() {
+         return this.entityRepresentation instanceof ItemFrame;

@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/entity/projectile/AbstractArrow.java
++++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -447,6 +_,14 @@
+         if (this.isOnFire() && !flag) {
+             // CraftBukkit start
+             org.bukkit.event.entity.EntityCombustByEntityEvent combustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5.0F);
++            // KioCG start - adjust enchantment
++            if (this.getWeaponItem() != null) {
++                final int flameLevel = this.getWeaponItem().getEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.FLAME);
++                if (flameLevel > 1) {
++                    combustEvent.setDuration(combustEvent.getDuration() * flameLevel);
++                }
++            }
++            // KioCG end - adjust enchantment
+             org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
+             if (!combustEvent.isCancelled()) {
+                 entity.igniteForSeconds(combustEvent.getDuration(), false);

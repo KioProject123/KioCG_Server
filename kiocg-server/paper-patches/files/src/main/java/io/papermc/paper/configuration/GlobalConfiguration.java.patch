@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -354,4 +_,86 @@
+@@ -354,4 +_,91 @@
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
@@ -83,6 +83,11 @@
 +                    return false;
 +                }
 +            }
++        }
++
++        public Enchant enchant;
++        public class Enchant extends ConfigurationPart {
++            public boolean allowUnsafeCommand = true;
 +        }
 +    }
 +    // KioCG end

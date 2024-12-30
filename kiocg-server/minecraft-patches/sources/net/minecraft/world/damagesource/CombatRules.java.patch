@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/damagesource/CombatRules.java
++++ b/net/minecraft/world/damagesource/CombatRules.java
+@@ -30,6 +_,7 @@
+     }
+ 
+     public static float getDamageAfterMagicAbsorb(float damage, float enchantModifiers) {
++        if (true) return damage * (1.0F - (enchantModifiers / (enchantModifiers + 20.0F))); // KioCG - adjust enchantment
+         float f = Mth.clamp(enchantModifiers, 0.0F, 20.0F);
+         return damage * (1.0F - f / 25.0F);
+     }
