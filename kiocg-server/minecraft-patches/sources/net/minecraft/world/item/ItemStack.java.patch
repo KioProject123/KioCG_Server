@@ -13,11 +13,10 @@
      public boolean isEnchanted() {
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
-@@ -1236,6 +_,14 @@
-     public ItemEnchantments getEnchantments() {
+@@ -1237,6 +_,14 @@
          return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
      }
-+
+ 
 +    // KioCG start - adjust enchantment
 +    public int getEnchantmentLevel(net.minecraft.core.RegistryAccess registryManager, net.minecraft.resources.ResourceKey<Enchantment> enchantmentKey) {
 +        return registryManager.lookupOrThrow(Registries.ENCHANTMENT).get(enchantmentKey)
@@ -25,6 +24,23 @@
 +                              .orElse(0);
 +    }
 +    // KioCG end - adjust enchantment
- 
++
      public boolean isFramed() {
          return this.entityRepresentation instanceof ItemFrame;
+     }
+@@ -1373,6 +_,15 @@
+ 
+     public boolean isValidRepairItem(ItemStack item) {
+         Repairable repairable = this.get(DataComponents.REPAIRABLE);
++        // KioCG start - more repair item
++        if (repairable == null) {
++            if (this.is(Items.SHEARS) && item.is(Items.IRON_INGOT)) return true;
++            if (this.is(Items.BOW) && item.is(Items.STRING)) return true;
++            if (this.is(Items.FISHING_ROD) && item.is(Items.STRING)) return true;
++            if (this.is(Items.FLINT_AND_STEEL) && item.is(Items.FLINT)) return true;
++            if (this.is(Items.BRUSH) && item.is(Items.FEATHER)) return true;
++        }
++        // KioCG end - more repair item
+         return repairable != null && repairable.isValidRepairItem(item);
+     }
+ }

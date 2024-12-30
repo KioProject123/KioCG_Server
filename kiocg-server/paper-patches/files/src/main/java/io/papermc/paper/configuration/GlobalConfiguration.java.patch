@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -354,4 +_,91 @@
+@@ -354,4 +_,98 @@
          public boolean disableChorusPlantUpdates = false;
          public boolean disableMushroomBlockUpdates = false;
      }
@@ -88,6 +88,13 @@
 +        public Enchant enchant;
 +        public class Enchant extends ConfigurationPart {
 +            public boolean allowUnsafeCommand = true;
++        }
++
++        public Anvil anvil;
++        public class Anvil extends ConfigurationPart {
++            public int maxCumulativeCost = 31;
++            public boolean repairNoLevelCost = true;
++            public boolean renameNoLevelCost = true;
 +        }
 +    }
 +    // KioCG end

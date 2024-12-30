@@ -1,7 +1,16 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -134,12 +_,21 @@
-         int i1 = 0;
+@@ -129,17 +_,28 @@
+         ItemStack item = this.inputSlots.getItem(0);
+         this.onlyRenaming = false;
+         this.cost.set(1);
+-        int i = 0;
+-        long l = 0L;
+-        int i1 = 0;
++        int i = 0; // 铁砧基础消耗
++        long l = 0L; // 铁砧累计惩罚
++        int i1 = 0; // 重命名消耗
++        boolean allowZeroLevel = false; // KioCG - adjust anvil
          if (!item.isEmpty() && EnchantmentHelper.canStoreEnchantments(item)) {
              ItemStack itemStack = item.copy();
 -            ItemStack item1 = this.inputSlots.getItem(1);
@@ -9,6 +18,7 @@
              ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemStack));
              l += (long)item.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue()
                  + item1.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue();
++            l = Math.min(l, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.maxCumulativeCost); // KioCG - adjust anvil
              this.repairItemCountCost = 0;
              if (!item1.isEmpty()) {
 +                // KioCG start - vanilla recipe excludes model items
@@ -23,3 +33,109 @@
                  boolean hasStoredEnchantments = item1.has(DataComponents.STORED_ENCHANTMENTS);
                  if (itemStack.isDamageableItem() && item.isValidRepairItem(item1)) {
                      int min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);
+@@ -154,6 +_,12 @@
+                         int i3 = itemStack.getDamageValue() - min;
+                         itemStack.setDamageValue(i3);
+                         i++;
++                        // KioCG start - adjust anvil
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.repairNoLevelCost) {
++                            allowZeroLevel = true;
++                            i--;
++                        }
++                        // KioCG end - adjust anvil
+                         min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);
+                     }
+ 
+@@ -236,21 +_,33 @@
+                 if (!this.itemName.equals(item.getHoverName().getString())) {
+                     i1 = 1;
+                     i += i1;
+-                    itemStack.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
++                    // KioCG start - adjust anvil
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.renameNoLevelCost) {
++                        allowZeroLevel = true;
++                        i -= i1;
++                    }
++                    // KioCG end - adjust anvil
++                    itemStack.set(DataComponents.CUSTOM_NAME, java.util.Objects.requireNonNullElseGet(renameColors(), () -> Component.literal(this.itemName))); // KioCG - adjust anvil
+                 }
+             } else if (item.has(DataComponents.CUSTOM_NAME)) {
+                 i1 = 1;
+                 i += i1;
++                // KioCG start - adjust anvil
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.renameNoLevelCost) {
++                    allowZeroLevel = true;
++                    i -= i1;
++                }
++                // KioCG end - adjust anvil
+                 itemStack.remove(DataComponents.CUSTOM_NAME);
+             }
+ 
+             int i6 = i <= 0 ? 0 : (int)Mth.clamp(l + i, 0L, 2147483647L);
+             this.cost.set(i6);
+-            if (i <= 0) {
++            if (i < 0 || i == 0 && !allowZeroLevel) { // KioCG - adjust anvil
+                 itemStack = ItemStack.EMPTY;
+             }
+ 
+-            if (i1 == i && i1 > 0) {
++            if ((i1 == i || io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.renameNoLevelCost && i == 0) && i1 > 0) { // KioCG - adjust anvil
+                 // CraftBukkit start
+                 if (this.cost.get() >= this.maximumRepairCost) {
+                     this.cost.set(this.maximumRepairCost - 1);
+@@ -271,6 +_,7 @@
+                 }
+ 
+                 if (i1 != i || i1 == 0) {
++                    if (this.cost.get() != 0) // KioCG - adjust anvil: 不消耗等级不要增加铁砧惩罚
+                     minxx = calculateIncreasedRepairCost(minxx);
+                 }
+ 
+@@ -290,6 +_,47 @@
+     public static int calculateIncreasedRepairCost(int oldRepairCost) {
+         return (int)Math.min(oldRepairCost * 2L + 1L, 2147483647L);
+     }
++
++    // KioCG start - adjust anvil
++    @Nullable
++    private Component renameColors() {
++        if (this.player == null) return null;
++
++        org.bukkit.craftbukkit.entity.CraftHumanEntity player = this.player.getBukkitEntity();
++        String name = this.itemName;
++        boolean removeItalics = false;
++        if (player.hasPermission("kiocg.anvil.remove_italics")) {
++            if (name.startsWith("&r")) {
++                name = name.substring(2);
++                removeItalics = true;
++            } else if (name.startsWith("<reset>")) {
++                name = name.substring(7);
++                removeItalics = true;
++            }
++        }
++
++        net.kyori.adventure.text.Component component;
++        if (player.hasPermission("kiocg.anvil.minimessage")) {
++            component = net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(name);
++        } else {
++            // 不能允许大写字母, 会被转义为正体字
++            if (player.hasPermission("kiocg.anvil.color")) {
++                name = name.replaceAll("&([0-9a-fr])", "\u00a7$1");
++                name = name.replaceAll("&#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])", "\u00a7x\u00a7$1\u00a7$2\u00a7$3\u00a7$4\u00a7$5\u00a7$6");
++            }
++            if (player.hasPermission("kiocg.anvil.format")) {
++                name = name.replaceAll("&([k-or])", "\u00a7$1");
++            }
++
++            component = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(name);
++        }
++
++        if (removeItalics) {
++            component = component.decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false);
++        }
++        return io.papermc.paper.adventure.PaperAdventure.asVanilla(component);
++    }
++    // KioCG end - adjust anvil
+ 
+     public boolean setItemName(String itemName) {
+         String string = validateName(itemName);
