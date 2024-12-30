@@ -1,6 +1,37 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -77,9 +_,19 @@
+@@ -42,6 +_,7 @@
+         super(BlockEntityType.CAMPFIRE, pos, blockState);
+     }
+ 
++    public boolean[] shouldTick = {true, true, true, true}; // KioCG - optimize block entity
+     public static void cookTick(
+         ServerLevel level,
+         BlockPos pos,
+@@ -52,13 +_,22 @@
+         boolean flag = false;
+ 
+         for (int i = 0; i < campfire.items.size(); i++) {
++            // KioCG start - optimize block entity
++            if (!campfire.shouldTick[i]) {
++                return;
++            }
++            campfire.shouldTick[i] = false;
++            // KioCG end - optimize block entity
++
+             ItemStack itemStack = campfire.items.get(i);
+             if (!itemStack.isEmpty()) {
+                 flag = true;
+                 if (!campfire.stopCooking[i]) { // Paper - Add more Campfire API
+                 campfire.cookingProgress[i]++;
++                campfire.shouldTick[i] = true; // KioCG - optimize block entity
+                 } // Paper - Add more Campfire API
+                 if (campfire.cookingProgress[i] >= campfire.cookingTime[i]) {
++                    campfire.shouldTick[i] = false; // KioCG - optimize block entity
+                     SingleRecipeInput singleRecipeInput = new SingleRecipeInput(itemStack);
+                     // Paper start - add recipe to cook events
+                     final var optionalCookingRecipe = check.getRecipeFor(singleRecipeInput, level);
+@@ -77,9 +_,16 @@
                              result,
                              (org.bukkit.inventory.CookingRecipe<?>) optionalCookingRecipe.map(RecipeHolder::toBukkitRecipe).orElse(null) // Paper -Add recipe to cook events
                          );
@@ -14,10 +45,7 @@
  
                          if (!blockCookEvent.callEvent()) {
 -                            return;
-+                            // KioCG start - fix event when cancelled
-+                            campfire.cookingProgress[i] = 0;
-+                            continue;
-+                            // KioCG end - fix event when cancelled
++                            continue; // KioCG - fix loop when cancelled
                          }
  
                          result = blockCookEvent.getResult();
@@ -30,6 +58,14 @@
              }
          }
  
+@@ -154,6 +_,7 @@
+     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+         super.loadAdditional(tag, registries);
+         this.items.clear();
++        this.shouldTick = new boolean[]{true, true, true, true}; // KioCG - optimize block entity
+         ContainerHelper.loadAllItems(tag, this.items, registries);
+         if (tag.contains("CookingTimes", 11)) {
+             int[] intArray = tag.getIntArray("CookingTimes");
 @@ -213,6 +_,13 @@
                  if (recipeFor.isEmpty()) {
                      return false;
@@ -44,6 +80,14 @@
  
                  // CraftBukkit start
                  org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(
+@@ -225,6 +_,7 @@
+                 // CraftBukkit end
+                 this.cookingProgress[i] = 0;
+                 this.items.set(i, stack.consumeAndReturn(1, entity));
++                this.shouldTick[i] = true; // KioCG - optimize block entity
+                 level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
+                 this.markUpdated();
+                 return true;
 @@ -247,6 +_,7 @@
      public void dowse() {
          if (this.level != null) {

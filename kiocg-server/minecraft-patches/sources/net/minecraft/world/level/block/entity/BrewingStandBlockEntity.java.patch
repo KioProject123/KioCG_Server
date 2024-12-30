@@ -34,6 +34,14 @@
              boolean flag1 = blockEntity.brewTime == 0;
              if (flag1 && isBrewable) {
                  doBrew(level, pos, blockEntity.items, blockEntity); // CraftBukkit
+@@ -272,6 +_,7 @@
+     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+         super.loadAdditional(tag, registries);
+         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
++        this.shouldTick = true; // KioCG - optimize block entity
+         ContainerHelper.loadAllItems(tag, this.items, registries);
+         this.brewTime = tag.getShort("BrewTime");
+         if (this.brewTime > 0) {
 @@ -296,8 +_,8 @@
              return potionBrewing.isIngredient(stack);
          } else {
