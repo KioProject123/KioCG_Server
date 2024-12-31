@@ -1,0 +1,25 @@
+--- a/src/main/java/io/papermc/paper/potion/PaperPotionBrewer.java
++++ b/src/main/java/io/papermc/paper/potion/PaperPotionBrewer.java
+@@ -53,4 +_,22 @@
+     public void resetPotionMixes() {
+         this.minecraftServer.potionBrewing = this.minecraftServer.potionBrewing().reload(this.minecraftServer.getWorldData().enabledFeatures());
+     }
++
++    // KioCG start - more api
++    public boolean isIngredient(org.bukkit.inventory.ItemStack itemStack) {
++        return this.minecraftServer.potionBrewing().isIngredient(org.bukkit.craftbukkit.inventory.CraftItemStack.unwrap(itemStack));
++    }
++    public boolean isInput(org.bukkit.inventory.ItemStack itemStack) {
++        return this.minecraftServer.potionBrewing().isPotion(org.bukkit.craftbukkit.inventory.CraftItemStack.unwrap(itemStack));
++    }
++    public boolean isFuel(org.bukkit.inventory.ItemStack itemStack) {
++        return this.minecraftServer.potionBrewing().isFuel(org.bukkit.craftbukkit.inventory.CraftItemStack.unwrap(itemStack));
++    }
++    public boolean isCustomIngredient(org.bukkit.inventory.ItemStack itemStack) {
++        return this.minecraftServer.potionBrewing().isCustomIngredient(org.bukkit.craftbukkit.inventory.CraftItemStack.unwrap(itemStack));
++    }
++    public boolean isCustomInput(org.bukkit.inventory.ItemStack itemStack) {
++        return this.minecraftServer.potionBrewing().isCustomInput(org.bukkit.craftbukkit.inventory.CraftItemStack.unwrap(itemStack));
++    }
++    // KioCG end - more api
+ }

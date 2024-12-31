@@ -1,0 +1,15 @@
+--- a/src/main/java/org/bukkit/potion/PotionBrewer.java
++++ b/src/main/java/org/bukkit/potion/PotionBrewer.java
+@@ -76,4 +_,12 @@
+     @NotNull
+     @Deprecated(since = "1.20.2", forRemoval = true) // Paper
+     public Collection<PotionEffect> getEffects(@NotNull PotionType type, boolean upgraded, boolean extended);
++
++    // KioCG start - more api
++    boolean isIngredient(org.bukkit.inventory.ItemStack itemStack);
++    boolean isInput(org.bukkit.inventory.ItemStack itemStack);
++    boolean isFuel(org.bukkit.inventory.ItemStack itemStack);
++    boolean isCustomIngredient(org.bukkit.inventory.ItemStack itemStack);
++    boolean isCustomInput(org.bukkit.inventory.ItemStack itemStack);
++    // KioCG end - more api
+ }
