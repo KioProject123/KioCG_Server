@@ -8,7 +8,7 @@
      public static void cookTick(
          ServerLevel level,
          BlockPos pos,
-@@ -52,13 +_,22 @@
+@@ -52,16 +_,26 @@
          boolean flag = false;
  
          for (int i = 0; i < campfire.items.size(); i++) {
@@ -31,7 +31,11 @@
                      SingleRecipeInput singleRecipeInput = new SingleRecipeInput(itemStack);
                      // Paper start - add recipe to cook events
                      final var optionalCookingRecipe = check.getRecipeFor(singleRecipeInput, level);
-@@ -77,9 +_,16 @@
++                    if (optionalCookingRecipe.isEmpty()) continue; // KioCG - change container behavior
+                     ItemStack itemStack1 = optionalCookingRecipe
+                         .map(recipe -> recipe.value().assemble(singleRecipeInput, level.registryAccess()))
+                         .orElse(itemStack);
+@@ -77,14 +_,23 @@
                              result,
                              (org.bukkit.inventory.CookingRecipe<?>) optionalCookingRecipe.map(RecipeHolder::toBukkitRecipe).orElse(null) // Paper -Add recipe to cook events
                          );
@@ -49,6 +53,32 @@
                          }
  
                          result = blockCookEvent.getResult();
+                         itemStack1 = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(result);
+                         // CraftBukkit end
++                        // KioCG start - change container behavior
++                        /*
+                         // Paper start - Fix item locations dropped from campfires
+                         double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
+                         while (!itemStack1.isEmpty()) {
+@@ -93,7 +_,18 @@
+                             level.addFreshEntity(droppedItem);
+                         }
+                         // Paper end - Fix item locations dropped from campfires
++                         */
++                        // KioCG end - change container behavior
++
+                         campfire.items.set(i, ItemStack.EMPTY);
++                        // KioCG start - change container behavior
++                        if (!campfire.placeFood(level, null, itemStack1, i)) {
++                            campfire.items.set(i, itemStack1);
++                            campfire.cookingTime[i] = 0;
++                            campfire.cookingProgress[i] = 0;
++                        }
++                        // KioCG end - change container behavior
++
+                         level.sendBlockUpdated(pos, state, state, 3);
+                         level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+                     }
 @@ -112,7 +_,7 @@
          for (int i = 0; i < blockEntity.items.size(); i++) {
              if (blockEntity.cookingProgress[i] > 0) {
@@ -66,6 +96,20 @@
          ContainerHelper.loadAllItems(tag, this.items, registries);
          if (tag.contains("CookingTimes", 11)) {
              int[] intArray = tag.getIntArray("CookingTimes");
+@@ -205,7 +_,12 @@
+     }
+ 
+     public boolean placeFood(ServerLevel level, @Nullable LivingEntity entity, ItemStack stack) {
+-        for (int i = 0; i < this.items.size(); i++) {
++        // KioCG start - change container behavior
++        return placeFood(level, entity, stack, 0);
++    }
++    public boolean placeFood(ServerLevel level, @Nullable LivingEntity entity, ItemStack stack, int startSlot) {
++        for (int i = startSlot; i < this.items.size(); i++) {
++        // KioCG end - change container behavior
+             ItemStack itemStack = this.items.get(i);
+             if (itemStack.isEmpty()) {
+                 Optional<RecipeHolder<CampfireCookingRecipe>> recipeFor = level.recipeAccess()
 @@ -213,6 +_,13 @@
                  if (recipeFor.isEmpty()) {
                      return false;

@@ -42,7 +42,16 @@
                  return true;
              }
          }
-@@ -122,12 +_,14 @@
+@@ -77,7 +_,7 @@
+             return true;
+         }
+         // Paper end - Custom Potion Mixes
+-        return this.isContainer(reagent) && (this.hasContainerMix(reagent, potionItem) || this.hasPotionMix(reagent, potionItem));
++        return this.isContainer(reagent) && (true || this.hasContainerMix(reagent, potionItem) || this.hasPotionMix(reagent, potionItem)); // KioCG - change container behavior: 自定义失败的酿造
+     }
+ 
+     public boolean hasContainerMix(ItemStack reagent, ItemStack potionItem) {
+@@ -122,16 +_,22 @@
              } else {
                  for (PotionBrewing.Mix<Item> mix : this.containerMixes) {
                      if (potionItem.is(mix.from) && mix.ingredient.test(potion)) {
@@ -57,3 +66,20 @@
                          return PotionContents.createItemStack(potionItem.getItem(), mixx.to);
                      }
                  }
+ 
++                // KioCG start - change container behavior: 自定义失败的酿造
++                potionItem = new ItemStack(potionItem.getItem());
++                potionItem.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
++                // KioCG end - change container behavior: 自定义失败的酿造
+                 return potionItem;
+             }
+         }
+@@ -170,7 +_,7 @@
+         builder.addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
+         builder.addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
+         builder.addMix(Potions.SLOWNESS, Items.GLOWSTONE_DUST, Potions.STRONG_SLOWNESS);
+-        builder.addMix(Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
++        builder.addMix(Potions.AWKWARD, Items.TURTLE_SCUTE, Potions.TURTLE_MASTER); // KioCG - 海龟壳改为海龟鳞甲
+         builder.addMix(Potions.TURTLE_MASTER, Items.REDSTONE, Potions.LONG_TURTLE_MASTER);
+         builder.addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
+         builder.addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
+@@ -99,7 +_,7 @@
+         this.inputSlots.setItem(0, ItemStack.EMPTY);
+         this.access.execute((level, blockPos) -> {
+             BlockState blockState = level.getBlockState(blockPos);
+-            if (!player.hasInfiniteMaterials() && blockState.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) {
++            if (false && !player.hasInfiniteMaterials() && blockState.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) { // KioCG - adjust anvil: 铁砧无法损坏
+                 BlockState blockState1 = AnvilBlock.damage(blockState);
+                 // Paper start - AnvilDamageEvent
+                 com.destroystokyo.paper.event.block.AnvilDamagedEvent event = new com.destroystokyo.paper.event.block.AnvilDamagedEvent(getBukkitView(), blockState1 != null ? org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(blockState1) : null);
 @@ -129,17 +_,28 @@
          ItemStack item = this.inputSlots.getItem(0);
          this.onlyRenaming = false;

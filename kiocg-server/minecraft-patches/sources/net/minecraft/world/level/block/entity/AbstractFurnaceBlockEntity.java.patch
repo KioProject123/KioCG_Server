@@ -28,6 +28,50 @@
          }
  
          ItemStack itemStack = furnace.items.get(1);
+@@ -218,7 +_,7 @@
+ 
+                 furnace.litTimeRemaining = furnaceBurnEvent.getBurnTime(); // CraftBukkit - respect event output
+                 furnace.litTotalTime = furnace.litTimeRemaining;
+-                if (furnace.isLit() && furnaceBurnEvent.isBurning()) { // CraftBukkit - respect event output
++                if (false && furnace.isLit() && furnaceBurnEvent.isBurning()) { // CraftBukkit - respect event output // KioCG - change container behavior: 燃烧完成后再扣除燃料
+                     flag = true;
+                     if (flag2 && furnaceBurnEvent.willConsumeFuel()) { // Paper - add consumeFuel to FurnaceBurnEvent
+                         Item item = itemStack.getItem();
+@@ -252,10 +_,33 @@
+                 if (furnace.cookingTimer >= furnace.cookingTotalTime) { // Paper - cook speed multiplier API
+                     furnace.cookingTimer = 0;
+                     furnace.cookingTotalTime = getTotalCookTime(level, furnace, furnace.recipeType, furnace.cookSpeedMultiplier); // Paper - cook speed multiplier API
+-                    if (burn(level.registryAccess(), recipeHolder, singleRecipeInput, furnace.items, maxStackSize, level, furnace.worldPosition)) { // CraftBukkit
++                    // KioCG start - change container behavior
++                    boolean burned = false;
++                    while (burn(level.registryAccess(), recipeHolder, singleRecipeInput, furnace.items, maxStackSize, level, furnace.worldPosition)) { // CraftBukkit
++                        burned = true;
++                    // KioCG end - change container behavior
+                         furnace.setRecipeUsed(recipeHolder);
+                     }
+ 
++                    // KioCG start - change container behavior
++                    if (burned) {
++                        furnace.getRecipesToAwardAndPopExperience(level, Vec3.atCenterOf(pos));
++                        furnace.recipesUsed.clear();
++                        furnace.litTimeRemaining = 0;
++
++                        // 燃烧完成后再扣除燃料
++                        if (!itemStack.isEmpty()) {
++                            Item item = itemStack.getItem();
++                            itemStack.shrink(1);
++
++                            ItemStack craftingRemainder = item.getCraftingRemainder();
++                            if (!craftingRemainder.isEmpty()) {
++                                net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
++                            }
++                        }
++                    }
++                    // KioCG end - change container behavior
++
+                     flag = true;
+                 }
+             } else {
 @@ -263,6 +_,7 @@
              }
          } else if (!furnace.isLit() && furnace.cookingTimer > 0) {
@@ -42,7 +86,7 @@
              } else {
 +                // KioCG start - vanilla recipe excludes model items
 +                if (recipe.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)) {
-+                    if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, items.get(0))) {
++                    if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.FURNACE, items.get(SLOT_INPUT))) {
 +                        return false;
 +                    }
 +                }
@@ -50,6 +94,44 @@
                  ItemStack itemStack1 = items.get(2);
                  return itemStack1.isEmpty()
                      || ItemStack.isSameItemSameComponents(itemStack1, itemStack)
+@@ -330,6 +_,10 @@
+             itemStack1 = result = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(apiResult);
+ 
+             if (!result.isEmpty()) {
++                // KioCG start - change container behavior
++                net.minecraft.world.Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), result.copy());
++            } else if (false) {
++                // KioCG end - change container behavior
+                 if (existingResults.isEmpty()) {
+                     items.set(2, result.copy());
+                 } else if (org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(existingResults).isSimilar(apiResult)) {
+@@ -349,7 +_,10 @@
+             // CraftBukkit end
+ 
+             if (itemStack.is(Blocks.WET_SPONGE.asItem()) && !items.get(1).isEmpty() && items.get(1).is(Items.BUCKET)) {
+-                items.set(1, new ItemStack(Items.WATER_BUCKET));
++                // KioCG start - change container behavior
++                items.set(1, ItemStack.EMPTY);
++                net.minecraft.world.Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), new ItemStack(Items.WATER_BUCKET));
++                // KioCG end - change container behavior
+             }
+ 
+             itemStack.shrink(1);
+@@ -371,12 +_,14 @@
+             ? furnace.quickCheck.getRecipeFor(singleRecipeInput, level).map(holder -> holder.value().cookingTime()).orElse(200)
+             /* passing a null level here is safe. world is only used for map extending recipes which won't happen here */
+             : (net.minecraft.server.MinecraftServer.getServer().getRecipeManager().getRecipeFor(recipeType, singleRecipeInput, level).map(holder -> holder.value().cookingTime()).orElse(200));
++        if (furnace instanceof BlastFurnaceBlockEntity || furnace instanceof SmokerBlockEntity) cookTime *= 2; // KioCG - change container behavior: 不要加速高炉和烟熏炉
+         return (int) Math.ceil (cookTime / cookSpeedMultiplier);
+         // Paper end - cook speed multiplier API
+     }
+ 
+     @Override
+     public int[] getSlotsForFace(Direction side) {
++        if (true) return new int[0]; // KioCG - 阻止漏斗交互
+         if (side == Direction.DOWN) {
+             return SLOTS_FOR_DOWN;
+         } else {
 @@ -420,6 +_,7 @@
              this.cookingTimer = 0;
              this.setChanged();
