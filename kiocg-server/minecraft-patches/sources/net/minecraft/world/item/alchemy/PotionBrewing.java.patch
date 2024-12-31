@@ -1,6 +1,26 @@
 --- a/net/minecraft/world/item/alchemy/PotionBrewing.java
 +++ b/net/minecraft/world/item/alchemy/PotionBrewing.java
-@@ -31,9 +_,25 @@
+@@ -15,25 +_,43 @@
+ 
+ public class PotionBrewing {
+     public static final int BREWING_TIME_SECONDS = 20;
+-    public static final PotionBrewing EMPTY = new PotionBrewing(List.of(), List.of(), List.of());
++    public static final PotionBrewing EMPTY = new PotionBrewing(List.of(), List.of(), List.of(), List.of()); // KioCG - mix potion effect
+     private final List<Ingredient> containers;
+     private final List<PotionBrewing.Mix<Potion>> potionMixes;
++    private final List<PotionBrewing.Mix<Potion>> baseMixes; // KioCG - mix potion effect
+     private final List<PotionBrewing.Mix<Item>> containerMixes;
+     private final it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<org.bukkit.NamespacedKey, io.papermc.paper.potion.PaperPotionMix> customMixes = new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>(); // Paper - Custom Potion Mixes
+ 
+-    PotionBrewing(List<Ingredient> containers, List<PotionBrewing.Mix<Potion>> potionMixes, List<PotionBrewing.Mix<Item>> containerMixes) {
++    PotionBrewing(List<Ingredient> containers, List<PotionBrewing.Mix<Potion>> potionMixes, List<PotionBrewing.Mix<Item>> containerMixes, List<PotionBrewing.Mix<Potion>> baseMixes) { // KioCG - mix potion effect
+         this.containers = containers;
+         this.potionMixes = potionMixes;
+         this.containerMixes = containerMixes;
++        this.baseMixes = baseMixes; // KioCG - mix potion effect
+     }
+ 
+     public boolean isIngredient(ItemStack stack) {
          return this.isContainerIngredient(stack) || this.isPotionIngredient(stack) || this.isCustomIngredient(stack); // Paper - Custom Potion Mixes
      }
  
@@ -51,22 +71,38 @@
      }
  
      public boolean hasContainerMix(ItemStack reagent, ItemStack potionItem) {
-@@ -122,16 +_,22 @@
+@@ -122,20 +_,53 @@
              } else {
                  for (PotionBrewing.Mix<Item> mix : this.containerMixes) {
                      if (potionItem.is(mix.from) && mix.ingredient.test(potion)) {
+-                        return PotionContents.createItemStack(mix.to.value(), optional.get());
 +                        if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.BREWING_STAND, potionItem)) return potionItem; // KioCG - vanilla recipe excludes model items
-                         return PotionContents.createItemStack(mix.to.value(), optional.get());
++                        return setCustomEffects(PotionContents.createItemStack(mix.to.value(), optional.get()), potionItem.get(DataComponents.POTION_CONTENTS).customEffects()); // KioCG - mix potion effect
                      }
                  }
  
                  for (PotionBrewing.Mix<Potion> mixx : this.potionMixes) {
                      if (mixx.from.is(optional.get()) && mixx.ingredient.test(potion)) {
+-                        return PotionContents.createItemStack(potionItem.getItem(), mixx.to);
+-                    }
+-                }
+-
 +                        if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.BREWING_STAND, potionItem)) return potionItem; // KioCG - vanilla recipe excludes model items
-                         return PotionContents.createItemStack(potionItem.getItem(), mixx.to);
-                     }
-                 }
- 
++                        return setCustomEffects(PotionContents.createItemStack(potionItem.getItem(), mixx.to), potionItem.get(DataComponents.POTION_CONTENTS).customEffects()); // KioCG - mix potion effect
++                    }
++                }
++
++                // KioCG start - mix potion effect
++                if (!optional.get().value().getEffects().isEmpty()) {
++                    for (PotionBrewing.Mix<Potion> mixx : this.baseMixes) {
++                        if (mixx.ingredient.test(potion)) {
++                            if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.BREWING_STAND, potionItem)) return potionItem; // KioCG - vanilla recipe excludes model items
++                            return setCustomEffects(PotionContents.createItemStack(potionItem.getItem(), mixx.to), potionItem.get(DataComponents.POTION_CONTENTS).getAllEffects());
++                        }
++                    }
++                }
++                // KioCG end - mix potion effect
++
 +                // KioCG start - change container behavior: 自定义失败的酿造
 +                potionItem = new ItemStack(potionItem.getItem());
 +                potionItem.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
@@ -74,6 +110,26 @@
                  return potionItem;
              }
          }
+     }
++
++    // KioCG start - mix potion effect
++    private ItemStack setCustomEffects(ItemStack result, Iterable<net.minecraft.world.effect.MobEffectInstance> effects) {
++        PotionContents resultContents = result.get(DataComponents.POTION_CONTENTS);
++        List<Holder<net.minecraft.world.effect.MobEffect>> resultEffects = resultContents.potion().get().value().getEffects().stream().map(net.minecraft.world.effect.MobEffectInstance::getEffect).toList();
++        java.util.Set<net.minecraft.world.effect.MobEffectInstance> treeSet = new java.util.TreeSet<>();
++        for (net.minecraft.world.effect.MobEffectInstance effect : effects) {
++            if (!resultEffects.contains(effect.getEffect())) {
++                treeSet.add(effect);
++            }
++        }
++
++        result.set(DataComponents.POTION_CONTENTS, new PotionContents(resultContents.potion(), resultContents.customColor(), List.copyOf(treeSet), resultContents.customName()));
++        return result;
++    }
++    // KioCG end - mix potion effect
+ 
+     public static PotionBrewing bootstrap(FeatureFlagSet enabledFeatures) {
+         PotionBrewing.Builder builder = new PotionBrewing.Builder(enabledFeatures);
 @@ -170,7 +_,7 @@
          builder.addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
          builder.addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
@@ -83,3 +139,28 @@
          builder.addMix(Potions.TURTLE_MASTER, Items.REDSTONE, Potions.LONG_TURTLE_MASTER);
          builder.addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
          builder.addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
+@@ -250,6 +_,7 @@
+     public static class Builder {
+         private final List<Ingredient> containers = new ArrayList<>();
+         private final List<PotionBrewing.Mix<Potion>> potionMixes = new ArrayList<>();
++        private final List<PotionBrewing.Mix<Potion>> baseMixes = new ArrayList<>(); // KioCG - mix potion effect
+         private final List<PotionBrewing.Mix<Item>> containerMixes = new ArrayList<>();
+         private final FeatureFlagSet enabledFeatures;
+ 
+@@ -281,6 +_,7 @@
+         public void addMix(Holder<Potion> input, Item reagent, Holder<Potion> result) {
+             if (input.value().isEnabled(this.enabledFeatures) && reagent.isEnabled(this.enabledFeatures) && result.value().isEnabled(this.enabledFeatures)) {
+                 this.potionMixes.add(new PotionBrewing.Mix<>(input, Ingredient.of(reagent), result));
++                if (input == Potions.AWKWARD) this.baseMixes.add(new PotionBrewing.Mix<>(input, Ingredient.of(reagent), result)); // KioCG - mix potion effect
+             }
+         }
+ 
+@@ -292,7 +_,7 @@
+         }
+ 
+         public PotionBrewing build() {
+-            return new PotionBrewing(List.copyOf(this.containers), List.copyOf(this.potionMixes), List.copyOf(this.containerMixes));
++            return new PotionBrewing(List.copyOf(this.containers), List.copyOf(this.potionMixes), List.copyOf(this.containerMixes), List.copyOf(this.baseMixes)); // KioCG - mix potion effect
+         }
+     }
+ 
