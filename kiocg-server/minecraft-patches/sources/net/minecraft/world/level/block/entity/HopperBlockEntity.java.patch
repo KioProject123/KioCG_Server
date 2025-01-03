@@ -1,0 +1,125 @@
+--- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -36,6 +_,7 @@
+     public int cooldownTime = -1;
+     private long tickedGameTime;
+     private Direction facing;
++    @Nullable public java.util.Set<net.minecraft.world.item.Item> itemFilter; // KioCG - hopper filter
+ 
+     // CraftBukkit start - add fields and methods
+     public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
+@@ -82,6 +_,7 @@
+         }
+ 
+         this.cooldownTime = tag.getInt("TransferCooldown");
++        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null; // KioCG - hopper filter
+     }
+ 
+     @Override
+@@ -223,6 +_,8 @@
+         for (int i = 0; i < hopper.getContainerSize(); ++i) {
+             final ItemStack item = hopper.getItem(i);
+             if (!item.isEmpty()) {
++                if (!HopperBlockEntity.suckInFilter(hopper, item) || !HopperBlockEntity.suckInFilter(destination, item)) continue; // KioCG - hopper filter
++
+                 foundItem = true;
+                 ItemStack origItemStack = item;
+                 ItemStack movedItem = origItemStack;
+@@ -263,6 +_,8 @@
+     }
+ 
+     private static boolean hopperPull(final Level level, final Hopper hopper, final Container container, ItemStack origItemStack, final int i) {
++        if (!HopperBlockEntity.suckInFilter(hopper, origItemStack) || !HopperBlockEntity.suckInFilter(container, origItemStack)) return false; // KioCG - hopper filter
++
+         ItemStack movedItem = origItemStack;
+         final int originalItemCount = origItemStack.getCount();
+         final int movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
+@@ -523,6 +_,64 @@
+         return true;
+     }
+ 
++    // KioCG start - hopper filter
++    @Override
++    protected void applyImplicitComponents(BlockEntity.DataComponentInput componentInput) {
++        super.applyImplicitComponents(componentInput);
++        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null;
++    }
++
++    @Nullable
++    public static java.util.Set<net.minecraft.world.item.Item> parseItemFilter(String string) {
++        java.util.Set<net.minecraft.world.item.Item> filter = new it.unimi.dsi.fastutil.objects.ObjectOpenHashSet<>();
++
++        for (String split : string.split(",")) {
++            if (split.startsWith("#")) {
++                split = split.substring(1);
++                if (split.isEmpty() || !net.minecraft.resources.ResourceLocation.isValidPath(split)) {
++                    return null;
++                }
++
++                net.minecraft.tags.TagKey<net.minecraft.world.item.Item> itemTagKey = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.ResourceLocation.withDefaultNamespace(split));
++                java.util.Optional<net.minecraft.core.HolderSet.Named<net.minecraft.world.item.Item>> itemTag = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemTagKey);
++                if (itemTag.isEmpty()) {
++                    return null;
++                }
++
++                for (net.minecraft.core.Holder<net.minecraft.world.item.Item> itemHolder : itemTag.get()) {
++                    filter.add(itemHolder.value());
++                }
++            } else {
++                if (split.isEmpty() || !net.minecraft.resources.ResourceLocation.isValidPath(split)) {
++                    return null;
++                }
++
++                final net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.ResourceLocation.withDefaultNamespace(split));
++                if (item == net.minecraft.world.item.Items.AIR) {
++                    return null;
++                }
++
++                filter.add(item);
++            }
++        }
++
++        return !filter.isEmpty() ? filter : null;
++    }
++
++    public static boolean suckInFilter(Container hopper, ItemStack itemstack) {
++        if (hopper instanceof HopperBlockEntity blockEntity) {
++            if (blockEntity.itemFilter != null) {
++                return blockEntity.itemFilter.contains(itemstack.getItem());
++            }
++        } else if (hopper instanceof net.minecraft.world.entity.vehicle.MinecartHopper minecartHopper) {
++            if (minecartHopper.itemFilter != null) {
++                return minecartHopper.itemFilter.contains(itemstack.getItem());
++            }
++        }
++        return true;
++    }
++    // KioCG end - hopper filter
++
+     public static boolean suckInItems(Level level, Hopper hopper) {
+         BlockPos blockPos = BlockPos.containing(hopper.getLevelX(), hopper.getLevelY() + 1.0, hopper.getLevelZ());
+         BlockState blockState = level.getBlockState(blockPos);
+@@ -613,6 +_,9 @@
+     }
+ 
+     public static boolean addItem(Container container, ItemEntity item) {
++        if (!HopperBlockEntity.suckInFilter(container, item.getItem())) return false; // KioCG - hopper filter
++        if (!item.level().paperConfig().kiocgConfig.hopperPullsEntityOwnedItem && item.target != null) return false; // KioCG - hopper filter
++
+         boolean flag = false;
+         // CraftBukkit start
+         if (org.bukkit.event.inventory.InventoryPickupItemEvent.getHandlerList().getRegisteredListeners().length > 0) { // Paper - optimize hoppers
+@@ -638,6 +_,13 @@
+     }
+ 
+     public static ItemStack addItem(@Nullable Container source, Container destination, ItemStack stack, @Nullable Direction direction) {
++        // KioCG start - hopper filter
++        if (source instanceof BaseContainerBlockEntity lockable1 && !lockable1.getLevel().paperConfig().kiocgConfig.hopperPullsLockedContainer && lockable1.lockKey != net.minecraft.world.LockCode.NO_LOCK
++            || destination instanceof BaseContainerBlockEntity lockable2 && !lockable2.getLevel().paperConfig().kiocgConfig.hopperPullsLockedContainer && lockable2.lockKey != net.minecraft.world.LockCode.NO_LOCK) {
++            return stack;
++        }
++        // KioCG end - hopper filter
++
+         if (destination instanceof WorldlyContainer worldlyContainer && direction != null) {
+             int[] slotsForFace = worldlyContainer.getSlotsForFace(direction);
+ 

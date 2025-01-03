@@ -1,8 +1,25 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartHopper.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartHopper.java
-@@ -100,6 +_,7 @@
+@@ -21,6 +_,7 @@
+ public class MinecartHopper extends AbstractMinecartContainer implements Hopper {
+     private boolean enabled = true;
+     private boolean consumedItemThisFrame = false;
++    @javax.annotation.Nullable public java.util.Set<net.minecraft.world.item.Item> itemFilter; // KioCG - hopper filter
+ 
+     public MinecartHopper(EntityType<? extends MinecartHopper> entityType, Level level) {
+         super(entityType, level);
+@@ -99,7 +_,16 @@
+         }
      }
  
++    // KioCG start - hopper filter
++    @Override
++    public void setCustomName(@javax.annotation.Nullable net.minecraft.network.chat.Component name) {
++        super.setCustomName(name);
++        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null;
++    }
++    // KioCG end - hopper filter
++
      public boolean suckInItems() {
 +        if (HopperBlockEntity.isFullContainer(this, null)) return false; // KioCG - optimize block entity
          if (HopperBlockEntity.suckInItems(this.level(), this)) {
