@@ -1,15 +1,31 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -4975,6 +_,12 @@
-         return this.level;
+@@ -3464,6 +_,7 @@
      }
  
+     public int getAirSupply() {
++        if (this instanceof ServerPlayer player) return player.getBukkitEntity().realAir; // KioCG - the long dark
+         return this.entityData.get(DATA_AIR_SUPPLY_ID);
+     }
+ 
+@@ -3478,6 +_,7 @@
+             this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
+             return;
+         }
++        if (this instanceof ServerPlayer player) { player.getBukkitEntity().realAir = event.getAmount(); } else // KioCG - the long dark
+         this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
+         // CraftBukkit end
+     }
+@@ -4974,6 +_,12 @@
+     public Level level() {
+         return this.level;
+     }
++
 +    // KioCG start
 +    public ServerLevel serverLevel() {
 +        return (ServerLevel)this.level();
 +    }
 +    // KioCG end
-+
+ 
      public void setLevel(Level level) {
          this.level = level;
-     }

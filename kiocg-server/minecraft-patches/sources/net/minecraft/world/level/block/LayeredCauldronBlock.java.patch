@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
++++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
+@@ -72,6 +_,7 @@
+             // CraftBukkit end
+             }
+         }
++        if (entity instanceof net.minecraft.world.entity.player.Player player && this.isEntityInsideContent(state, pos, entity)) player.coldData.isInWater = true; // KioCG - the long dark
+     }
+ 
+     // CraftBukkit start

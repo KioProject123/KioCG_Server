@@ -8,7 +8,13 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -924,6 +_,11 @@
+@@ -919,11 +_,16 @@
+ 
+             if (this.totalExperience != this.lastSentExp) {
+                 this.lastSentExp = this.totalExperience;
+-                this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
++                // this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel)); // KioCG - the long dark
+             }
  
              if (this.tickCount % 20 == 0) {
                  CriteriaTriggers.LOCATION.trigger(this);
@@ -63,3 +69,21 @@
          // Paper start - cancellable death event
          if (event.isCancelled()) {
              // make compatible with plugins that might have already set the health in an event listener
+@@ -2049,6 +_,8 @@
+             // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
+             this.setHealth(that.getHealth());
+             this.foodData = that.foodData;
++            this.coldData = that.coldData; // KioCG - the long dark
++            this.thirstData = that.thirstData; // KioCG - the long dark
+ 
+             for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
+                 // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
+@@ -3050,6 +_,8 @@
+         this.setRemainingFireTicks(0);
+         this.fallDistance = 0;
+         this.foodData = new net.minecraft.world.food.FoodData();
++        this.coldData = new com.kiocg.player.ColdData(); // KioCG - the long dark
++        this.thirstData = new com.kiocg.player.ThirstData(); // KioCG - the long dark
+         this.experienceLevel = this.newLevel;
+         this.totalExperience = this.newTotalExp;
+         this.experienceProgress = 0;

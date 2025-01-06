@@ -9,6 +9,15 @@
          boolean _boolean2 = gameRules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
          serverGamePacketListenerImpl.send(
              new ClientboundLoginPacket(
+@@ -785,7 +_,7 @@
+         serverPlayer.connection.send(new ClientboundSetDefaultSpawnPositionPacket(level.getSharedSpawnPos(), level.getSharedSpawnAngle()));
+         serverPlayer.connection.send(new ClientboundChangeDifficultyPacket(levelData.getDifficulty(), levelData.isDifficultyLocked()));
+         serverPlayer.connection
+-            .send(new ClientboundSetExperiencePacket(serverPlayer.experienceProgress, serverPlayer.totalExperience, serverPlayer.experienceLevel));
++            .send(new ClientboundSetExperiencePacket(serverPlayer.coldData.getColdProgress(), serverPlayer.totalExperience, serverPlayer.experienceLevel)); // KioCG - the long dark
+         this.sendActivePlayerEffects(serverPlayer);
+         this.sendLevelInfo(serverPlayer, level);
+         this.sendPlayerPermissionLevel(serverPlayer);
 @@ -1131,7 +_,7 @@
          player.refreshEntityData(player); // CraftBukkkit - SPIGOT-7218: sync metadata
          player.connection.send(new ClientboundSetHeldSlotPacket(player.getInventory().selected));

@@ -1,9 +1,27 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3514,6 +_,13 @@
+@@ -213,6 +_,7 @@
+     private double health = 20;
+     private boolean scaledHealth = false;
+     private double healthScale = 20;
++    public int realAir; // KioCG - the long dark
+     private CraftWorldBorder clientWorldBorder = null;
+     private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
+     public org.bukkit.event.player.PlayerResourcePackStatusEvent.Status resourcePackStatus; // Paper - more resource pack API
+@@ -2255,7 +_,7 @@
+         playerList.sendAllPlayerInfo(handle);
+ 
+         // Resend their XP and effects because the respawn packet resets it
+-        connection.send(new net.minecraft.network.protocol.game.ClientboundSetExperiencePacket(handle.experienceProgress, handle.totalExperience, handle.experienceLevel));
++        connection.send(new net.minecraft.network.protocol.game.ClientboundSetExperiencePacket(handle.coldData.getColdProgress(), handle.totalExperience, handle.experienceLevel)); // KioCG - the long dark
+         for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
+             connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
+         }
+@@ -3513,6 +_,54 @@
+         return FeatureHooks.isChunkSent(this.getHandle(), chunkKey);
      }
      // Paper end
- 
++
 +    // KioCG start - player in structure api
 +    @Override
 +    public boolean isInStructure() {
@@ -11,6 +29,46 @@
 +    }
 +    // KioCG end - player in structure api
 +
++    // KioCG start - the long dark
++    @Override
++    public int getColdValue() {
++        return this.getHandle().coldData.getColdValue();
++    }
++    @Override
++    public void setColdValue(int value) {
++        this.getHandle().coldData.setColdValue(value);
++    }
++    @Override
++    public void addColdValue(int add) {
++        this.getHandle().coldData.addColdValue(add);
++    }
++
++    @Override
++    public int getThirstValue() {
++        return this.getHandle().thirstData.getThirstValue();
++    }
++    @Override
++    public void setThirstValue(int value) {
++        this.getHandle().thirstData.setThirstValue(value);
++    }
++    @Override
++    public void addThirstValue(int add) {
++        this.getHandle().thirstData.addThirstValue(add);
++    }
++
++    @Override
++    public float getThirstRegain() {
++        return this.getHandle().thirstData.getThirstRegain();
++    }
++    @Override
++    public void setThirstRegain(float value) {
++        this.getHandle().thirstData.setThirstRegain(value);
++    }
++    @Override
++    public void addThirstRegain(float add) {
++        this.getHandle().thirstData.addThirstRegain(add);
++    }
++    // KioCG end - the long dark
+ 
      public Player.Spigot spigot()
      {
-         return this.spigot;

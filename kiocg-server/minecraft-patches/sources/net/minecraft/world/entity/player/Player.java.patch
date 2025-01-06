@@ -1,0 +1,52 @@
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -163,6 +_,8 @@
+     public final InventoryMenu inventoryMenu;
+     public AbstractContainerMenu containerMenu;
+     protected FoodData foodData = new FoodData();
++    public com.kiocg.player.ColdData coldData = new com.kiocg.player.ColdData(); // KioCG - the long dark
++    public com.kiocg.player.ThirstData thirstData = new com.kiocg.player.ThirstData(); // KioCG - the long dark
+     protected int jumpTriggerTime;
+     private boolean clientLoaded = false;
+     protected int clientLoadedTimeoutTimer = 60;
+@@ -246,7 +_,8 @@
+             .add(Attributes.SUBMERGED_MINING_SPEED)
+             .add(Attributes.SNEAKING_SPEED)
+             .add(Attributes.MINING_EFFICIENCY)
+-            .add(Attributes.SWEEPING_DAMAGE_RATIO);
++            .add(Attributes.SWEEPING_DAMAGE_RATIO)
++            .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE); // KioCG - the long dark: 属性用于玩家温度
+     }
+ 
+     @Override
+@@ -304,6 +_,8 @@
+         this.moveCloak();
+         if (this instanceof ServerPlayer serverPlayer) {
+             this.foodData.tick(serverPlayer);
++            this.coldData.tick(serverPlayer); // KioCG - the long dark
++            this.thirstData.tick(serverPlayer); // KioCG - the long dark
+             this.awardStat(Stats.PLAY_TIME);
+             this.awardStat(Stats.TOTAL_WORLD_TIME);
+             if (this.isAlive()) {
+@@ -823,6 +_,10 @@
+ 
+         this.setScore(compound.getInt("Score"));
+         this.foodData.readAdditionalSaveData(compound);
++        // KioCG start - the long dark
++        this.coldData.readAdditionalSaveData(compound);
++        this.thirstData.readAdditionalSaveData(compound);
++        // KioCG end - the long dark
+         this.abilities.loadSaveData(compound);
+         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.abilities.getWalkingSpeed());
+         if (compound.contains("EnderItems", 9)) {
+@@ -865,6 +_,10 @@
+         compound.putInt("XpSeed", this.enchantmentSeed);
+         compound.putInt("Score", this.getScore());
+         this.foodData.addAdditionalSaveData(compound);
++        // KioCG start - the long dark
++        this.coldData.addAdditionalSaveData(compound);
++        this.thirstData.addAdditionalSaveData(compound);
++        // KioCG end - the long dark
+         this.abilities.addSaveData(compound);
+         compound.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
+         if (!this.getShoulderEntityLeft().isEmpty()) {

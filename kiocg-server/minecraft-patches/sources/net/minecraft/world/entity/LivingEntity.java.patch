@@ -1,0 +1,40 @@
+--- a/net/minecraft/world/entity/LivingEntity.java
++++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -1307,6 +_,7 @@
+ 
+     public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason, boolean isFastRegen) {
+         // Paper end - Forward
++        if (!(this instanceof net.minecraft.world.entity.player.Player player) || !player.thirstData.isThirsty(player)) { // KioCG - the long dark
+         float health = this.getHealth();
+         if (health > 0.0F) {
+             EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), healAmount, regainReason, isFastRegen); // Paper
+@@ -1317,9 +_,11 @@
+ 
+             if (!event.isCancelled()) {
+                 this.setHealth((float) (this.getHealth() + event.getAmount()));
++                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain((float) (Math.max(this.getHealth() - health, 0) * this.level().paperConfig().kiocgConfig.theLongDark.thirstValue.thirstRegainMultiplierHealth)); // KioCG - the long dark
+             }
+             // CraftBukkit end
+         }
++        } // KioCG - the long dark
+     }
+ 
+     public float getHealth() {
+@@ -3258,6 +_,8 @@
+                 ItemStack itemBySlot = entry.getValue();
+                 if (!itemBySlot.isEmpty() && !itemBySlot.isBroken()) {
+                     itemBySlot.forEachModifier(equipmentSlot1, (attribute, modifier) -> {
++                        if (this instanceof net.minecraft.world.entity.monster.Zombie && attribute == Attributes.SPAWN_REINFORCEMENTS_CHANCE) return; // KioCG - the long dark: 属性用于玩家温度
++
+                         AttributeInstance instance = this.attributes.getInstance(attribute);
+                         if (instance != null) {
+                             instance.removeModifier(modifier.id());
+@@ -3454,7 +_,7 @@
+         profilerFiller.push("freezing");
+         if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
+             int ticksFrozen = this.getTicksFrozen();
+-            if (this.isInPowderSnow && this.canFreeze()) {
++            if (this.isInPowderSnow && this.canFreeze() || this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen(player)) { // KioCG - the long dark
+                 this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), ticksFrozen + 1));
+             } else {
+                 this.setTicksFrozen(Math.max(0, ticksFrozen - 2));
