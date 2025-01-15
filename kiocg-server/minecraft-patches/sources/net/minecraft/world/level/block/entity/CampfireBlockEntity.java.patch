@@ -1,6 +1,30 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -42,6 +_,7 @@
+@@ -38,10 +_,31 @@
+     public final int[] cookingTime = new int[4];
+     public final boolean[] stopCooking = new boolean[4]; // Paper - Add more Campfire API
+ 
++    // KioCG start - campfire healing
++    private int healingTime;
++    private static final FuelValues fuelValues;
++
++    static {
++        int smeltingTime = 200;
++        fuelValues = new FuelValues.Builder(net.minecraft.server.MinecraftServer.getServer().registryAccess(), net.minecraft.server.MinecraftServer.getServer().getWorldData().enabledFeatures())
++                .add(net.minecraft.tags.ItemTags.LOGS, smeltingTime * 3 / 2)
++                .add(net.minecraft.tags.ItemTags.BAMBOO_BLOCKS, smeltingTime * 3 / 2)
++                .add(net.minecraft.tags.ItemTags.PLANKS, smeltingTime * 3 / 2)
++                .add(net.minecraft.world.level.block.Blocks.BAMBOO_MOSAIC, smeltingTime * 3 / 2)
++                .add(net.minecraft.world.item.Items.STICK, smeltingTime / 2)
++                .add(net.minecraft.world.level.block.Blocks.BAMBOO, smeltingTime / 4)
++                .add(net.minecraft.world.level.block.Blocks.DEAD_BUSH, smeltingTime / 2)
++                .add(net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS, smeltingTime * 3 / 2)
++                .remove(net.minecraft.tags.ItemTags.NON_FLAMMABLE_WOOD)
++                .build();
++    }
++    // KioCG end - campfire healing
++
+     public CampfireBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.CAMPFIRE, pos, blockState);
      }
  
@@ -79,6 +103,60 @@
                          level.sendBlockUpdated(pos, state, state, 3);
                          level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
+@@ -101,10 +_,53 @@
+             }
+         }
+ 
++        // KioCG start - campfire healing
++        if (campfire.healingTime > 0) {
++            --campfire.healingTime;
++            if (level.getGameTime() % 20L == 0L) {
++                CampfireBlockEntity.healingNearbyPlayers(level, pos);
++            }
++            if (level.getGameTime() % 5L == 0L) {
++                double x = (double) pos.getX() + 0.5;
++                double y = (double) pos.getY() + 1.0;
++                double z = (double) pos.getZ() + 0.5;
++                level.sendParticles(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION).getParticleOptions(),
++                                    x, y, z,
++                                    2,
++                                    0.25, 0.1, 0.25,
++                                    1.0);
++            }
++        }
++        // KioCG end - campfire healing
++
+         if (flag) {
+             setChanged(level, pos, state);
+         }
+     }
++
++    // KioCG start - campfire healing
++    private static void healingNearbyPlayers(Level level, BlockPos pos) {
++        net.minecraft.world.phys.AABB aabb = (new net.minecraft.world.phys.AABB(pos)).inflate(10, 5, 10);
++        java.util.List<net.minecraft.world.entity.player.Player> players = level.getEntitiesOfClass(net.minecraft.world.entity.player.Player.class, aabb);
++        for (net.minecraft.world.entity.player.Player player : players) {
++            player.campfireHealing();
++        }
++    }
++
++    public static void entityInside(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.Entity entity, CampfireBlockEntity blockEntity) {
++        if (entity instanceof net.minecraft.world.entity.item.ItemEntity itemEntity) {
++            ItemStack item = itemEntity.getItem();
++            int burnDuration = CampfireBlockEntity.fuelValues.burnDuration(item);
++            if (burnDuration > 0) {
++                blockEntity.healingTime = Math.min(blockEntity.healingTime + burnDuration * item.getCount(), 20 * 60);
++                itemEntity.discard();
++
++                RandomSource random = level.getRandom();
++                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
++            }
++        }
++    }
++    // KioCG end - campfire healing
+ 
+     public static void cooldownTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
+         boolean flag = false;
 @@ -112,7 +_,7 @@
          for (int i = 0; i < blockEntity.items.size(); i++) {
              if (blockEntity.cookingProgress[i] > 0) {

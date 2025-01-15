@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
+@@ -117,6 +_,15 @@
+             entity.hurt(level.damageSources().campfire().directBlock(level, pos), (float) this.fireDamage); // CraftBukkit
+         }
+ 
++        // KioCG start - campfire healing
++        if (state.getValue(LIT)) {
++            BlockEntity blockEntity = level.getBlockEntity(pos);
++            if (blockEntity instanceof CampfireBlockEntity) {
++                CampfireBlockEntity.entityInside(level, pos, state, entity, (CampfireBlockEntity) blockEntity);
++            }
++        }
++        // KioCG end - campfire healing
++
+         super.entityInside(state, level, pos, entity);
+     }
+ 
 @@ -337,6 +_,7 @@
                      (level1, pos, state1, blockEntity) -> CampfireBlockEntity.cookTick(serverLevel, pos, state1, blockEntity, cachedCheck)
                  );

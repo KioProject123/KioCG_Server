@@ -19,6 +19,15 @@
      }
  
      @Override
+@@ -271,6 +_,8 @@
+             this.takeXpDelay--;
+         }
+ 
++        this.campfireHealed = false; // KioCG - campfire healing
++
+         if (this.isSleeping()) {
+             this.sleepCounter++;
+             // Paper start - Add PlayerDeepSleepEvent
 @@ -304,6 +_,8 @@
          this.moveCloak();
          if (this instanceof ServerPlayer serverPlayer) {
@@ -50,3 +59,31 @@
          this.abilities.addSaveData(compound);
          compound.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
          if (!this.getShoulderEntityLeft().isEmpty()) {
+@@ -938,6 +_,27 @@
+             }
+         }
+     }
++
++    // KioCG start - campfire healing
++    private boolean campfireHealed;
++    public void campfireHealing() {
++        if (!campfireHealed && this.isHurt()) {
++            final float health = this.getHealth();
++            this.heal(1.0F);
++            this.causeFoodExhaustion(this.level().spigotConfig.regenExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
++            if (this.getHealth() > health) {
++                this.serverLevel().sendParticlesSource(
++                        (net.minecraft.server.level.ServerPlayer) this,
++                        net.minecraft.core.particles.ParticleTypes.HEART,
++                        false, false,
++                        this.getX(), this.getY(), this.getZ(),
++                        5,
++                        0.3, 0.3, 0.3,
++                        1.0);
++            }
++        }
++    }
++    // KioCG end - campfire healing
+ 
+     @Override
+     protected void blockUsingShield(LivingEntity entity) {
