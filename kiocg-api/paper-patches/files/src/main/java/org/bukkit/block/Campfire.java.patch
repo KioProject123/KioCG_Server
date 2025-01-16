@@ -1,0 +1,9 @@
+--- a/src/main/java/org/bukkit/block/Campfire.java
++++ b/src/main/java/org/bukkit/block/Campfire.java
+@@ -105,4 +_,6 @@
+      */
+     boolean isCookingDisabled(int index);
+     // Paper end
++
++    boolean isCauldronBoiling(); // KioCG - campfire boiling water
+ }

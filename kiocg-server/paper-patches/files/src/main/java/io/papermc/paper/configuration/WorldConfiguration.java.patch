@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,4 +_,43 @@
+@@ -587,4 +_,45 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -40,6 +40,8 @@
 +                public double thirstRegainMultiplierFood = 2.0;
 +                public double lowDownfallBiomeThirst = 0.02;
 +            }
++
++            public int campfireBoilingWaterTime = 600;
 +        }
 +    }
 +    // KioCG end
