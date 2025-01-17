@@ -1,0 +1,13 @@
+--- a/src/main/java/org/bukkit/entity/Mob.java
++++ b/src/main/java/org/bukkit/entity/Mob.java
+@@ -229,4 +_,10 @@
+      */
+     public int getPossibleExperienceReward();
+     // Paper end - mob xp reward API
++
++    // KioCG start - entity bossbar api
++    @Nullable
++    public org.bukkit.boss.BossBar getBossbar();
++    public void setBossbar(@Nullable org.bukkit.boss.BossBar bossbar);
++    // KioCG end - entity bossbar api
+ }

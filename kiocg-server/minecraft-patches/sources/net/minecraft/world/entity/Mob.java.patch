@@ -1,0 +1,106 @@
+--- a/net/minecraft/world/entity/Mob.java
++++ b/net/minecraft/world/entity/Mob.java
+@@ -145,6 +_,8 @@
+     private BlockPos restrictCenter = BlockPos.ZERO;
+     private float restrictRadius = -1.0F;
+     public boolean aware = true; // CraftBukkit
++    @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG - entity bossbar api
++    private int ticksSinceLastPlayerScan = 21; // KioCG - entity bossbar api
+ 
+     protected Mob(EntityType<? extends Mob> entityType, Level level) {
+         super(entityType, level);
+@@ -399,6 +_,16 @@
+         if (!this.level().isClientSide && this.tickCount % 5 == 0) {
+             this.updateControlFlags();
+         }
++
++        // KioCG start - entity bossbar api
++        if (this.bossbar != null) {
++            this.bossbar.setProgress(this.getHealth() / this.getMaxHealth());
++            if (++this.ticksSinceLastPlayerScan >= 20) {
++                updatePlayers();
++                this.ticksSinceLastPlayerScan = 0;
++            }
++        }
++        // KioCG end - entity bossbar api
+     }
+ 
+     protected void updateControlFlags() {
+@@ -486,6 +_,12 @@
+             compound.putBoolean("NoAI", this.isNoAi());
+         }
+         compound.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
++
++        // KioCG start - entity bossbar api
++        if (this.bossbar != null) {
++            compound.put("KioCG.Bossbar", this.bossbar.save(this.registryAccess()));
++        }
++        // KioCG end - entity bossbar api
+     }
+ 
+     @Override
+@@ -568,6 +_,12 @@
+             this.aware = compound.getBoolean("Bukkit.Aware");
+         }
+         // CraftBukkit end
++
++        // KioCG start - entity bossbar api
++        if (compound.contains("KioCG.Bossbar")) {
++            this.bossbar = net.minecraft.server.level.ServerBossEvent.load(compound.getCompound("KioCG.Bossbar"), this.registryAccess());
++        }
++        // KioCG end - entity bossbar api
+     }
+ 
+     @Override
+@@ -1684,6 +_,51 @@
+             this.getNavigation().updatePathfinderMaxVisitedNodes();
+         }
+     }
++
++    // KioCG start - entity bossbar api
++    @Nullable
++    public net.minecraft.server.level.ServerBossEvent getBossBar() {
++        return this.bossbar;
++    }
++
++    public void setBossBar(@Nullable net.minecraft.server.level.ServerBossEvent bossbar) {
++        if (this.bossbar != null) {
++            this.bossbar.removeAllPlayers();
++        }
++        this.bossbar = bossbar;
++        updatePlayers();
++    }
++
++    private void updatePlayers() {
++        java.util.Set<net.minecraft.server.level.ServerPlayer> set = com.google.common.collect.Sets.newHashSet();
++
++        net.minecraft.server.level.ChunkMap.TrackedEntity entityTracker = this.serverLevel().getChunkSource().chunkMap.entityMap.get(this.getId());
++        if (entityTracker != null) {
++            for (net.minecraft.server.network.ServerPlayerConnection connection : entityTracker.seenBy) {
++                net.minecraft.server.level.ServerPlayer serverPlayer = connection.getPlayer();
++                if (this.position().distanceToSqr(serverPlayer.position()) <= 16 * 16) {
++                    this.bossbar.addPlayer(serverPlayer);
++                    set.add(serverPlayer);
++                }
++            }
++        }
++
++        java.util.Set<net.minecraft.server.level.ServerPlayer> set1 = com.google.common.collect.Sets.newHashSet(this.bossbar.getPlayers());
++        set1.removeAll(set);
++
++        for (net.minecraft.server.level.ServerPlayer serverPlayer1 : set1) {
++            this.bossbar.removePlayer(serverPlayer1);
++        }
++    }
++
++    @Override
++    public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
++        super.stopSeenByPlayer(player);
++        if (this.bossbar != null) {
++            this.bossbar.removePlayer(player);
++        }
++    }
++    // KioCG end - entity bossbar api
+ 
+     @VisibleForTesting
+     public float[] getHandDropChances() {

@@ -1,0 +1,19 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
+@@ -192,4 +_,16 @@
+         return io.papermc.paper.entity.PaperLeashable.super.setLeashHolder(holder);
+     }
+     // Paper end - Leashable API
++
++    // KioCG start - entity bossbar api
++    @Override
++    public org.bukkit.boss.BossBar getBossbar() {
++        return new org.bukkit.craftbukkit.boss.CraftBossBar(getHandle().getBossBar());
++    }
++
++    @Override
++    public void setBossbar(org.bukkit.boss.BossBar bossbar) {
++        getHandle().setBossBar(bossbar != null ? ((org.bukkit.craftbukkit.boss.CraftBossBar) bossbar).getHandle() : null);
++    }
++    // KioCG end - entity bossbar api
+ }
