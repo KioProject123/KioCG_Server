@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/projectile/ThrownExperienceBottle.java
++++ b/net/minecraft/world/entity/projectile/ThrownExperienceBottle.java
+@@ -39,6 +_,7 @@
+         if (this.level() instanceof ServerLevel) {
+             // CraftBukkit - moved to after event
+             int i = 3 + this.level().random.nextInt(5) + this.level().random.nextInt(5);
++            i = i * 3 + 2; // KioCG - more exp
+             // CraftBukkit start
+             org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, result, i);
+             i = event.getExperience();
