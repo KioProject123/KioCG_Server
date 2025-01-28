@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
+@@ -97,6 +_,14 @@
+     }
+     // CraftBukkit end
+ 
++    // KioCG start - call PrepareItemCraftEvent for crafter
++    @Override
++    public net.minecraft.world.item.crafting.RecipeHolder<net.minecraft.world.item.crafting.CraftingRecipe> getCurrentRecipe() {
++        if (this.level == null) return null;
++        return CrafterBlock.getPotentialResults((net.minecraft.server.level.ServerLevel) this.level, this.asCraftInput()).orElse(null);
++    }
++    // KioCG end - call PrepareItemCraftEvent for crafter
++
+     public CrafterBlockEntity(BlockPos pos, BlockState state) {
+         super(BlockEntityType.CRAFTER, pos, state);
+     }

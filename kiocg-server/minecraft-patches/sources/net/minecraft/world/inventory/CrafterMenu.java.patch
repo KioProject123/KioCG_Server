@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/inventory/CrafterMenu.java
++++ b/net/minecraft/world/inventory/CrafterMenu.java
+@@ -122,9 +_,16 @@
+         if (this.player instanceof ServerPlayer serverPlayer) {
+             ServerLevel serverLevel = serverPlayer.serverLevel();
+             CraftingInput craftInput = this.container.asCraftInput();
+-            ItemStack itemStack = CrafterBlock.getPotentialResults(serverLevel, craftInput)
++            // KioCG start - call PrepareItemCraftEvent for crafter
++            final java.util.Optional<net.minecraft.world.item.crafting.RecipeHolder<net.minecraft.world.item.crafting.CraftingRecipe>> recipe = CrafterBlock.getPotentialResults(serverLevel, craftInput);
++            ItemStack itemStack = recipe
+                 .map(recipeHolder -> recipeHolder.value().assemble(craftInput, serverLevel.registryAccess()))
+                 .orElse(ItemStack.EMPTY);
++
++            this.container.onOpen(serverPlayer.getBukkitEntity());
++            itemStack = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(this.container, this.resultContainer, itemStack, this.getBukkitView(), recipe.map(net.minecraft.world.item.crafting.RecipeHolder::value).orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe);
++            this.container.onClose(serverPlayer.getBukkitEntity());
++            // KioCG end - call PrepareItemCraftEvent for crafter
+             this.resultContainer.setItem(0, itemStack);
+         }
+     }
