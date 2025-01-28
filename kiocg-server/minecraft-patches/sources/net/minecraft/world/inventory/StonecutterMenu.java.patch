@@ -9,15 +9,17 @@
              this.input = item.copy();
              this.setupRecipeList(item);
          }
-@@ -192,6 +_,11 @@
-         this.resultSlot.set(ItemStack.EMPTY);
-         if (!stack.isEmpty()) {
-             this.recipesForInput = this.level.recipeAccess().stonecutterRecipes().selectByInput(stack);
+@@ -202,6 +_,13 @@
+         if (!this.recipesForInput.isEmpty() && this.isValidRecipeIndex(id)) {
+             SelectableRecipe.SingleInputEntry<StonecutterRecipe> singleInputEntry = this.recipesForInput.entries().get(id);
+             optional = singleInputEntry.recipe().recipe();
 +            // KioCG start - vanilla recipe excludes model items
-+            if (!this.allowModelItem(stack)) {
-+                this.recipesForInput.entries().removeIf(recipe -> recipe.recipe().recipe().filter(recipeHolder -> recipeHolder.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)).isPresent());
++            if (optional.filter(recipeHolder -> recipeHolder.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)).isPresent()) {
++                if (!this.allowModelItem(this.inputSlot.getItem())) {
++                    optional = Optional.empty();
++                }
 +            }
 +            // KioCG end - vanilla recipe excludes model items
          } else {
-             this.recipesForInput = SelectableRecipe.SingleInputSet.empty();
+             optional = Optional.empty();
          }
