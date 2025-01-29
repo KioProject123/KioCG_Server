@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/inventory/view/StonecutterView.java
++++ b/src/main/java/org/bukkit/inventory/view/StonecutterView.java
+@@ -32,6 +_,8 @@
+     @NotNull
+     List<StonecuttingRecipe> getRecipes();
+ 
++    void setRecipes(List<StonecuttingRecipe> recipes); // KioCG - more stonecutter api
++
+     /**
+      * Gets the amount of recipes currently available.
+      *

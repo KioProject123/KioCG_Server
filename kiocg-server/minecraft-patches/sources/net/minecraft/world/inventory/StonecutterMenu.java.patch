@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/inventory/StonecutterMenu.java
 +++ b/net/minecraft/world/inventory/StonecutterMenu.java
+@@ -119,6 +_,12 @@
+         return this.recipesForInput;
+     }
+ 
++    // KioCG start - more stonecutter api
++    public void setVisibleRecipes(SelectableRecipe.SingleInputSet<StonecutterRecipe> recipes) {
++        this.recipesForInput = recipes;
++    }
++    // KioCG end - more stonecutter api
++
+     public int getNumberOfVisibleRecipes() {
+         return this.recipesForInput.size();
+     }
 @@ -180,7 +_,7 @@
      @Override
      public void slotsChanged(Container inventory) {
@@ -9,13 +22,12 @@
              this.input = item.copy();
              this.setupRecipeList(item);
          }
-@@ -192,11 +_,33 @@
+@@ -192,11 +_,32 @@
          this.resultSlot.set(ItemStack.EMPTY);
          if (!stack.isEmpty()) {
              this.recipesForInput = this.level.recipeAccess().stonecutterRecipes().selectByInput(stack);
-+
 +            // KioCG start - vanilla recipe excludes model items
-+            if (!this.allowModelItem(this.inputSlot.getItem()) && !this.recipesForInput.isEmpty()) {
++            if (!this.allowModelItem(stack) && !this.recipesForInput.isEmpty()) {
 +                this.recipesForInput = new SelectableRecipe.SingleInputSet<>(this.recipesForInput.entries().stream().filter(entry -> entry.recipe().recipe().filter(recipeHolder -> recipeHolder.id().location().getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT)).isEmpty()).toList());
 +            }
 +            // KioCG end - vanilla recipe excludes model items
@@ -27,7 +39,7 @@
      }
  
 +    // KioCG start - fix stonecutter recipe list display
-+    private void refreshRecipe(net.minecraft.server.level.ServerPlayer serverPlayer, boolean visibleRecipes) {
++    public void refreshRecipe(net.minecraft.server.level.ServerPlayer serverPlayer, boolean visibleRecipes) {
 +        net.minecraft.world.item.crafting.RecipeManager recipeManager = net.minecraft.server.MinecraftServer.getServer().getRecipeManager();
 +        net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket clientboundUpdateRecipesPacket = new net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket(
 +                recipeManager.getSynchronizedItemProperties(), visibleRecipes ? this.getVisibleRecipes() : recipeManager.getSynchronizedStonecutterRecipes()

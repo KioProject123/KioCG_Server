@@ -1,0 +1,37 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/view/CraftStonecutterView.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/view/CraftStonecutterView.java
+@@ -34,6 +_,34 @@
+         return recipes;
+     }
+ 
++    // KioCG start - more stonecutter api
++    @Override
++    public void setRecipes(final List<StonecuttingRecipe> recipes) {
++        final List<SelectableRecipe.SingleInputEntry<StonecutterRecipe>> list = recipes.stream()
++            .map(org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe::fromBukkitRecipe)
++            .map(craftRecipe -> new RecipeHolder<>(
++                org.bukkit.craftbukkit.inventory.CraftRecipe.toMinecraft(craftRecipe.getKey()),
++                new StonecutterRecipe(
++                    craftRecipe.getGroup(),
++                    craftRecipe.toNMS(craftRecipe.getInputChoice(), true),
++                    org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(craftRecipe.getResult())
++                )
++            ))
++            .map(holder -> new SelectableRecipe.SingleInputEntry<>(
++                holder.value().input(),
++                new SelectableRecipe<>(
++                    holder.value().resultDisplay(),
++                    java.util.Optional.of(holder)
++                )
++            ))
++            .toList();
++        this.container.setVisibleRecipes(new SelectableRecipe.SingleInputSet<>(list));
++        if (this.getPlayer() instanceof org.bukkit.entity.Player player) {
++            this.container.refreshRecipe(((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle(), true);
++        }
++    }
++    // KioCG end - more stonecutter api
++
+     @Override
+     public int getRecipeAmount() {
+         return this.container.getNumberOfVisibleRecipes();
