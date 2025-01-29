@@ -69,6 +69,15 @@
          // Paper start - cancellable death event
          if (event.isCancelled()) {
              // make compatible with plugins that might have already set the health in an event listener
+@@ -1155,6 +_,8 @@
+         this.setCamera(this); // Remove spectated target
+         // CraftBukkit end
+ 
++        if (this.useItem.has(DataComponents.CONSUMABLE)) this.stopUsingItem(); // KioCG - fix MC-133218
++
+         this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment); // CraftBukkit - Get our scores instead
+         LivingEntity killCredit = this.getKillCredit();
+         if (killCredit != null) {
 @@ -2049,6 +_,8 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
