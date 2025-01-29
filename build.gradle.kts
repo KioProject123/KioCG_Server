@@ -63,6 +63,7 @@ subprojects {
         options.encoding = Charsets.UTF_8.name()
         options.release = 21
         options.isFork = true
+        options.compilerArgs.add("-Xlint:none")
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()
