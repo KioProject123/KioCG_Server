@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/ItemCombinerMenu.java
++++ b/net/minecraft/world/inventory/ItemCombinerMenu.java
+@@ -156,7 +_,7 @@
+                 return ItemStack.EMPTY;
+             }
+ 
+-            slot.onTake(player, item);
++            slot.onTake(player, index == this.getResultSlot() ? itemStack : item); // KioCG - AnvilResultTakenEvent: 传递正确的物品
+         }
+ 
+         return itemStack;
