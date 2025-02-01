@@ -20,7 +20,7 @@
      }
  
      public float getHealth() {
-@@ -3258,6 +_,8 @@
+@@ -3260,6 +_,8 @@
                  ItemStack itemBySlot = entry.getValue();
                  if (!itemBySlot.isEmpty() && !itemBySlot.isBroken()) {
                      itemBySlot.forEachModifier(equipmentSlot1, (attribute, modifier) -> {
@@ -29,7 +29,7 @@
                          AttributeInstance instance = this.attributes.getInstance(attribute);
                          if (instance != null) {
                              instance.removeModifier(modifier.id());
-@@ -3454,7 +_,7 @@
+@@ -3456,7 +_,7 @@
          profilerFiller.push("freezing");
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int ticksFrozen = this.getTicksFrozen();

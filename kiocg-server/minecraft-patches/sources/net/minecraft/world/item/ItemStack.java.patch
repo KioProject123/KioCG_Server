@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -1229,6 +_,12 @@
+@@ -1248,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
      }
  
@@ -13,7 +13,7 @@
      public boolean isEnchanted() {
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
-@@ -1237,6 +_,14 @@
+@@ -1256,6 +_,14 @@
          return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
      }
  
@@ -28,7 +28,7 @@
      public boolean isFramed() {
          return this.entityRepresentation instanceof ItemFrame;
      }
-@@ -1373,6 +_,15 @@
+@@ -1392,6 +_,15 @@
  
      public boolean isValidRepairItem(ItemStack item) {
          Repairable repairable = this.get(DataComponents.REPAIRABLE);

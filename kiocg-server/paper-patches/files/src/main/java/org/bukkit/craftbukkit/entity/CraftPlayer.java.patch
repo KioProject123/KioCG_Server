@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -213,6 +_,7 @@
+@@ -220,6 +_,7 @@
      private double health = 20;
      private boolean scaledHealth = false;
      private double healthScale = 20;
@@ -8,7 +8,7 @@
      private CraftWorldBorder clientWorldBorder = null;
      private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
      public org.bukkit.event.player.PlayerResourcePackStatusEvent.Status resourcePackStatus; // Paper - more resource pack API
-@@ -2255,7 +_,7 @@
+@@ -2244,7 +_,7 @@
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it
@@ -17,7 +17,7 @@
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
-@@ -3513,6 +_,54 @@
+@@ -3504,6 +_,54 @@
          return FeatureHooks.isChunkSent(this.getHandle(), chunkKey);
      }
      // Paper end

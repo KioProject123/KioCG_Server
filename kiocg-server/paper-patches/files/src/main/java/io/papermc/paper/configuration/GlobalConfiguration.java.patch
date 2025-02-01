@@ -1,8 +1,8 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -354,4 +_,98 @@
-         public boolean disableChorusPlantUpdates = false;
-         public boolean disableMushroomBlockUpdates = false;
+@@ -395,4 +_,98 @@
+             }
+         }
      }
 +
 +    // KioCG start

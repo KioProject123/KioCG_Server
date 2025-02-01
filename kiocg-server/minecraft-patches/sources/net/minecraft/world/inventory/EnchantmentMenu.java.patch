@@ -47,7 +47,7 @@
                      level.getCraftServer().getPluginManager().callEvent(event);
  
                      if (event.isCancelled()) {
-@@ -316,7 +_,7 @@
+@@ -318,7 +_,7 @@
                  if (!this.moveItemStackTo(item, 2, 38, true)) {
                      return ItemStack.EMPTY;
                  }

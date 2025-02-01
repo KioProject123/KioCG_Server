@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -3464,6 +_,7 @@
+@@ -3458,6 +_,7 @@
      }
  
      public int getAirSupply() {
@@ -8,7 +8,7 @@
          return this.entityData.get(DATA_AIR_SUPPLY_ID);
      }
  
-@@ -3478,6 +_,7 @@
+@@ -3472,6 +_,7 @@
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
@@ -16,7 +16,7 @@
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
-@@ -4974,6 +_,12 @@
+@@ -4968,6 +_,12 @@
      public Level level() {
          return this.level;
      }

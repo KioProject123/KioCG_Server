@@ -52,7 +52,7 @@
              boolean flag1 = blockEntity.brewTime == 0;
              if (flag1 && isBrewable) {
                  doBrew(level, pos, blockEntity.items, blockEntity); // CraftBukkit
-@@ -233,6 +_,8 @@
+@@ -232,6 +_,8 @@
              brewResults.add(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(potionBrewing.mix(itemStack, items.get(i))));
          }
  
@@ -61,7 +61,7 @@
          if (owner != null) {
              org.bukkit.event.inventory.BrewEvent event = new org.bukkit.event.inventory.BrewEvent(
                  org.bukkit.craftbukkit.block.CraftBlock.at(level, pos),
-@@ -244,9 +_,19 @@
+@@ -243,9 +_,19 @@
                  return;
              }
  
@@ -81,7 +81,7 @@
                  } else {
                      items.set(i, ItemStack.EMPTY);
                  }
-@@ -254,10 +_,10 @@
+@@ -253,10 +_,10 @@
          }
          // CraftBukkit end
  
@@ -95,7 +95,7 @@
                  itemStack = craftingRemainder;
              } else {
                  Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
-@@ -268,10 +_,28 @@
+@@ -267,10 +_,28 @@
          level.levelEvent(1035, pos, 0);
      }
  
@@ -124,7 +124,7 @@
          ContainerHelper.loadAllItems(tag, this.items, registries);
          this.brewTime = tag.getShort("BrewTime");
          if (this.brewTime > 0) {
-@@ -296,14 +_,15 @@
+@@ -295,14 +_,15 @@
              return potionBrewing.isIngredient(stack);
          } else {
              return index == 4

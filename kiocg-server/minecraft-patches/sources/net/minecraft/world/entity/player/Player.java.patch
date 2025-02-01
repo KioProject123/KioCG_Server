@@ -37,7 +37,7 @@
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
-@@ -823,6 +_,10 @@
+@@ -828,6 +_,10 @@
  
          this.setScore(compound.getInt("Score"));
          this.foodData.readAdditionalSaveData(compound);
@@ -48,7 +48,7 @@
          this.abilities.loadSaveData(compound);
          this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.abilities.getWalkingSpeed());
          if (compound.contains("EnderItems", 9)) {
-@@ -865,6 +_,10 @@
+@@ -870,6 +_,10 @@
          compound.putInt("XpSeed", this.enchantmentSeed);
          compound.putInt("Score", this.getScore());
          this.foodData.addAdditionalSaveData(compound);
@@ -59,7 +59,7 @@
          this.abilities.addSaveData(compound);
          compound.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
          if (!this.getShoulderEntityLeft().isEmpty()) {
-@@ -938,6 +_,27 @@
+@@ -943,6 +_,27 @@
              }
          }
      }

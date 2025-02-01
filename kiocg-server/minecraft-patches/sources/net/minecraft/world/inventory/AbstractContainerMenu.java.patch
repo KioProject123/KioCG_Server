@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -931,6 +_,16 @@
+@@ -932,6 +_,16 @@
          return this.stateId;
      }
  

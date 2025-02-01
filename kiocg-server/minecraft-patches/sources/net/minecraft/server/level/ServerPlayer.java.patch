@@ -87,7 +87,7 @@
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
-@@ -3050,6 +_,8 @@
+@@ -3051,6 +_,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();

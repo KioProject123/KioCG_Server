@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -161,8 +_,9 @@
+@@ -166,8 +_,9 @@
      private final BiomeProvider biomeProvider;
      private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
      private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
@@ -11,7 +11,7 @@
      private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
      // Paper start - void damage configuration
      private boolean voidDamageEnabled;
-@@ -2374,6 +_,13 @@
+@@ -2401,6 +_,13 @@
      public PersistentDataContainer getPersistentDataContainer() {
          return this.persistentDataContainer;
      }

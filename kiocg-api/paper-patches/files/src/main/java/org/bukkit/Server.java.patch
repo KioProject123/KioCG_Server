@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -626,6 +_,8 @@
+@@ -664,6 +_,8 @@
      @NotNull
      public List<Player> matchPlayer(@NotNull String name);
  

@@ -14,13 +14,13 @@
          }
 +
 +        // KioCG start - campfire boiling water
-+        if (world.getBlockEntity(pos.below()) instanceof net.minecraft.world.level.block.entity.CampfireBlockEntity campfireBlockEntity) {
-+            int oldLevel = world.getBlockState(pos).getValue(LayeredCauldronBlock.LEVEL);
++        if (level.getBlockEntity(pos.below()) instanceof net.minecraft.world.level.block.entity.CampfireBlockEntity campfireBlockEntity) {
++            int oldLevel = level.getBlockState(pos).getValue(LayeredCauldronBlock.LEVEL);
 +            int newLevel = newBlock.getValue(LayeredCauldronBlock.LEVEL);
 +            campfireBlockEntity.cauldronLevelChanged(oldLevel, newLevel);
 +        }
 +        // KioCG end - campfire boiling water
 +
          newState.update(true);
-         if (sendGameEvent) world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
+         if (sendGameEvent) level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
          return true;

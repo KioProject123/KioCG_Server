@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3895,6 +_,28 @@
+@@ -3878,6 +_,28 @@
      boolean isChunkSent(long chunkKey);
      // Paper end
  
