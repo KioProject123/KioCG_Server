@@ -2,8 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    java // TODO java launcher tasks
-    id("io.papermc.paperweight.patcher") version "2.0.0-beta.8"
+    id("io.papermc.paperweight.patcher") version "2.0.0-beta.14"
 }
 
 paperweight {
@@ -26,11 +25,6 @@ paperweight {
             patchesDir = file("kiocg-api/paper-patches")
             outputDir = file("paper-api")
         }
-        patchDir("paperApiGenerator") {
-            upstreamPath = "paper-api-generator"
-            patchesDir = file("kiocg-api-generator/paper-patches")
-            outputDir = file("paper-api-generator")
-        }
     }
 }
 
@@ -49,10 +43,6 @@ subprojects {
     repositories {
         mavenCentral()
         maven(paperMavenPublicUrl)
-    }
-
-    dependencies {
-        "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
     }
 
     tasks.withType<AbstractArchiveTask>().configureEach {
