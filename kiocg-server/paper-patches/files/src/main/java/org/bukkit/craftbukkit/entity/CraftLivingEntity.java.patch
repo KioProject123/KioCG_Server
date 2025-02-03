@@ -1,0 +1,39 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+@@ -1211,4 +_,36 @@
+         return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
+     }
+     // Paper end - Expose canUseSlot
++
++    // KioCG start - entity baby api
++    @Override
++    public void setNormalSimulate() {
++        this.getHandle().removeScaleAttributes();
++    }
++
++    @Override
++    public void setBabySimulate() {
++        this.getHandle().setBabySimulate();
++    }
++
++    @Override
++    public void setHugeSimulate() {
++        this.getHandle().setHugeSimulate();
++    }
++
++    @Override
++    public boolean isBabySimulate() {
++        return this.getHandle().isBabySimulate();
++    }
++
++    @Override
++    public boolean isBabyOrBabySimulate() {
++        return this.getHandle().isBabyOrBabySimulate();
++    }
++
++    @Override
++    public boolean isHugeSimulate() {
++        return this.getHandle().isHugeSimulate();
++    }
++    // KioCG end - entity baby api
+ }

@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -413,7 +_,10 @@
+     }
+ 
+     @Override
+-    public void setBaby(boolean baby) {
++    // KioCG start - entity baby api
++    public void setBaby1(boolean baby) {
++        if (baby) removeScaleAttributes();
++    // KioCG end - entity baby api
+         this.setAge(baby ? -48000 : 0);
+     }
+ 

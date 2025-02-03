@@ -1,5 +1,134 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -301,6 +_,12 @@
+     public org.bukkit.craftbukkit.entity.CraftLivingEntity getBukkitLivingEntity() { return (org.bukkit.craftbukkit.entity.CraftLivingEntity) super.getBukkitEntity(); } // Paper
+     public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
+     public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
++    // KioCG start - entity baby api
++    private ScaleSimulate scaleSimulate = ScaleSimulate.NORMAL;
++    private final ResourceLocation SCALE_MODIFIER_ID = ResourceLocation.withDefaultNamespace("scale_simulate");
++    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(SCALE_MODIFIER_ID, this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 0.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(SCALE_MODIFIER_ID, this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 1.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
++    // KioCG end - entity baby api
+ 
+     @Override
+     public float getBukkitYaw() {
+@@ -594,6 +_,70 @@
+         return false;
+     }
+ 
++    // KioCG start - entity baby api
++    public void setScaleSimulate(ScaleSimulate scale) {
++        switch (scale) {
++            case BABY -> {
++                if (isBaby()) return; // Vanilla baby
++
++                this.scaleSimulate = scale;
++                AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++                attributemodifiable.addOrUpdateTransientModifier(this.SCALE_MODIFIER_BABY);
++            }
++            case HUGE -> {
++                this.scaleSimulate = scale;
++                AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++                attributemodifiable.addOrUpdateTransientModifier(this.SCALE_MODIFIER_HUGE);
++            }
++            case NORMAL -> {
++                this.scaleSimulate = scale;
++                AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
++                attributemodifiable.removeModifier(this.SCALE_MODIFIER_ID);
++            }
++        }
++    }
++
++    public void setBabySimulate() {
++        this.setScaleSimulate(ScaleSimulate.BABY);
++    }
++
++    public void setHugeSimulate() {
++        this.setScaleSimulate(ScaleSimulate.HUGE);
++    }
++
++    public boolean isBabySimulate() {
++        return this.scaleSimulate == ScaleSimulate.BABY;
++    }
++
++    public boolean isBabyOrBabySimulate() {
++        return this.isBabySimulate() || this.isBaby();
++    }
++
++    public boolean isHugeSimulate() {
++        return this.scaleSimulate == ScaleSimulate.HUGE;
++    }
++
++    public void removeScaleAttributes() {
++        this.setScaleSimulate(ScaleSimulate.NORMAL);
++    }
++
++    public void transformScaleSimulate(LivingEntity original) {
++        if (original.isBabyOrBabySimulate()) {
++            this.setBabySimulate();
++        } else if (original.isHugeSimulate()) {
++            this.setHugeSimulate();
++        } else {
++            this.removeScaleAttributes();
++        }
++    }
++
++    public enum ScaleSimulate {
++        NORMAL,
++        BABY,
++        HUGE
++    }
++    // KioCG end - entity baby api
++
+     public float getAgeScale() {
+         return this.isBaby() ? 0.5F : 1.0F;
+     }
+@@ -620,11 +_,11 @@
+     }
+ 
+     public boolean shouldDropExperience() {
+-        return !this.isBaby();
++        return !this.isBabyOrBabySimulate(); // KioCG - entity baby api
+     }
+ 
+     protected boolean shouldDropLoot() {
+-        return !this.isBaby();
++        return !this.isBabyOrBabySimulate(); // KioCG - entity baby api
+     }
+ 
+     protected int decreaseAirSupply(int currentAir) {
+@@ -799,6 +_,12 @@
+         });
+         DataResult<Tag> dataResult = this.brain.serializeStart(NbtOps.INSTANCE);
+         dataResult.resultOrPartial(LOGGER::error).ifPresent(brain -> compound.put("Brain", brain));
++
++        // KioCG start - entity baby api
++        if (this.scaleSimulate != ScaleSimulate.NORMAL) {
++            compound.putString("KioCG.ScaleSimulate", this.scaleSimulate.toString());
++        }
++        // KioCG end - entity baby api
+     }
+ 
+     @Override
+@@ -882,6 +_,17 @@
+         if (compound.contains("Brain", 10)) {
+             this.brain = this.makeBrain(new Dynamic<>(NbtOps.INSTANCE, compound.get("Brain")));
+         }
++
++        // KioCG start - entity baby api
++        if (compound.contains("KioCG.ScaleSimulate")) {
++            String ss = compound.getString("KioCG.ScaleSimulate");
++            try {
++                this.setScaleSimulate(ScaleSimulate.valueOf(ss));
++            } catch (Exception ignored) {
++                LOGGER.error("Unknown scale simulate " + ss + " for " + this);
++            }
++        }
++        // KioCG end - entity baby api
+     }
+ 
+     // CraftBukkit start
 @@ -1307,6 +_,7 @@
  
      public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason, boolean isFastRegen) {
@@ -20,6 +149,15 @@
      }
  
      public float getHealth() {
+@@ -2743,7 +_,7 @@
+     }
+ 
+     public float getVoicePitch() {
+-        return this.isBaby()
++        return this.isBabyOrBabySimulate() // KioCG - entity baby api
+             ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F
+             : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
+     }
 @@ -3260,6 +_,8 @@
                  ItemStack itemBySlot = entry.getValue();
                  if (!itemBySlot.isEmpty() && !itemBySlot.isBroken()) {

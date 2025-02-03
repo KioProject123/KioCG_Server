@@ -9,3 +9,16 @@
                  EntityType<?> type = this.getType(level.registryAccess(), itemInHand);
                  spawner.setEntityId(type, level.getRandom());
                  level.sendBlockUpdated(clickedPos, blockState, blockState, 3);
+@@ -165,8 +_,10 @@
+             if (breedOffspring == null) {
+                 return Optional.empty();
+             } else {
+-                breedOffspring.setBaby(true);
+-                if (!breedOffspring.isBaby()) {
++                // KioCG start - entity baby api
++                breedOffspring.setBabySimulate();
++                if (!breedOffspring.isBabyOrBabySimulate()) {
++                // KioCG end - entity baby api
+                     return Optional.empty();
+                 } else {
+                     breedOffspring.moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);

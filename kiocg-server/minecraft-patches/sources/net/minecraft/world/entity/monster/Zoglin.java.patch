@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/entity/monster/Zoglin.java
++++ b/net/minecraft/world/entity/monster/Zoglin.java
+@@ -256,11 +_,19 @@
+     }
+ 
+     @Override
+-    public void setBaby(boolean childZombie) {
++    // KioCG start - entity baby api
++    public void setBaby1(boolean childZombie) {
++        if (childZombie) removeScaleAttributes();
++    // KioCG end - entity baby api
+         this.getEntityData().set(DATA_BABY_ID, childZombie);
+         if (!this.level().isClientSide && childZombie) {
+             this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.5);
+         }
++        // KioCG start - fix
++        if (!this.level().isClientSide && !childZombie) {
++            this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
++        }
++        // KioCG end - fix
+     }
+ 
+     @Override

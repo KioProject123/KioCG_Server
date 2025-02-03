@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/AgeableMob.java
++++ b/net/minecraft/world/entity/AgeableMob.java
+@@ -176,7 +_,10 @@
+     }
+ 
+     @Override
+-    public void setBaby(boolean baby) {
++    // KioCG start - entity baby api
++    public void setBaby1(boolean baby) {
++        if (baby) removeScaleAttributes();
++    // KioCG end - entity baby api
+         this.setAge(baby ? -24000 : 0);
+     }
+ 

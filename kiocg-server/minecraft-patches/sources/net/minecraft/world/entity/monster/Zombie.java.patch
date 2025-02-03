@@ -16,3 +16,15 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
+@@ -181,7 +_,10 @@
+     }
+ 
+     @Override
+-    public void setBaby(boolean childZombie) {
++    // KioCG start - entity baby api
++    public void setBaby1(boolean childZombie) {
++        if (childZombie) removeScaleAttributes();
++    // KioCG end - entity baby api
+         this.getEntityData().set(DATA_BABY_ID, childZombie);
+         if (this.level() != null && !this.level().isClientSide) {
+             AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);

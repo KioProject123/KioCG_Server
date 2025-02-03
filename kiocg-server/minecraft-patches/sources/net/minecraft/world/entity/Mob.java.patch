@@ -52,6 +52,32 @@
      }
  
      @Override
+@@ -1560,8 +_,23 @@
+         return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
+     }
+ 
+-    public void setBaby(boolean baby) {
+-    }
++    // KioCG start - entity baby api
++    public final void setBaby(boolean baby) { // final防止重写, 便于版本更新检查
++        this.setBaby1(baby);
++    }
++
++    public void setBaby1(boolean baby) {
++    }
++
++    public void setScaleSimulate(ScaleSimulate scale) {
++        switch (scale) {
++            case BABY -> setBaby(true);
++            case HUGE -> setBaby(false);
++        }
++
++        super.setScaleSimulate(scale);
++    }
++    // KioCG end - entity baby api
+ 
+     @Override
+     public HumanoidArm getMainArm() {
 @@ -1684,6 +_,51 @@
              this.getNavigation().updatePathfinderMaxVisitedNodes();
          }

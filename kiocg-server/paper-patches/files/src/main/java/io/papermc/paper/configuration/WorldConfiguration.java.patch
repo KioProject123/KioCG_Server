@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,45 @@
+@@ -575,4 +_,57 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -42,6 +42,18 @@
 +            }
 +
 +            public int campfireBoilingWaterTime = 600;
++        }
++
++        public Entity entity;
++        public class Entity extends ConfigurationPart {
++            public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> sizeScalingBaby = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(0.5);
++                map.put(EntityType.SKELETON, 0.65);
++            });
++            public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> sizeScalingHuge = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                map.defaultReturnValue(1.5);
++                map.put(EntityType.SKELETON, 1.5);
++            });
 +        }
 +    }
 +    // KioCG end
