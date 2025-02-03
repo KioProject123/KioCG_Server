@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/ConversionType.java
 +++ b/net/minecraft/world/entity/ConversionType.java
-@@ -96,7 +_,7 @@
- 
-         if (oldMob.isBaby()) {
+@@ -98,6 +_,8 @@
              newMob.setBaby(true);
--        }
-+        } else newMob.transformScaleSimulate(oldMob); // KioCG - entity baby api
+         }
  
++        if (!newMob.isBaby()) newMob.transformScaleSimulate(oldMob); // KioCG - entity baby api
++
          if (oldMob instanceof AgeableMob ageableMob && newMob instanceof AgeableMob ageableMob1) {
              ageableMob1.setAge(ageableMob.getAge());
+             ageableMob1.forcedAge = ageableMob.forcedAge;
