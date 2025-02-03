@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Spider.java
++++ b/net/minecraft/world/entity/monster/Spider.java
+@@ -184,7 +_,7 @@
+ 
+         @Override
+         public boolean canUse() {
+-            return super.canUse() && !this.mob.isVehicle();
++            return super.canUse() && !this.mob.hasControllingPassenger(); // KioCG - 更好的坐骑检测
+         }
+ 
+         @Override

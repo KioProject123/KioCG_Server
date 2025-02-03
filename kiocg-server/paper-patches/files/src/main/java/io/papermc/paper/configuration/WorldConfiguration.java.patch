@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,57 @@
+@@ -575,4 +_,65 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -54,6 +54,14 @@
 +                map.defaultReturnValue(1.5);
 +                map.put(EntityType.SKELETON, 1.5);
 +            });
++
++            public KiocgConfig.Entity.Monster monster;
++            public class Monster extends ConfigurationPart {
++                public boolean spawnInLightAtNight = true;
++                public int darkEnoughToSprint = 7;
++                public double zombiesSkinnedChance = 0.25;
++                public boolean babyZombieJockey = true;
++            }
 +        }
 +    }
 +    // KioCG end

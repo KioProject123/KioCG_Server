@@ -1,8 +1,19 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -110,13 +_,13 @@
+@@ -109,14 +_,24 @@
+     }
  
      protected void addBehaviourGoals() {
++        // KioCG start - monster strengthens
++        if (this.level().paperConfig().kiocgConfig.entity.monster.babyZombieJockey) {
++            this.goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.LeapAtTargetGoal(this, 0.4F) {
++                @Override
++                public boolean canUse() {
++                    return Zombie.this.isBaby() && super.canUse();
++                }
++            });
++        }
++        // KioCG end - monster strengthens
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0, false));
 -        this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors));
 +        // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors)); // KioCG - optimize entity behavior
@@ -28,3 +39,37 @@
          this.getEntityData().set(DATA_BABY_ID, childZombie);
          if (this.level() != null && !this.level().isClientSide) {
              AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
+@@ -375,6 +_,33 @@
+             return true;
+         }
+     }
++
++    // KioCG start - monster strengthens
++    public void die(DamageSource damageSource) {
++        if (!this.isRemoved() && !this.dead) {
++            if (damageSource.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK) && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedChance) {
++                Skeleton converted = this.convertTo(EntityType.SKELETON, ConversionParams.single(this, true, true), skeleton -> {
++                    if (!this.isSilent()) {
++                        this.level().levelEvent(null, net.minecraft.world.level.block.LevelEvent.SOUND_SKELETON_TO_STRAY, this.blockPosition(), 0);
++                    }
++
++                    skeleton.setTarget(this.getTarget(), null, false);
++                    skeleton.getNavigation().moveTo(this.getNavigation().getPath(), 1.2D);
++                    skeleton.setAggressive(this.isAggressive());
++                    skeleton.setRemainingFireTicks(this.getRemainingFireTicks());
++                }, org.bukkit.event.entity.EntityTransformEvent.TransformReason.PEELING, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PEELING);
++                if (converted != null) {
++                    this.forceDrops = true;
++                    this.dropFromLootTable(this.serverLevel(), damageSource, this.lastHurtByPlayerTime > 0);
++                    this.forceDrops = false;
++                    return;
++                }
++            }
++        }
++
++        super.die(damageSource);
++    }
++    // KioCG end - monster strengthens
+ 
+     @Override
+     public boolean doHurtTarget(ServerLevel level, Entity source) {

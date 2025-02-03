@@ -1,0 +1,15 @@
+--- a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
++++ b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
+@@ -217,6 +_,12 @@
+          * {@link org.bukkit.potion.PotionType#OOZING}, {@link org.bukkit.potion.PotionType#INFESTED}
+          */
+         POTION_EFFECT,
++        // KioCG start - monster strengthens
++        /**
++         * 当僵尸被剥皮
++         */
++        PEELING,
++        // KioCG end - monster strengthens
+         /**
+          * When a creature is spawned by plugins
+          */

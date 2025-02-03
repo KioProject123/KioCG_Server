@@ -1,0 +1,44 @@
+--- a/net/minecraft/world/entity/monster/Monster.java
++++ b/net/minecraft/world/entity/monster/Monster.java
+@@ -43,6 +_,19 @@
+         this.updateSwingTime();
+         this.updateNoActionTime();
+         super.aiStep();
++
++        // KioCG start - monster strengthens
++        final int darkEnoughToSprint = this.level().paperConfig().kiocgConfig.entity.monster.darkEnoughToSprint;
++        if (darkEnoughToSprint >= 0 && this.level().getMaxLocalRawBrightness(this.blockPosition()) <= darkEnoughToSprint) {
++            if (!this.isSprinting()) {
++                this.setSprinting(true);
++            }
++        } else {
++            if (this.isSprinting()) {
++                this.setSprinting(false);
++            }
++        }
++        // KioCG end - monster strengthens
+     }
+ 
+     protected void updateNoActionTime() {
+@@ -88,9 +_,20 @@
+     }
+ 
+     public static boolean isDarkEnoughToSpawn(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
+-        if (level.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
++        // KioCG start - monster strengthens
++        int brightnessSky = level.getBrightness(LightLayer.SKY, pos);
++        if (brightnessSky > random.nextInt(32)) {
++        // KioCG end - monster strengthens
+             return false;
+         } else {
++            // KioCG start - monster strengthens
++            if (level instanceof net.minecraft.server.level.ServerLevel serverLevel && serverLevel.paperConfig().kiocgConfig.entity.monster.spawnInLightAtNight && serverLevel.getSkyDarken() >= 5 && brightnessSky >= 15) {
++                // 不要在玩家的建筑之上生成
++                if (level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()) + 1 >= pos.getY()) {
++                    return true;
++                }
++            }
++            // KioCG end - monster strengthens
+             DimensionType dimensionType = level.dimensionType();
+             int i = level.getLevel().paperConfig().entities.spawning.monsterSpawnMaxLightLevel.or(dimensionType.monsterSpawnBlockLightLimit()); // Paper - Configurable max block light for monster spawning
+             if (i < 15 && level.getBrightness(LightLayer.BLOCK, pos) > i) {
