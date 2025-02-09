@@ -116,11 +116,10 @@
                      minxx = calculateIncreasedRepairCost(minxx);
                  }
  
-@@ -290,6 +_,47 @@
-     public static int calculateIncreasedRepairCost(int oldRepairCost) {
+@@ -291,11 +_,52 @@
          return (int)Math.min(oldRepairCost * 2L + 1L, 2147483647L);
      }
-+
+ 
 +    // KioCG start - adjust anvil
 +    @Nullable
 +    private Component renameColors() {
@@ -161,6 +160,13 @@
 +        return io.papermc.paper.adventure.PaperAdventure.asVanilla(component);
 +    }
 +    // KioCG end - adjust anvil
- 
++
      public boolean setItemName(String itemName) {
          String string = validateName(itemName);
+         if (string != null && !string.equals(this.itemName)) {
+             this.itemName = string;
+-            if (this.getSlot(2).hasItem()) {
++            if (false && this.getSlot(2).hasItem()) { // KioCG - 不需要设置物品名, 因为将在createResult()中设置
+                 ItemStack item = this.getSlot(2).getItem();
+                 if (StringUtil.isBlank(string)) {
+                     item.remove(DataComponents.CUSTOM_NAME);
