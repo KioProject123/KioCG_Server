@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/TurtleEggBlock.java
++++ b/net/minecraft/world/level/block/TurtleEggBlock.java
+@@ -195,6 +_,6 @@
+         return !(entity instanceof Turtle)
+             && !(entity instanceof Bat)
+             && entity instanceof LivingEntity
+-            && (entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING));
++            && (false || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)); // KioCG - better mob griefing setting
+     }
+ }

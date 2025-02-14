@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/entity/animal/SnowGolem.java
++++ b/net/minecraft/world/entity/animal/SnowGolem.java
+@@ -95,7 +_,7 @@
+                 this.hurtServer(serverLevel, this.damageSources().melting(), 1.0F); // CraftBukkit - DamageSources.ON_FIRE -> CraftEventFactory.MELTING
+             }
+ 
+-            if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (this.tickCount % 10 != 0 || !serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)) { // KioCG - better mob griefing setting
+                 return;
+             }
+ 
+@@ -107,6 +_,13 @@
+                 int floor2 = Mth.floor(this.getZ() + (i / 2 % 2 * 2 - 1) * 0.25F);
+                 BlockPos blockPos = new BlockPos(floor, floor1, floor2);
+                 if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
++                    // KioCG start - better mob griefing setting: 只在雪地产生雪
++                    net.minecraft.world.level.biome.Biome biomebase = serverLevel.getBiome(blockPos).value();
++                    if (biomebase.warmEnoughToRain(blockPos, serverLevel.getSeaLevel())) {
++                        return;
++                    }
++                    // KioCG end - better mob griefing setting: 只在雪地产生雪
++
+                     if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockPos, blockState, this)) continue; // CraftBukkit
+                     this.level().gameEvent(GameEvent.BLOCK_PLACE, blockPos, GameEvent.Context.of(this, blockState));
+                 }

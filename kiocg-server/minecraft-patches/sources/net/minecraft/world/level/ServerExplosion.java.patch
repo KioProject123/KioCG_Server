@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/ServerExplosion.java
++++ b/net/minecraft/world/level/ServerExplosion.java
+@@ -734,14 +_,14 @@
+         return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK
+             && (
+                 this.source == null
+-                    || this.source.getType() != EntityType.BREEZE_WIND_CHARGE
+-                    || this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
++                    // || this.source.getType() != EntityType.BREEZE_WIND_CHARGE // KioCG - better mob griefing setting: 包括玩家丢出的风弹
++                    || this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) // KioCG - better mob griefing setting
+             );
+     }
+ 
+     @Override
+     public boolean shouldAffectBlocklikeEntities() {
+-        boolean _boolean = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++        boolean _boolean = false; // KioCG - better mob griefing setting
+         boolean flag = this.source == null || !this.source.isInWater();
+         boolean flag1 = this.source == null || this.source.getType() != EntityType.BREEZE_WIND_CHARGE && this.source.getType() != EntityType.WIND_CHARGE;
+         return _boolean ? flag && flag1 : this.blockInteraction.shouldAffectBlocklikeEntities() && flag && flag1;

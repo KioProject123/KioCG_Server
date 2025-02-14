@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/vehicle/VehicleEntity.java
++++ b/net/minecraft/world/entity/vehicle/VehicleEntity.java
+@@ -84,7 +_,7 @@
+ 
+     @Override
+     public boolean ignoreExplosion(Explosion explosion) {
+-        return explosion.getIndirectSourceEntity() instanceof Mob && !explosion.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++        return true && !explosion.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1); // KioCG - better mob griefing setting
+     }
+ 
+     public void destroy(ServerLevel level, Item dropItem) {

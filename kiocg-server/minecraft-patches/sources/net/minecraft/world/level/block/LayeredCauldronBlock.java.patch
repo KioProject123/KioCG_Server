@@ -1,6 +1,16 @@
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -72,6 +_,7 @@
+@@ -64,14 +_,15 @@
+         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
+         if (level instanceof ServerLevel serverLevel && entity.isOnFire() && this.isEntityInsideContent(state, pos, entity)) {
+             // CraftBukkit start - moved down
+-            // entity.clearFire();
+-            if ((entity instanceof net.minecraft.world.entity.player.Player || serverLevel.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) && entity.mayInteract(serverLevel, pos)) { // Paper - Fixes MC-248588
++            entity.clearFire(); // KioCG - better mob griefing setting: 始终允许熄灭火焰
++            if ((false || serverLevel.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING1)) && entity.mayInteract(serverLevel, pos)) { // Paper - Fixes MC-248588 // KioCG - better mob griefing setting
+                 if (this.handleEntityOnFireInside(state, level, pos, entity)) { // Paper - fix powdered snow cauldron extinguishing entities
+                     entity.clearFire();
+                 }
              // CraftBukkit end
              }
          }

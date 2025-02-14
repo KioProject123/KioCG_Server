@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/item/ItemEntity.java
++++ b/net/minecraft/world/entity/item/ItemEntity.java
+@@ -339,7 +_,7 @@
+     public final boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
+         if (this.isInvulnerableToBase(damageSource)) {
+             return false;
+-        } else if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && damageSource.getEntity() instanceof Mob) {
++        } else if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) && damageSource.getEntity() instanceof Mob) { // KioCG - better mob griefing setting
+             return false;
+         } else if (!this.getItem().canBeHurtBy(damageSource)) {
+             return false;

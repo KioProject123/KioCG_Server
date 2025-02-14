@@ -52,6 +52,15 @@
      }
  
      @Override
+@@ -620,7 +_,7 @@
+             && this.canPickUpLoot()
+             && this.isAlive()
+             && !this.dead
+-            && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            && true) { // KioCG - better mob griefing setting
+             Vec3i pickupReach = this.getPickupReach();
+ 
+             for (ItemEntity itemEntity : this.level()
 @@ -1560,8 +_,23 @@
          return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
      }

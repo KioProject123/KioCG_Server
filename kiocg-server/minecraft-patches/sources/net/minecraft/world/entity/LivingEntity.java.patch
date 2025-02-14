@@ -158,6 +158,15 @@
      }
  
      public float getHealth() {
+@@ -1759,7 +_,7 @@
+         if (this.level() instanceof ServerLevel serverLevel) {
+             boolean var6 = false;
+             if (this.dead && entitySource instanceof WitherBoss) { // Paper
+-                if (serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                if (serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)) { // KioCG - better mob griefing setting
+                     BlockPos blockPos = this.blockPosition();
+                     BlockState blockState = Blocks.WITHER_ROSE.defaultBlockState();
+                     if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
 @@ -2743,7 +_,7 @@
      }
  

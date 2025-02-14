@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/projectile/Projectile.java
++++ b/net/minecraft/world/entity/projectile/Projectile.java
+@@ -454,7 +_,7 @@
+     @Override
+     public boolean mayInteract(ServerLevel level, BlockPos pos) {
+         Entity owner = this.getOwner();
+-        return owner instanceof Player ? owner.mayInteract(level, pos) : owner == null || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++        return owner instanceof Player ? owner.mayInteract(level, pos) && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) : owner == null || false; // KioCG - better mob griefing setting
+     }
+ 
+     public boolean mayBreak(ServerLevel level) {

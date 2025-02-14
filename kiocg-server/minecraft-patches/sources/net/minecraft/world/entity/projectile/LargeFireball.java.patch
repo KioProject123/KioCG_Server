@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/entity/projectile/LargeFireball.java
++++ b/net/minecraft/world/entity/projectile/LargeFireball.java
+@@ -18,20 +_,20 @@
+ 
+     public LargeFireball(EntityType<? extends LargeFireball> entityType, Level level) {
+         super(entityType, level);
+-        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); // CraftBukkit
++        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1); // CraftBukkit // KioCG - better mob griefing setting
+     }
+ 
+     public LargeFireball(Level level, LivingEntity owner, Vec3 movement, int explosionPower) {
+         super(EntityType.FIREBALL, owner, movement, level);
+         this.explosionPower = explosionPower;
+-        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); // CraftBukkit
++        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1); // CraftBukkit // KioCG - better mob griefing setting
+     }
+ 
+     @Override
+     protected void onHit(HitResult result) {
+         super.onHit(result);
+         if (this.level() instanceof ServerLevel serverLevel) {
+-            boolean _boolean = serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++            boolean _boolean = serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1); // KioCG - better mob griefing setting
+             // CraftBukkit start - fire ExplosionPrimeEvent
+             org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
+             this.level().getCraftServer().getPluginManager().callEvent(event);

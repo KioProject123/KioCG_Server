@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
++++ b/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
+@@ -35,7 +_,7 @@
+ 
+     @Override
+     public boolean canUse() {
+-        if (!getServerLevel(this.removerMob).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (!getServerLevel(this.removerMob).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)) { // KioCG - better mob griefing setting
+             return false;
+         } else if (this.nextStartTick > 0) {
+             this.nextStartTick--;

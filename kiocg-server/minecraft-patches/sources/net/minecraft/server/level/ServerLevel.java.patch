@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/level/ServerLevel.java
++++ b/net/minecraft/server/level/ServerLevel.java
+@@ -1833,7 +_,7 @@
+         Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
+             case NONE -> Explosion.BlockInteraction.KEEP;
+             case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
+-            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
++            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) // KioCG - better mob griefing setting
+                 ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY)
+                 : Explosion.BlockInteraction.KEEP;
+             case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);

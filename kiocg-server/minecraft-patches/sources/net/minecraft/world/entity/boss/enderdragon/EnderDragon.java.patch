@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
++++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
+@@ -464,7 +_,7 @@
+                     BlockPos blockPos = new BlockPos(i, i1, i2);
+                     BlockState blockState = level.getBlockState(blockPos);
+                     if (!blockState.isAir() && !blockState.is(BlockTags.DRAGON_TRANSPARENT)) {
+-                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && !blockState.is(BlockTags.DRAGON_IMMUNE)) {
++                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) && !blockState.is(BlockTags.DRAGON_IMMUNE)) { // KioCG - better mob griefing setting
+                             // CraftBukkit start - Add blocks to list rather than destroying them
+                             //flag1 = level.removeBlock(blockPos, false) || flag1;
+                             flag1 = true;

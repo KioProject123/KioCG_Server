@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Evoker.java
++++ b/net/minecraft/world/entity/monster/Evoker.java
+@@ -296,7 +_,7 @@
+                 return false;
+             } else {
+                 ServerLevel serverLevel = getServerLevel(Evoker.this.level());
+-                if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)) { // KioCG - better mob griefing setting
+                     return false;
+                 } else {
+                     List<Sheep> nearbyEntities = serverLevel.getNearbyEntities(

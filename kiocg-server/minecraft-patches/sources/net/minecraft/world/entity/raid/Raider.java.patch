@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/raid/Raider.java
++++ b/net/minecraft/world/entity/raid/Raider.java
+@@ -399,7 +_,7 @@
+         }
+ 
+         private boolean cannotPickUpBanner() {
+-            if (!getServerLevel(this.mob).getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING) || !this.mob.canPickUpLoot()) return false; // Paper - respect game and entity rules for picking up items
++            if (false || !this.mob.canPickUpLoot()) return false; // Paper - respect game and entity rules for picking up items // KioCG - better mob griefing setting
+             if (!this.mob.hasActiveRaid()) {
+                 return true;
+             } else if (this.mob.getCurrentRaid().isOver()) {
