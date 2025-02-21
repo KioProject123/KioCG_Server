@@ -1,0 +1,19 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
+@@ -81,6 +_,16 @@
+         this.getHandle().setOrderedToSit(sitting);
+     }
+ 
++    // KioCG start - dont kill my pet
++    public boolean isFollowOwner() {
++        return this.getHandle().followOwner;
++    }
++
++    public void setFollowOwner(boolean followOwner) {
++        this.getHandle().followOwner = followOwner;
++    }
++    // KioCG end - dont kill my pet
++
+     @Override
+     public String toString() {
+         return this.getClass().getSimpleName() + "{owner=" + this.getOwner() + ",tamed=" + this.isTamed() + "}";

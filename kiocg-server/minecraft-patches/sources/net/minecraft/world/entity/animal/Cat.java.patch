@@ -16,6 +16,25 @@
          this.goalSelector.addGoal(12, new LookAtPlayerGoal(this, Player.class, 10.0F));
          this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Rabbit.class, false, null));
          this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
+@@ -381,6 +_,18 @@
+                     }
+ 
+                     return InteractionResult.SUCCESS;
++                    // KioCG start - dont kill my pet
++                } else if (itemInHand.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) {
++                    this.playEatingSound();
++
++                    this.usePlayerItem(player, hand, itemInHand);
++                    this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++                    if (player.isCreative() || !this.isInvulnerable()) {
++                        this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
++                    }
++
++                    return InteractionResult.SUCCESS;
++                    // KioCG end - dont kill my pet
+                 }
+ 
+                 InteractionResult interactionResult = super.mobInteract(player, hand);
 @@ -637,7 +_,7 @@
  
          @Override

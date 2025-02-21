@@ -1,0 +1,14 @@
+--- a/src/main/java/org/bukkit/entity/Parrot.java
++++ b/src/main/java/org/bukkit/entity/Parrot.java
+@@ -29,6 +_,11 @@
+      */
+     public boolean isDancing();
+ 
++    // KioCG start - dont kill my pet
++    public boolean isFollowOwner();
++    public void setFollowOwner(boolean followOwner);
++    // KioCG end - dont kill my pet
++
+     /**
+      * Represents the variant of a parrot - ie its color.
+      */

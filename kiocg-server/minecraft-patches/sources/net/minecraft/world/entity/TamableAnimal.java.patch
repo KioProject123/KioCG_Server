@@ -1,0 +1,113 @@
+--- a/net/minecraft/world/entity/TamableAnimal.java
++++ b/net/minecraft/world/entity/TamableAnimal.java
+@@ -38,6 +_,7 @@
+         TamableAnimal.class, EntityDataSerializers.OPTIONAL_UUID
+     );
+     private boolean orderedToSit;
++    public boolean followOwner = true; // KioCG - pet follow owner api
+ 
+     protected TamableAnimal(EntityType<? extends TamableAnimal> entityType, Level level) {
+         super(entityType, level);
+@@ -58,6 +_,7 @@
+         }
+ 
+         compound.putBoolean("Sitting", this.orderedToSit);
++        compound.putBoolean("KioCG.FollowOwner", this.followOwner); // KioCG - pet follow owner api
+     }
+ 
+     @Override
+@@ -85,6 +_,7 @@
+ 
+         this.orderedToSit = compound.getBoolean("Sitting");
+         this.setInSittingPose(this.orderedToSit, false); // Paper - Add EntityToggleSitEvent
++        this.followOwner = compound.getBoolean("KioCG.FollowOwner"); // KioCG - pet follow owner api
+     }
+ 
+     @Override
+@@ -252,11 +_,55 @@
+         super.die(cause);
+     }
+ 
++    // KioCG start - dont kill my pet
++    @Override
++    public boolean nearDeath() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dontKillMyPet && this.isTame() && this.getHealth() == Float.MIN_VALUE;
++    }
++
++    @Override
++    public boolean canBeSeenAsEnemy() {
++        return !this.nearDeath() && super.canBeSeenAsEnemy();
++    }
++
++    @Override
++    public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
++        return (!this.nearDeath() || amount == Float.MAX_VALUE || damageSource.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY))
++               && super.hurtServer(level, damageSource, amount);
++    }
++
++    @Override
++    public void tick() {
++        super.tick();
++
++        if (this.nearDeath()) {
++            this.addNearDeathParticles();
++            if (!this.isOrderedToSit()) {
++                this.jumping = false;
++                this.navigation.stop();
++                this.setTarget(null);
++                this.setOrderedToSit(true);
++            }
++        }
++    }
++
++    public void addNearDeathParticles() {
++        if (this.tickCount % 5 == 0) {
++            this.serverLevel().sendParticles(ParticleTypes.SOUL,
++                                             this.getX(), this.getEyeY(), this.getZ(),
++                                             1,
++                                             this.getBbWidth() / 2, this.getBbHeight() / 2, this.getBbWidth() / 2,
++                                             0.0);
++        }
++    }
++    // KioCG end - dont kill my pet
++
+     public boolean isOrderedToSit() {
+         return this.orderedToSit;
+     }
+ 
+     public void setOrderedToSit(boolean orderedToSit) {
++        if (!orderedToSit && this.nearDeath()) return; // KioCG - dont kill my pet
+         this.orderedToSit = orderedToSit;
+     }
+ 
+@@ -269,7 +_,7 @@
+ 
+     public boolean shouldTryTeleportToOwner() {
+         LivingEntity owner = this.getOwner();
+-        return owner != null && this.distanceToSqr(this.getOwner()) >= 144.0;
++        return owner != null && this.distanceToSqr(this.getOwner()) >= io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petTeleportDistanceSqr; // KioCG - pet teleport distance
+     }
+ 
+     private void teleportToAroundBlockPos(BlockPos pos) {
+@@ -318,6 +_,7 @@
+     }
+ 
+     public final boolean unableToMoveToOwner() {
++        if (!this.followOwner) return true; // KioCG - pet follow owner api
+         return this.isOrderedToSit() || this.isPassenger() || this.mayBeLeashed() || this.getOwner() != null && this.getOwner().isSpectator();
+     }
+ 
+@@ -333,6 +_,13 @@
+         public TamableAnimalPanicGoal(final double speedModifier) {
+             super(TamableAnimal.this, speedModifier);
+         }
++
++        // KioCG start - dont kill my pet
++        @Override
++        public boolean shouldPanic() {
++            return !this.mob.nearDeath() && super.shouldPanic();
++        }
++        // KioCG end - dont kill my pet
+ 
+         @Override
+         public void tick() {

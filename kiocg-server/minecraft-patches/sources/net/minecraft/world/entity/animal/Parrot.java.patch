@@ -26,3 +26,12 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
+@@ -266,7 +_,7 @@
+             }
+ 
+             return InteractionResult.SUCCESS;
+-        } else if (!itemInHand.is(ItemTags.PARROT_POISONOUS_FOOD)) {
++        } else if (!itemInHand.is(ItemTags.PARROT_POISONOUS_FOOD) && !itemInHand.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) { // KioCG - dont kill my pet
+             if (!this.isFlying() && this.isTame() && this.isOwnedBy(player)) {
+                 if (!this.level().isClientSide) {
+                     this.setOrderedToSit(!this.isOrderedToSit());

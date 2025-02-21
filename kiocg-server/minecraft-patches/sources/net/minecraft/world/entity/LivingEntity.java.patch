@@ -158,7 +158,17 @@
      }
  
      public float getHealth() {
-@@ -1759,7 +_,7 @@
+@@ -1755,11 +_,17 @@
+         }
+     }
+ 
++    // KioCG start - dont kill my pet
++    public boolean nearDeath() {
++        return false;
++    }
++    // KioCG end - dont kill my pet
++
+     protected void createWitherRose(@Nullable LivingEntity entitySource) {
          if (this.level() instanceof ServerLevel serverLevel) {
              boolean var6 = false;
              if (this.dead && entitySource instanceof WitherBoss) { // Paper
@@ -167,6 +177,23 @@
                      BlockPos blockPos = this.blockPosition();
                      BlockState blockState = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
+@@ -2382,7 +_,15 @@
+                 }
+                 // CraftBukkit end
+                 this.getCombatTracker().recordDamage(damageSource, amount);
+-                this.setHealth(this.getHealth() - amount);
++                // KioCG start - dont kill my pet
++                float health = this.getHealth() - amount;
++                if (health <= 0.0F && originalDamage != Float.MAX_VALUE && !damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dontKillMyPet && this instanceof TamableAnimal pet && pet.isTame()) {
++                        health = Float.MIN_VALUE;
++                    }
++                }
++                this.setHealth(health);
++                // KioCG end - dont kill my pet
+                 // CraftBukkit start
+                 if (!human) {
+                     this.setAbsorptionAmount(this.getAbsorptionAmount() - amount);
 @@ -2743,7 +_,7 @@
      }
  

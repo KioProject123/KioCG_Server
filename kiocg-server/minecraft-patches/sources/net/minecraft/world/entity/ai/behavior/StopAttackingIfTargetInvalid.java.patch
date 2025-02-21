@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
++++ b/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
+@@ -46,7 +_,7 @@
+                             reason = org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_INVALID;
+                         } else if (canGrowTiredOfTryingToReachTarget && StopAttackingIfTargetInvalid.isTiredOfTryingToReachTarget(entity, instance.tryGet(memoryAccessor1))) {
+                             reason = org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET;
+-                        } else if (!livingEntity.isAlive()) {
++                        } else if (!livingEntity.isAlive() || livingEntity.nearDeath()) { // KioCG - dont kill my pet
+                             reason = org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED;
+                         } else if (livingEntity.level() != entity.level()) {
+                             reason = org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_OTHER_LEVEL;

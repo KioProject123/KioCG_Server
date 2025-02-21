@@ -1,0 +1,14 @@
+--- a/src/main/java/org/bukkit/entity/Wolf.java
++++ b/src/main/java/org/bukkit/entity/Wolf.java
+@@ -90,6 +_,11 @@
+      */
+     void setVariant(@NotNull Variant variant);
+ 
++    // KioCG start - dont kill my pet
++    public boolean isFollowOwner();
++    public void setFollowOwner(boolean followOwner);
++    // KioCG end - dont kill my pet
++
+     /**
+      * Represents the variant of a wolf.
+      */

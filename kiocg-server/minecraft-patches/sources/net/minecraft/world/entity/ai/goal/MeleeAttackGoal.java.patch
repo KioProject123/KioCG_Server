@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
++++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
+@@ -39,7 +_,7 @@
+             LivingEntity target = this.mob.getTarget();
+             if (target == null) {
+                 return false;
+-            } else if (!target.isAlive()) {
++            } else if (!target.isAlive() || target.nearDeath()) { // KioCG - dont kill my pet
+                 return false;
+             } else {
+                 this.path = this.mob.getNavigation().createPath(target, 0);
+@@ -53,7 +_,7 @@
+         LivingEntity target = this.mob.getTarget();
+         if (target == null) {
+             return false;
+-        } else if (!target.isAlive()) {
++        } else if (!target.isAlive() || target.nearDeath()) { // KioCG - dont kill my pet
+             return false;
+         } else {
+             return !this.followingTargetEvenIfNotSeen

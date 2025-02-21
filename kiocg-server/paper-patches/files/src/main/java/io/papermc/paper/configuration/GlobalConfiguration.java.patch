@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -395,4 +_,98 @@
+@@ -395,4 +_,102 @@
              }
          }
      }
@@ -96,6 +96,10 @@
 +            public boolean repairNoLevelCost = true;
 +            public boolean renameNoLevelCost = true;
 +        }
++
++        public boolean dontKillMyPet = true;
++        public double petTeleportDistanceSqr = 256.0;
++        public boolean petFollowKeepChunkLoaded = true;
 +    }
 +    // KioCG end
  }

@@ -1,0 +1,12 @@
+--- a/src/main/java/org/bukkit/entity/Cat.java
++++ b/src/main/java/org/bukkit/entity/Cat.java
+@@ -124,4 +_,9 @@
+      */
+     public boolean isHeadUp();
+     // Paper end - More cat api
++
++    // KioCG start - dont kill my pet
++    public boolean isFollowOwner();
++    public void setFollowOwner(boolean followOwner);
++    // KioCG end - dont kill my pet
+ }

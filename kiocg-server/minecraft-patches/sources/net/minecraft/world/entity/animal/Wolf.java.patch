@@ -42,6 +42,25 @@
          this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
      }
  
+@@ -415,6 +_,18 @@
+                 return InteractionResult.SUCCESS;
+             }
+ 
++            // KioCG start - dont kill my pet
++            if (itemInHand.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) {
++                this.usePlayerItem(player, hand, itemInHand);
++                this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++                if (player.isCreative() || !this.isInvulnerable()) {
++                    this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
++                }
++
++                return InteractionResult.SUCCESS;
++            }
++            // KioCG end - dont kill my pet
++
+             if (!(item instanceof DyeItem dyeItem && this.isOwnedBy(player))) {
+                 if (this.isEquippableInSlot(itemInHand, EquipmentSlot.BODY) && !this.isWearingBodyArmor() && this.isOwnedBy(player) && !this.isBaby()) {
+                     this.setBodyArmorItem(itemInHand.copyWithCount(1));
 @@ -650,7 +_,7 @@
  
          @Override
