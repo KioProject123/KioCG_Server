@@ -28,6 +28,15 @@
          if (this.isSleeping()) {
              this.sleepCounter++;
              // Paper start - Add PlayerDeepSleepEvent
+@@ -284,7 +_,7 @@
+                 this.sleepCounter = 100;
+             }
+ 
+-            if (!this.level().isClientSide && this.level().isDay()) {
++            if (!this.level().isClientSide && this.level().isDay() && !this.level().paperConfig().kiocgConfig.sleepAnyTime) { // KioCG - sleep any time
+                 this.stopSleepInBed(false, true);
+             }
+         } else if (this.sleepCounter > 0) {
 @@ -304,6 +_,8 @@
          this.moveCloak();
          if (this instanceof ServerPlayer serverPlayer) {

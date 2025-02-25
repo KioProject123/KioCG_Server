@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,65 @@
+@@ -575,4 +_,68 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -63,6 +63,9 @@
 +                public boolean babyZombieJockey = true;
 +            }
 +        }
++
++        public boolean sleepAnyTime = true;
++        public int sleepHealingRegenRate = 10;
 +    }
 +    // KioCG end
  }

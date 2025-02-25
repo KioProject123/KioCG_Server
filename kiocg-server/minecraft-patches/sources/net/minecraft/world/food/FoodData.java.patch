@@ -14,3 +14,34 @@
                  }
  
                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetHealthPacket(player.getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
+@@ -63,7 +_,29 @@
+         }
+ 
+         boolean _boolean = serverLevel.getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+-        if (_boolean && this.saturationLevel > 0.0F && player.isHurt() && this.foodLevel >= 20) {
++
++        // KioCG start - sleep any time
++        if (player.level().paperConfig().kiocgConfig.sleepHealingRegenRate >= 0 && player.isSleepingLongEnough() && this.foodLevel > 6 && player.isHurt()) {
++            this.tickTimer++;
++            if (this.tickTimer >= player.level().paperConfig().kiocgConfig.sleepHealingRegenRate) {
++                final float health = player.getHealth();
++                player.heal(1.0F);
++                if (player.getHealth() > health) {
++                    ((net.minecraft.server.level.ServerLevel) player.level()).sendParticlesSource(
++                            player,
++                            net.minecraft.core.particles.ParticleTypes.HEART,
++                            false, false,
++                            player.getX(), player.getY(), player.getZ(),
++                            5,
++                            0.3, 0.3, 0.3,
++                            1.0);
++                }
++
++                this.tickTimer = 0;
++            }
++        } else
++        // KioCG end - sleep any time
++        if (false && _boolean && this.saturationLevel > 0.0F && player.isHurt() && this.foodLevel >= 20) { // KioCG - 不要快速恢复生命值
+             this.tickTimer++;
+             if (this.tickTimer >= this.saturatedRegenRate) { // CraftBukkit
+                 float min = Math.min(this.saturationLevel, 6.0F);

@@ -78,6 +78,24 @@
          this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment); // CraftBukkit - Get our scores instead
          LivingEntity killCredit = this.getKillCredit();
          if (killCredit != null) {
+@@ -1551,7 +_,7 @@
+             return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
+         } else {
+             this.setRespawnPosition(this.level().dimension(), at, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
+-            if (this.level().isDay()) {
++            if (this.level().isDay() && !this.level().paperConfig().kiocgConfig.sleepAnyTime) { // KioCG - sleep any time
+                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+             } else {
+                 if (!this.isCreative()) {
+@@ -1600,7 +_,7 @@
+                     this.awardStat(Stats.SLEEP_IN_BED);
+                     CriteriaTriggers.SLEPT_IN_BED.trigger(this);
+                 });
+-                if (!this.serverLevel().canSleepThroughNights()) {
++                if (!this.serverLevel().canSleepThroughNights() && !this.level().paperConfig().kiocgConfig.sleepAnyTime) { // KioCG - sleep any time
+                     this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
+                 }
+ 
 @@ -2049,6 +_,8 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
@@ -87,6 +105,15 @@
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
+@@ -2546,7 +_,7 @@
+             // Paper end - Add PlayerSetSpawnEvent
+ 
+             if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent
+-                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.getNotification())); // Paper - Add PlayerSetSpawnEvent
++                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.getNotification()), this.level().paperConfig().kiocgConfig.sleepAnyTime); // Paper - Add PlayerSetSpawnEvent // KioCG - sleep any time: 使用操作栏提示
+             }
+ 
+             this.respawnPosition = position;
 @@ -3051,6 +_,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
