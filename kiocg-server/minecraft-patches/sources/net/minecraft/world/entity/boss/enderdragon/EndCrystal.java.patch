@@ -1,0 +1,137 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
++++ b/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
+@@ -26,6 +_,38 @@
+     private static final EntityDataAccessor<Boolean> DATA_SHOW_BOTTOM = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.BOOLEAN);
+     public int time;
+     public boolean generatedByDragonFight = false; // Paper - Fix invulnerable end crystals
++    // KioCG start - end crystal turret
++    @Nullable
++    private Integer turretCooldown = null;
++    public int getTurretCooldown() {
++        return java.util.Objects.requireNonNullElse(this.turretCooldown, this.level().paperConfig().kiocgConfig.entity.turretCooldownDefault);
++    }
++    public void setTurretCooldown(@Nullable Integer cooldown) {
++        this.turretCooldown = cooldown;
++    }
++
++    @Nullable
++    private Double turretRange = null;
++    public double getTurretRange() {
++        return java.util.Objects.requireNonNullElse(this.turretRange, this.level().paperConfig().kiocgConfig.entity.turretRangeDefault);
++    }
++    public void setTurretRange(@Nullable Double range) {
++        this.turretRange = range;
++    }
++
++    @Nullable
++    private Double turretDamage = null;
++    public double getTurretDamage() {
++        return java.util.Objects.requireNonNullElse(this.turretDamage, this.level().paperConfig().kiocgConfig.entity.turretDamageDefault);
++    }
++    public void setTurretDamage(@Nullable Double damage) {
++        this.turretDamage = damage;
++    }
++
++    private int beamTicks = 0;
++    @Nullable
++    private net.minecraft.world.entity.LivingEntity target;
++    // KioCG end - end crystal turret
+ 
+     public EndCrystal(EntityType<? extends EndCrystal> entityType, Level level) {
+         super(entityType, level);
+@@ -74,7 +_,56 @@
+             }
+         }
+         // Paper end - Fix invulnerable end crystals
+-    }
++
++        // KioCG start - end crystal turret
++        if (this.level().paperConfig().kiocgConfig.entity.turretEnable && !this.generatedByDragonFight) {
++            if (this.beamTicks > 0) {
++                --this.beamTicks;
++                refreshTarget();
++
++                if (this.target != null) {
++                    this.target.hurt(this.target.damageSources().indirectMagic(this, this), (float) getTurretDamage());
++                    setBeamTarget(this.target.blockPosition().offset(0, (int) (this.target.getEyeHeight() * 0.7), 0).offset(0, -2, 0));
++                    this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW.value(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
++                }
++            } else {
++                if (this.beamTicks == 0) {
++                    this.target = null;
++                    setBeamTarget(null);
++                }
++
++                int cooldown = getTurretCooldown();
++                if (cooldown == 0 || cooldown > 0 && this.time % cooldown == 0) { // 使炮塔间的发射间隔错开
++                    findTarget();
++                }
++            }
++        }
++        // KioCG end - end crystal turret
++    }
++
++    // KioCG start - end crystal turret
++    private void findTarget() {
++        net.minecraft.world.phys.AABB aabb = this.getBoundingBox().inflate(getTurretRange());
++        java.util.List<net.minecraft.world.entity.monster.Monster> list = this.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, aabb, monster -> {
++            return monster.isAlive() && monster.hasLineOfSight(this);
++        });
++
++        if (!list.isEmpty()) {
++            this.target = list.get(this.random.nextInt(list.size()));
++            this.beamTicks = 60;
++        }
++    }
++
++    private void refreshTarget() {
++        if (this.target != null) {
++            net.minecraft.world.phys.AABB aabb = this.getBoundingBox().inflate(getTurretRange() + 1.0); // 稍微增大攻击距离, 防止快速断开
++            if (!this.target.isAlive() || !this.target.getBoundingBox().intersects(aabb) || !this.target.hasLineOfSight(this)) {
++                this.target = null;
++                this.beamTicks = 10;
++            }
++        }
++    }
++    // KioCG end - end crystal turret
+ 
+     @Override
+     protected void addAdditionalSaveData(CompoundTag compound) {
+@@ -84,6 +_,18 @@
+ 
+         compound.putBoolean("ShowBottom", this.showsBottom());
+         if (this.generatedByDragonFight) compound.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
++
++        // KioCG start - end crystal turret
++        if (this.turretCooldown != null) {
++            compound.putInt("KioCG.TurretCooldown", this.turretCooldown);
++        }
++        if (this.turretRange != null) {
++            compound.putDouble("KioCG.TurretRange", this.turretRange);
++        }
++        if (this.turretDamage != null) {
++            compound.putDouble("KioCG.TurretDamage", this.turretDamage);
++        }
++        // KioCG end - end crystal turret
+     }
+ 
+     @Override
+@@ -93,6 +_,18 @@
+             this.setShowBottom(compound.getBoolean("ShowBottom"));
+         }
+         if (compound.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = compound.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
++
++        // KioCG start - end crystal turret
++        if (compound.contains("KioCG.TurretCooldown")) {
++            this.turretCooldown = compound.getInt("KioCG.TurretCooldown");
++        }
++        if (compound.contains("KioCG.TurretRange")) {
++            this.turretRange = compound.getDouble("KioCG.TurretRange");
++        }
++        if (compound.contains("KioCG.TurretDamage")) {
++            this.turretDamage = compound.getDouble("KioCG.TurretDamage");
++        }
++        // KioCG end - end crystal turret
+     }
+ 
+     @Override

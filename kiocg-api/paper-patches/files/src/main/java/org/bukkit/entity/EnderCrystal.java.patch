@@ -1,0 +1,18 @@
+--- a/src/main/java/org/bukkit/entity/EnderCrystal.java
++++ b/src/main/java/org/bukkit/entity/EnderCrystal.java
+@@ -40,4 +_,15 @@
+      * @throws IllegalArgumentException for differing worlds
+      */
+     void setBeamTarget(@Nullable Location location);
++
++    // KioCG start - end crystal turret
++    int getTurretCooldown();
++    void setTurretCooldown(@Nullable Integer cooldown);
++
++    double getTurretRange();
++    void setTurretRange(@Nullable Double range);
++
++    double getTurretDamage();
++    void setTurretDamage(@Nullable Double damage);
++    // KioCG end - end crystal turret
+ }

@@ -1,0 +1,41 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
+@@ -39,6 +_,38 @@
+         }
+     }
+ 
++    // KioCG start - end crystal turret
++    @Override
++    public int getTurretCooldown() {
++        return this.getHandle().getTurretCooldown();
++    }
++
++    @Override
++    public void setTurretCooldown(@javax.annotation.Nullable Integer cooldown) {
++        this.getHandle().setTurretCooldown(cooldown);
++    }
++
++    @Override
++    public double getTurretRange() {
++        return this.getHandle().getTurretRange();
++    }
++
++    @Override
++    public void setTurretRange(@javax.annotation.Nullable Double range) {
++        this.getHandle().setTurretRange(range);
++    }
++
++    @Override
++    public double getTurretDamage() {
++        return this.getHandle().getTurretDamage();
++    }
++
++    @Override
++    public void setTurretDamage(@javax.annotation.Nullable Double damage) {
++        this.getHandle().setTurretDamage(damage);
++    }
++    // KioCG end - end crystal turret
++
+     @Override
+     public EndCrystal getHandle() {
+         return (EndCrystal) this.entity;
