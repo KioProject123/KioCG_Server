@@ -1,5 +1,36 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -79,6 +_,13 @@
+ 
+     @Override
+     protected boolean isRandomlyTicking(BlockState state) {
++        // KioCG start - crops grow every day
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        // KioCG end - crops grow every day
+         return !this.isMaxAge(state);
+     }
+ 
+@@ -104,7 +_,7 @@
+                     modifier = level.spigotConfig.wheatModifier;
+                 }
+ 
+-                if (random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / growthSpeed) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                if (modifier > 0 && FarmBlock.isMoisture(level, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+                     // Spigot end
+                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(level, pos, this.getStateForAge(age + 1), 2); // CraftBukkit
+                 }
+@@ -127,6 +_,7 @@
+     }
+ 
+     protected static float getGrowthSpeed(Block block, BlockGetter level, BlockPos pos) {
++        if (true) return 1.0F; // KioCG - crops grow every day: 已弃用, 跳过繁重的运算
+         float f = 1.0F;
+         BlockPos blockPos = pos.below();
+ 
 @@ -182,7 +_,7 @@
      @Override
      protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {

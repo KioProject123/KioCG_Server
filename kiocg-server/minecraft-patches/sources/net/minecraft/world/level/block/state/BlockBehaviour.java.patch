@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/level/block/state/BlockBehaviour.java
++++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
+@@ -343,6 +_,12 @@
+     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+     }
+ 
++    // KioCG start - crops grow every day
++    protected void dayTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
++        this.randomTick(state, level, pos, random);
++    }
++    // KioCG end - crops grow every day
++
+     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+     }
+ 
+@@ -396,6 +_,12 @@
+         return this.isRandomlyTicking;
+     }
+ 
++    // KioCG start - crops grow every day
++    protected boolean isDailyTicking(BlockState state) {
++        return false;
++    }
++    // KioCG end - crops grow every day
++
+     protected SoundType getSoundType(BlockState state) {
+         return this.soundType;
+     }
+@@ -449,6 +_,7 @@
+         private BlockBehaviour.BlockStateBase.Cache cache;
+         private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
+         private boolean isRandomlyTicking;
++        private boolean isDailyTicking; // KioCG - crops grow every day
+         private boolean solidRender;
+         private VoxelShape occlusionShape;
+         private VoxelShape[] occlusionShapesByFace;
+@@ -581,6 +_,7 @@
+         public void initCache() {
+             this.fluidState = this.owner.getFluidState(this.asState());
+             this.isRandomlyTicking = this.owner.isRandomlyTicking(this.asState());
++            this.isDailyTicking = this.owner.isDailyTicking(this.asState()); // KioCG - crops grow every day
+             if (!this.getBlock().hasDynamicShape()) {
+                 this.cache = new BlockBehaviour.BlockStateBase.Cache(this.asState());
+             }
+@@ -882,6 +_,12 @@
+             this.getBlock().randomTick(this.asState(), level, pos, random);
+         }
+ 
++        // KioCG start - crops grow every day
++        public void dayTick(ServerLevel level, BlockPos pos, RandomSource random) {
++            this.getBlock().dayTick(this.asState(), level, pos, random);
++        }
++        // KioCG end - crops grow every day
++
+         public void entityInside(Level level, BlockPos pos, Entity entity) {
+             this.getBlock().entityInside(this.asState(), level, pos, entity);
+         }
+@@ -1004,6 +_,12 @@
+         public final boolean isRandomlyTicking() { // Paper - Perf: Final for inlining
+             return this.isRandomlyTicking;
+         }
++
++        // KioCG start - crops grow every day
++        public final boolean isDailyTicking() { // Paper - Perf: Final for inlining
++            return this.isDailyTicking;
++        }
++        // KioCG end - crops grow every day
+ 
+         public long getSeed(BlockPos pos) {
+             return this.getBlock().getSeed(this.asState(), pos);

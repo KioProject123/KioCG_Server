@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
++++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
+@@ -54,6 +_,13 @@
+ 
+     @Override
+     protected boolean isRandomlyTicking(BlockState state) {
++        // KioCG start - crops grow every day
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        // KioCG end - crops grow every day
+         return state.getValue(AGE) < 5;
+     }
+ 
+@@ -142,8 +_,12 @@
+     }
+ 
+     private void placeGrownFlower(Level level, BlockPos pos, int age) {
+-        level.setBlock(pos, this.defaultBlockState().setValue(AGE, Integer.valueOf(age)), 2);
++        // KioCG start - crops grow every day
++        BlockState blockState = this.defaultBlockState().setValue(AGE, Integer.valueOf(age));
++        boolean success = level.setBlock(pos, blockState, 2);
++        // KioCG end - crops grow every day
+         level.levelEvent(1033, pos, 0);
++        if (success && level.random.nextDouble() < 0.8) blockState.randomTick((ServerLevel) level, pos, level.random); // KioCG - crops grow every day: 随机继续生长
+     }
+ 
+     private void placeDeadFlower(Level level, BlockPos pos) {

@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/TorchflowerCropBlock.java
++++ b/net/minecraft/world/level/block/TorchflowerCropBlock.java
+@@ -63,12 +_,16 @@
+         return age == 2 ? Blocks.TORCHFLOWER.defaultBlockState() : super.getStateForAge(age);
+     }
+ 
++    // KioCG start - crops grow every day
++    /*
+     @Override
+     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+         if (random.nextInt(3) != 0) {
+             super.randomTick(state, level, pos, random);
+         }
+     }
++    */
++    // KioCG end - crops grow every day
+ 
+     @Override
+     protected int getBonemealAgeIncrease(Level level) {

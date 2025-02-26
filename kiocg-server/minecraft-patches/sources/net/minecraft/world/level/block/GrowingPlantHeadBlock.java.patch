@@ -1,0 +1,72 @@
+--- a/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
++++ b/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
+@@ -18,7 +_,7 @@
+ 
+ public abstract class GrowingPlantHeadBlock extends GrowingPlantBlock implements BonemealableBlock {
+     public static final IntegerProperty AGE = BlockStateProperties.AGE_25;
+-    public static final int MAX_AGE = 25;
++    public static final int MAX_AGE = 15; // KioCG - crops grow every day
+     private final double growPerTickProbability;
+ 
+     protected GrowingPlantHeadBlock(
+@@ -34,12 +_,19 @@
+ 
+     @Override
+     public BlockState getStateForPlacement(RandomSource random) {
+-        return this.defaultBlockState().setValue(AGE, Integer.valueOf(random.nextInt(25)));
++        return this.defaultBlockState().setValue(AGE, Integer.valueOf(random.nextInt(MAX_AGE))); // KioCG - crops grow every day
+     }
+ 
+     @Override
+     protected boolean isRandomlyTicking(BlockState state) {
+-        return state.getValue(AGE) < 25;
++        // KioCG start - crops grow every day
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        // KioCG end - crops grow every day
++        return state.getValue(AGE) < MAX_AGE; // KioCG - crops grow every day
+     }
+ 
+     @Override
+@@ -55,7 +_,7 @@
+         } else if (this == Blocks.CAVE_VINES) {
+             modifier = level.spigotConfig.caveVinesModifier;
+         }
+-        if (state.getValue(AGE) < 25 && random.nextDouble() < ((modifier / 100.0D) * this.growPerTickProbability)) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (state.getValue(AGE) < MAX_AGE && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+             // Spigot end
+             BlockPos blockPos = pos.relative(this.growthDirection);
+             if (this.canGrowInto(level.getBlockState(blockPos))) {
+@@ -75,11 +_,11 @@
+     }
+ 
+     public BlockState getMaxAgeState(BlockState state) {
+-        return state.setValue(AGE, Integer.valueOf(25));
++        return state.setValue(AGE, Integer.valueOf(MAX_AGE)); // KioCG - crops grow every day
+     }
+ 
+     public boolean isMaxAge(BlockState state) {
+-        return state.getValue(AGE) == 25;
++        return state.getValue(AGE) == MAX_AGE; // KioCG - crops grow every day
+     }
+ 
+     protected BlockState updateBodyAfterConvertedFromHead(BlockState head, BlockState body) {
+@@ -130,13 +_,13 @@
+     @Override
+     public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+         BlockPos blockPos = pos.relative(this.growthDirection);
+-        int min = Math.min(state.getValue(AGE) + 1, 25);
++        int min = Math.min(state.getValue(AGE) + 1, MAX_AGE); // KioCG - crops grow every day
+         int blocksToGrowWhenBonemealed = this.getBlocksToGrowWhenBonemealed(random);
+ 
+         for (int i = 0; i < blocksToGrowWhenBonemealed && this.canGrowInto(level.getBlockState(blockPos)); i++) {
+             level.setBlockAndUpdate(blockPos, state.setValue(AGE, Integer.valueOf(min)));
+             blockPos = blockPos.relative(this.growthDirection);
+-            min = Math.min(min + 1, 25);
++            min = Math.min(min + 1, MAX_AGE); // KioCG - crops grow every day
+         }
+     }
+ 

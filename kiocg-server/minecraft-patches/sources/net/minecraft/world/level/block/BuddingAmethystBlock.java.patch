@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/level/block/BuddingAmethystBlock.java
++++ b/net/minecraft/world/level/block/BuddingAmethystBlock.java
+@@ -23,6 +_,18 @@
+         super(properties);
+     }
+ 
++    // KioCG start - crops grow every day
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        return true;
++    }
++    // KioCG end - crops grow every day
++
+     @Override
+     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+         if (random.nextInt(5) == 0) {

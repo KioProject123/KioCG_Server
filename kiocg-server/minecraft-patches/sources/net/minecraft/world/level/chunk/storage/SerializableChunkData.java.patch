@@ -1,0 +1,42 @@
+--- a/net/minecraft/world/level/chunk/storage/SerializableChunkData.java
++++ b/net/minecraft/world/level/chunk/storage/SerializableChunkData.java
+@@ -78,6 +_,7 @@
+     int minSectionY,
+     long lastUpdateTime,
+     long inhabitedTime,
++    int chunkDays, // KioCG - crops grow every day
+     ChunkStatus chunkStatus,
+     @Nullable BlendingData.Packed blendingData,
+     @Nullable BelowZeroRetrogen belowZeroRetrogen,
+@@ -280,6 +_,7 @@
+                 levelHeightAccessor.getMinSectionY(),
+                 _long,
+                 _long1,
++                tag.getInt("ChunkDays"), // KioCG - crops grow every day
+                 chunkStatus,
+                 packed,
+                 belowZeroRetrogen,
+@@ -424,6 +_,7 @@
+             }
+         }
+ 
++        chunkAccess.chunkDays = this.chunkDays; // KioCG - crops grow every day
+         // CraftBukkit start - load chunk persistent data from nbt - SPIGOT-6814: Already load PDC here to account for 1.17 to 1.18 chunk upgrading.
+         if (this.persistentDataContainer instanceof CompoundTag compoundTag) {
+             chunkAccess.persistentDataContainer.putAll(compoundTag);
+@@ -593,6 +_,7 @@
+                 chunk.getMinSectionY(),
+                 level.getGameTime(),
+                 chunk.getInhabitedTime(),
++                chunk.chunkDays, // KioCG - crops grow every day
+                 chunk.getPersistedStatus(),
+                 Optionull.map(chunk.getBlendingData(), BlendingData::pack),
+                 chunk.getBelowZeroRetrogen(),
+@@ -618,6 +_,7 @@
+         compoundTag.putInt("zPos", this.chunkPos.z);
+         compoundTag.putLong("LastUpdate", this.lastUpdateTime); // Paper - Diff on change
+         compoundTag.putLong("InhabitedTime", this.inhabitedTime);
++        compoundTag.putInt("ChunkDays", this.chunkDays); // KioCG - crops grow every day
+         compoundTag.putString("Status", BuiltInRegistries.CHUNK_STATUS.getKey(this.chunkStatus).toString());
+         if (this.blendingData != null) {
+             BlendingData.Packed.CODEC

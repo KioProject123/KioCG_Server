@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/level/block/SugarCaneBlock.java
++++ b/net/minecraft/world/level/block/SugarCaneBlock.java
+@@ -47,6 +_,18 @@
+         }
+     }
+ 
++    // KioCG start - crops grow every day
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        return true;
++    }
++    // KioCG end - crops grow every day
++
+     @Override
+     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+         if (level.isEmptyBlock(pos.above())) {
+@@ -59,10 +_,10 @@
+             if (i < level.paperConfig().maxGrowthHeight.reeds) { // Paper - Configurable cactus/bamboo/reed growth height
+                 int ageValue = state.getValue(AGE);
+                 int modifier = level.spigotConfig.caneModifier; // Spigot - SPIGOT-7159: Better modifier resolution
+-                if (ageValue >= 15 || (modifier != 100 && random.nextFloat() < (modifier / (100.0f * 16)))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                if (random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(level, pos.above(), this.defaultBlockState()); // CraftBukkit
+                     level.setBlock(pos, state.setValue(AGE, Integer.valueOf(0)), 4);
+-                } else if (modifier == 100 || random.nextFloat() < (modifier / (100.0f * 16))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                } else if (false) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+                     level.setBlock(pos, state.setValue(AGE, Integer.valueOf(ageValue + 1)), 4);
+                 }
+             }

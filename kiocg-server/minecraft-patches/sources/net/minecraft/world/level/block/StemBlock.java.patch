@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/block/StemBlock.java
++++ b/net/minecraft/world/level/block/StemBlock.java
+@@ -76,11 +_,26 @@
+         return state.is(Blocks.FARMLAND);
+     }
+ 
++    // KioCG start - crops grow every day
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        return true;
++    }
++    // KioCG end - crops grow every day
++
+     @Override
+     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+         if (level.getRawBrightness(pos, 0) >= 9) {
+             float growthSpeed = CropBlock.getGrowthSpeed(this, level, pos);
+-            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? level.spigotConfig.pumpkinModifier : level.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / growthSpeed) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
++            // KioCG start - crops grow every day
++            int modifier = this == Blocks.PUMPKIN_STEM ? level.spigotConfig.pumpkinModifier : level.spigotConfig.melonModifier;
++            if (modifier > 0 && FarmBlock.isMoisture(level, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution
++            // KioCG end - crops grow every day
+                 int ageValue = state.getValue(AGE);
+                 if (ageValue < 7) {
+                     state = state.setValue(AGE, Integer.valueOf(ageValue + 1));

@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/block/BambooSaplingBlock.java
++++ b/net/minecraft/world/level/block/BambooSaplingBlock.java
+@@ -41,9 +_,21 @@
+         return SAPLING_SHAPE.move(offset.x, offset.y, offset.z);
+     }
+ 
++    // KioCG start - crops grow every day
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return false;
++    }
++
++    @Override
++    protected boolean isDailyTicking(BlockState state) {
++        return true;
++    }
++    // KioCG end - crops grow every day
++
+     @Override
+     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+-        if (random.nextFloat() < (level.spigotConfig.bambooModifier / (100.0f * 3)) && level.isEmptyBlock(pos.above()) && level.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (random.nextFloat() < (level.spigotConfig.bambooModifier / 100.0f) && level.isEmptyBlock(pos.above()) && level.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+             this.growBamboo(level, pos);
+         }
+     }

@@ -16,6 +16,51 @@
  
          this.updateSkyBrightness();
          if (runsNormally) {
+@@ -914,6 +_,44 @@
+             }
+         }
+ 
++        // KioCG start - crops grow every day
++        int days = this.getDays();
++        if (chunk.chunkDays != days) {
++            int daysSpent = Mth.clamp(days - chunk.chunkDays, 0, 7);
++            chunk.chunkDays = days;
++
++        for (int sectionIndex = 0, sectionsLen = sections.length; sectionIndex < sectionsLen; sectionIndex++) {
++            final int offsetY = (sectionIndex + minSection) << 4;
++            final LevelChunkSection section = sections[sectionIndex];
++            final net.minecraft.world.level.chunk.PalettedContainer<net.minecraft.world.level.block.state.BlockState> states = section.states;
++            if (!section.isDailyTickingBlocks()) {
++                continue;
++            }
++
++            final ca.spottedleaf.moonrise.common.list.ShortList tickList = section.dailyTickingBlocks;
++
++            for (int i = 0; i < daysSpent; ++i) {
++                final int tickingBlocks = tickList.size();
++                if (tickingBlocks == 0) break;
++
++                List<Integer> dayTickList = new ArrayList<>(tickingBlocks);
++                for (int index = 0; index < tickingBlocks; ++index) {
++                    final int location = (int)tickList.getRaw(index) & 0xFFFF;
++                    dayTickList.add(location);
++                }
++                for (Integer location : dayTickList) {
++                    final BlockState state = states.get(location);
++
++                    // do not use a mutable pos, as some random tick implementations store the input without calling immutable()!
++                    final BlockPos pos = new BlockPos((location & 15) | offsetX, ((location >>> (4 + 4)) & 15) | offsetY, ((location >>> 4) & 15) | offsetZ);
++
++                    state.dayTick((ServerLevel)(Object)this, pos, simpleRandom);
++                }
++            }
++        }
++        }
++        // KioCG end - crops grow every day
++
+         return;
+     }
+     // Paper end - optimise random ticking
 @@ -1052,6 +_,7 @@
      }
  

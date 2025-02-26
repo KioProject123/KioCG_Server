@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/chunk/LevelChunk.java
++++ b/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -204,6 +_,7 @@
+         this.setLightCorrect(chunk.isLightCorrect());
+         this.markUnsaved();
+         this.needsDecoration = true; // CraftBukkit
++        this.chunkDays = chunk.chunkDays; // KioCG - crops grow every day
+         // CraftBukkit start
+         this.persistentDataContainer = chunk.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
+         // CraftBukkit end
