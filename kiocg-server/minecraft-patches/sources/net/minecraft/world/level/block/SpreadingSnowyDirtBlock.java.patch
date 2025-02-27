@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
++++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
+@@ -76,12 +_,7 @@
+                         continue;
+                     }
+ 
+-                    final net.minecraft.world.level.chunk.ChunkAccess access;
+-                    if (cachedBlockChunk.locX == blockPos.getX() >> 4 && cachedBlockChunk.locZ == blockPos.getZ() >> 4) {
+-                        access = cachedBlockChunk;
+-                    } else {
+-                        access = level.getChunkAt(blockPos);
+-                    }
++                    final net.minecraft.world.level.chunk.ChunkAccess access = getCachedBlockChunk(cachedBlockChunk, level, blockPos); // KioCG - Perf: optimize flowers and Grasses spreading: 提取方法
+                     if (access.getBlockState(blockPos).is(Blocks.DIRT) && SpreadingSnowyDirtBlock.canPropagate(access, blockState, level, blockPos)) {
+                         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(level, pos, blockPos, (BlockState) blockState.setValue(SpreadingSnowyDirtBlock.SNOWY, isSnowySetting(access.getBlockState(blockPos.above())))); // CraftBukkit
+                         // Paper end - Perf: optimize dirt and snow spreading
+@@ -90,4 +_,16 @@
+             }
+         }
+     }
++
++    // KioCG start - Perf: optimize flowers and Grasses spreading: 提取方法
++    protected net.minecraft.world.level.chunk.ChunkAccess getCachedBlockChunk(net.minecraft.world.level.chunk.ChunkAccess cachedBlockChunk, ServerLevel level, BlockPos blockPos) {
++        final net.minecraft.world.level.chunk.ChunkAccess access;
++        if (cachedBlockChunk.locX == blockPos.getX() >> 4 && cachedBlockChunk.locZ == blockPos.getZ() >> 4) {
++            access = cachedBlockChunk;
++        } else {
++            access = level.getChunkAt(blockPos);
++        }
++        return access;
++    }
++    // KioCG end - Perf: optimize flowers and Grasses spreading: 提取方法
+ }
