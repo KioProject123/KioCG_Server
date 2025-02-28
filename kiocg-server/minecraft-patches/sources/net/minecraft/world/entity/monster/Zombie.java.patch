@@ -47,7 +47,7 @@
 +    // KioCG start - monster strengthens
 +    public void die(DamageSource damageSource) {
 +        if (!this.isRemoved() && !this.dead) {
-+            if (damageSource.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK) && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedChance) {
++            if (damageSource.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK) && this.random.nextFloat() < (float) this.level().paperConfig().kiocgConfig.entity.monster.zombiesSkinnedChance) {
 +                Skeleton converted = this.convertTo(EntityType.SKELETON, ConversionParams.single(this, true, true), skeleton -> {
 +                    if (!this.isSilent()) {
 +                        this.level().levelEvent(null, net.minecraft.world.level.block.LevelEvent.SOUND_SKELETON_TO_STRAY, this.blockPosition(), 0);

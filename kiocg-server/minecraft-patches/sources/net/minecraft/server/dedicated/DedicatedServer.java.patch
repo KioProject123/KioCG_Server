@@ -18,3 +18,11 @@
              LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
+@@ -735,6 +_,7 @@
+         this.executeBlocking(() -> {
+             CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
+             org.bukkit.event.server.RemoteServerCommandEvent event = new org.bukkit.event.server.RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), s);
++            event.setCancelled(true); // KioCG - rcon: default cancelled
+             this.server.getPluginManager().callEvent(event);
+             if (event.isCancelled()) {
+                 return;

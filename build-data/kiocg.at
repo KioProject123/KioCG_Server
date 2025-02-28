@@ -1,5 +1,6 @@
 # This file is auto generated, any changes may be overridden!
 # See CONTRIBUTING.md on how to add access transformers.
 protected net.minecraft.world.entity.ai.goal.FollowMobGoal mob
+public net.minecraft.server.rcon.thread.RconClient sendCmdResponse(ILjava/lang/String;)V
 public net.minecraft.world.entity.Entity DATA_AIR_SUPPLY_ID
 public net.minecraft.world.level.block.entity.HopperBlockEntity isFullContainer(Lnet/minecraft/world/Container;Lnet/minecraft/core/Direction;)Z

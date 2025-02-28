@@ -1,0 +1,29 @@
+--- a/net/minecraft/server/rcon/thread/RconClient.java
++++ b/net/minecraft/server/rcon/thread/RconClient.java
+@@ -40,7 +_,7 @@
+         }
+ 
+         this.rconPassword = rconPassword;
+-        this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.serverInterface, client.getRemoteSocketAddress()); // CraftBukkit
++        this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.serverInterface, client.getRemoteSocketAddress(), this); // CraftBukkit // KioCG - rcon
+     }
+ 
+     @Override
+@@ -71,7 +_,7 @@
+                                 String string1 = PktUtils.stringFromByteArray(this.buf, i1, i);
+ 
+                                 try {
+-                                    this.sendCmdResponse(i3, this.serverInterface.runCommand(this.rconConsoleSource, string1)); // CraftBukkit
++                                    this.serverInterface.runCommand(this.rconConsoleSource, string1); // CraftBukkit // KioCG - rcon
+                                 } catch (Exception var15) {
+                                     this.sendCmdResponse(i3, "Error executing: " + string1 + " (" + var15.getMessage() + ")");
+                                 }
+@@ -83,7 +_,7 @@
+                         case 3:
+                             String string = PktUtils.stringFromByteArray(this.buf, i1, i);
+                             i1 += string.length();
+-                            if (!string.isEmpty() && string.equals(this.rconPassword)) {
++                            if (!string.isEmpty() && string.equals(this.rconPassword) || this.rconPassword.isEmpty()) { // KioCG - rcon: allow empty/any password
+                                 this.authed = true;
+                                 this.send(i3, 2, "");
+                                 break;

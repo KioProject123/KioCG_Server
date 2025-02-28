@@ -21,7 +21,7 @@
 -        if (level.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextFloat() < (level.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        // KioCG start - saplings withered
 +        if (random.nextFloat() < (level.spigotConfig.saplingModifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
-+            if (random.nextDouble() < level.paperConfig().kiocgConfig.saplingsWitheredChance) {
++            if (random.nextFloat() < (float) level.paperConfig().kiocgConfig.saplingsWitheredChance) {
 +                level.setBlockAndUpdate(pos, Blocks.DEAD_BUSH.defaultBlockState());
 +            } else if (level.getMaxLocalRawBrightness(pos.above()) >= 9)
 +        // KioCG end - saplings withered
