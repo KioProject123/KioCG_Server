@@ -18,16 +18,21 @@
      }
  
      // CraftBukkit start
-@@ -112,6 +_,15 @@
+@@ -112,6 +_,20 @@
          if (!event.callEvent()) {
              return false;
          }
 +
 +        // KioCG start - campfire boiling water
 +        if (level.getBlockEntity(pos.below()) instanceof net.minecraft.world.level.block.entity.CampfireBlockEntity campfireBlockEntity) {
-+            int oldLevel = level.getBlockState(pos).getValue(LayeredCauldronBlock.LEVEL);
-+            int newLevel = newBlock.getValue(LayeredCauldronBlock.LEVEL);
-+            campfireBlockEntity.cauldronLevelChanged(oldLevel, newLevel);
++            BlockState oldState = level.getBlockState(pos);
++            if (oldState.is(newBlock.getBlock())) {
++                int oldLevel = oldState.getValue(LayeredCauldronBlock.LEVEL);
++                int newLevel = newBlock.getValue(LayeredCauldronBlock.LEVEL);
++                campfireBlockEntity.cauldronLevelChanged(oldLevel, newLevel);
++            } else {
++                campfireBlockEntity.setCauldronTemperature(0);
++            }
 +        }
 +        // KioCG end - campfire boiling water
 +
