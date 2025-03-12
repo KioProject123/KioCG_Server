@@ -1,5 +1,123 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
+@@ -21,6 +_,12 @@
+     protected int forcedAge;
+     protected int forcedAgeTimer;
+     public boolean ageLocked; // CraftBukkit
++    // KioCG start - breeding animals
++    private int survivalDays;
++    private int feedingDays;
++    public int feedingToday;
++    public int produceToday;
++    // KioCG end - breeding animals
+ 
+     protected AgeableMob(EntityType<? extends AgeableMob> entityType, Level level) {
+         super(entityType, level);
+@@ -67,6 +_,8 @@
+     }
+ 
+     public void ageUp(int amount, boolean forced) {
++        if (forced) { ageUp(); return; } // KioCG - breeding animals: 额外的保障
++
+         if (this.ageLocked) return; // Paper - Honor ageLock
+         int age = this.getAge();
+         age += amount * 20;
+@@ -92,6 +_,15 @@
+         this.ageUp(amount, false);
+     }
+ 
++    // KioCG start - breeding animals
++    public void ageUp() {
++        if (!this.canFeed()) return; // 额外的保障
++
++        ageUp(net.minecraft.util.Mth.nextInt(random, 200, 400));
++        this.feedingFeed();
++    }
++    // KioCG end - breeding animals
++
+     public void setAge(int age) {
+         int age1 = this.getAge();
+         this.age = age;
+@@ -101,12 +_,36 @@
+         }
+     }
+ 
++    // KioCG start - breeding animals
++    public boolean canFeed() {
++        return this.feedingToday < (this.isHugeSimulate() ? 3 : 1);
++    }
++
++    public void feedingFeed() {
++        ++this.feedingToday;
++    }
++
++    public boolean canProduce() {
++        return this.produceToday < (this.isHugeSimulate() ? 3 : 1);
++    }
++
++    public void produce() {
++        ++produceToday;
++    }
++    // KioCG end - breeding animals
++
+     @Override
+     public void addAdditionalSaveData(CompoundTag compound) {
+         super.addAdditionalSaveData(compound);
+         compound.putInt("Age", this.getAge());
+         compound.putInt("ForcedAge", this.forcedAge);
+         compound.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
++        // KioCG start - breeding animals
++        compound.putInt("KioCG.SurvivalDays", this.survivalDays);
++        compound.putInt("KioCG.FeedingDays", this.feedingDays);
++        compound.putInt("KioCG.FeedingToday", this.feedingToday);
++        compound.putInt("KioCG.ProduceToday", this.produceToday);
++        // KioCG end - breeding animals
+     }
+ 
+     @Override
+@@ -115,6 +_,12 @@
+         this.setAge(compound.getInt("Age"));
+         this.forcedAge = compound.getInt("ForcedAge");
+         this.ageLocked = compound.getBoolean("AgeLocked"); // CraftBukkit
++        // KioCG start - breeding animals
++        this.survivalDays = compound.getInt("KioCG.SurvivalDays");
++        this.feedingDays = compound.getInt("KioCG.FeedingDays");
++        this.feedingToday = compound.getInt("KioCG.FeedingToday");
++        this.produceToday = compound.getInt("KioCG.ProduceToday");
++        // KioCG end - breeding animals
+     }
+ 
+     @Override
+@@ -135,7 +_,7 @@
+         } else {
+             int age = this.getAge();
+             if (age < 0) {
+-                this.setAge(++age);
++                // this.setAge(++age); // KioCG - breeding animals: 阻止小动物自然生长
+             } else if (age > 0) {
+                 this.setAge(--age);
+             }
+@@ -157,10 +_,19 @@
+         } else if (this.isAlive()) {
+             int age = this.getAge();
+             if (age < 0) {
+-                this.setAge(++age);
++                // this.setAge(++age); // KioCG - breeding animals: 阻止小动物自然生长
+             } else if (age > 0) {
+                 this.setAge(--age);
+             }
++
++            // KioCG start - breeding animals
++            final int days = this.level().getDays();
++            if (days != this.survivalDays) {
++                this.survivalDays = days;
++                this.feedingToday = 0;
++                this.produceToday = 0;
++            }
++            // KioCG end - breeding animals
+         }
+     }
+ 
 @@ -176,7 +_,10 @@
      }
  

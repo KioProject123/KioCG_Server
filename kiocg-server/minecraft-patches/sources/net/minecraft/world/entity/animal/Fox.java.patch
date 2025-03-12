@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
+@@ -892,8 +_,10 @@
+                     CriteriaTriggers.BRED_ANIMALS.trigger(serverPlayer, this.animal, this.partner, fox);
+                 }
+ 
+-                this.animal.setAge(6000);
+-                this.partner.setAge(6000);
++                // KioCG start - breeding animals: 不需要繁殖冷却
++                // this.animal.setAge(6000);
++                // this.partner.setAge(6000);
++                // KioCG end - breeding animals: 不需要繁殖冷却
+                 this.animal.resetLove();
+                 this.partner.resetLove();
+                 serverLevel.addFreshEntityWithPassengers(fox, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
 @@ -952,7 +_,7 @@
          }
  

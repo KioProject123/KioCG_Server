@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/animal/MushroomCow.java
++++ b/net/minecraft/world/entity/animal/MushroomCow.java
+@@ -86,6 +_,13 @@
+     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+         ItemStack itemInHand = player.getItemInHand(hand);
+         if (itemInHand.is(Items.BOWL) && !this.isBaby()) {
++            // KioCG start - breeding animals
++            if (!this.canProduce()) {
++                player.containerMenu.sendAllDataToRemote(); // Paper - Fix inventory desync
++                return InteractionResult.PASS;
++            }
++            // KioCG end - breeding animals
++
+             boolean flag = false;
+             ItemStack itemStack;
+             if (this.stewEffects != null) {
+@@ -98,6 +_,7 @@
+             }
+ 
+             ItemStack itemStack1 = ItemUtils.createFilledResult(itemInHand, player, itemStack, false);
++            this.produce(); // KioCG - breeding animals
+             player.setItemInHand(hand, itemStack1);
+             SoundEvent soundEvent;
+             if (flag) {

@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/animal/armadillo/Armadillo.java
++++ b/net/minecraft/world/entity/animal/armadillo/Armadillo.java
+@@ -140,7 +_,7 @@
+         profilerFiller.push("armadilloActivityUpdate");
+         ArmadilloAi.updateActivity(this);
+         profilerFiller.pop();
+-        if (this.isAlive() && !this.isBaby() && --this.scuteTime <= 0) {
++        if (false && this.isAlive() && !this.isBaby() && --this.scuteTime <= 0) { // KioCG - breeding animals
+             this.forceDrops = true; // CraftBukkit
+             if (this.dropFromGiftLootTable(level, BuiltInLootTables.ARMADILLO_SHED, this::spawnAtLocation)) {
+                 this.playSound(SoundEvents.ARMADILLO_SCUTE_DROP, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+@@ -315,10 +_,11 @@
+     }
+ 
+     public boolean brushOffScute() {
+-        if (this.isBaby()) {
++        if (this.isBaby() || !this.canProduce()) { // KioCG - breeding animals
+             return false;
+         } else {
+             if (this.level() instanceof ServerLevel serverLevel) {
++                this.produce(); // KioCG - breeding animals
+                 this.forceDrops = true; // CraftBukkit
+                 this.spawnAtLocation(serverLevel, new ItemStack(Items.ARMADILLO_SCUTE));
+                 this.forceDrops = false; // CraftBukkit

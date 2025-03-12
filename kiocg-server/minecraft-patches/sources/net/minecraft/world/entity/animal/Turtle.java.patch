@@ -1,0 +1,52 @@
+--- a/net/minecraft/world/entity/animal/Turtle.java
++++ b/net/minecraft/world/entity/animal/Turtle.java
+@@ -338,6 +_,36 @@
+         return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(pose);
+     }
+ 
++    // KioCG start - breeding animals
++    @Override
++    public net.minecraft.world.InteractionResult mobInteract(Player player, net.minecraft.world.InteractionHand hand) {
++        ItemStack itemInHand = player.getItemInHand(hand);
++        if (itemInHand.is(Items.BRUSH) && this.brushOffScute()) {
++            itemInHand.hurtAndBreak(16, player, getSlotForHand(hand));
++            return net.minecraft.world.InteractionResult.SUCCESS;
++        } else {
++            return super.mobInteract(player, hand);
++        }
++    }
++
++    public boolean brushOffScute() {
++        if (this.isBaby() || !this.canProduce()) { // KioCG - breeding animals
++            return false;
++        } else {
++            if (this.level() instanceof ServerLevel serverLevel) {
++                this.produce(); // KioCG - breeding animals
++                this.forceDrops = true; // CraftBukkit
++                this.spawnAtLocation(serverLevel, new ItemStack(Items.TURTLE_SCUTE));
++                this.forceDrops = false; // CraftBukkit
++                this.gameEvent(GameEvent.ENTITY_INTERACT);
++                this.playSound(SoundEvents.ARMADILLO_BRUSH);
++            }
++
++            return true;
++        }
++    }
++    // KioCG end - breeding animals
++
+     static class TurtleBreedGoal extends BreedGoal {
+         private final Turtle turtle;
+ 
+@@ -368,8 +_,10 @@
+             }
+ 
+             this.turtle.setHasEgg(true);
+-            this.animal.setAge(6000);
+-            this.partner.setAge(6000);
++            // KioCG start - breeding animals: 不需要繁殖冷却
++            // this.animal.setAge(6000);
++            // this.partner.setAge(6000);
++            // KioCG end - breeding animals: 不需要繁殖冷却
+             this.animal.resetLove();
+             this.partner.resetLove();
+             RandomSource random = this.animal.getRandom();

@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/animal/goat/Goat.java
++++ b/net/minecraft/world/entity/animal/goat/Goat.java
+@@ -231,6 +_,13 @@
+     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+         ItemStack itemInHand = player.getItemInHand(hand);
+         if (itemInHand.is(Items.BUCKET) && !this.isBaby()) {
++            // KioCG start - breeding animals
++            if (!this.canProduce()) {
++                player.containerMenu.sendAllDataToRemote(); // Paper - Fix inventory desync
++                return InteractionResult.PASS;
++            }
++            // KioCG end - breeding animals
++
+             // CraftBukkit start - Got milk?
+             org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemInHand, Items.MILK_BUCKET, hand);
+ 
+@@ -241,6 +_,7 @@
+             // CraftBukkit end
+             player.playSound(this.getMilkingSound(), 1.0F, 1.0F);
+             ItemStack itemStack = ItemUtils.createFilledResult(itemInHand, player, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
++            this.produce(); // KioCG - breeding animals
+             player.setItemInHand(hand, itemStack);
+             return InteractionResult.SUCCESS;
+         } else {

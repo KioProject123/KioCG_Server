@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
-@@ -67,7 +_,7 @@
+@@ -63,11 +_,12 @@
+     @Override
+     public void tick() {
+         this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
++        if (true) return; // KioCG - breeding animals
+         if (this.eatAnimationTick == this.adjustedTickDelay(4)) {
              BlockPos blockPos = this.mob.blockPosition();
              final BlockState blockState = this.level.getBlockState(blockPos); // Paper - fix wrong block state
              if (IS_TALL_GRASS.test(blockState)) { // Paper - fix wrong block state

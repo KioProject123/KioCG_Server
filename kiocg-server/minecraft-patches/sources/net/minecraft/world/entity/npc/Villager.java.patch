@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/npc/Villager.java
++++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -707,6 +_,7 @@
+ 
+     @Override
+     public boolean canBreed() {
++        if (!this.level().paperConfig().kiocgConfig.entity.animal.villagerCanBreed) return false; // KioCG - breeding animals
+         return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
+     }
+ 

@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/entity/animal/Chicken.java
++++ b/net/minecraft/world/entity/animal/Chicken.java
+@@ -43,7 +_,7 @@
+     public float oFlap;
+     public float flapping = 1.0F;
+     private float nextFlap = 1.0F;
+-    public int eggTime = this.random.nextInt(6000) + 6000;
++    public int eggTime = this.random.nextInt(200); // KioCG - breeding animals
+     public boolean isChickenJockey;
+ 
+     public Chicken(EntityType<? extends Chicken> entityType, Level level) {
+@@ -90,7 +_,7 @@
+         }
+ 
+         this.flap = this.flap + this.flapping * 2.0F;
+-        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() && !this.isChickenJockey() && --this.eggTime <= 0) {
++        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() && !this.isChickenJockey() && this.canProduce() && --this.eggTime <= 0) { // KioCG - breeding animals
+             this.forceDrops = true; // CraftBukkit
+             if (this.dropFromGiftLootTable(serverLevel, BuiltInLootTables.CHICKEN_LAY, this::spawnAtLocation)) {
+                 this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+@@ -98,7 +_,8 @@
+             }
+             this.forceDrops = false; // CraftBukkit
+ 
+-            this.eggTime = this.random.nextInt(6000) + 6000;
++            this.produce(); // KioCG - breeding animals
++            this.eggTime = this.random.nextInt(200); // KioCG - breeding animals
+         }
+     }
+ 

@@ -1,0 +1,73 @@
+--- a/net/minecraft/world/entity/animal/Animal.java
++++ b/net/minecraft/world/entity/animal/Animal.java
+@@ -150,9 +_,9 @@
+                 return InteractionResult.SUCCESS_SERVER;
+             }
+ 
+-            if (this.isBaby()) {
++            if (this.isBaby() && this.canFeed()) { // KioCG - breeding animals
+                 this.usePlayerItem(player, hand, itemInHand);
+-                this.ageUp(getSpeedUpSecondsWhenFeeding(-age), true);
++                this.ageUp(); // KioCG - breeding animals
+                 this.playEatingSound();
+                 return InteractionResult.SUCCESS;
+             }
+@@ -179,7 +_,7 @@
+     }
+ 
+     public boolean canFallInLove() {
+-        return this.inLove <= 0;
++        return this.inLove <= 0 && this.canFeed(); // KioCG - breeding animals
+     }
+ 
+     @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper - Fix EntityBreedEvent copying
+@@ -196,7 +_,9 @@
+             this.breedItem = null; // Paper - Fix EntityBreedEvent copying; clear if cancelled
+             return;
+         }
+-        this.inLove = entityEnterLoveModeEvent.getTicksInLove();
++
++        dropDefaultLootTable(); // KioCG - breeding animals
++        // this.inLove = entityEnterLoveModeEvent.getTicksInLove(); // KioCG - breeding animals: 不再进入繁殖阶段
+         // CraftBukkit end
+         if (player != null) {
+             this.loveCause = player.getUUID();
+@@ -206,6 +_,25 @@
+         this.level().broadcastEntityEvent(this, (byte)18);
+     }
+ 
++    // KioCG start - breeding animals
++    private void dropDefaultLootTable() {
++        if (!this.canFeed()) return; // 额外的保障
++
++        this.feedingFeed();
++
++        final Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>> lootTable = this.lootTable;
++        this.lootTable = Optional.empty();
++        this.forceDrops = true;
++        this.dropFromLootTable((ServerLevel) this.level(), this.damageSources().generic(), false);
++        this.forceDrops = false;
++        this.lootTable = lootTable;
++
++        if (!this.isHugeSimulate() && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
++            this.setHugeSimulate();
++        }
++    }
++    // KioCG end - breeding animals
++
+     public void setInLoveTime(int inLove) {
+         this.inLove = inLove;
+     }
+@@ -269,8 +_,10 @@
+             player.awardStat(Stats.ANIMALS_BRED);
+             CriteriaTriggers.BRED_ANIMALS.trigger(player, this, animal, baby);
+         } // Paper
+-        this.setAge(6000);
+-        animal.setAge(6000);
++        // KioCG start - breeding animals: 不需要繁殖冷却
++        // this.setAge(6000);
++        // animal.setAge(6000);
++        // KioCG end - breeding animals: 不需要繁殖冷却
+         this.resetLove();
+         animal.resetLove();
+         level.broadcastEntityEvent(this, (byte)18);

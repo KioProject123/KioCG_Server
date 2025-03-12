@@ -1,0 +1,26 @@
+--- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
+@@ -773,7 +_,7 @@
+             protected ItemStack execute(BlockSource blockSource, ItemStack item) {
+                 ServerLevel serverLevel = blockSource.level();
+                 BlockPos blockPos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
+-                List<Armadillo> entitiesOfClass = serverLevel.getEntitiesOfClass(Armadillo.class, new AABB(blockPos), EntitySelector.NO_SPECTATORS);
++                List<LivingEntity> entitiesOfClass = serverLevel.getEntitiesOfClass(LivingEntity.class, new AABB(blockPos), EntitySelector.NO_SPECTATORS); // KioCG - breeding animals
+                 if (entitiesOfClass.isEmpty()) {
+                     this.setSuccess(false);
+                     return item;
+@@ -801,8 +_,12 @@
+                         }
+                     }
+                     // CraftBukkit end
+-                    for (Armadillo armadillo : entitiesOfClass) {
+-                        if (armadillo.brushOffScute()) {
++                    // KioCG start - breeding animals
++                    for (LivingEntity entity : entitiesOfClass) {
++                        boolean isArmadillo = entity instanceof Armadillo;
++                        boolean isTurtle = !isArmadillo && entity instanceof net.minecraft.world.entity.animal.Turtle;
++                        if (isArmadillo && ((Armadillo) entity).brushOffScute() || isTurtle && ((net.minecraft.world.entity.animal.Turtle) entity).brushOffScute()) {
++                    // KioCG end - breeding animals
+                             item.hurtAndBreak(16, serverLevel, null, item1 -> {});
+                             return item;
+                         }

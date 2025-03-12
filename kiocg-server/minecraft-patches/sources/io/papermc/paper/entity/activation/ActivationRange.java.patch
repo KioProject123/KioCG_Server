@@ -18,3 +18,12 @@
                  return 10;
              }
          } else if (!arrow.isInGround()) {
+@@ -251,7 +_,7 @@
+                 return 1;
+             }
+             if (entity instanceof final Animal animal) {
+-                if (animal.isBaby() || animal.isInLove()) {
++                if (animal.isInLove()) { // KioCG - breeding animals: 不再需要豁免baby
+                     return 5;
+                 }
+                 if (entity instanceof final Sheep sheep && sheep.isSheared()) {

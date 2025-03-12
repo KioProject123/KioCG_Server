@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
++++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
+@@ -558,7 +_,7 @@
+             f = 4.0F;
+             i = 60;
+             i1 = 5;
+-            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
++            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && this.canFallInLove()) { // KioCG - breeding animals
+                 flag = true;
+                 this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
+             }
+@@ -566,7 +_,7 @@
+             f = 10.0F;
+             i = 240;
+             i1 = 10;
+-            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
++            if (!this.level().isClientSide && this.isTamed() && this.getAge() == 0 && this.canFallInLove()) { // KioCG - breeding animals
+                 flag = true;
+                 this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
+             }
+@@ -577,10 +_,11 @@
+             flag = true;
+         }
+ 
+-        if (this.isBaby() && i > 0) {
++        if (this.isBaby() && i > 0 && this.canFeed()) { // KioCG - breeding animals
+             this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
+             if (!this.level().isClientSide) {
+                 this.ageUp(i);
++                this.ageUp(); // KioCG - breeding animals: 保留额外成长
+                 flag = true;
+             }
+         }
