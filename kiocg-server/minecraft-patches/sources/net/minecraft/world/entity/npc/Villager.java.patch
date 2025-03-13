@@ -1,5 +1,58 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -126,6 +_,7 @@
+     public int numberOfRestocksToday;
+     private long lastRestockCheckDayTime;
+     private boolean assignProfessionWhenSpawned;
++    private com.kiocg.entity.Lobotomized lobotomized = new com.kiocg.entity.Lobotomized(); public boolean isLobotomized() { return lobotomized.isLobotomized; } // KioCG - lobotomized villager
+     private static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(
+         MemoryModuleType.HOME,
+         MemoryModuleType.JOB_SITE,
+@@ -289,10 +_,18 @@
+         // Paper start - EAR 2
+         this.customServerAiStep(level, false);
+     }
+-    protected void customServerAiStep(ServerLevel level, final boolean inactive) {
++    protected void customServerAiStep(ServerLevel level, boolean inactive) { // KioCG - lobotomized villager: not final
+         // Paper end - EAR 2
+         ProfilerFiller profilerFiller = Profiler.get();
+         profilerFiller.push("villagerBrain");
++        // KioCG start - lobotomized villager
++        if (this.lobotomized.checkLobotomized(this)) {
++            inactive = true; // treat as inactive if lobotomized
++            if (this.shouldRestock()) {
++                this.restock();
++            }
++        }
++        // KioCG end - lobotomized villager
+         if (!inactive) this.getBrain().tick(level, this); // Paper - EAR 2
+         profilerFiller.pop();
+         if (this.assignProfessionWhenSpawned) {
+@@ -380,6 +_,7 @@
+     }
+ 
+     private void startTrading(Player player) {
++        if (this.lobotomized.isLobotomized) this.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.FEET, player.position()); // KioCG - lobotomized villager
+         this.updateSpecialPrices(player);
+         this.setTradingPlayer(player);
+         this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().getLevel());
+@@ -551,6 +_,7 @@
+         if (this.assignProfessionWhenSpawned) {
+             compound.putBoolean("AssignProfessionWhenSpawned", true);
+         }
++        compound.putBoolean("KioCG.Lobotomized", this.lobotomized.isLobotomized); // KioCG - lobotomized villager
+     }
+ 
+     @Override
+@@ -583,6 +_,8 @@
+         if (compound.contains("AssignProfessionWhenSpawned")) {
+             this.assignProfessionWhenSpawned = compound.getBoolean("AssignProfessionWhenSpawned");
+         }
++
++        this.lobotomized.isLobotomized = (compound.getBoolean("KioCG.Lobotomized")); // KioCG - lobotomized villager
+     }
+ 
+     @Override
 @@ -707,6 +_,7 @@
  
      @Override

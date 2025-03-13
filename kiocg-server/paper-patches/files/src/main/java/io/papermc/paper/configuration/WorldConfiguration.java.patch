@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,81 @@
+@@ -575,4 +_,82 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -67,6 +67,7 @@
 +            public class Animal extends ConfigurationPart {
 +                public boolean villagerCanBreed = false;
 +                public double feedingHugeChance = 0.01;
++                public int lobotomizeCheckInterval = 100;
 +            }
 +
 +            public boolean turretEnable = true;

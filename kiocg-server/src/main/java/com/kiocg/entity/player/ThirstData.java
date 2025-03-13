@@ -1,4 +1,4 @@
-package com.kiocg.player;
+package com.kiocg.entity.player;
 
 import io.papermc.paper.configuration.WorldConfiguration;
 import net.minecraft.core.BlockPos;

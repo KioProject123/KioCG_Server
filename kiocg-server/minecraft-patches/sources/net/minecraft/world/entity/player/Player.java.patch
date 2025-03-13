@@ -4,8 +4,8 @@
      public final InventoryMenu inventoryMenu;
      public AbstractContainerMenu containerMenu;
      protected FoodData foodData = new FoodData();
-+    public com.kiocg.player.ColdData coldData = new com.kiocg.player.ColdData(); // KioCG - the long dark
-+    public com.kiocg.player.ThirstData thirstData = new com.kiocg.player.ThirstData(); // KioCG - the long dark
++    public com.kiocg.entity.player.ColdData coldData = new com.kiocg.entity.player.ColdData(); // KioCG - the long dark
++    public com.kiocg.entity.player.ThirstData thirstData = new com.kiocg.entity.player.ThirstData(); // KioCG - the long dark
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
      protected int clientLoadedTimeoutTimer = 60;
