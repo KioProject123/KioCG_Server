@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/ChestBlock.java
++++ b/net/minecraft/world/level/block/ChestBlock.java
+@@ -246,6 +_,7 @@
+             }
+         }
+ 
++        chestType = ChestType.SINGLE; // KioCG - expand container rows: 强制单箱子
+         return this.defaultBlockState()
+             .setValue(FACING, opposite)
+             .setValue(TYPE, chestType)

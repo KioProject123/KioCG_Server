@@ -9,6 +9,14 @@
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
      protected int clientLoadedTimeoutTimer = 60;
+@@ -200,6 +_,7 @@
+     private int currentImpulseContextResetGraceTime;
+     public boolean affectsSpawning = true; // Paper - Affects Spawning API
+     public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
++    public int enderchestRows; // KioCG - expand container rows
+ 
+     // CraftBukkit start
+     public boolean fauxSleeping;
 @@ -246,7 +_,8 @@
              .add(Attributes.SUBMERGED_MINING_SPEED)
              .add(Attributes.SNEAKING_SPEED)
@@ -68,7 +76,7 @@
          this.abilities.addSaveData(compound);
          compound.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
          if (!this.getShoulderEntityLeft().isEmpty()) {
-@@ -943,6 +_,27 @@
+@@ -943,6 +_,28 @@
              }
          }
      }
@@ -77,6 +85,7 @@
 +    private boolean campfireHealed;
 +    public void campfireHealing() {
 +        if (!campfireHealed && this.isHurt()) {
++            campfireHealed = true;
 +            final float health = this.getHealth();
 +            this.heal(1.0F);
 +            this.causeFoodExhaustion(this.level().spigotConfig.regenExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value

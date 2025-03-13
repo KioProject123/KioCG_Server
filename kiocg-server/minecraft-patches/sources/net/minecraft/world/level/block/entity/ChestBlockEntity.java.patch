@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
+@@ -26,7 +_,7 @@
+ 
+ public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
+     private static final int EVENT_SET_OPEN_COUNT = 1;
+-    private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
++    private NonNullList<ItemStack> items; // KioCG - expand container rows: 移至构造函数
+     public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+         @Override
+         protected void onOpen(Level level, BlockPos pos, BlockState state) {
+@@ -88,6 +_,7 @@
+ 
+     protected ChestBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+         super(type, pos, blockState);
++        this.items = NonNullList.withSize(type == BlockEntityType.TRAPPED_CHEST ? 54 : 27, ItemStack.EMPTY); // KioCG - expand container rows
+     }
+ 
+     public ChestBlockEntity(BlockPos pos, BlockState blockState) {

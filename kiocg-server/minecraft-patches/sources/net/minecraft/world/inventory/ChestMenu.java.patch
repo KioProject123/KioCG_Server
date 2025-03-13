@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/inventory/ChestMenu.java
++++ b/net/minecraft/world/inventory/ChestMenu.java
+@@ -74,6 +_,21 @@
+         return new ChestMenu(MenuType.GENERIC_9x6, containerId, playerInventory, container, 6);
+     }
+ 
++    // KioCG start - expand container rows
++    public static ChestMenu oneRow(int containerId, Inventory playerInventory, Container container) {
++        return new ChestMenu(MenuType.GENERIC_9x1, containerId, playerInventory, container, 1);
++    }
++    public static ChestMenu twoRows(int containerId, Inventory playerInventory, Container container) {
++        return new ChestMenu(MenuType.GENERIC_9x2, containerId, playerInventory, container, 2);
++    }
++    public static ChestMenu fourRows(int containerId, Inventory playerInventory, Container container) {
++        return new ChestMenu(MenuType.GENERIC_9x4, containerId, playerInventory, container, 4);
++    }
++    public static ChestMenu fiveRows(int containerId, Inventory playerInventory, Container container) {
++        return new ChestMenu(MenuType.GENERIC_9x5, containerId, playerInventory, container, 5);
++    }
++    // KioCG end - expand container rows
++
+     public ChestMenu(MenuType<?> type, int containerId, Inventory playerInventory, Container container, int rows) {
+         super(type, containerId);
+         checkContainerSize(container, rows * 9);

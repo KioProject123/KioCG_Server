@@ -1,0 +1,46 @@
+--- a/net/minecraft/world/level/block/EnderChestBlock.java
++++ b/net/minecraft/world/level/block/EnderChestBlock.java
+@@ -85,7 +_,7 @@
+                 enderChestInventory.setActiveChest(enderChestBlockEntity); // Needs to happen before ChestMenu.threeRows as it is required for opening animations
+                 if (level instanceof ServerLevel serverLevel && player.openMenu(
+                     new SimpleMenuProvider(
+-                        (containerId, playerInventory, player1) -> ChestMenu.threeRows(containerId, playerInventory, enderChestInventory), CONTAINER_TITLE
++                        (containerId, playerInventory, player1) -> this.getEnderChestRows(containerId, playerInventory, enderChestInventory, player), CONTAINER_TITLE // KioCG - expand container rows
+                     )
+                 ).isPresent()) {
+                 // Paper end - Fix InventoryOpenEvent cancellation - moved up;
+@@ -99,6 +_,34 @@
+             return InteractionResult.SUCCESS;
+         }
+     }
++
++    // KioCG start - expand container rows
++    private ChestMenu getEnderChestRows(int containerId, net.minecraft.world.entity.player.Inventory playerInventory, PlayerEnderChestContainer container, Player player) {
++        org.bukkit.craftbukkit.entity.CraftHumanEntity bukkitPlayer = player.getBukkitEntity();
++        if (bukkitPlayer.hasPermission("kiocg.enderchestrows.6")) {
++            player.enderchestRows = 6;
++            return ChestMenu.sixRows(containerId, playerInventory, container);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.5")) {
++            player.enderchestRows = 5;
++            return ChestMenu.fiveRows(containerId, playerInventory, container);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.4")) {
++            player.enderchestRows = 4;
++            return ChestMenu.fourRows(containerId, playerInventory, container);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.3")) {
++            player.enderchestRows = 3;
++            return ChestMenu.threeRows(containerId, playerInventory, container);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.2")) {
++            player.enderchestRows = 2;
++            return ChestMenu.twoRows(containerId, playerInventory, container);
++        } else if (bukkitPlayer.hasPermission("kiocg.enderchestrows.1")) {
++            player.enderchestRows = 1;
++            return ChestMenu.oneRow(containerId, playerInventory, container);
++        } else {
++            player.enderchestRows = 3;
++            return ChestMenu.threeRows(containerId, playerInventory, container);
++        }
++    }
++    // KioCG end - expand container rows
+ 
+     @Override
+     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
