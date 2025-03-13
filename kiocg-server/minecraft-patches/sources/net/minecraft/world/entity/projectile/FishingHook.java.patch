@@ -1,0 +1,162 @@
+--- a/net/minecraft/world/entity/projectile/FishingHook.java
++++ b/net/minecraft/world/entity/projectile/FishingHook.java
+@@ -78,6 +_,14 @@
+     public boolean skyInfluenced = true;
+     // CraftBukkit end
+ 
++    // KioCG start - more realistic fishing
++    private int timeUntilSink;
++    private int deepSinkCooldown;
++    private double fishWeight;
++    @Nullable
++    public BlockPos fishPosition;
++    // KioCG end - more realistic fishing
++
+     private FishingHook(EntityType<? extends FishingHook> entityType, Level level, int luck, int lureSpeed) {
+         super(entityType, level);
+         this.luck = Math.max(0, luck);
+@@ -140,7 +_,7 @@
+         if (DATA_BITING.equals(key)) {
+             this.biting = this.getEntityData().get(DATA_BITING);
+             if (this.biting) {
+-                this.setDeltaMovement(this.getDeltaMovement().x, -0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F), this.getDeltaMovement().z);
++                this.setDeltaMovement(this.getDeltaMovement().x, -0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F), this.getDeltaMovement().z); // KioCG - more realistic fishing: 注意补丁更改
+             }
+         }
+ 
+@@ -191,6 +_,7 @@
+                 }
+ 
+                 if (flag) {
++                    this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.75F + (this.random.nextFloat() - this.random.nextFloat()) * 0.25F); // KioCG - more realistic fishing: 鱼钩落水音效, 防止监测声音的自动钓鱼
+                     this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
+                     this.currentState = FishingHook.FishHookState.BOBBING;
+                     return;
+@@ -222,19 +_,21 @@
+                     if (this.nibble <= 0 && this.timeUntilHooked <= 0) {
+                         this.openWater = true;
+                     } else {
++                        if (!this.biting) // KioCG - more realistic fishing: 防止拉近鱼钩时始终处于非开阔水域
+                         this.openWater = this.openWater && this.outOfWaterTime < 10 && this.calculateOpenWater(blockPos);
+                     }
+ 
+                     if (flag) {
+                         this.outOfWaterTime = Math.max(0, this.outOfWaterTime - 1);
+                         if (this.biting) {
+-                            this.setDeltaMovement(
++                            this.setDeltaMovementSync( // KioCG - more realistic fishing
+                                 this.getDeltaMovement().add(0.0, -0.1 * this.syncronizedRandom.nextFloat() * this.syncronizedRandom.nextFloat(), 0.0)
+                             );
+                         }
+ 
+                         if (!this.level().isClientSide) {
+                             this.catchingFish(blockPos);
++                            if (this.tickCount % 20 == 0) this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.001F, 1.0F); // KioCG - more realistic fishing: 虚拟鱼上钩音效, 防止监测声音的自动钓鱼
+                         }
+                     } else {
+                         this.outOfWaterTime = Math.min(10, this.outOfWaterTime + 1);
+@@ -313,12 +_,33 @@
+             i--;
+         }
+ 
++        // KioCG start - more realistic fishing
++        if (this.nibble <= 0 && (this.timeUntilLured > 0 || this.timeUntilHooked > 0) && --this.timeUntilSink < 0) {
++            this.timeUntilSink = Mth.nextInt(this.random, 20, 100);
++            if (this.calculateOpenWater(this.blockPosition())) {
++                boolean deepSink = this.timeUntilLured > 0 && --this.deepSinkCooldown < 0;
++                if (deepSink) {
++                    this.deepSinkCooldown = 3 + this.random.nextInt(3);
++                }
++
++                float x = Mth.nextFloat(this.random, -0.125F, 0.125F);
++                float y = deepSink ? -0.4F * Mth.nextFloat(this.random, 0.6F, 1.0F) : -0.4F * Math.max(0, Mth.nextFloat(this.random, -0.3F, 0.3F));
++                float z = Mth.nextFloat(this.random, -0.125F, 0.125F);
++                this.setDeltaMovementSync(this.getDeltaMovement().add(x, y, z));
++                this.playSound(SoundEvents.FISH_SWIM, 0.25F, (deepSink ? 0.5F : 1.5F) + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
++            }
++        }
++        // KioCG end - more realistic fishing
++
+         if (this.nibble > 0) {
+             this.nibble--;
+             if (this.nibble <= 0) {
+                 this.timeUntilLured = 0;
+                 this.timeUntilHooked = 0;
+-                this.getEntityData().set(DATA_BITING, false);
++                // KioCG start - more realistic fishing
++                this.fishPosition = null;
++                this.biting = false; // this.getEntityData().set(DATA_BITING, false); // 防止自动钓鱼
++                // KioCG end - more realistic fishing
+                 // CraftBukkit start
+                 org.bukkit.event.player.PlayerFishEvent playerFishEvent = new org.bukkit.event.player.PlayerFishEvent((org.bukkit.entity.Player) this.getPlayerOwner().getBukkitEntity(), null, (org.bukkit.entity.FishHook) this.getBukkitEntity(), org.bukkit.event.player.PlayerFishEvent.State.FAILED_ATTEMPT);
+                 this.level().getCraftServer().getPluginManager().callEvent(playerFishEvent);
+@@ -378,7 +_,12 @@
+                     0.2F
+                 );
+                 this.nibble = Mth.nextInt(this.random, 20, 40);
+-                this.getEntityData().set(DATA_BITING, true);
++                // KioCG start - more realistic fishing
++                this.fishWeight = Mth.nextDouble(this.random, 0.5F, 1.0F);
++                this.fishPosition = this.blockPosition();
++                this.biting = true; // this.getEntityData().set(DATA_BITING, true); // 防止自动钓鱼
++                this.setDeltaMovementSync(this.getDeltaMovement().x, -0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F), this.getDeltaMovement().z);
++                // KioCG end - more realistic fishing
+             }
+         } else if (this.timeUntilLured > 0) {
+             this.timeUntilLured -= i;
+@@ -429,10 +_,39 @@
+     public void resetTimeUntilLured() {
+         this.timeUntilLured = Mth.nextInt(this.random, this.minWaitTime, this.maxWaitTime);
+         this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed ) : 0; // Paper - Fix Lure infinite loop
++        // KioCG start - more realistic fishing
++        this.timeUntilSink = Mth.nextInt(this.random, 20, 100);
++        this.deepSinkCooldown = this.random.nextInt(3);
++        // KioCG end - more realistic fishing
+     }
+     // Paper end - more projectile api - extract time until lured reset logic
+ 
++
++    // KioCG start - more realistic fishing
++    public void setDeltaMovementSync(Vec3 deltaMovement) {
++        super.setDeltaMovement(deltaMovement);
++        markHurt();
++    }
++
++    public void setDeltaMovementSync(double x, double y, double z) {
++        super.setDeltaMovement(x, y, z);
++        markHurt();
++    }
++
++    private boolean closerThanOwnerHorizontal(double radius) {
++        net.minecraft.world.entity.player.Player entityhuman = this.getPlayerOwner();
++        if (entityhuman != null) {
++            final Vec3 v1 = entityhuman.position();
++            final Vec3 v2 = this.position();
++            return Mth.lengthSquared(v1.x() - v2.x(), v1.z() - v2.z()) < Mth.square(radius);
++        }
++        return false;
++    }
++    // KioCG end - more realistic fishing
++
+     public boolean calculateOpenWater(BlockPos pos) {
++        if (this.closerThanOwnerHorizontal(6.0)) return false; // KioCG - more realistic fishing
++
+         FishingHook.OpenWaterType openWaterType = FishingHook.OpenWaterType.INVALID;
+ 
+         for (int i = -1; i <= 2; i++) {
+@@ -518,6 +_,15 @@
+                 i = this.hookedIn instanceof ItemEntity ? 3 : 5;
+                 } // Paper - re-check to see if there is a hooked entity
+             } else if (this.nibble > 0) {
++                // KioCG start - more realistic fishing
++                if (!this.closerThanOwnerHorizontal(2.5)) {
++                    Vec3 vec3 = playerOwner.position().subtract(this.position()).normalize().multiply(0.3 * this.fishWeight, 0.0, 0.3 * this.fishWeight);
++                    this.setDeltaMovementSync(this.getDeltaMovement().add(vec3));
++                    this.nibble = Mth.nextInt(this.random, 20, 40);
++                    return 0;
++                }
++                // KioCG end - more realistic fishing
++
+                 LootParams lootParams = new LootParams.Builder((ServerLevel)this.level())
+                     .withParameter(LootContextParams.ORIGIN, this.position())
+                     .withParameter(LootContextParams.TOOL, stack)

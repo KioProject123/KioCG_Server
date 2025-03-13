@@ -1,0 +1,25 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftFishHook.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftFishHook.java
+@@ -164,6 +_,7 @@
+ 
+     @Override
+     public boolean isInOpenWater() {
++        if (this.getHandle().biting) return this.getHandle().isOpenWaterFishing(); // KioCG - more realistic fishing: 防止拉近鱼钩时始终处于非开阔水域
+         return this.getHandle().outOfWaterTime < 10 && this.getHandle().calculateOpenWater(this.getHandle().blockPosition()); // Paper - isOpenWaterFishing is only calculated when a "fish" is approaching the hook
+     }
+ 
+@@ -234,4 +_,14 @@
+         hook.timeUntilHooked = 0; // Reset time until hooked, will be repopulated once lured time is ticked down.
+     }
+     // Paper end
++
++    // KioCG start - more realistic fishing
++    @Override
++    public org.bukkit.Location getFishLocation() {
++        if (this.getHandle().fishPosition == null) {
++            return null;
++        }
++        return org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.getHandle().fishPosition, this.getWorld(), 0.0F, 0.0F);
++    }
++    // KioCG end - more realistic fishing
+ }
