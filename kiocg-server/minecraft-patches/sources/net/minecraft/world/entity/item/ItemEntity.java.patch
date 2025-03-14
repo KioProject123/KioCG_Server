@@ -1,5 +1,65 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
+@@ -178,7 +_,10 @@
+                 }
+             }
+ 
+-            if (!this.onGround() || this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F || (this.tickCount + this.getId()) % 4 == 0) { // Paper - Diff on change; ActivationRange immunity
++            // KioCG start - item entity collision
++            boolean checkPush = false;
++            if (!this.onGround() || (checkPush = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F) || (this.tickCount + this.getId()) % 4 == 0) { // Paper - Diff on change; ActivationRange immunity
++            // KioCG end - item entity collision
+                 this.move(MoverType.SELF, this.getDeltaMovement());
+                 this.applyEffectsFromBlocks();
+                 float f = 0.98F;
+@@ -197,6 +_,8 @@
+                         this.setDeltaMovement(deltaMovement1.multiply(1.0, -0.5, 1.0));
+                     }
+                 }
++
++                if (checkPush) this.pushEntities(); // KioCG - item entity collision
+             }
+ 
+             boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX())
+@@ -231,6 +_,38 @@
+         }
+     }
+ 
++    // KioCG start - item entity collision
++    protected void pushEntities() {
++        if (this.level().paperConfig().collisions.maxEntityCollisions <= 0) {
++            return;
++        }
++
++        this.numCollisions = Math.max(0, this.numCollisions - this.level().paperConfig().collisions.maxEntityCollisions);
++        if (this.numCollisions >= this.level().paperConfig().collisions.maxEntityCollisions) {
++            return;
++        }
++
++        java.util.List<ItemEntity> entities = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox());
++        // Paper start - Cap entity collisions
++        for (Entity entity1 : entities) {
++            if (entity1 == this) continue;
++            if (this.numCollisions >= this.level().paperConfig().collisions.maxEntityCollisions) {
++                break;
++            }
++
++            entity1.numCollisions++;
++            this.numCollisions++;
++            // Paper end - Cap entity collisions
++            entity1.push(this);
++        }
++    }
++
++    @Override
++    public boolean isCollidable(boolean ignoreClimbing) {
++        return this.isAlive();
++    }
++    // KioCG end - item entity collision
++
+     @Override
+     public BlockPos getBlockPosBelowThatAffectsMyMovement() {
+         return this.getOnPos(0.999999F);
 @@ -339,7 +_,7 @@
      public final boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
          if (this.isInvulnerableToBase(damageSource)) {

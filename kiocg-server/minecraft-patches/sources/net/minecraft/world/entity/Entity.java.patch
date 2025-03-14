@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -2177,7 +_,11 @@
+                         this.push(-d, 0.0, -d1);
+                     }
+ 
+-                    if (!entity.isVehicle() && entity.isPushable()) {
++                    // KioCG start - item entity collision: 物品不要挤压生物
++                    boolean isItem1 = this instanceof ItemEntity;
++                    boolean isItem2 = entity instanceof ItemEntity;
++                    if (isItem1 == isItem2 && !entity.isVehicle() && entity.isPushable()) {
++                    // KioCG end - item entity collision: 物品不要挤压生物
+                         entity.push(d, 0.0, d1);
+                     }
+                 }
 @@ -3458,6 +_,7 @@
      }
  
