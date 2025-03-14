@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/block/FenceGateBlock.java
++++ b/net/minecraft/world/level/block/FenceGateBlock.java
+@@ -241,6 +_,24 @@
+         }
+     }
+ 
++    // KioCG start - automatic door closing
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return state.getValue(OPEN) && !state.getValue(POWERED);
++    }
++
++    @Override
++    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
++        if (state.getValue(OPEN) != state.getValue(POWERED)) {
++            if (random.nextFloat() < 0.05688889F * 0.1F) {
++                boolean open = state.getValue(OPEN);
++                level.setBlock(pos, state.setValue(OPEN, !open), 10);
++                level.gameEvent(null, !open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
++            }
++        }
++    }
++    // KioCG end - automatic door closing
++
+     @Override
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+         builder.add(FACING, OPEN, POWERED, IN_WALL);

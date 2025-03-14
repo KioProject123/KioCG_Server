@@ -1,0 +1,97 @@
+--- a/net/minecraft/world/level/block/DoorBlock.java
++++ b/net/minecraft/world/level/block/DoorBlock.java
+@@ -211,10 +_,46 @@
+             level.setBlock(pos, state, 10);
+             this.playSound(player, level, pos, state.getValue(OPEN));
+             level.gameEvent(player, this.isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
++
++            // KioCG start - double door opening
++            BlockPos relativeDoorPos = getRelativeDoor(state, (ServerLevel) level, pos);
++            if (relativeDoorPos != null) {
++                boolean open = !state.getValue(OPEN);
++                BlockState relativeDoorState = level.getBlockState(relativeDoorPos);
++                if (open == relativeDoorState.getValue(OPEN)) {
++                    setOpenWithoutSound(null, level, relativeDoorState, relativeDoorPos, !open);
++                }
++            }
++            // KioCG end - double door opening
++
+             return InteractionResult.SUCCESS;
+         }
+     }
+ 
++    // KioCG start - double door opening
++    private @Nullable BlockPos getRelativeDoor(BlockState state, ServerLevel level, BlockPos pos) {
++        Direction facing = state.getValue(DoorBlock.FACING);
++        DoorHingeSide hinge = state.getValue(DoorBlock.HINGE);
++        boolean hingeRight = hinge == DoorHingeSide.RIGHT;
++        Direction relative = switch (facing) {
++            case NORTH -> hingeRight ? Direction.WEST : Direction.EAST;
++            case EAST -> hingeRight ? Direction.NORTH : Direction.SOUTH;
++            case SOUTH -> hingeRight ? Direction.EAST : Direction.WEST;
++            case WEST -> hingeRight ? Direction.SOUTH : Direction.NORTH;
++            default -> throw new IllegalStateException("Unexpected value: " + facing);
++        };
++        BlockPos relativePos = pos.relative(relative);
++        BlockState relativeState = level.getBlockState(relativePos);
++        if (relativeState.is(this)
++            && relativeState.getValue(DoorBlock.FACING) == facing
++            && relativeState.getValue(DoorBlock.HINGE) != hinge
++            && relativeState.getValue(DoorBlock.HALF) == state.getValue(DoorBlock.HALF)) {
++            return relativePos;
++        }
++        return null;
++    }
++    // KioCG end - double door opening
++
+     public boolean isOpen(BlockState state) {
+         return state.getValue(OPEN);
+     }
+@@ -227,6 +_,15 @@
+         }
+     }
+ 
++    // KioCG start - double door opening
++    public void setOpenWithoutSound(@Nullable Entity entity, Level level, BlockState state, BlockPos pos, boolean _open) {
++        if (state.is(this) && state.getValue(OPEN) != _open) {
++            level.setBlock(pos, state.setValue(OPEN, Boolean.valueOf(_open)), 10);
++            level.gameEvent(entity, _open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
++        }
++    }
++    // KioCG end - double door opening
++
+     @Override
+     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
+         // CraftBukkit start
+@@ -253,6 +_,31 @@
+             level.setBlock(pos, state.setValue(POWERED, Boolean.valueOf(flag)).setValue(OPEN, Boolean.valueOf(flag)), 2);
+         }
+     }
++
++    // KioCG start - automatic door closing
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return state.getValue(OPEN) != state.getValue(DoorBlock.POWERED);
++    }
++
++    @Override
++    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
++        if (state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER && state.getValue(OPEN) != state.getValue(DoorBlock.POWERED)) {
++            if (random.nextFloat() < 0.05688889F * 0.1F) {
++                boolean open = state.getValue(OPEN);
++                setOpenWithoutSound(null, level, state, pos, !open);
++
++                BlockPos relativeDoorPos = getRelativeDoor(state, level, pos);
++                if (relativeDoorPos != null) {
++                    BlockState relativeDoorState = level.getBlockState(relativeDoorPos);
++                    if (open == relativeDoorState.getValue(OPEN) && open != relativeDoorState.getValue(DoorBlock.POWERED)) {
++                        setOpenWithoutSound(null, level, relativeDoorState, relativeDoorPos, !open);
++                    }
++                }
++            }
++        }
++    }
++    // KioCG end - automatic door closing
+ 
+     @Override
+     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {

@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/WeatheringCopperDoorBlock.java
++++ b/net/minecraft/world/level/block/WeatheringCopperDoorBlock.java
+@@ -33,6 +_,7 @@
+ 
+     @Override
+     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
++        super.randomTick(state, level, pos, random); // KioCG - automatic door closing
+         if (state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER) {
+             this.changeOverTime(state, level, pos, random);
+         }
+@@ -40,7 +_,7 @@
+ 
+     @Override
+     protected boolean isRandomlyTicking(BlockState state) {
+-        return WeatheringCopper.getNext(state.getBlock()).isPresent();
++        return super.isRandomlyTicking(state) || WeatheringCopper.getNext(state.getBlock()).isPresent(); // KioCG - automatic door closing
+     }
+ 
+     @Override
