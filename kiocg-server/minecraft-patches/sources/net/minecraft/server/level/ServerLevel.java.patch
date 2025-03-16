@@ -16,6 +16,20 @@
  
          this.updateSkyBrightness();
          if (runsNormally) {
+@@ -863,7 +_,12 @@
+ 
+     private void wakeUpAllPlayers() {
+         this.sleepStatus.removeAllSleepers();
+-        this.players.stream().filter(LivingEntity::isSleeping).collect(Collectors.toList()).forEach(player -> player.stopSleepInBed(false, false));
++        // KioCG start - sleep progress
++        this.players.stream().filter(LivingEntity::isSleeping).collect(Collectors.toList()).forEach(player -> {
++            player.stopSleepInBed(false, false);
++            player.resetStat(net.minecraft.stats.Stats.CUSTOM.get(net.minecraft.stats.Stats.TIME_SINCE_REST));
++        });
++        // KioCG end - sleep progress
+     }
+ 
+     // Paper start - optimise random ticking
 @@ -914,6 +_,44 @@
              }
          }

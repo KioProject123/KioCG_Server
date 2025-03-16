@@ -36,8 +36,33 @@
          if (this.isSleeping()) {
              this.sleepCounter++;
              // Paper start - Add PlayerDeepSleepEvent
-@@ -284,7 +_,7 @@
+@@ -282,9 +_,32 @@
+             // Paper end - Add PlayerDeepSleepEvent
+             if (this.sleepCounter > 100) {
                  this.sleepCounter = 100;
++
++                // KioCG start - sleep progress
++                if (this instanceof ServerPlayer serverPlayer) {
++                    Stat<ResourceLocation> stat = Stats.CUSTOM.get(Stats.TIME_SINCE_REST);
++                    int timeSinceRest = serverPlayer.getStats().getValue(stat);
++                    if (timeSinceRest > 0) {
++                        int decrement;
++                        int playerInsomniaStartTicks = serverPlayer.level().paperConfig().entities.behavior.playerInsomniaStartTicks;
++                        if (timeSinceRest > playerInsomniaStartTicks) {
++                            decrement = -Math.min(timeSinceRest - playerInsomniaStartTicks, timeSinceRest);
++                        } else {
++                            decrement = -Mth.clamp(playerInsomniaStartTicks / 10 / 20, 24000 / 10 / 20, timeSinceRest);
++                        }
++                        serverPlayer.awardStat(stat, decrement);
++
++                        timeSinceRest = serverPlayer.getStats().getValue(stat);
++                        serverPlayer.sendSleepMessage(timeSinceRest, playerInsomniaStartTicks);
++                        if (timeSinceRest == 0) {
++
++                        }
++                    }
++                }
++                // KioCG end - sleep progress
              }
  
 -            if (!this.level().isClientSide && this.level().isDay()) {

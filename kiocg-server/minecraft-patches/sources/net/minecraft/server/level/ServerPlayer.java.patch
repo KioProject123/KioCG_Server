@@ -96,6 +96,35 @@
                      this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                  }
  
+@@ -1612,10 +_,27 @@
+ 
+     @Override
+     public void startSleeping(BlockPos pos) {
+-        this.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
++        // this.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)); // KioCG - sleep progress
+         super.startSleeping(pos);
+     }
+ 
++    // KioCG start - sleep progress
++    public void sendSleepMessage(int value, int maxValue) {
++        String content = io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.sleepProgressContent;
++        float progress = (float) (maxValue - value) / maxValue;
++        int split = (int) (content.length() * progress);
++        String substring1 = content.substring(0, split);
++        String substring2 = content.substring(split);
++        net.kyori.adventure.text.Component result = net.kyori.adventure.text.Component.empty()
++            .append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.sleepProgressLeft)
++            .append(net.kyori.adventure.text.Component.text(substring1))
++            .append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.sleepProgressClock)
++            .append(net.kyori.adventure.text.Component.text(substring2))
++            .append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.sleepProgressRight);
++        this.getBukkitEntity().sendActionBar(result);
++    }
++    // KioCG end - sleep progress
++
+     private boolean bedInRange(BlockPos pos, Direction direction) {
+         return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
+     }
 @@ -2049,6 +_,8 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());

@@ -54,7 +54,7 @@
 +                if (this.target != null) {
 +                    this.target.hurt(this.target.damageSources().indirectMagic(this, this), (float) getTurretDamage());
 +                    setBeamTarget(this.target.blockPosition().offset(0, (int) (this.target.getEyeHeight() * 0.7), 0).offset(0, -2, 0));
-+                    this.level().playSound(null, this.blockPosition(), net.minecraft.sounds.SoundEvents.TRIDENT_THROW.value(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 2.0F);
++                    this.playSound(net.minecraft.sounds.SoundEvents.TRIDENT_THROW.value(), 1.0F, 2.0F);
 +                }
 +            } else {
 +                if (this.beamTicks == 0) {

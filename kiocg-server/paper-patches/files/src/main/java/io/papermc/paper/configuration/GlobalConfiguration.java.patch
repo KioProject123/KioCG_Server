@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -395,4 +_,102 @@
+@@ -395,4 +_,106 @@
              }
          }
      }
@@ -100,6 +100,10 @@
 +        public boolean dontKillMyPet = true;
 +        public double petTeleportDistanceSqr = 256.0;
 +        public boolean petFollowKeepChunkLoaded = true;
++        public Component sleepProgressClock = Component.text("\uD83D\uDE34");
++        public Component sleepProgressLeft = Component.text("☽", NamedTextColor.BLUE);
++        public Component sleepProgressRight = Component.text("☀", NamedTextColor.YELLOW);
++        public String sleepProgressContent = "                              ";
 +    }
 +    // KioCG end
  }
