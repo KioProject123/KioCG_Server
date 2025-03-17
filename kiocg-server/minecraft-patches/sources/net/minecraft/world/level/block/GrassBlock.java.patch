@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/level/block/GrassBlock.java
 +++ b/net/minecraft/world/level/block/GrassBlock.java
-@@ -31,7 +_,12 @@
+@@ -30,8 +_,13 @@
+     }
  
      @Override
-     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
 -        return level.getBlockState(pos.above()).isAir();
++    public final boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) { // KiCG - final防止重写
 +        // KioCG start - Perf: optimize flowers and Grasses spreading
 +        return isValidBonemealTarget(level.getChunk(pos), level, pos, state);
 +    }
@@ -14,10 +16,12 @@
      }
  
      @Override
-@@ -41,24 +_,42 @@
+@@ -40,25 +_,43 @@
+     }
  
      @Override
-     public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
++    public final void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) { // KiCG - final防止重写
 +        // KioCG start - flowers and grasses spread naturally
 +        performBonemeal(level, random, pos, state, 0);
 +    }

@@ -265,11 +265,13 @@
      }
  
      @Override
-@@ -205,7 +_,12 @@
+@@ -204,8 +_,13 @@
+         return compoundTag;
      }
  
-     public boolean placeFood(ServerLevel level, @Nullable LivingEntity entity, ItemStack stack) {
+-    public boolean placeFood(ServerLevel level, @Nullable LivingEntity entity, ItemStack stack) {
 -        for (int i = 0; i < this.items.size(); i++) {
++    public final boolean placeFood(ServerLevel level, @Nullable LivingEntity entity, ItemStack stack) { // KiCG - final防止重写
 +        // KioCG start - change container behavior
 +        return placeFood(level, entity, stack, 0);
 +    }
