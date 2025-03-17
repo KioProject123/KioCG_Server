@@ -6,7 +6,7 @@
  
 -            if (!this.onGround() || this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F || (this.tickCount + this.getId()) % 4 == 0) { // Paper - Diff on change; ActivationRange immunity
 +            // KioCG start - item entity collision
-+            boolean checkPush = false;
++            boolean checkPush = true;
 +            if (!this.onGround() || (checkPush = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F) || (this.tickCount + this.getId()) % 4 == 0) { // Paper - Diff on change; ActivationRange immunity
 +            // KioCG end - item entity collision
                  this.move(MoverType.SELF, this.getDeltaMovement());
@@ -69,3 +69,11 @@
              return false;
          } else if (!this.getItem().canBeHurtBy(damageSource)) {
              return false;
+@@ -363,6 +_,7 @@
+ 
+     @Override
+     public boolean ignoreExplosion(Explosion explosion) {
++        if (this.level().paperConfig().kiocgConfig.entity.itemEntityExplosionKnockback) return false; // KioCG - item entity explosion knockback
+         return !explosion.shouldAffectBlocklikeEntities() || super.ignoreExplosion(explosion);
+     }
+ 

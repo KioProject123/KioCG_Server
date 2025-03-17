@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
+@@ -490,6 +_,7 @@
+                 if (d <= 1.0) {
+                     double d1 = entity.getX() - this.center.x;
+                     double d2 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - this.center.y;
++                    if (entity instanceof ItemEntity) d2 += 1.0; // KioCG - item entity explosion knockback
+                     double d3 = entity.getZ() - this.center.z;
+                     double squareRoot = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+                     if (squareRoot != 0.0) {
+@@ -497,6 +_,7 @@
+                         d2 /= squareRoot;
+                         d3 /= squareRoot;
+                         boolean shouldDamageEntity = this.damageCalculator.shouldDamageEntity(this, entity);
++                        if (entity.level().paperConfig().kiocgConfig.entity.itemEntityExplosionKnockback && entity instanceof ItemEntity) shouldDamageEntity = false; // KioCG - item entity explosion knockback
+                         float knockbackMultiplier = this.damageCalculator.getKnockbackMultiplier(entity);
+                         float f1 = !shouldDamageEntity && knockbackMultiplier == 0.0F ? 0.0F : this.getBlockDensity(this.center, entity); // Paper - Optimize explosions
+                         if (shouldDamageEntity) {
 @@ -734,14 +_,14 @@
          return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK
              && (
