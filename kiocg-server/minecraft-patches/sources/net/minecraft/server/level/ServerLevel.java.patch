@@ -1,21 +1,14 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -726,6 +_,7 @@
-             profilerFiller.pop();
+@@ -727,7 +_,7 @@
          }
  
-+        if (!this.paperConfig().kiocgConfig.sleepAnyTime) { // KioCG - sleep any time
          int _int = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
-         if (this.sleepStatus.areEnoughSleeping(_int) && this.sleepStatus.areEnoughDeepSleeping(_int, this.players)) {
+-        if (this.sleepStatus.areEnoughSleeping(_int) && this.sleepStatus.areEnoughDeepSleeping(_int, this.players)) {
++        if (false && this.sleepStatus.areEnoughSleeping(_int) && this.sleepStatus.areEnoughDeepSleeping(_int, this.players)) { // KioCG - sleep any time
              // Paper start - create time skip event - move up calculations
-@@ -751,6 +_,7 @@
-                 this.resetWeatherCycle();
-             }
-         }
-+        } // KioCG - sleep any time
- 
-         this.updateSkyBrightness();
-         if (runsNormally) {
+             final long newDayTime = this.levelData.getDayTime() + 24000L;
+             org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(
 @@ -863,7 +_,12 @@
  
      private void wakeUpAllPlayers() {
@@ -79,7 +72,7 @@
      }
  
      private void announceSleepStatus() {
-+        if (this.paperConfig().kiocgConfig.sleepAnyTime) return; // KioCG - sleep any time
++        if (true) return; // KioCG - sleep any time
          if (this.canSleepThroughNights()) {
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int _int = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);

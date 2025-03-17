@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,82 @@
+@@ -575,4 +_,81 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -76,7 +76,6 @@
 +            public boolean itemEntityExplosionKnockback = true;
 +        }
 +
-+        public boolean sleepAnyTime = true;
 +        public int sleepHealingRegenRate = 10;
 +        public double saplingsWitheredChance = 0.025;
 +        public double flowersAndGrassesSpreadChance = 0.01;

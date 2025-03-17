@@ -83,7 +83,7 @@
          } else {
              this.setRespawnPosition(this.level().dimension(), at, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
 -            if (this.level().isDay()) {
-+            if (this.level().isDay() && !this.level().paperConfig().kiocgConfig.sleepAnyTime) { // KioCG - sleep any time
++            if (false && this.level().isDay()) { // KioCG - sleep any time
                  return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                  if (!this.isCreative()) {
@@ -92,7 +92,7 @@
                      CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                  });
 -                if (!this.serverLevel().canSleepThroughNights()) {
-+                if (!this.serverLevel().canSleepThroughNights() && !this.level().paperConfig().kiocgConfig.sleepAnyTime) { // KioCG - sleep any time
++                if (false && !this.serverLevel().canSleepThroughNights()) { // KioCG - sleep any time
                      this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                  }
  
@@ -151,7 +151,7 @@
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent
 -                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.getNotification())); // Paper - Add PlayerSetSpawnEvent
-+                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.getNotification()), this.level().paperConfig().kiocgConfig.sleepAnyTime); // Paper - Add PlayerSetSpawnEvent // KioCG - sleep any time: 使用操作栏提示
++                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.getNotification()), true); // Paper - Add PlayerSetSpawnEvent // KioCG - sleep any time: 使用操作栏提示
              }
  
              this.respawnPosition = position;
