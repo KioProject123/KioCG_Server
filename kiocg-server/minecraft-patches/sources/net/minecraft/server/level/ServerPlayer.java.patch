@@ -125,6 +125,18 @@
      private boolean bedInRange(BlockPos pos, Direction direction) {
          return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
      }
+@@ -1701,9 +_,9 @@
+     }
+ 
+     @Override
+-    protected void pushEntities() {
++    protected void pushEntities(boolean moved) { // KioCG start - optimize entity collide
+         if (this.level().tickRateManager().runsNormally()) {
+-            super.pushEntities();
++            super.pushEntities(true); // KioCG start - optimize entity collide
+         }
+     }
+ 
 @@ -2049,6 +_,8 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());

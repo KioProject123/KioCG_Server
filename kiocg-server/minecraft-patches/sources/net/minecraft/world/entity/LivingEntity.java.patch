@@ -221,3 +221,30 @@
                  this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), ticksFrozen + 1));
              } else {
                  this.setTicksFrozen(Math.max(0, ticksFrozen - 2));
+@@ -3476,11 +_,12 @@
+             this.checkAutoSpinAttack(boundingBox, this.getBoundingBox());
+         }
+ 
+-        this.pushEntities();
++        boolean moved = this.xo != this.getX() || this.yo != this.getY() || this.zo != this.getZ() || this.yRotO != this.getYRot() || this.xRotO != this.getXRot(); // KioCG - optimize entity collide: 提取变量
++        this.pushEntities(moved); // KioCG - optimize entity collide
+         profilerFiller.pop();
+         // Paper start - Add EntityMoveEvent
+         if (((ServerLevel) this.level()).hasEntityMoveEvent && !(this instanceof Player)) {
+-            if (this.xo != this.getX() || this.yo != this.getY() || this.zo != this.getZ() || this.yRotO != this.getYRot() || this.xRotO != this.getXRot()) {
++            if (moved) { // KioCG - optimize entity collide: 提取变量
+                 Location from = new Location(this.level().getWorld(), this.xo, this.yo, this.zo, this.yRotO, this.xRotO);
+                 Location to = new Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+                 io.papermc.paper.event.entity.EntityMoveEvent event = new io.papermc.paper.event.entity.EntityMoveEvent(this.getBukkitLivingEntity(), from, to.clone());
+@@ -3541,7 +_,10 @@
+     protected void serverAiStep() {
+     }
+ 
+-    protected void pushEntities() {
++    // KioCG start - optimize entity collide
++    protected void pushEntities(boolean moved) {
++        if (!moved) return;
++        // KioCG end - optimize entity collide
+         if (!(this.level() instanceof ServerLevel serverLevel)) {
+             this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
+         } else {

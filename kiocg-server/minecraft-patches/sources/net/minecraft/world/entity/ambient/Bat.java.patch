@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ambient/Bat.java
++++ b/net/minecraft/world/entity/ambient/Bat.java
+@@ -94,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void pushEntities() {
++    protected void pushEntities(boolean moved) { // KioCG start - optimize entity collide
+     }
+ 
+     public static AttributeSupplier.Builder createAttributes() {
