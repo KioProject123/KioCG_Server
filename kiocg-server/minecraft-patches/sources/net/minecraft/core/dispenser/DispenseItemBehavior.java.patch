@@ -5,7 +5,7 @@
                  ServerLevel serverLevel = blockSource.level();
                  BlockPos blockPos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
 -                List<Armadillo> entitiesOfClass = serverLevel.getEntitiesOfClass(Armadillo.class, new AABB(blockPos), EntitySelector.NO_SPECTATORS);
-+                List<LivingEntity> entitiesOfClass = serverLevel.getEntitiesOfClass(LivingEntity.class, new AABB(blockPos), EntitySelector.NO_SPECTATORS); // KioCG - breeding animals
++                List<net.minecraft.world.entity.animal.Animal> entitiesOfClass = serverLevel.getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, new AABB(blockPos), EntitySelector.NO_SPECTATORS.and(entity -> entity instanceof Armadillo || entity instanceof net.minecraft.world.entity.animal.Turtle)); // KioCG - breeding animals
                  if (entitiesOfClass.isEmpty()) {
                      this.setSuccess(false);
                      return item;

@@ -99,6 +99,14 @@
      public static boolean suckInItems(Level level, Hopper hopper) {
          BlockPos blockPos = BlockPos.containing(hopper.getLevelX(), hopper.getLevelY() + 1.0, hopper.getLevelZ());
          BlockState blockState = level.getBlockState(blockPos);
+@@ -540,6 +_,7 @@
+             return false;
+         } else {
+             boolean flag = hopper.isGridAligned() && blockState.isCollisionShapeFullBlock(level, blockPos) && !blockState.is(BlockTags.DOES_NOT_BLOCK_HOPPERS);
++            flag = flag || hopper.isGridAligned() && level.paperConfig().kiocgConfig.hopperRailsOptimize && blockState.is(BlockTags.RAILS); // KioCG - hopper rails optimize: 不要吸取铁轨上的物品
+             if (!flag) {
+                 for (ItemEntity itemEntity : getItemsAtAndAbove(level, hopper)) {
+                     if (addItem(hopper, itemEntity)) {
 @@ -613,6 +_,9 @@
      }
  
@@ -123,3 +131,19 @@
          if (destination instanceof WorldlyContainer worldlyContainer && direction != null) {
              int[] slotsForFace = worldlyContainer.getSlotsForFace(direction);
  
+@@ -781,6 +_,7 @@
+         // Paper end - Perf: Optimize Hoppers
+         Container blockContainer = getBlockContainer(level, pos, state);
+         if (blockContainer == null && (!optimizeEntities || !level.paperConfig().hopper.ignoreOccludingBlocks || !state.getBukkitMaterial().isOccluding())) { // Paper - Perf: Optimize Hoppers
++            if (level.paperConfig().kiocgConfig.hopperRailsOptimize && state.is(BlockTags.RAILS)) // KioCG - hopper rails optimize: 不要吸取铁轨外的矿车
+             blockContainer = getEntityContainer(level, x, y, z);
+         }
+ 
+@@ -862,6 +_,7 @@
+         if (entity instanceof ItemEntity itemEntity
+             && !itemEntity.getItem().isEmpty()
+             && entity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(blockEntity.getSuckAabb())) {
++            if (level.paperConfig().kiocgConfig.hopperRailsOptimize && level.getBlockState(pos.relative(Direction.UP)).is(BlockTags.RAILS)) return; // KioCG - hopper rails optimize: 不要吸取铁轨上的物品
+             tryMoveItems(level, pos, state, blockEntity, () -> addItem(blockEntity, itemEntity));
+         }
+     }
