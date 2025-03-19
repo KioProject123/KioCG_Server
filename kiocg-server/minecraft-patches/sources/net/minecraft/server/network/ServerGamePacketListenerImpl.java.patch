@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -385,6 +_,7 @@
+             && this.server.getPlayerIdleTimeout() > 0
+             && Util.getMillis() - this.player.getLastActionTime() > this.server.getPlayerIdleTimeout() * 1000L * 60L && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits
+             this.player.resetLastActionTime(); // CraftBukkit - SPIGOT-854
++            if (this.player.getNearbyChunkHot() >= this.player.level().paperConfig().kiocgConfig.chunkHot.phaseMedium || this.player.getNearbyChunkHot() >= this.player.level().paperConfig().kiocgConfig.chunkHot.phaseGood && MinecraftServer.getServer().tps5.getAverage() < 18.0) // KioCG - chunk hot
+             this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
+         }
+         // Paper start - Prevent causing expired keys from impacting new joins

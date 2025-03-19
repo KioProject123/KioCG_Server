@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -85,6 +_,7 @@
+     private final LevelChunkTicks<Block> blockTicks;
+     private final LevelChunkTicks<Fluid> fluidTicks;
+     private LevelChunk.UnsavedListener unsavedListener = chunkPos -> {};
++    private final com.kiocg.world.ChunkHot chunkHot = new com.kiocg.world.ChunkHot(); public com.kiocg.world.ChunkHot getChunkHot() { return this.chunkHot; } // KioCG - chunk hot
+     // CraftBukkit start
+     public boolean mustNotSave;
+     public boolean needsDecoration;
 @@ -204,6 +_,7 @@
          this.setLightCorrect(chunk.isLightCorrect());
          this.markUnsaved();
@@ -8,3 +16,19 @@
          // CraftBukkit start
          this.persistentDataContainer = chunk.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
          // CraftBukkit end
+@@ -913,6 +_,7 @@
+                     try {
+                         ProfilerFiller profilerFiller = Profiler.get();
+                         profilerFiller.push(this::getType);
++                        LevelChunk.this.chunkHot.startTicking(); try { // KioCG - chunk hot
+                         BlockState blockState = LevelChunk.this.getBlockState(blockPos);
+                         if (this.blockEntity.getType().isValid(blockState)) {
+                             this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
+@@ -927,6 +_,7 @@
+                             // Paper end - Remove the Block Entity if it's invalid
+                         }
+ 
++                        } finally { LevelChunk.this.chunkHot.endTickingAndCount(); } // KioCG - chunk hot
+                         profilerFiller.pop();
+                     } catch (Throwable var5) {
+                         // Paper start - Prevent block entity and entity crashes

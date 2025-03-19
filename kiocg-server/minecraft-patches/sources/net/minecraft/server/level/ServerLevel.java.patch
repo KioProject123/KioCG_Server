@@ -76,6 +76,43 @@
          if (this.canSleepThroughNights()) {
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int _int = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
+@@ -1265,10 +_,16 @@
+         profilerFiller.push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
+         profilerFiller.incrementCounter("tickNonPassenger");
+         final boolean isActive = io.papermc.paper.entity.activation.ActivationRange.checkIfActive(entity); // Paper - EAR 2
++        // KioCG start - chunk hot
++        LevelChunk levelChunk = entity.shouldTickHot() ? this.getChunkIfLoaded(entity.blockPosition()) : null;
++        if (levelChunk != null) levelChunk.getChunkHot().startTicking();
++        try {
++        // KioCG end - chunk hot
+         if (isActive) { // Paper - EAR 2
+         entity.tick();
+         entity.postTick(); // CraftBukkit
+         } else {entity.inactiveTick();} // Paper - EAR 2
++        } finally { if (levelChunk != null) levelChunk.getChunkHot().endTickingAndCount(); } // KioCG - chunk hot
+         profilerFiller.pop();
+ 
+         for (Entity entity1 : entity.getPassengers()) {
+@@ -1292,6 +_,11 @@
+             ProfilerFiller profilerFiller = Profiler.get();
+             profilerFiller.push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(passengerEntity.getType()).toString());
+             profilerFiller.incrementCounter("tickPassenger");
++            // KioCG start - chunk hot
++            LevelChunk levelChunk = passengerEntity.shouldTickHot() ? this.getChunkIfLoaded(passengerEntity.blockPosition()) : null;
++            if (levelChunk != null) levelChunk.getChunkHot().startTicking();
++            try {
++            // KioCG end - chunk hot
+             // Paper start - EAR 2
+             if (isActive) {
+             passengerEntity.rideTick();
+@@ -1303,6 +_,7 @@
+                 ridingEntity.positionRider(passengerEntity);
+             }
+             // Paper end - EAR 2
++            } finally { if (levelChunk != null) levelChunk.getChunkHot().endTickingAndCount(); } // KioCG - chunk hot
+             profilerFiller.pop();
+ 
+             for (Entity entity : passengerEntity.getPassengers()) {
 @@ -1833,7 +_,7 @@
          Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
              case NONE -> Explosion.BlockInteraction.KEEP;

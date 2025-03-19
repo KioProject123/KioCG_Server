@@ -1,0 +1,28 @@
+--- a/net/minecraft/server/MinecraftServer.java
++++ b/net/minecraft/server/MinecraftServer.java
+@@ -1093,6 +_,7 @@
+         this.safeShutdown(waitForServer, false);
+     }
+     public void safeShutdown(boolean waitForServer, boolean isRestarting) {
++        com.kiocg.task.BossBarTask.stopAll(); // KioCG - bossbar task
+         this.isRestarting = isRestarting;
+         this.hasLoggedStop = true; // Paper - Debugging
+         if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
+@@ -1521,6 +_,17 @@
+                 return;
+             }
+         }
++
++        // KioCG start - chunk hot
++        if (this.tickCount % 20 == 0) {
++            for (ServerLevel serverLevel : this.getAllLevels()) {
++                for (ServerChunkCache.ChunkAndHolder chunkAndHolder : serverLevel.moonrise$getTickingChunks()) {
++                    chunkAndHolder.chunk().getChunkHot().newTick();
++                }
++            }
++            com.kiocg.world.ChunkHot.nextTick();
++        }
++        // KioCG end - chunk hot
+ 
+         this.server.spark.tickStart(); // Paper - spark
+         new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events

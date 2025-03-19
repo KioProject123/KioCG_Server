@@ -101,11 +101,10 @@
          this.abilities.addSaveData(compound);
          compound.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
          if (!this.getShoulderEntityLeft().isEmpty()) {
-@@ -943,6 +_,28 @@
-             }
+@@ -944,6 +_,28 @@
          }
      }
-+
+ 
 +    // KioCG start - campfire healing
 +    private boolean campfireHealed;
 +    public void campfireHealing() {
@@ -127,6 +126,21 @@
 +        }
 +    }
 +    // KioCG end - campfire healing
- 
++
      @Override
      protected void blockUsingShield(LivingEntity entity) {
+         super.blockUsingShield(entity);
+@@ -2415,6 +_,13 @@
+     public boolean onClimbable() {
+         return !this.abilities.flying && super.onClimbable();
+     }
++
++    // KioCG start - chunk hot
++    @Override
++    public boolean shouldTickHot() {
++        return false;
++    }
++    // KioCG end - chunk hot
+ 
+     public static enum BedSleepingProblem {
+         NOT_POSSIBLE_HERE,

@@ -87,7 +87,7 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1684,6 +_,51 @@
+@@ -1684,6 +_,58 @@
              this.getNavigation().updatePathfinderMaxVisitedNodes();
          }
      }
@@ -136,6 +136,13 @@
 +        }
 +    }
 +    // KioCG end - entity bossbar api
++
++    // KioCG start - chunk hot
++    @Override
++    public boolean shouldTickHot() {
++        return super.shouldTickHot() && (this.isPersistenceRequired() || this.requiresCustomPersistence() || !this.removeWhenFarAway(0.0));
++    }
++    // KioCG end - chunk hot
  
      @VisibleForTesting
      public float[] getHandDropChances() {

@@ -18,6 +18,14 @@
              LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
+@@ -350,6 +_,7 @@
+                 LOGGER.info("JMX monitoring enabled");
+             }
+ 
++            com.kiocg.task.BossBarTask.startAll(); // KioCG - bossbar task
+             return true;
+         }
+     }
 @@ -735,6 +_,7 @@
          this.executeBlocking(() -> {
              CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();

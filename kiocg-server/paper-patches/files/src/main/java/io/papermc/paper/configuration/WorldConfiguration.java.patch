@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,83 @@
+@@ -575,4 +_,91 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -81,6 +81,14 @@
 +        public int sleepHealingRegenRate = 10;
 +        public double saplingsWitheredChance = 0.025;
 +        public double flowersAndGrassesSpreadChance = 0.01;
++
++        public ChunkHot chunkHot;
++        public class ChunkHot extends ConfigurationPart {
++            public long phaseGood = 300_000L;
++            public long phaseMedium = 500_000L;
++            public String mediumMessage = "<red><i>这片区域令你感到不适";
++            public String lowMessage = "<dark_red><i><b>古神在你耳边窃窃私语";
++        }
 +    }
 +    // KioCG end
  }

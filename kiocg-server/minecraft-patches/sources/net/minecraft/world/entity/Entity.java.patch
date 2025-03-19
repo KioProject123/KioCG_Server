@@ -29,16 +29,27 @@
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
-@@ -4968,6 +_,12 @@
-     public Level level() {
+@@ -4969,6 +_,12 @@
          return this.level;
      }
-+
+ 
 +    // KioCG start
 +    public ServerLevel serverLevel() {
 +        return (ServerLevel)this.level();
 +    }
 +    // KioCG end
- 
++
      public void setLevel(Level level) {
          this.level = level;
+     }
+@@ -5077,4 +_,10 @@
+         return ((ServerLevel) this.level).isPositionEntityTicking(this.blockPosition());
+     }
+     // Paper end - Expose entity id counter
++
++    // KioCG start - chunk hot
++    public boolean shouldTickHot() {
++        return this.tickCount > 20 && this.isAlive();
++    }
++    // KioCG end - chunk hot
+ }
