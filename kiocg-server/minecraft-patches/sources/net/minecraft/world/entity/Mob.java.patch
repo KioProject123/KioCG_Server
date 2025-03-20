@@ -61,6 +61,53 @@
              Vec3i pickupReach = this.getPickupReach();
  
              for (ItemEntity itemEntity : this.level()
+@@ -700,6 +_,7 @@
+     protected void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
+         this.setItemSlot(slot, stack);
+         this.setGuaranteedDrop(slot);
++        if (this.level().paperConfig().kiocgConfig.entity.monster.persistentWhenPickedUpItems) // KioCG - drop picked up items when despawn
+         this.persistenceRequired = true;
+     }
+ 
+@@ -811,6 +_,7 @@
+     @Override
+     public void checkDespawn() {
+         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
++            this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
+             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+             Entity nearestPlayer = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+@@ -825,11 +_,13 @@
+                 final double distanceSquared = dxSqr + dzSqr + dySqr;
+                 // Despawn if hard/soft limit is exceeded
+                 if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
++                    this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                  }
+ 
+                 if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
+                     if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
++                        this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
+                         this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                     }
+                 } else {
+@@ -842,6 +_,16 @@
+         }
+     }
+ 
++    // KioCG start - drop picked up items when despawn
++    private void dropPickedUpItems() {
++        this.forceDrops = true; // CraftBukkit
++        this.dropPreservedEquipment(serverLevel(), itemStack -> {
++            return !EnchantmentHelper.has(itemStack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP);
++        });
++        this.forceDrops = false; // CraftBukkit
++    }
++    // KioCG end - drop picked up items when despawn
++
+     @Override
+     protected final void serverAiStep() {
+         this.noActionTime++;
 @@ -1560,8 +_,23 @@
          return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
      }
