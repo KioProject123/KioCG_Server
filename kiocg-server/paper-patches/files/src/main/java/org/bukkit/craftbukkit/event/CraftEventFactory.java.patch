@@ -1,5 +1,47 @@
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -605,6 +_,41 @@
+         return event;
+     }
+ 
++    // KioCG start - PlayerItemUseEvent
++    public static com.kiocg.event.player.PlayerItemUseEvent callPlayerItemUseEvent(net.minecraft.world.entity.player.Player who, Action action, BlockPos position, Direction direction, ItemStack itemstack, InteractionHand hand, Vec3 targetPos, PlayerInteractEvent interactEvent) {
++        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
++        CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
++
++        Vector clickedPos = null;
++        if (position != null && targetPos != null) {
++            clickedPos = CraftVector.toBukkit(targetPos.subtract(Vec3.atLowerCornerOf(position)));
++        }
++
++        CraftWorld craftWorld = (CraftWorld) player.getWorld();
++        CraftServer craftServer = (CraftServer) player.getServer();
++
++        Block blockClicked = null;
++        if (position != null) {
++            blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
++        } else {
++            switch (action) {
++                case LEFT_CLICK_BLOCK:
++                    action = Action.LEFT_CLICK_AIR;
++                    break;
++                case RIGHT_CLICK_BLOCK:
++                    action = Action.RIGHT_CLICK_AIR;
++                    break;
++            }
++        }
++        BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
++
++        com.kiocg.event.player.PlayerItemUseEvent event = new com.kiocg.event.player.PlayerItemUseEvent(player, action, itemInHand, blockClicked, blockFace, ((hand == InteractionHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND), clickedPos, interactEvent);
++        craftServer.getPluginManager().callEvent(event);
++
++        return event;
++    }
++    // KioCG end - PlayerItemUseEvent
++
+     /**
+      * EntityTransformEvent
+      */
 @@ -1019,10 +_,16 @@
      }
  

@@ -1,0 +1,102 @@
+--- a/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -420,11 +_,42 @@
+     }
+ 
+     public InteractionResult useItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand) {
++        // KioCG start - PlayerItemUseEvent
++        return this.useItem(player, level, stack, hand, null, false, null);
++    }
++    public InteractionResult useItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, net.minecraft.world.phys.BlockHitResult hitResult, boolean interactCancelled, org.bukkit.event.player.PlayerInteractEvent interactEvent) {
++        // KioCG end - PlayerItemUseEvent
+         if (this.gameModeForPlayer == GameType.SPECTATOR) {
+             return InteractionResult.PASS;
+         } else if (player.getCooldowns().isOnCooldown(stack)) {
+             return InteractionResult.PASS;
+         } else {
++            // KioCG start - PlayerItemUseEvent: 复制PlayerInteractEvent的行为
++            boolean cancelled;
++            if (hitResult == null || hitResult.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) {
++                com.kiocg.event.player.PlayerItemUseEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemUseEvent(this.player, org.bukkit.event.block.Action.RIGHT_CLICK_AIR, null, null, stack, hand, null, interactEvent);
++                cancelled = event.isCancelled();
++            } else {
++                if (this.player.gameMode.firedUseItem && this.player.gameMode.useItemPosition.equals(hitResult.getBlockPos()) && this.player.gameMode.useItemHand == hand && ItemStack.isSameItemSameComponents(this.player.gameMode.useItemItemStack, stack)) {
++                    cancelled = this.player.gameMode.useItemResult;
++                } else {
++                    com.kiocg.event.player.PlayerItemUseEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemUseEvent(this.player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitResult.getBlockPos(), hitResult.getDirection(), stack, hand, hitResult.getLocation(), interactEvent);
++                    cancelled = event.isCancelled();
++                }
++                this.player.gameMode.firedUseItem = false;
++            }
++
++            if (cancelled || interactCancelled) {
++                this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
++                this.player.containerMenu.sendAllDataToRemote(); // SPIGOT-2524
++                return InteractionResult.FAIL;
++            }
++            stack = this.player.getItemInHand(hand); // Update in case it was changed in the event
++            if (stack.isEmpty()) {
++                return InteractionResult.FAIL;
++            }
++            // KioCG end - PlayerItemUseEvent: 复制PlayerInteractEvent的行为
++
+             int count = stack.getCount();
+             int damageValue = stack.getDamageValue();
+             InteractionResult interactionResult = stack.use(level, player, hand);
+@@ -463,6 +_,13 @@
+     public BlockPos interactPosition;
+     public InteractionHand interactHand;
+     public ItemStack interactItemStack;
++    // KioCG start - PlayerItemUseEvent
++    public boolean useItemResult = false;
++    public boolean firedUseItem = false;
++    public BlockPos useItemPosition;
++    public InteractionHand useItemHand;
++    public ItemStack useItemItemStack;
++    // KioCG end - PlayerItemUseEvent
+     public InteractionResult useItemOn(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult hitResult) {
+         BlockPos blockPos = hitResult.getBlockPos();
+         BlockState blockState = level.getBlockState(blockPos);
+@@ -494,6 +_,21 @@
+             }
+             player.getBukkitEntity().updateInventory(); // SPIGOT-2867
+             this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
++
++            // KioCG start - PlayerItemUseEvent
++            if (!stack.isEmpty()) {
++                com.kiocg.event.player.PlayerItemUseEvent event1 = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemUseEvent(player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, blockPos, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
++                this.firedUseItem = true;
++                this.useItemResult = event1.isCancelled();
++                this.useItemPosition = blockPos.immutable();
++                this.useItemHand = hand;
++                this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
++                if (event1.isCancelled()) {
++                    return InteractionResult.SUCCESS;
++                }
++            }
++            // KioCG end - PlayerItemUseEvent
++
+             return (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+         } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
+             MenuProvider menuProvider = blockState.getMenuProvider(level, blockPos);
+@@ -521,6 +_,20 @@
+                     }
+                 }
+             }
++
++            // KioCG start - PlayerItemUseEvent
++            if (!stack.isEmpty()) {
++                com.kiocg.event.player.PlayerItemUseEvent event1 = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemUseEvent(player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, blockPos, hitResult.getDirection(), stack, hand, hitResult.getLocation(), event);
++                this.firedUseItem = true;
++                this.useItemResult = event1.isCancelled();
++                this.useItemPosition = blockPos.immutable();
++                this.useItemHand = hand;
++                this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
++                if (event1.isCancelled()) {
++                    return InteractionResult.PASS;
++                }
++            }
++            // KioCG end - PlayerItemUseEvent
+ 
+             if (!stack.isEmpty() && !this.interactResult) { // add !interactResult SPIGOT-764
+                 UseOnContext useOnContext = new UseOnContext(player, hand, hitResult);
