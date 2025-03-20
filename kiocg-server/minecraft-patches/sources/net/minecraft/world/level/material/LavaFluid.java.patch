@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/material/LavaFluid.java
 +++ b/net/minecraft/world/level/material/LavaFluid.java
+@@ -75,6 +_,8 @@
+     @Override
+     public void randomTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource random) {
+         if (level.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
++            if (net.minecraft.server.MinecraftServer.currentTick % 10 != 0) return; // KioCG - optimize
++
+             int randomInt = random.nextInt(3);
+             if (randomInt > 0) {
+                 BlockPos blockPos = pos;
 @@ -211,7 +_,7 @@
              if (this.is(FluidTags.LAVA) && fluidState1.is(FluidTags.WATER)) {
                  if (blockState.getBlock() instanceof LiquidBlock) {
