@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/entity/animal/Bucketable.java
++++ b/net/minecraft/world/entity/animal/Bucketable.java
+@@ -56,7 +_,30 @@
+ 
+             compoundTag.putFloat("Health", mob.getHealth());
+         });
+-    }
++        saveEntityData(mob, bucket); // KioCG - save bucketable entity data
++    }
++
++    // KioCG start - save bucketable entity data
++    private static void saveEntityData(Mob entity, ItemStack stack) {
++        entity.unRide();
++        if (entity.isLeashed()) { // Paper - only call if it is leashed
++            // Paper start - Expand EntityUnleashEvent
++            final org.bukkit.event.entity.EntityUnleashEvent event = new org.bukkit.event.entity.EntityUnleashEvent(entity.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.UNKNOWN, true); // CraftBukkit
++            event.callEvent();
++            if (!event.isDropLeash()) {
++                entity.removeLeash();
++            } else {
++                entity.dropLeash();
++            }
++            // Paper end - Expand EntityUnleashEvent
++        }
++
++        org.bukkit.entity.EntitySnapshot snapshot = entity.getBukkitEntity().createSnapshot();
++        if (snapshot != null) {
++            CustomData.set(DataComponents.ENTITY_DATA, stack, ((org.bukkit.craftbukkit.entity.CraftEntitySnapshot) snapshot).getData());
++        }
++    }
++    // KioCG end - save bucketable entity data
+ 
+     @Deprecated
+     static void loadDefaultDataFromBucketTag(Mob mob, CompoundTag tag) {
