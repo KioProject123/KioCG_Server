@@ -36,6 +36,32 @@
          this.updateSpecialPrices(player);
          this.setTradingPlayer(player);
          this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().getLevel());
+@@ -463,21 +_,22 @@
+     public boolean shouldRestock() {
+         long l = this.lastRestockGameTime + 12000L;
+         long gameTime = this.level().getGameTime();
+-        boolean flag = gameTime > l;
++        boolean flag = gameTime > l && false; // KioCG - villager restock every day: 去除半天刷新一次补货? 意义不明
+         long dayTime = this.level().getDayTime();
+         if (this.lastRestockCheckDayTime > 0L) {
+             long l1 = this.lastRestockCheckDayTime / 24000L;
+             long l2 = dayTime / 24000L;
++            // KioCG - 注释: 天数不同则补货
+             flag |= l2 > l1;
+         }
+ 
+         this.lastRestockCheckDayTime = dayTime;
+         if (flag) {
+             this.lastRestockGameTime = gameTime;
+-            this.resetNumberOfRestocks();
++            this.numberOfRestocksToday = 1; // KioCG - villager restock every day: 补货后会变成2, 用于兼容插件
+         }
+ 
+-        return this.allowedToRestock() && this.needsToRestock();
++        return flag; // KioCG - villager restock every day
+     }
+ 
+     private void catchUpDemand() {
 @@ -551,6 +_,7 @@
          if (this.assignProfessionWhenSpawned) {
              compound.putBoolean("AssignProfessionWhenSpawned", true);
