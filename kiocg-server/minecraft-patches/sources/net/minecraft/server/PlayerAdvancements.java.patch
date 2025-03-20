@@ -1,0 +1,106 @@
+--- a/net/minecraft/server/PlayerAdvancements.java
++++ b/net/minecraft/server/PlayerAdvancements.java
+@@ -53,6 +_,7 @@
+     private AdvancementTree tree;
+     private final Map<AdvancementHolder, AdvancementProgress> progress = new LinkedHashMap<>();
+     private final Set<AdvancementHolder> visible = new HashSet<>();
++    private final Set<AdvancementHolder> registered = new HashSet<>(); // KioCG - linear achievement system
+     private final Set<AdvancementHolder> progressChanged = new HashSet<>();
+     private final Set<AdvancementNode> rootsToUpdate = new HashSet<>();
+     private ServerPlayer player;
+@@ -86,6 +_,7 @@
+         this.stopListening();
+         this.progress.clear();
+         this.visible.clear();
++        this.registered.clear(); // KioCG - linear achievement system
+         this.rootsToUpdate.clear();
+         this.progressChanged.clear();
+         this.isFirstPacket = true;
+@@ -179,6 +_,14 @@
+             }
+             // Paper end - Add PlayerAdvancementCriterionGrantEvent
+             this.unregisterListeners(advancement);
++            // KioCG start - linear achievement system
++            AdvancementNode advancementNode = this.tree.get(advancement);
++            if (advancementNode != null) {
++                for (AdvancementNode child : advancementNode.children()) {
++                    this.registerDisplayedChildren(child);
++                }
++            }
++            // KioCG end - linear achievement system
+             this.progressChanged.add(advancement);
+             flag = true;
+             if (!isDone && orStartProgress.isDone()) {
+@@ -233,7 +_,55 @@
+         }
+     }
+ 
+-    private void registerListeners(AdvancementHolder advancement) {
++    // KioCG start - linear achievement system
++    private void registerDisplayedChildren(AdvancementNode advancementNode) {
++        AdvancementHolder advancement = advancementNode.holder();
++        this.registerListenersLinear(advancement);
++
++        if (!this.visible.contains(advancement)) {
++            for (AdvancementNode child : advancementNode.children()) {
++                this.registerDisplayedChildren(child);
++            }
++        }
++    }
++
++    private @Nullable AdvancementNode getDisplayedParent(AdvancementNode advancementNode) {
++        while ((advancementNode = advancementNode.parent()) != null) {
++            if (this.visible.contains(advancementNode.holder())) {
++                return advancementNode;
++            }
++        }
++
++        return null;
++    }
++    // KioCG end - linear achievement system
++
++    private final void registerListeners(AdvancementHolder advancement) { // KiCG - final防止重写
++        // KioCG start - linear achievement system
++        if (advancement.value().display().isEmpty()) {
++            this.registerListenersLinear(advancement);
++        } else if (advancement.value().isRoot()) {
++            this.registerListenersLinear(advancement);
++        } else {
++            AdvancementNode parent = this.getDisplayedParent(this.tree.get(advancement));
++            if (parent == null) {
++                this.registerListenersLinear(advancement);
++            } else if (this.getOrStartProgress(parent.holder()).isDone()) {
++                this.registerListenersLinear(advancement);
++            } else {
++                String path = advancement.id().getPath();
++                for (String registerPath : io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.advancementRegisterPath) {
++                    if (path.equals(registerPath) || path.startsWith(registerPath + "//")) {
++                        this.registerListenersLinear(advancement);
++                        return;
++                    }
++                }
++            }
++        }
++    }
++    private void registerListenersLinear(AdvancementHolder advancement) {
++        if (this.registered.contains(advancement)) return;
++        // KioCG end - linear achievement system
+         AdvancementProgress orStartProgress = this.getOrStartProgress(advancement);
+         if (!orStartProgress.isDone()) {
+             for (Entry<String, Criterion<?>> entry : advancement.value().criteria().entrySet()) {
+@@ -246,6 +_,7 @@
+     }
+ 
+     private <T extends CriterionTriggerInstance> void registerListener(AdvancementHolder advancement, String criterionKey, Criterion<T> criterion) {
++        this.registered.add(advancement); // KioCG - linear achievement system
+         criterion.trigger().addPlayerListener(this, new CriterionTrigger.Listener<>(criterion.triggerInstance(), advancement, criterionKey));
+     }
+ 
+@@ -261,6 +_,7 @@
+     }
+ 
+     private <T extends CriterionTriggerInstance> void removeListener(AdvancementHolder advancement, String criterionKey, Criterion<T> criterion) {
++        this.registered.remove(advancement); // KioCG - linear achievement system
+         criterion.trigger().removePlayerListener(this, new CriterionTrigger.Listener<>(criterion.triggerInstance(), advancement, criterionKey));
+     }
+ 

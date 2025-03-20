@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -395,4 +_,116 @@
+@@ -395,4 +_,118 @@
              }
          }
      }
@@ -114,6 +114,8 @@
 +        public String commandTpsBarTextColorMedium = "<gradient:#ffff55:#ffaa00><text></gradient>";
 +        public String commandTpsBarTextColorLow = "<gradient:#ff5555:#aa0000><text></gradient>";
 +        public int commandTpsBarTickInterval = 20;
++
++        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap", "challenges");
 +    }
 +    // KioCG end
  }
