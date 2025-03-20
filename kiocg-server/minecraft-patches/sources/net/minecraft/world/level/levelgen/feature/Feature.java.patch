@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/Feature.java
++++ b/net/minecraft/world/level/levelgen/feature/Feature.java
+@@ -216,7 +_,7 @@
+     }
+ 
+     public static boolean isAdjacentToAir(Function<BlockPos, BlockState> adjacentStateAccessor, BlockPos pos) {
+-        return checkNeighbors(adjacentStateAccessor, pos, BlockBehaviour.BlockStateBase::isAir);
++        return checkNeighbors(adjacentStateAccessor, pos, blockState -> blockState.isAir() || blockState == net.minecraft.world.level.block.Blocks.LAVA.defaultBlockState()); // KioCG - anti ancient debris ESP
+     }
+ 
+     protected void markAboveForPostProcessing(WorldGenLevel level, BlockPos basePos) {
