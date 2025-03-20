@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/DispenserBlock.java
++++ b/net/minecraft/world/level/block/DispenserBlock.java
+@@ -123,7 +_,7 @@
+ 
+     @Override
+     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
+-        boolean flag = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
++        boolean flag = level.hasNeighborSignal(pos); // KioCG - fix redstone quirks: remove bud
+         boolean triggeredValue = state.getValue(TRIGGERED);
+         if (flag && !triggeredValue) {
+             level.scheduleTick(pos, this, 4);
+@@ -145,7 +_,7 @@
+ 
+     @Override
+     public BlockState getStateForPlacement(BlockPlaceContext context) {
+-        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
++        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite()).setValue(TRIGGERED, context.getLevel().hasNeighborSignal(context.getClickedPos())); // KioCG - fix redstone quirks
+     }
+ 
+     @Override

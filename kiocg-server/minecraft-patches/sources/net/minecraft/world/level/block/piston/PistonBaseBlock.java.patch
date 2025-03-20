@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+@@ -156,6 +_,7 @@
+             }
+         }
+ 
++        if (true) return false; // KioCG - fix redstone quirks: remove bud
+         if (signalGetter.hasSignal(pos, Direction.DOWN)) {
+             return true;
+         } else {
 @@ -173,6 +_,11 @@
  
      @Override

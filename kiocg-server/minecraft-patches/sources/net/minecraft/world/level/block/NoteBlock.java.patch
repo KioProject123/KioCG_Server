@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/NoteBlock.java
++++ b/net/minecraft/world/level/block/NoteBlock.java
+@@ -106,6 +_,15 @@
+         }
+     }
+ 
++    // KioCG start - fix redstone quirks
++    @Override
++    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
++        if (!oldState.is(state.getBlock())) {
++            this.neighborChanged(state, level, pos, null, null, isMoving);
++        }
++    }
++    // KioCG end - fix redstone quirks
++
+     private void playNote(@Nullable Entity entity, BlockState state, Level level, BlockPos pos) {
+         if (state.getValue(INSTRUMENT).worksAboveNoteBlock() || level.getBlockState(pos.above()).isAir()) {
+             level.blockEvent(pos, this, 0, 0);

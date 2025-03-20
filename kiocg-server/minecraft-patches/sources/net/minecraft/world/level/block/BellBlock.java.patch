@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/level/block/BellBlock.java
 +++ b/net/minecraft/world/level/block/BellBlock.java
+@@ -83,6 +_,15 @@
+         }
+     }
+ 
++    // KioCG start - fix redstone quirks
++    @Override
++    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
++        if (!oldState.is(state.getBlock())) {
++            this.neighborChanged(state, level, pos, null, null, isMoving);
++        }
++    }
++    // KioCG end - fix redstone quirks
++
+     @Override
+     protected void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
+         Entity owner = projectile.getOwner();
 @@ -224,7 +_,7 @@
  
      @Override
