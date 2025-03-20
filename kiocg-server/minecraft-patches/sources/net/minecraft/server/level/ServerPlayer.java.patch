@@ -9,6 +9,22 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+@@ -782,6 +_,7 @@
+ 
+     @Override
+     public void onInsideBlock(BlockState state) {
++        if (!state.isAir()) // KioCG - optimize trigger advancements
+         CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
+     }
+ 
+@@ -829,6 +_,7 @@
+         }
+ 
+         CriteriaTriggers.TICK.trigger(this);
++        if (this.tickCount % (20 * 60) == 0) CriteriaTriggers.MINUTE.trigger(this); // KioCG - optimize trigger advancements
+         if (this.levitationStartPos != null) {
+             CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
+         }
 @@ -837,7 +_,54 @@
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();

@@ -1,0 +1,10 @@
+--- a/net/minecraft/advancements/CriteriaTriggers.java
++++ b/net/minecraft/advancements/CriteriaTriggers.java
+@@ -72,6 +_,7 @@
+     public static final LevitationTrigger LEVITATION = register("levitation", new LevitationTrigger());
+     public static final ChangeDimensionTrigger CHANGED_DIMENSION = register("changed_dimension", new ChangeDimensionTrigger());
+     public static final PlayerTrigger TICK = register("tick", new PlayerTrigger());
++    public static final PlayerTrigger MINUTE = register("minute", new PlayerTrigger()); // KioCG - optimize trigger advancements
+     public static final TameAnimalTrigger TAME_ANIMAL = register("tame_animal", new TameAnimalTrigger());
+     public static final ItemUsedOnLocationTrigger PLACED_BLOCK = register("placed_block", new ItemUsedOnLocationTrigger());
+     public static final ConsumeItemTrigger CONSUME_ITEM = register("consume_item", new ConsumeItemTrigger());

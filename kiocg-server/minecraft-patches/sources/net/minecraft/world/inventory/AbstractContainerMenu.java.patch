@@ -1,9 +1,42 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -932,6 +_,16 @@
-         return this.stateId;
+@@ -223,10 +_,23 @@
+         return list;
      }
  
++    // KioCG start - optimize trigger advancements: 每刻只触发一次
++    private int triggerTick = -1;
++    private boolean shouldTriggerSlotListeners() {
++        if (net.minecraft.server.MinecraftServer.currentTick != triggerTick) {
++            triggerTick = net.minecraft.server.MinecraftServer.currentTick;
++            return true;
++        }
++        return false;
++    }
++    // KioCG end - optimize trigger advancements: 每刻只触发一次
++
+     public void broadcastChanges() {
++        boolean triggerSlotListeners = shouldTriggerSlotListeners(); // KioCG - optimize trigger advancements
+         for (int i = 0; i < this.slots.size(); i++) {
+             ItemStack item = this.slots.get(i).getItem();
+             Supplier<ItemStack> supplier = Suppliers.memoize(item::copy);
++            if (triggerSlotListeners) // KioCG - optimize trigger advancements
+             this.triggerSlotListeners(i, item, supplier);
+             this.synchronizeSlotToRemote(i, item, supplier);
+         }
+@@ -245,6 +_,7 @@
+     }
+ 
+     public void broadcastFullState() {
++        if (shouldTriggerSlotListeners()) // KioCG - optimize trigger advancements
+         for (int i = 0; i < this.slots.size(); i++) {
+             ItemStack item = this.slots.get(i).getItem();
+             this.triggerSlotListeners(i, item, item::copy);
+@@ -931,6 +_,16 @@
+         this.stateId = this.stateId + 1 & 32767;
+         return this.stateId;
+     }
++
 +    // KioCG start - vanilla recipe excludes model items
 +    boolean allowModelItem(ItemStack itemStack) {
 +        return allowModelItem(getType(), itemStack);
@@ -13,7 +46,6 @@
 +        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.modelItems.vanillaRecipeCanUse.allowed(menuType, itemStack);
 +    }
 +    // KioCG end - vanilla recipe excludes model items
-+
+ 
      // Paper start - Add missing InventoryHolders
      // The reason this is a supplier, is that the createHolder method uses the bukkit InventoryView#getTopInventory to get the inventory in question
-     // and that can't be obtained safely until the AbstractContainerMenu has been fully constructed. Using a supplier lazily
