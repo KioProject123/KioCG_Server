@@ -49,7 +49,7 @@
 +        this.forceDrops = false;
 +        this.lootTable = lootTable;
 +
-+        if (!this.isHugeSimulate() && this.random.nextDouble() < this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
++        if (!this.isHugeSimulate() && this.random.nextFloat() < (float) this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
 +            this.setHugeSimulate();
 +        }
 +    }

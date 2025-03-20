@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/entity/monster/Creeper.java
++++ b/net/minecraft/world/entity/monster/Creeper.java
+@@ -175,7 +_,7 @@
+     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
+         super.dropCustomDeathLoot(level, damageSource, recentlyHit);
+         Entity entity = damageSource.getEntity();
+-        if (entity != this && entity instanceof Creeper creeper && creeper.canDropMobsSkull()) {
++        if (entity != this && entity instanceof Creeper creeper && creeper.canDropMobsSkull(this)) { // KioCG - drop mobs skull chance
+             creeper.increaseDroppedSkulls();
+             this.spawnAtLocation(level, Items.CREEPER_HEAD);
+         }
+@@ -301,8 +_,14 @@
+         setIgnited(true); // Paper - CreeperIgniteEvent
+     }
+ 
+-    public boolean canDropMobsSkull() {
+-        return this.isPowered() && this.droppedSkulls < 1;
++    // KioCG start - drop mobs skull chance
++    public boolean canDropMobsSkull(Entity entity) {
++        boolean canDrop = this.isPowered() && this.droppedSkulls < 1;
++        if (canDrop && this.random.nextFloat() > (float) level().paperConfig().kiocgConfig.entity.monster.poweredCreeperDropMobsSkullChance.getOrDefault(entity.getType(), 1.0)) {
++            canDrop = false;
++        }
++        return canDrop;
++        // KioCG end - drop mobs skull chance
+     }
+ 
+     public void increaseDroppedSkulls() {

@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -575,4 +_,91 @@
+@@ -575,4 +_,96 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -62,6 +62,11 @@
 +                public int darkEnoughToSprint = 7;
 +                public double zombiesSkinnedChance = 0.25;
 +                public boolean babyZombieJockey = true;
++
++                public it.unimi.dsi.fastutil.objects.Reference2DoubleMap<EntityType<?>> poweredCreeperDropMobsSkullChance = Util.make(new it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap<>(BuiltInRegistries.ENTITY_TYPE.size()), map -> {
++                    map.defaultReturnValue(1.0);
++                    map.put(EntityType.WITHER_SKELETON, 0.0);
++                });
 +            }
 +
 +            public KiocgConfig.Entity.Animal animal;

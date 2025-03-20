@@ -39,11 +39,10 @@
          this.getEntityData().set(DATA_BABY_ID, childZombie);
          if (this.level() != null && !this.level().isClientSide) {
              AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
-@@ -375,6 +_,33 @@
-             return true;
+@@ -376,6 +_,33 @@
          }
      }
-+
+ 
 +    // KioCG start - monster strengthens
 +    public void die(DamageSource damageSource) {
 +        if (!this.isRemoved() && !this.dead) {
@@ -70,6 +69,16 @@
 +        super.die(damageSource);
 +    }
 +    // KioCG end - monster strengthens
- 
++
      @Override
      public boolean doHurtTarget(ServerLevel level, Entity source) {
+         boolean flag = super.doHurtTarget(level, source);
+@@ -609,7 +_,7 @@
+     @Override
+     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
+         super.dropCustomDeathLoot(level, damageSource, recentlyHit);
+-        if (damageSource.getEntity() instanceof Creeper creeper && creeper.canDropMobsSkull()) {
++        if (damageSource.getEntity() instanceof Creeper creeper && creeper.canDropMobsSkull(this)) { // KioCG - drop mobs skull chance
+             ItemStack skull = this.getSkull();
+             if (!skull.isEmpty()) {
+                 creeper.increaseDroppedSkulls();

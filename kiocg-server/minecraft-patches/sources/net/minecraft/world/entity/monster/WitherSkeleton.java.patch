@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/WitherSkeleton.java
++++ b/net/minecraft/world/entity/monster/WitherSkeleton.java
+@@ -73,7 +_,7 @@
+     @Override
+     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
+         super.dropCustomDeathLoot(level, damageSource, recentlyHit);
+-        if (damageSource.getEntity() instanceof Creeper creeper && creeper.canDropMobsSkull()) {
++        if (damageSource.getEntity() instanceof Creeper creeper && creeper.canDropMobsSkull(this)) { // KioCG - drop mobs skull chance
+             creeper.increaseDroppedSkulls();
+             this.spawnAtLocation(level, Items.WITHER_SKELETON_SKULL);
+         }
