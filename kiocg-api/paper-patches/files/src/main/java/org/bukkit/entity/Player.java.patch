@@ -1,15 +1,9 @@
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3853,6 +_,28 @@
+@@ -3853,6 +_,22 @@
      boolean isChunkSent(long chunkKey);
      // Paper end
  
-+    // KioCG start - add items vanilla-like
-+    default void giveItem(ItemStack... items) throws IllegalArgumentException {
-+        this.getInventory().addItem(items).values().forEach(leftover -> this.getOpenInventory().setItem(-999, leftover));
-+    }
-+    // KioCG end - add items vanilla-like
-+
 +    boolean isInStructure(); // KioCG - player in structure api
 +
 +    // KioCG start - the long dark
