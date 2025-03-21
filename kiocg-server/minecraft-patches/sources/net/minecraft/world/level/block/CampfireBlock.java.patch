@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
 @@ -117,6 +_,15 @@
-             entity.hurt(level.damageSources().campfire().directBlock(level, pos), (float) this.fireDamage); // CraftBukkit
+             entity.hurt(level.damageSources().campfire().eventBlockDamager(level, pos), (float) this.fireDamage); // CraftBukkit
          }
  
 +        // KioCG start - campfire healing

@@ -108,7 +108,7 @@
      @Override
      protected final void serverAiStep() {
          this.noActionTime++;
-@@ -1560,8 +_,23 @@
+@@ -1562,8 +_,23 @@
          return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
      }
  
@@ -134,7 +134,7 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1684,6 +_,58 @@
+@@ -1686,6 +_,58 @@
              this.getNavigation().updatePathfinderMaxVisitedNodes();
          }
      }

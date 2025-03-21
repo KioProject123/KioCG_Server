@@ -1,11 +1,11 @@
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3878,6 +_,28 @@
+@@ -3853,6 +_,28 @@
      boolean isChunkSent(long chunkKey);
      // Paper end
  
 +    // KioCG start - add items vanilla-like
-+    default void giveItem(@NotNull ItemStack... items) throws IllegalArgumentException {
++    default void giveItem(ItemStack... items) throws IllegalArgumentException {
 +        this.getInventory().addItem(items).values().forEach(leftover -> this.getOpenInventory().setItem(-999, leftover));
 +    }
 +    // KioCG end - add items vanilla-like
@@ -26,6 +26,6 @@
 +    void addThirstRegain(float add);
 +    // KioCG end - the long dark
 +
-     @NotNull
      @Override
      Spigot spigot();
+     // Spigot end

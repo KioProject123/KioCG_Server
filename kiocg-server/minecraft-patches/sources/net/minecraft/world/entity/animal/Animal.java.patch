@@ -58,10 +58,10 @@
      public void setInLoveTime(int inLove) {
          this.inLove = inLove;
      }
-@@ -269,8 +_,10 @@
+@@ -272,8 +_,10 @@
              player.awardStat(Stats.ANIMALS_BRED);
              CriteriaTriggers.BRED_ANIMALS.trigger(player, this, animal, baby);
-         } // Paper
+         } // Paper - call EntityBreedEvent
 -        this.setAge(6000);
 -        animal.setAge(6000);
 +        // KioCG start - breeding animals: 不需要繁殖冷却

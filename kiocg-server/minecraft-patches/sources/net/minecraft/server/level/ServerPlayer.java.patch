@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -393,6 +_,8 @@
+@@ -400,6 +_,8 @@
      public com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
      public @Nullable String clientBrandName = null; // Paper - Brand support
      public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
@@ -9,7 +9,7 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -782,6 +_,7 @@
+@@ -789,6 +_,7 @@
  
      @Override
      public void onInsideBlock(BlockState state) {
@@ -17,7 +17,7 @@
          CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
      }
  
-@@ -829,6 +_,7 @@
+@@ -836,6 +_,7 @@
          }
  
          CriteriaTriggers.TICK.trigger(this);
@@ -25,7 +25,7 @@
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -837,7 +_,54 @@
+@@ -844,7 +_,54 @@
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this);
@@ -81,7 +81,7 @@
  
      private void updatePlayerAttributes() {
          AttributeInstance attribute = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
-@@ -919,11 +_,16 @@
+@@ -926,11 +_,16 @@
  
              if (this.totalExperience != this.lastSentExp) {
                  this.lastSentExp = this.totalExperience;
@@ -99,7 +99,7 @@
              }
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
-@@ -1065,11 +_,31 @@
+@@ -1072,11 +_,31 @@
              return;
          }
          List<DefaultDrop> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // Paper - Restore vanilla drops behavior
@@ -133,7 +133,7 @@
                  }
              }
          }
-@@ -1085,7 +_,7 @@
+@@ -1092,7 +_,7 @@
  
          String deathmessage = defaultMessage.getString();
          this.keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
@@ -142,7 +142,7 @@
          // Paper start - cancellable death event
          if (event.isCancelled()) {
              // make compatible with plugins that might have already set the health in an event listener
-@@ -1155,6 +_,8 @@
+@@ -1162,6 +_,8 @@
          this.setCamera(this); // Remove spectated target
          // CraftBukkit end
  
@@ -151,7 +151,7 @@
          this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment); // CraftBukkit - Get our scores instead
          LivingEntity killCredit = this.getKillCredit();
          if (killCredit != null) {
-@@ -1551,7 +_,7 @@
+@@ -1558,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
              this.setRespawnPosition(this.level().dimension(), at, this.getYRot(), false, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -160,7 +160,7 @@
                  return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                  if (!this.isCreative()) {
-@@ -1600,7 +_,7 @@
+@@ -1607,7 +_,7 @@
                      this.awardStat(Stats.SLEEP_IN_BED);
                      CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                  });
@@ -169,7 +169,7 @@
                      this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                  }
  
-@@ -1612,10 +_,27 @@
+@@ -1619,10 +_,27 @@
  
      @Override
      public void startSleeping(BlockPos pos) {
@@ -198,7 +198,7 @@
      private boolean bedInRange(BlockPos pos, Direction direction) {
          return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
      }
-@@ -1701,9 +_,9 @@
+@@ -1708,9 +_,9 @@
      }
  
      @Override
@@ -210,7 +210,7 @@
          }
      }
  
-@@ -2049,6 +_,8 @@
+@@ -2056,6 +_,8 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
              this.foodData = that.foodData;
@@ -219,7 +219,7 @@
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
-@@ -2546,7 +_,7 @@
+@@ -2553,7 +_,7 @@
              // Paper end - Add PlayerSetSpawnEvent
  
              if (event.willNotifyPlayer() && event.getNotification() != null) { // Paper - Add PlayerSetSpawnEvent
@@ -228,7 +228,7 @@
              }
  
              this.respawnPosition = position;
-@@ -3051,6 +_,8 @@
+@@ -3058,6 +_,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();

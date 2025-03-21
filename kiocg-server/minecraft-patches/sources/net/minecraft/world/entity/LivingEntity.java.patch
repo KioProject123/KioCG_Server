@@ -177,7 +177,7 @@
                      BlockPos blockPos = this.blockPosition();
                      BlockState blockState = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
-@@ -2382,7 +_,15 @@
+@@ -2389,7 +_,15 @@
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damageSource, amount);
@@ -194,7 +194,7 @@
                  // CraftBukkit start
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - amount);
-@@ -2743,7 +_,7 @@
+@@ -2750,7 +_,7 @@
      }
  
      public float getVoicePitch() {
@@ -203,7 +203,7 @@
              ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F
              : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
      }
-@@ -3260,6 +_,8 @@
+@@ -3283,6 +_,8 @@
                  ItemStack itemBySlot = entry.getValue();
                  if (!itemBySlot.isEmpty() && !itemBySlot.isBroken()) {
                      itemBySlot.forEachModifier(equipmentSlot1, (attribute, modifier) -> {
@@ -212,7 +212,7 @@
                          AttributeInstance instance = this.attributes.getInstance(attribute);
                          if (instance != null) {
                              instance.removeModifier(modifier.id());
-@@ -3456,7 +_,7 @@
+@@ -3481,7 +_,7 @@
          profilerFiller.push("freezing");
          if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
              int ticksFrozen = this.getTicksFrozen();
@@ -221,7 +221,7 @@
                  this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), ticksFrozen + 1));
              } else {
                  this.setTicksFrozen(Math.max(0, ticksFrozen - 2));
-@@ -3476,11 +_,12 @@
+@@ -3501,11 +_,12 @@
              this.checkAutoSpinAttack(boundingBox, this.getBoundingBox());
          }
  
@@ -236,7 +236,7 @@
                  Location from = new Location(this.level().getWorld(), this.xo, this.yo, this.zo, this.yRotO, this.xRotO);
                  Location to = new Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
                  io.papermc.paper.event.entity.EntityMoveEvent event = new io.papermc.paper.event.entity.EntityMoveEvent(this.getBukkitLivingEntity(), from, to.clone());
-@@ -3541,7 +_,10 @@
+@@ -3566,7 +_,10 @@
      protected void serverAiStep() {
      }
  
