@@ -1,5 +1,19 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -353,6 +_,13 @@
+         this.originWorld = location.getWorld().getUID();
+     }
+ 
++    // KioCG start - fix converted entity data
++    public void copyOrigin(Entity entity) {
++        this.origin = entity.origin;
++        this.originWorld = entity.originWorld;
++    }
++    // KioCG end - fix converted entity data
++
+     @javax.annotation.Nullable
+     public org.bukkit.util.Vector getOriginVector() {
+         return this.origin != null ? this.origin.clone() : null;
 @@ -2178,7 +_,11 @@
                          this.push(-d, 0.0, -d1);
                      }

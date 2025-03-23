@@ -9,7 +9,7 @@
          if (oldMob instanceof AgeableMob ageableMob && newMob instanceof AgeableMob ageableMob1) {
              ageableMob1.setAge(ageableMob.getAge());
              ageableMob1.forcedAge = ageableMob.forcedAge;
-@@ -113,6 +_,13 @@
+@@ -113,6 +_,14 @@
          if (conversionParams.preserveCanPickUpLoot()) {
              newMob.setCanPickUpLoot(oldMob.canPickUpLoot());
          }
@@ -19,6 +19,7 @@
 +        newMob.persist = oldMob.persist;
 +        newMob.fromNetherPortal = oldMob.fromNetherPortal;
 +        newMob.spawnedViaMobSpawner = oldMob.spawnedViaMobSpawner;
++        newMob.copyOrigin(oldMob);
 +        // KioCG end - fix converted entity data
  
          newMob.setLeftHanded(oldMob.isLeftHanded());
