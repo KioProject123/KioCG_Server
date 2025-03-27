@@ -15,7 +15,7 @@
 +        if (state.getValue(OPEN) != state.getValue(POWERED)) {
 +            if (random.nextFloat() < 0.05688889F * 0.1F) {
 +                boolean open = state.getValue(OPEN);
-+                level.setBlock(pos, state.setValue(OPEN, !open), 10);
++                level.setBlockAndUpdate(pos, state.setValue(OPEN, !open));
 +                level.gameEvent(null, !open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 +            }
 +        }

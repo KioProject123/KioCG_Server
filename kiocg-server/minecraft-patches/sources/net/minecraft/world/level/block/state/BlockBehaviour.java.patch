@@ -1,5 +1,31 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
+@@ -316,6 +_,25 @@
+         return true;
+     }
+ 
++    // KioCG start - extended block placement
++    protected void playPlaceSound(BlockState state, Level level, BlockPos pos, Player player, @Nullable InteractionHand swingHand) {
++        boolean canBuild = level.checkEntityCollision(state, player, CollisionContext.of(player), pos, true); // Paper - Cancel hit for vanished players
++        if (canBuild) {
++            ((net.minecraft.server.level.ServerPlayer) player).connection.send(
++                    new net.minecraft.network.protocol.game.ClientboundSoundPacket(
++                            net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundType.getPlaceSound()),
++                            net.minecraft.sounds.SoundSource.BLOCKS,
++                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
++                            (soundType.getVolume() + 1.0F) / 2.0F,
++                            soundType.getPitch() * 0.8F,
++                            player.random.nextLong()));
++            if (swingHand != null) {
++                player.swing(swingHand, true);
++            }
++        }
++    }
++    // KioCG end - extended block placement
++
+     protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+         return state.isCollisionShapeFullBlock(level, pos) ? 0.2F : 1.0F;
+     }
 @@ -343,6 +_,12 @@
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
      }

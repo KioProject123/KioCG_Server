@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/LadderBlock.java
 +++ b/net/minecraft/world/level/block/LadderBlock.java
-@@ -61,7 +_,16 @@
+@@ -61,11 +_,29 @@
      }
  
      @Override
@@ -18,6 +18,19 @@
          Direction direction = state.getValue(FACING);
          return this.canAttachTo(level, pos.relative(direction.getOpposite()), direction);
      }
+ 
++    // KioCG start - ladder survive dangling
++    @Override
++    protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, RandomSource random) {
++        if (!state.canSurvive(level, pos)) {
++            level.destroyBlock(pos, true);
++        }
++    }
++    // KioCG end - ladder survive dangling
++
+     @Override
+     protected BlockState updateShape(
+         BlockState state,
 @@ -77,8 +_,11 @@
          BlockState neighborState,
          RandomSource random
@@ -41,43 +54,9 @@
 +                boolean surviveDangling = false;
 +                if (this.canSurviveVanilla(blockState, level, clickedPos) || (surviveDangling = this.canSurviveDangling(blockState, level, clickedPos))) {
 +                    if (surviveDangling && context.getPlayer() != null) {
-+                        this.playPlaceSound((net.minecraft.world.level.Level) level, blockState, context.getPlayer(), clickedPos, context.getHand());
++                        this.playPlaceSound(blockState, (net.minecraft.world.level.Level) level, clickedPos, context.getPlayer(), context.getHand());
 +                    }
 +                // KioCG end - ladder survive dangling
                      return blockState.setValue(WATERLOGGED, Boolean.valueOf(fluidState.getType() == Fluids.WATER));
                  }
              }
-@@ -114,6 +_,33 @@
- 
-         return null;
-     }
-+
-+    // KioCG start - ladder survive dangling
-+    private void playPlaceSound(net.minecraft.world.level.Level level, BlockState state, net.minecraft.world.entity.player.Player player, BlockPos pos, @Nullable net.minecraft.world.InteractionHand swing) {
-+        boolean canBuild = level.checkEntityCollision(state, player, CollisionContext.of(player), pos, true); // Paper - Cancel hit for vanished players
-+        if (canBuild) {
-+            ((net.minecraft.server.level.ServerPlayer) player).connection.send(
-+                    new net.minecraft.network.protocol.game.ClientboundSoundPacket(
-+                            net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundType.getPlaceSound()),
-+                            net.minecraft.sounds.SoundSource.BLOCKS,
-+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-+                            (soundType.getVolume() + 1.0F) / 2.0F,
-+                            soundType.getPitch() * 0.8F,
-+                            player.random.nextLong()));
-+
-+            if (swing != null) {
-+                player.swing(swing, true);
-+            }
-+        }
-+    }
-+
-+    @Override
-+    protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, RandomSource random) {
-+        if (!state.canSurvive(level, pos)) {
-+            level.destroyBlock(pos, true);
-+        }
-+    }
-+    // KioCG end - ladder survive dangling
- 
-     @Override
-     protected BlockState rotate(BlockState state, Rotation rotation) {

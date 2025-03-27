@@ -54,7 +54,7 @@
 +    // KioCG start - double door opening
 +    public void setOpenWithoutSound(@Nullable Entity entity, Level level, BlockState state, BlockPos pos, boolean _open) {
 +        if (state.is(this) && state.getValue(OPEN) != _open) {
-+            level.setBlock(pos, state.setValue(OPEN, Boolean.valueOf(_open)), 10);
++            level.setBlockAndUpdate(pos, state.setValue(OPEN, Boolean.valueOf(_open))); // 需要更新客户端
 +            level.gameEvent(entity, _open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 +        }
 +    }
