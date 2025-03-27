@@ -107,12 +107,13 @@
              if (!flag) {
                  for (ItemEntity itemEntity : getItemsAtAndAbove(level, hopper)) {
                      if (addItem(hopper, itemEntity)) {
-@@ -613,6 +_,9 @@
+@@ -613,6 +_,10 @@
      }
  
      public static boolean addItem(Container container, ItemEntity item) {
 +        if (!HopperBlockEntity.suckInFilter(container, item.getItem())) return false; // KioCG - hopper filter
 +        if (!item.level().paperConfig().kiocgConfig.hopperPullsEntityOwnedItem && item.target != null) return false; // KioCG - hopper filter
++        if (!item.level().paperConfig().kiocgConfig.hopperPullsInfinitePickupItem && item.pickupDelay == Short.MAX_VALUE) return false; // KioCG - hopper filter
 +
          boolean flag = false;
          // CraftBukkit start
