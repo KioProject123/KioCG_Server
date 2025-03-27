@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/entity/player/Abilities.java
++++ b/net/minecraft/world/entity/player/Abilities.java
+@@ -11,6 +_,18 @@
+     public float flyingSpeed = 0.05F;
+     public float walkingSpeed = 0.1F;
+ 
++    // KioCG start - keep player abilities
++    public void restoreFrom(Abilities that) {
++        this.invulnerable = that.invulnerable;
++        this.flying = that.flying;
++        this.mayfly = that.mayfly;
++        this.instabuild = that.instabuild;
++        this.mayBuild = that.mayBuild;
++        this.flyingSpeed = that.flyingSpeed;
++        this.walkingSpeed = that.walkingSpeed;
++    }
++    // KioCG end - keep player abilities
++
+     public void addSaveData(CompoundTag compound) {
+         CompoundTag compoundTag = new CompoundTag();
+         compoundTag.putBoolean("invulnerable", this.invulnerable);

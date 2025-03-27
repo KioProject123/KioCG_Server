@@ -23,6 +23,9 @@ import org.jetbrains.annotations.Nullable;
  * 方块的行为可能会消耗物品, 这通常是那些特定于物品的方块. 例如唱片机会消耗唱片,
  * 不同于打火石可在几乎任何方块上点火, 前者不会触发本事件而后者会.
  * <p>
+ * 不触发在BlockState#useItemOn()和BlockState#useWithoutItem(),
+ * 触发在ItemStack#use()和ItemStack#useOn()
+ * <p>
  * {@link PlayerInteractEvent}的执行结果不影响本事件的触发, 使用{@link #useInteractedBlock()}和
  * {@link #useItemInHand()}获取其执行后的结果.
  */

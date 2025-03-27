@@ -210,7 +210,19 @@
          }
      }
  
-@@ -2056,6 +_,8 @@
+@@ -2049,13 +_,18 @@
+     public void restoreFrom(ServerPlayer that, boolean keepEverything) {
+         this.wardenSpawnTracker = that.wardenSpawnTracker;
+         this.chatSession = that.chatSession;
+-        this.gameMode.setGameModeForPlayer(that.gameMode.getGameModeForPlayer(), that.gameMode.getPreviousGameModeForPlayer());
+-        this.onUpdateAbilities();
++        // KioCG start - keep player abilities
++        this.gameMode.setGameModeForPlayer(that.gameMode.getGameModeForPlayer(), that.gameMode.getPreviousGameModeForPlayer(), false);
++        this.getAbilities().restoreFrom(that.getAbilities());
++        // this.onUpdateAbilities();
++        // KioCG end - keep player abilities
+         if (keepEverything) {
+             this.getAttributes().assignBaseValues(that.getAttributes());
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
              this.foodData = that.foodData;
@@ -228,6 +240,36 @@
              }
  
              this.respawnPosition = position;
+@@ -2715,17 +_,25 @@
+ 
+     public void loadGameTypes(@Nullable CompoundTag tag) {
+         // Paper start - Expand PlayerGameModeChangeEvent
++        setGameModeForPlayer: // KioCG - keep player abilities
+         if (this.server.getForcedGameType() != null && this.server.getForcedGameType() != ServerPlayer.readPlayerMode(tag, "playerGameType")) {
+             if (new org.bukkit.event.player.PlayerGameModeChangeEvent(this.getBukkitEntity(), org.bukkit.GameMode.getByValue(this.server.getDefaultGameType().getId()), org.bukkit.event.player.PlayerGameModeChangeEvent.Cause.DEFAULT_GAMEMODE, null).callEvent()) {
+-                this.gameMode.setGameModeForPlayer(this.server.getForcedGameType(), GameType.DEFAULT_MODE);
++                this.gameMode.setGameModeForPlayer(this.server.getForcedGameType(), readPlayerMode(tag, "previousPlayerGameType"), true); // KioCG - keep player abilities
+             } else {
+-                this.gameMode.setGameModeForPlayer(ServerPlayer.readPlayerMode(tag,"playerGameType"), ServerPlayer.readPlayerMode(tag, "previousPlayerGameType"));
++                // KioCG start - keep player abilities
++                break setGameModeForPlayer;
++                // this.gameMode.setGameModeForPlayer(ServerPlayer.readPlayerMode(tag,"playerGameType"), ServerPlayer.readPlayerMode(tag, "previousPlayerGameType"));
++                // KioCG end - keep player abilities
+             }
+             return;
+         }
+         // Paper end - Expand PlayerGameModeChangeEvent
+-        this.gameMode
+-            .setGameModeForPlayer(this.calculateGameModeForNewPlayer(readPlayerMode(tag, "playerGameType")), readPlayerMode(tag, "previousPlayerGameType"));
++        // KioCG start - keep player abilities
++        GameType gameMode = readPlayerMode(tag, "playerGameType");
++        GameType calculateGameMode = this.calculateGameModeForNewPlayer(gameMode);
++        boolean updateAbilities = gameMode != calculateGameMode;
++        this.gameMode.setGameModeForPlayer(calculateGameMode, readPlayerMode(tag, "previousPlayerGameType"), updateAbilities);
++        // KioCG end - keep player abilities
+     }
+ 
+     private void storeGameTypes(CompoundTag tag) {
 @@ -3058,6 +_,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;

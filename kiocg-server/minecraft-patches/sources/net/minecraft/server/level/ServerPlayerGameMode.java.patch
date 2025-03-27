@@ -1,5 +1,49 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -72,7 +_,7 @@
+                 return event; // Paper - Expand PlayerGameModeChangeEvent
+             }
+             // CraftBukkit end
+-            this.setGameModeForPlayer(gameModeForPlayer, this.gameModeForPlayer); // Paper - Fix MC-259571
++            this.setGameModeForPlayer(gameModeForPlayer, this.gameModeForPlayer, true); // Paper - Fix MC-259571 // KioCG - keep player abilities
+             this.player.onUpdateAbilities();
+             this.player
+                 .server
+@@ -87,12 +_,33 @@
+         }
+     }
+ 
+-    protected void setGameModeForPlayer(GameType gameModeForPlayer, @Nullable GameType previousGameModeForPlayer) {
++    protected void setGameModeForPlayer(GameType gameModeForPlayer, @Nullable GameType previousGameModeForPlayer, boolean updateAbilities) { // KioCG - keep player abilities
+         this.previousGameModeForPlayer = previousGameModeForPlayer;
+         this.gameModeForPlayer = gameModeForPlayer;
++        if (updateAbilities) // KioCG - keep player abilities
+         gameModeForPlayer.updatePlayerAbilities(this.player.getAbilities());
+     }
+ 
++    // KioCG start - keep player abilities: should keep flying
++    public void checkFlying() {
++        if (player.getAbilities().flying && this.gameModeForPlayer != GameType.SPECTATOR) {
++            net.minecraft.world.phys.AABB boundingBox = player.getBoundingBox();
++            boundingBox = new net.minecraft.world.phys.AABB(
++                    boundingBox.minX,
++                    boundingBox.minY - 1.0E-5F,
++                    boundingBox.minZ,
++                    boundingBox.maxX,
++                    boundingBox.minY,
++                    boundingBox.maxZ
++            );
++            if (!player.level().noCollision(player, boundingBox)) {
++                player.getAbilities().flying = false;
++                player.onUpdateAbilities();
++            }
++        }
++    }
++    // KioCG end - keep player abilities: should keep flying
++
+     public GameType getGameModeForPlayer() {
+         return this.gameModeForPlayer;
+     }
 @@ -420,11 +_,42 @@
      }
  

@@ -8,6 +8,14 @@
              this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
          }
          // Paper start - Prevent causing expired keys from impacting new joins
+@@ -1759,6 +_,7 @@
+         }
+ 
+         this.player.teleportSetPosition(posMoveRotation, relatives);
++        this.player.gameMode.checkFlying(); // KioCG - keep player abilities
+         this.awaitingPositionFromClient = this.player.position();
+         // CraftBukkit start - update last location
+         this.lastPosX = this.awaitingPositionFromClient.x;
 @@ -2009,31 +_,37 @@
                  BlockHitResult hitResult = this.player.level().clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.player));
  
