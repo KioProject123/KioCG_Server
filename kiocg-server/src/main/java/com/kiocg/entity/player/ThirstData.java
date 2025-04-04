@@ -60,6 +60,7 @@ public class ThirstData {
     // 1: 25-3
     // 0: -5--33
     private int getThirstProgress() {
+        int thirstValue = Mth.ceil(this.thirstValue / 2);
         if (!underWater) {
             return (300 / 10) * (thirstValue - 1) + (3 + AIR_OFFSET_TICK);
         } else {
@@ -78,9 +79,9 @@ public class ThirstData {
                 addThirstValue(-1);
             }
 
-            if (thirstValue <= 6 && player.tickCount % 10 == 0) {
-                if (!player.hasEffect(MobEffects.WEAKNESS) || player.getEffect(MobEffects.WEAKNESS).getAmplifier() == 0 && player.getEffect(MobEffects.WEAKNESS).endsWithin(20)) {
-                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20, 0));
+            if (thirstValue <= 6 && player.tickCount % 20 == 0) {
+                if (!player.hasEffect(MobEffects.WEAKNESS) || player.getEffect(MobEffects.WEAKNESS).getAmplifier() == 0 && player.getEffect(MobEffects.WEAKNESS).endsWithin(11 * 20)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 11 * 20, 0));
                 }
             }
 
