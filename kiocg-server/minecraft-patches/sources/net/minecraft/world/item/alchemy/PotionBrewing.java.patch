@@ -105,7 +105,7 @@
 +
 +                // KioCG start - change container behavior: 自定义失败的酿造
 +                potionItem = new ItemStack(potionItem.getItem());
-+                potionItem.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
++                potionItem.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.of(0), List.of(), Optional.empty()));
 +                // KioCG end - change container behavior: 自定义失败的酿造
                  return potionItem;
              }
