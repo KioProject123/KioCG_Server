@@ -13,6 +13,21 @@
  
      @Override
      public float getBukkitYaw() {
+@@ -465,12 +_,14 @@
+                 }
+             }
+ 
++            if (this instanceof ServerPlayer serverPlayer) serverPlayer.thirstData.underWater = false; // KioCG - the long dark
+             if (this.isEyeInFluid(FluidTags.WATER)
+                 && !this.level().getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
+                 boolean flag1 = !this.canBreatheUnderwater()
+                     && !MobEffectUtil.hasWaterBreathing(this)
+                     && (!flag || !((Player)this).getAbilities().invulnerable);
+                 if (flag1) {
++                    if (this instanceof ServerPlayer serverPlayer) serverPlayer.thirstData.underWater = true; // KioCG - the long dark
+                     this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
+                     if (this.getAirSupply() == -20) {
+                         this.setAirSupply(0);
 @@ -572,7 +_,7 @@
      }
  

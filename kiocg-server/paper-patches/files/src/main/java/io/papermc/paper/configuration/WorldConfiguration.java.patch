@@ -38,9 +38,9 @@
 +
 +            public ThirstValue thirstValue;
 +            public class ThirstValue extends ConfigurationPart {
-+                public double thirstRegainMultiplierHealth = 1.0;
-+                public double thirstRegainMultiplierFood = 2.0;
-+                public double lowDownfallBiomeThirst = 0.02;
++                public double thirstRegainMultiplierHealth = 2.0;
++                public double thirstRegainMultiplierFood = 6.0;
++                public double lowDownfallBiomeMultiplier = 1.5;
 +            }
 +
 +            public int campfireBoilingWaterTime = 600;

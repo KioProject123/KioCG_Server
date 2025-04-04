@@ -274,8 +274,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();
-+        this.coldData = new com.kiocg.entity.player.ColdData(); // KioCG - the long dark
-+        this.thirstData = new com.kiocg.entity.player.ThirstData(); // KioCG - the long dark
++        this.coldData = new com.kiocg.entity.player.ColdData(this); // KioCG - the long dark
++        this.thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - the long dark
          this.experienceLevel = this.newLevel;
          this.totalExperience = this.newTotalExp;
          this.experienceProgress = 0;

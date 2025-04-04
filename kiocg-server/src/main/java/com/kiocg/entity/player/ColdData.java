@@ -14,7 +14,12 @@ import net.minecraft.world.level.LightLayer;
 public class ColdData {
     public static final int MAX_VALUE = 60 * 20 * 10;
 
+    private final Player player;
     private int coldValue = MAX_VALUE;
+
+    public ColdData(Player player) {
+        this.player = player;
+    }
 
     public int getColdValue() {
         return coldValue;
@@ -39,7 +44,7 @@ public class ColdData {
     public boolean isInWater;
     public boolean isInLava;
 
-    public void tick(ServerPlayer player) {
+    public void tick() {
         if (!player.getAbilities().invulnerable) {
             final Level world = player.level();
             final BlockPos pos = player.blockPosition();
@@ -73,7 +78,7 @@ public class ColdData {
 
             double finalTemperature = (playerTemperature + ambientTemperature) * config.finalTemperatureMultiplier;
             addColdValue((int) finalTemperature);
-            player.connection.send(new ClientboundSetExperiencePacket(getColdProgress(), player.totalExperience, player.experienceLevel));
+            ((ServerPlayer) player).connection.send(new ClientboundSetExperiencePacket(getColdProgress(), player.totalExperience, player.experienceLevel));
         }
 
         isInWater = false;

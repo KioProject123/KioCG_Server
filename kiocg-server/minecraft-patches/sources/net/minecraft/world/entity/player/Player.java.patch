@@ -4,8 +4,8 @@
      public final InventoryMenu inventoryMenu;
      public AbstractContainerMenu containerMenu;
      protected FoodData foodData = new FoodData();
-+    public com.kiocg.entity.player.ColdData coldData = new com.kiocg.entity.player.ColdData(); // KioCG - the long dark
-+    public com.kiocg.entity.player.ThirstData thirstData = new com.kiocg.entity.player.ThirstData(); // KioCG - the long dark
++    public com.kiocg.entity.player.ColdData coldData = new com.kiocg.entity.player.ColdData(this); // KioCG - the long dark
++    public com.kiocg.entity.player.ThirstData thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - the long dark
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
      protected int clientLoadedTimeoutTimer = 60;
@@ -74,8 +74,8 @@
          this.moveCloak();
          if (this instanceof ServerPlayer serverPlayer) {
              this.foodData.tick(serverPlayer);
-+            this.coldData.tick(serverPlayer); // KioCG - the long dark
-+            this.thirstData.tick(serverPlayer); // KioCG - the long dark
++            this.coldData.tick(); // KioCG - the long dark
++            this.thirstData.tick(); // KioCG - the long dark
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {

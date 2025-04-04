@@ -1,9 +1,6 @@
 package com.kiocg.entity.player;
 
-import io.papermc.paper.configuration.WorldConfiguration;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -12,10 +9,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class ThirstData {
-    public static final int MAX_VALUE = 10;
+    public static final int MAX_VALUE = 20;
+    public static final int AIR_OFFSET_TICK = 5;
 
+    private final Player player;
     private int thirstValue = MAX_VALUE;
     private float thirstRegain;
+
+    // 在水下偏移氧气条数据包
+    public boolean underWater;
+
+    public ThirstData(Player player) {
+        this.player = player;
+    }
 
     public int getThirstValue() {
         return thirstValue;
@@ -38,33 +44,41 @@ public class ThirstData {
     }
 
     public void addThirstRegain(float add) {
+        final Level world = player.level();
+        if (world.getBiome(player.blockPosition()).value().climateSettings.downfall() <= 0.0) {
+            thirstRegain += (float) (add * world.paperConfig().kiocgConfig.theLongDark.thirstValue.lowDownfallBiomeMultiplier);
+            return;
+        }
+
         thirstRegain += add;
     }
 
+    // 10: 295-273
+    // 9: 265-243
+    // 8: 235-213
+    // ...
+    // 1: 25-3
+    // 0: -5--33
     private int getThirstProgress() {
-        return 300 / 10 * (thirstValue - 1) + 8;
+        if (!underWater) {
+            return (300 / 10) * (thirstValue - 1) + (3 + AIR_OFFSET_TICK);
+        } else {
+            return (300 / 10) * thirstValue - (5 + AIR_OFFSET_TICK);
+        }
     }
 
     public boolean isThirsty(Player player) {
         return thirstValue <= 0 && !player.getAbilities().invulnerable;
     }
 
-    public void tick(ServerPlayer player) {
+    public void tick() {
         if (!player.getAbilities().invulnerable) {
-            final Level world = player.level();
-            final BlockPos pos = player.blockPosition();
-            final WorldConfiguration.KiocgConfig.TheLongDark.ThirstValue config = world.paperConfig().kiocgConfig.theLongDark.thirstValue;
-
-            if (world.getBiome(pos).value().climateSettings.downfall() <= 0.0) {
-                addThirstRegain((float) config.lowDownfallBiomeThirst);
-            }
-
             if (thirstRegain > 20.0F) {
                 thirstRegain -= 20.0F;
                 addThirstValue(-1);
             }
 
-            if (thirstValue <= 3 && player.tickCount % 10 == 0) {
+            if (thirstValue <= 6 && player.tickCount % 10 == 0) {
                 if (!player.hasEffect(MobEffects.WEAKNESS) || player.getEffect(MobEffects.WEAKNESS).getAmplifier() == 0 && player.getEffect(MobEffects.WEAKNESS).endsWithin(20)) {
                     player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20, 0));
                 }
