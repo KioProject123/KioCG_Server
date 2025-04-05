@@ -52,6 +52,27 @@
              boolean flag1 = blockEntity.brewTime == 0;
              if (flag1 && isBrewable) {
                  doBrew(level, pos, blockEntity.items, blockEntity); // CraftBukkit
+@@ -160,6 +_,20 @@
+                 blockEntity.brewTime = 0;
+             }
+ 
++            // KioCG start - change container behavior: 效果动画
++            if (level.getGameTime() % 5L == 0L) {
++                double x = (double) pos.getX() + 0.5;
++                double y = (double) pos.getY() + 0.85;
++                double z = (double) pos.getZ() + 0.5;
++                ((net.minecraft.server.level.ServerLevel) level).sendParticles(
++                        net.minecraft.core.particles.ColorParticleOption.create(net.minecraft.core.particles.ParticleTypes.ENTITY_EFFECT, level.random.nextFloat(), level.random.nextFloat(), level.random.nextFloat()),
++                        x, y, z,
++                        1,
++                        0.0, 0.0, 0.0,
++                        0.0);
++            }
++            // KioCG end - change container behavior: 效果动画
++
+             setChanged(level, pos, state);
+         } else if (isBrewable && blockEntity.fuel > 0) {
+             blockEntity.fuel--;
 @@ -232,6 +_,8 @@
              brewResults.add(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(potionBrewing.mix(itemStack, items.get(i))));
          }
