@@ -9,3 +9,27 @@
  
      /**
       * Gets the entity's current position
+@@ -1094,6 +_,23 @@
+      * @since 1.17.1
+      */
+     boolean spawnAt(@NotNull Location location, @NotNull CreatureSpawnEvent.SpawnReason reason);
++
++    // KioCG start - send virtual entity api
++    default void sendSpawn(@NotNull Player player, @NotNull Location location) {
++        sendSpawn(List.of(player), location);
++    }
++    void sendSpawn(@NotNull List<Player> players, @NotNull Location location);
++
++    default void sendChanges(@NotNull Player player) {
++        sendChanges(List.of(player));
++    }
++    void sendChanges(@NotNull List<Player> players);
++
++    default void sendRemove(@NotNull Player player) {
++        sendRemove(List.of(player));
++    }
++    void sendRemove(@NotNull List<Player> players);
++    // KioCG end - send virtual entity api
+ 
+     /**
+      * Check if entity is inside powdered snow.

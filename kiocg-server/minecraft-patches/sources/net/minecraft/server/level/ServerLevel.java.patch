@@ -122,3 +122,11 @@
                  ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
+@@ -2643,6 +_,7 @@
+ 
+             entity.updateDynamicGameEventListener(DynamicGameEventListener::add);
+             entity.inWorld = true; // CraftBukkit - Mark entity as in world
++            entity.getBukkitEntity().virtualEntity = null; // KioCG - send virtual entity api
+             entity.valid = true; // CraftBukkit
+             ServerLevel.this.getChunkSource().addEntity(entity); // Paper - ignore and warn about illegal addEntity calls instead of crashing server
+             // Paper start - Entity origin API

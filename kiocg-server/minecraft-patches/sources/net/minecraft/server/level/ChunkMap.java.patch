@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/level/ChunkMap.java
++++ b/net/minecraft/server/level/ChunkMap.java
+@@ -919,6 +_,12 @@
+         }
+     }
+ 
++    // KioCG start - send virtual entity api
++    public TrackedEntity getTrackedEntity(Entity entity, int range, int updateInterval, EntityType<?> type) {
++        return new TrackedEntity(entity, range, updateInterval, type.trackDeltas());
++    }
++    // KioCG end - send virtual entity api
++
+     protected void removeEntity(Entity entity) {
+         org.spigotmc.AsyncCatcher.catchOp("entity untrack"); // Spigot
+         if (entity instanceof ServerPlayer serverPlayer) {

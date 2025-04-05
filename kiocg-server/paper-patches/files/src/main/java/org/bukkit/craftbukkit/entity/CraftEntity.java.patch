@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -73,6 +_,7 @@
+@@ -73,11 +_,31 @@
      private final EntityType entityType;
      private EntityDamageEvent lastDamageEvent;
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftEntity.DATA_TYPE_REGISTRY);
@@ -8,17 +8,91 @@
      protected net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
      // Paper start - Folia shedulers
      public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
-@@ -915,6 +_,13 @@
-     public CraftPersistentDataContainer getPersistentDataContainer() {
+     private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
+ 
++    // KioCG start - send virtual entity api
++    public ChunkMap.TrackedEntity virtualEntity;
++    private void runVirtualEntity(List<ServerPlayer> players, java.util.function.Consumer<net.minecraft.server.level.ServerEntity> run) {
++        Preconditions.checkArgument(!isInWorld(), "Entity is real");
++        if (virtualEntity == null) {
++            virtualEntity = entity.serverLevel().getChunkSource().chunkMap.getTrackedEntity(entity, 0, 1, entity.getType());
++        }
++
++        try {
++            for (ServerPlayer player : players) {
++                virtualEntity.seenBy.add(player.connection);
++            }
++            run.accept(virtualEntity.serverEntity);
++        } finally {
++            virtualEntity.seenBy.clear();
++        }
++    }
++    // KioCG end - send virtual entity api
++
+     @Override
+     public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
+         return this.apiScheduler;
+@@ -916,6 +_,13 @@
          return this.persistentDataContainer;
      }
-+
+ 
 +    // KioCG start - temporary meta
 +    @Override
 +    public java.util.Map<String, Object> getTemporaryMeta() {
 +        return this.temporaryMeta;
 +    }
 +    // KioCG end - temporary meta
- 
++
      @Override
      public Pose getPose() {
+         return Pose.values()[this.getHandle().getPose().ordinal()];
+@@ -1242,6 +_,49 @@
+         this.entity.getIndirectPassengers().forEach(e -> e.level().addFreshEntity(e, reason));
+         return true;
+     }
++
++    // KioCG start - send virtual entity api
++    @Override
++    public void sendSpawn(List<Player> players, Location location) {
++        Preconditions.checkNotNull(players, "players cannot be null");
++        Preconditions.checkArgument(!players.isEmpty(), "players cannot be empty");
++        Preconditions.checkNotNull(location, "location cannot be null");
++        this.entity.setLevel(((CraftWorld) location.getWorld()).getHandle());
++        this.entity.setPos(location.getX(), location.getY(), location.getZ());
++        this.entity.setRot(location.getYaw(), location.getPitch());
++        this.entity.getSelfAndPassengers().forEach(entity -> {
++            List<ServerPlayer> serverPlayers = players.stream().map(player -> ((CraftPlayer) player).getHandle()).toList();
++            entity.getBukkitEntity().runVirtualEntity(serverPlayers, serverEntity -> {
++                List<net.minecraft.network.protocol.Packet<? super net.minecraft.network.protocol.game.ClientGamePacketListener>> list = new java.util.ArrayList<>();
++                serverEntity.sendPairingData(serverPlayers.getFirst(), list::add); // 玩家参数不重要
++                for (ServerPlayer serverPlayer : serverPlayers) {
++                    serverPlayer.connection.send(new net.minecraft.network.protocol.game.ClientboundBundlePacket(list));
++                }
++            });
++        });
++    }
++
++    @Override
++    public void sendChanges(List<Player> players) {
++        Preconditions.checkNotNull(players, "players cannot be null");
++        Preconditions.checkArgument(!players.isEmpty(), "players cannot be empty");
++        List<ServerPlayer> serverPlayers = players.stream().map(player -> ((CraftPlayer) player).getHandle()).toList();
++        entity.getBukkitEntity().runVirtualEntity(serverPlayers, serverEntity -> {
++            serverEntity.sendChanges();
++            //TODO 盔甲更新
++        });
++    }
++
++    @Override
++    public void sendRemove(List<Player> players) {
++        Preconditions.checkNotNull(players, "players cannot be null");
++        Preconditions.checkArgument(!players.isEmpty(), "players cannot be empty");
++        List<ServerPlayer> serverPlayers = players.stream().map(player -> ((CraftPlayer) player).getHandle()).toList();
++        for (ServerPlayer serverPlayer : serverPlayers) {
++            serverPlayer.connection.send(new net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket(entity.getId()));
++        }
++    }
++    // KioCG end - send virtual entity api
+ 
+     // Paper start - entity powdered snow API
+     @Override
