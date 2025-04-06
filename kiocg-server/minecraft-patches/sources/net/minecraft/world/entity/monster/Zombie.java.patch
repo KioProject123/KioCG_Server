@@ -54,7 +54,7 @@
 +
 +                    skeleton.setTarget(this.getTarget(), null, false);
 +                    skeleton.getNavigation().moveTo(this.getNavigation().getPath(), 1.2D);
-+                    skeleton.setAggressive(this.isAggressive());
++                    skeleton.setAggressive(true); // 僵尸始终抬起手
 +                    skeleton.setRemainingFireTicks(this.getRemainingFireTicks());
 +                }, org.bukkit.event.entity.EntityTransformEvent.TransformReason.PEELING, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PEELING);
 +                if (converted != null) {

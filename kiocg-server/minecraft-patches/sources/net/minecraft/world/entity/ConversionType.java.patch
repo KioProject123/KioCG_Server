@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/ConversionType.java
 +++ b/net/minecraft/world/entity/ConversionType.java
+@@ -14,6 +_,12 @@
+         void convert(Mob oldMob, Mob newMob, ConversionParams conversionParams) {
+             Entity firstPassenger = oldMob.getFirstPassenger();
+             newMob.copyPosition(oldMob);
++            // KioCG start - fix converted entity data
++            newMob.yBodyRot = oldMob.yBodyRot;
++            newMob.yBodyRotO = oldMob.yBodyRotO;
++            newMob.yHeadRot = oldMob.yHeadRot;
++            newMob.yHeadRotO = oldMob.yHeadRotO;
++            // KioCG end - fix converted entity data
+             newMob.setDeltaMovement(oldMob.getDeltaMovement());
+             if (firstPassenger != null) {
+                 firstPassenger.stopRiding();
 @@ -98,6 +_,8 @@
              newMob.setBaby(true);
          }
