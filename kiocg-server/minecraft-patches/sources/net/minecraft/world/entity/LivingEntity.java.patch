@@ -6,7 +6,7 @@
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
 +    // KioCG start - entity baby api
 +    private ScaleSimulate scaleSimulate = ScaleSimulate.NORMAL;
-+    private final ResourceLocation SCALE_MODIFIER_ID = ResourceLocation.withDefaultNamespace("scale_simulate");
++    private static final ResourceLocation SCALE_MODIFIER_ID = ResourceLocation.withDefaultNamespace("scale_simulate");
 +    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(SCALE_MODIFIER_ID, this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 0.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(SCALE_MODIFIER_ID, this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 1.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    // KioCG end - entity baby api
@@ -60,7 +60,7 @@
 +            case NORMAL -> {
 +                this.scaleSimulate = scale;
 +                AttributeInstance attributemodifiable = this.getAttribute(Attributes.SCALE);
-+                attributemodifiable.removeModifier(this.SCALE_MODIFIER_ID);
++                attributemodifiable.removeModifier(SCALE_MODIFIER_ID);
 +            }
 +        }
 +    }
@@ -109,7 +109,18 @@
      public float getAgeScale() {
          return this.isBaby() ? 0.5F : 1.0F;
      }
-@@ -620,11 +_,11 @@
+@@ -613,18 +_,21 @@
+ 
+     protected void tickDeath() {
+         this.deathTime++;
+-        if (this.deathTime >= 20 && !this.level().isClientSide() && !this.isRemoved()) {
++        // KioCG start - mob spawning or dying animation
++        int maxDeathTime = (this instanceof Mob mob && mob.dyingAnimation) ? 30 : 20;
++        if (this.deathTime >= maxDeathTime && !this.level().isClientSide() && !this.isRemoved()) {
++        // KioCG end - mob spawning or dying animation
+             this.level().broadcastEntityEvent(this, (byte)60);
+             this.remove(Entity.RemovalReason.KILLED, EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
+         }
      }
  
      public boolean shouldDropExperience() {

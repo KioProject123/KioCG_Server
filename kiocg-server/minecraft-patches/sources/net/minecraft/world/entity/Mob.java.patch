@@ -1,18 +1,24 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -145,6 +_,8 @@
+@@ -145,6 +_,13 @@
      private BlockPos restrictCenter = BlockPos.ZERO;
      private float restrictRadius = -1.0F;
      public boolean aware = true; // CraftBukkit
 +    @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG - entity bossbar api
 +    private int ticksSinceLastPlayerScan = 21; // KioCG - entity bossbar api
++    // KioCG start - mob spawning or dying animation
++    private static final ResourceLocation ANIMATION_SCALE_MODIFIER_ID = ResourceLocation.withDefaultNamespace("animation_scale");
++    public boolean spawningAnimation = this.level().paperConfig().kiocgConfig.entity.mobSpawningAnimation;
++    public boolean dyingAnimation = this.level().paperConfig().kiocgConfig.entity.mobDyingAnimation;
++    // KioCG end - mob spawning or dying animation
  
      protected Mob(EntityType<? extends Mob> entityType, Level level) {
          super(entityType, level);
-@@ -399,6 +_,16 @@
+@@ -399,7 +_,37 @@
          if (!this.level().isClientSide && this.tickCount % 5 == 0) {
              this.updateControlFlags();
          }
+-    }
 +
 +        // KioCG start - entity bossbar api
 +        if (this.bossbar != null) {
@@ -23,9 +29,30 @@
 +            }
 +        }
 +        // KioCG end - entity bossbar api
-     }
++
++        // KioCG start - mob spawning or dying animation
++        if (this.spawningAnimation && this.tickCount <= 10) {
++            AttributeInstance scale = this.getAttribute(Attributes.SCALE);
++            if (scale.hasModifier(ANIMATION_SCALE_MODIFIER_ID)) {
++                scale.addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, (this.tickCount / 10.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
++            }
++        }
++        // KioCG end - mob spawning or dying animation
++    }
++
++    // KioCG start - mob spawning or dying animation
++    @Override
++    protected void tickDeath() {
++        super.tickDeath();
++        if (this.dyingAnimation && this.deathTime > 20 && this.deathTime <= 30) {
++            int reventDeathTime = 30 - this.deathTime;
++            this.getAttribute(Attributes.SCALE).addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, (reventDeathTime / 10.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
++        }
++    }
++    // KioCG end - mob spawning or dying animation
  
      protected void updateControlFlags() {
+         boolean flag = !(this.getControllingPassenger() instanceof Mob);
 @@ -486,6 +_,12 @@
              compound.putBoolean("NoAI", this.isNoAi());
          }
@@ -108,6 +135,14 @@
      @Override
      protected final void serverAiStep() {
          this.noActionTime++;
+@@ -1282,6 +_,7 @@
+             );
+         }
+ 
++        this.getAttribute(Attributes.SCALE).addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, -1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)); // KioCG - mob spawning or dying animation
+         this.setLeftHanded(random.nextFloat() < 0.05F);
+         return spawnGroupData;
+     }
 @@ -1562,8 +_,23 @@
          return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
      }
