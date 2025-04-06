@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -301,6 +_,12 @@
+@@ -301,6 +_,13 @@
      public org.bukkit.craftbukkit.entity.CraftLivingEntity getBukkitLivingEntity() { return (org.bukkit.craftbukkit.entity.CraftLivingEntity) super.getBukkitEntity(); } // Paper
      public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
@@ -10,6 +10,7 @@
 +    private final AttributeModifier SCALE_MODIFIER_BABY = new AttributeModifier(SCALE_MODIFIER_ID, this.level().paperConfig().kiocgConfig.entity.sizeScalingBaby.getOrDefault(this.getType(), 0.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    private final AttributeModifier SCALE_MODIFIER_HUGE = new AttributeModifier(SCALE_MODIFIER_ID, this.level().paperConfig().kiocgConfig.entity.sizeScalingHuge.getOrDefault(this.getType(), 1.5) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 +    // KioCG end - entity baby api
++    private boolean damagedKnockback; // KioCG - fix damage knockback
  
      @Override
      public float getBukkitYaw() {
@@ -173,6 +174,20 @@
      }
  
      public float getHealth() {
+@@ -1444,11 +_,12 @@
+                 // CraftBukkit end
+                 this.hurtDuration = 10;
+                 this.hurtTime = this.hurtDuration;
++                this.damagedKnockback = false; // KioCG - fix damage knockback
+             }
+ 
+             this.resolveMobResponsibleForDamage(damageSource);
+             this.resolvePlayerResponsibleForDamage(damageSource);
+-            if (flag1) {
++            if (flag1 || !this.damagedKnockback) { // KioCG - fix damage knockback
+                 if (flag) {
+                     level.broadcastEntityEvent(this, (byte)29);
+                 } else {
 @@ -1755,11 +_,17 @@
          }
      }
@@ -192,6 +207,21 @@
                      BlockPos blockPos = this.blockPosition();
                      BlockState blockState = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
+@@ -1944,9 +_,14 @@
+                 return;
+             }
+ 
++            // KioCG start - fix damage knockback
++            if (!event.getKnockback().isZero()) {
++            this.damagedKnockback = true;
++            // KioCG end - fix damage knockback
+             this.hasImpulse = true;
+             this.setDeltaMovement(deltaMovement.add(event.getKnockback().getX(), event.getKnockback().getY(), event.getKnockback().getZ())); // Paper - knockback events
+             // CraftBukkit end
++            } // KioCG - fix damage knockback
+         }
+     }
+ 
 @@ -2389,7 +_,15 @@
                  }
                  // CraftBukkit end
