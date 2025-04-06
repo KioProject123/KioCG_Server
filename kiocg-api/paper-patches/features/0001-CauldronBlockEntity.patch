@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: KioProject <1105919949@qq.com>
+Date: Sun, 6 Apr 2025 22:11:28 +0800
+Subject: [PATCH] CauldronBlockEntity
+
+
+diff --git a/src/main/java/org/bukkit/block/Cauldron.java b/src/main/java/org/bukkit/block/Cauldron.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..e5223941d5276ef05e606c81349ca2cec9f6e812
+--- /dev/null
++++ b/src/main/java/org/bukkit/block/Cauldron.java
+@@ -0,0 +1,11 @@
++package org.bukkit.block;
++
++/**
++ * Represents a captured state of a cauldron.
++ */
++// KioCG start - CauldronBlockEntity: all class
++public interface Cauldron extends TileState {
++
++    boolean isBoiling();
++}
++// KioCG end - CauldronBlockEntity: all class

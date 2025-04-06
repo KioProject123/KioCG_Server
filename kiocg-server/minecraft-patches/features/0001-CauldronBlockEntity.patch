@@ -1,0 +1,201 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: KioProject <1105919949@qq.com>
+Date: Sun, 6 Apr 2025 23:22:52 +0800
+Subject: [PATCH] CauldronBlockEntity
+
+
+diff --git a/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java b/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
+index 9e321ef1c3d5803519b243685f4ee598dc0cf640..0ece3b1f6cfc2a8a8b7cffcb7899e75742613714 100644
+--- a/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
++++ b/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
+@@ -61,6 +61,7 @@ public class ClientboundLevelChunkPacketData {
+         int totalTileEntities = 0; // Paper - Handle oversized block entities in chunks
+ 
+         for (Entry<BlockPos, BlockEntity> entryx : levelChunk.getBlockEntities().entrySet()) {
++            if (BlockEntityType.UNABLE_SEND_TO_CLIENT.contains(entryx.getValue().getType())) continue; // KioCG - CauldronBlockEntity
+             // Paper start - Handle oversized block entities in chunks
+             if (++totalTileEntities > BLOCK_ENTITY_LIMIT) {
+                 net.minecraft.network.protocol.Packet<ClientGamePacketListener> packet = entryx.getValue().getUpdatePacket();
+diff --git a/net/minecraft/world/level/block/AbstractCauldronBlock.java b/net/minecraft/world/level/block/AbstractCauldronBlock.java
+index 648d22cdfcf261494038d589f5a5e32704083076..5cfe11cac39f9928e2a70adb0044e1077d9e192c 100644
+--- a/net/minecraft/world/level/block/AbstractCauldronBlock.java
++++ b/net/minecraft/world/level/block/AbstractCauldronBlock.java
+@@ -23,7 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public abstract class AbstractCauldronBlock extends Block {
++public abstract class AbstractCauldronBlock extends BaseEntityBlock { // KioCG - CauldronBlockEntity
+     private static final int SIDE_THICKNESS = 2;
+     private static final int LEG_WIDTH = 4;
+     private static final int LEG_HEIGHT = 3;
+@@ -100,4 +100,17 @@ public abstract class AbstractCauldronBlock extends Block {
+ 
+     protected void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
+     }
++
++    // KioCG start - CauldronBlockEntity
++    @Override
++    public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
++        return new net.minecraft.world.level.block.entity.CauldronBlockEntity(pos, state);
++    }
++
++    @javax.annotation.Nullable
++    @Override
++    public <T extends net.minecraft.world.level.block.entity.BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
++        return null;
++    }
++    // KioCG end - CauldronBlockEntity
+ }
+diff --git a/net/minecraft/world/level/block/LayeredCauldronBlock.java b/net/minecraft/world/level/block/LayeredCauldronBlock.java
+index 23b3a58462f0a381202249dd560a79a621aeb908..866b8d4893f199a3421ae37f746fe40aee77e664 100644
+--- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
++++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
+@@ -114,6 +114,17 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+             return false;
+         }
+ 
++        // KioCG start - campfire boiling water
++        BlockState oldState = level.getBlockState(pos);
++        if (oldState.is(newBlock.getBlock())) {
++            if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CauldronBlockEntity cauldronBlockEntity) {
++                int oldLevel = oldState.getValue(LayeredCauldronBlock.LEVEL);
++                int newLevel = newBlock.getValue(LayeredCauldronBlock.LEVEL);
++                cauldronBlockEntity.levelChanged(oldLevel, newLevel);
++            }
++        }
++        // KioCG end - campfire boiling water
++
+         newState.update(true);
+         if (sendGameEvent) level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
+         return true;
+@@ -150,4 +161,13 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+             level.levelEvent(1047, pos, 0);
+         }
+     }
++
++    // KioCG start - CauldronBlockEntity
++    @javax.annotation.Nullable
++    @Override
++    public <T extends net.minecraft.world.level.block.entity.BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
++        return createTickerHelper(blockEntityType, net.minecraft.world.level.block.entity.BlockEntityType.CAULDRON,
++                                  (level1, pos, state1, blockEntity) -> net.minecraft.world.level.block.entity.CauldronBlockEntity.serverTickLayered((ServerLevel) level1, pos, state1, blockEntity));
++    }
++    // KioCG end - CauldronBlockEntity
+ }
+diff --git a/net/minecraft/world/level/block/entity/BlockEntityType.java b/net/minecraft/world/level/block/entity/BlockEntityType.java
+index a2a674f18d7f2c2e50a6b25f9ac3bf4534275976..76173955d7a53c7b51b5ccbd34c4c5b94502cee9 100644
+--- a/net/minecraft/world/level/block/entity/BlockEntityType.java
++++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
+@@ -282,4 +282,17 @@ public class BlockEntityType<T extends BlockEntity> {
+     interface BlockEntitySupplier<T extends BlockEntity> {
+         T create(BlockPos pos, BlockState state);
+     }
++
++    // KioCG start - CauldronBlockEntity: 确保最后一个注册以免影响数据包
++    public static final BlockEntityType<CauldronBlockEntity> CAULDRON = register(
++            "cauldron",
++            CauldronBlockEntity::new,
++            Blocks.CAULDRON,
++            Blocks.WATER_CAULDRON,
++            Blocks.LAVA_CAULDRON,
++            Blocks.POWDER_SNOW_CAULDRON
++    );
++
++    public static final Set<BlockEntityType> UNABLE_SEND_TO_CLIENT = Set.of(CAULDRON);
++    // KioCG end - CauldronBlockEntity: 确保最后一个注册以免影响数据包
+ }
+diff --git a/net/minecraft/world/level/block/entity/CauldronBlockEntity.java b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..750c9ccabc2349d6afbd4b8e32e1e596203be755
+--- /dev/null
++++ b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
+@@ -0,0 +1,88 @@
++package net.minecraft.world.level.block.entity;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.HolderLookup;
++import net.minecraft.core.particles.ParticleTypes;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.sounds.SoundEvents;
++import net.minecraft.sounds.SoundSource;
++import net.minecraft.tags.BlockTags;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.LayeredCauldronBlock;
++import net.minecraft.world.level.block.state.BlockState;
++import net.minecraft.world.level.gameevent.GameEvent;
++
++// KioCG start - CauldronBlockEntity: all class
++public class CauldronBlockEntity extends BlockEntity {
++    private int temperature = 0;
++
++    public CauldronBlockEntity(BlockPos pos, BlockState blockState) {
++        super(BlockEntityType.CAULDRON, pos, blockState);
++    }
++
++    public static void serverTickLayered(ServerLevel level, BlockPos pos, BlockState state, CauldronBlockEntity cauldron) {
++        boolean flag = false;
++
++        BlockState belowState = level.getBlockState(pos.below());
++        if (belowState.is(BlockTags.CAMPFIRES) || belowState.is(Blocks.FIRE) || belowState.is(Blocks.LAVA)) {
++            if (!cauldron.isBoiling()) {
++                int per = LayeredCauldronBlock.MAX_FILL_LEVEL - state.getValue(LayeredCauldronBlock.LEVEL) + 1;
++                cauldron.temperature = Math.min(cauldron.temperature + per, level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime);
++
++                if (cauldron.isBoiling() && state.is(Blocks.POWDER_SNOW_CAULDRON)) {
++                    if (LayeredCauldronBlock.changeLevel(level, pos, Blocks.WATER_CAULDRON.defaultBlockState(), null, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.EVAPORATE, false)) { // avoid duplicate game event
++                        level.setBlockAndUpdate(pos, Blocks.WATER_CAULDRON.defaultBlockState());
++                        level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
++                        return;
++                    }
++                }
++
++                flag = true;
++            } else {
++                if (level.getGameTime() % 4 == 0 && level.getRandom().nextFloat() < 0.25F) {
++                    level.playSound(null, pos, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER_INTO_CAULDRON, SoundSource.BLOCKS, 1.0F, 0.1F);
++                }
++
++                double x = (double) pos.getX() + 0.5;
++                double y = (double) pos.getY() + 1.0;
++                double z = (double) pos.getZ() + 0.5;
++                level.sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 10, 0.25, 0.1, 0.25, 1.0);
++            }
++        } else if (cauldron.temperature > 0) {
++            int per = LayeredCauldronBlock.MAX_FILL_LEVEL - state.getValue(LayeredCauldronBlock.LEVEL) + 1;
++            cauldron.temperature = Math.max(cauldron.temperature - per, 0);
++            flag = true;
++        }
++
++        if (flag) {
++            setChanged(level, pos, state);
++        }
++    }
++
++    public boolean isBoiling() {
++        return this.temperature >= this.level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime;
++    }
++
++    public void setTemperature(int temperature) {
++        this.temperature = temperature;
++        this.setChanged();
++    }
++
++    public void levelChanged(int oldLevel, int newLevel) {
++        if (newLevel > oldLevel) {
++            setTemperature(this.temperature * oldLevel / newLevel);
++        }
++    }
++
++    @Override
++    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
++        this.temperature = tag.getInt("KioCG.Temperature");
++    }
++
++    @Override
++    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
++        tag.putInt("KioCG.Temperature", this.temperature);
++    }
++}
++// KioCG end - CauldronBlockEntity: all class

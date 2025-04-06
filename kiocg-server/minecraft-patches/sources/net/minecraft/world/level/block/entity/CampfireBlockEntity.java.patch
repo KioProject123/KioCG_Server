@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -37,11 +_,33 @@
-     public final int[] cookingProgress = new int[4];
+@@ -38,10 +_,31 @@
      public final int[] cookingTime = new int[4];
      public final boolean[] stopCooking = new boolean[4]; // Paper - Add more Campfire API
-+    private int cauldronTemperature = 0; // KioCG - campfire boiling water
-+
+ 
 +    // KioCG start - campfire healing
 +    private int healingTime;
 +    private static final FuelValues fuelValues;
@@ -25,7 +23,7 @@
 +                .build();
 +    }
 +    // KioCG end - campfire healing
- 
++
      public CampfireBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.CAMPFIRE, pos, blockState);
      }
@@ -105,7 +103,7 @@
                          level.sendBlockUpdated(pos, state, state, 3);
                          level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
-@@ -101,10 +_,92 @@
+@@ -101,10 +_,53 @@
              }
          }
  
@@ -127,45 +125,6 @@
 +            }
 +        }
 +        // KioCG end - campfire healing
-+
-+        // KioCG start - campfire boiling water
-+        BlockPos above = pos.above();
-+        BlockState aboveState = level.getBlockState(above);
-+        boolean isWaterCauldron = aboveState.is(net.minecraft.world.level.block.Blocks.WATER_CAULDRON);
-+        boolean isPowderSnowCauldron = !isWaterCauldron && aboveState.is(net.minecraft.world.level.block.Blocks.POWDER_SNOW_CAULDRON);
-+        if (isWaterCauldron || isPowderSnowCauldron) {
-+            if (!campfire.isCauldronBoiling()) {
-+                int cauldronLevel = aboveState.getValue(net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL);
-+                campfire.cauldronTemperature = Math.min(campfire.cauldronTemperature + switch (cauldronLevel) {
-+                    case 1 -> 3;
-+                    case 2 -> 2;
-+                    case 3 -> 1;
-+                    default -> throw new IllegalStateException("Unexpected value: " + cauldronLevel);
-+                }, level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime);
-+
-+                if (campfire.isCauldronBoiling() && isPowderSnowCauldron) {
-+                    if (net.minecraft.world.level.block.LayeredCauldronBlock.changeLevel(level, above, net.minecraft.world.level.block.Blocks.WATER_CAULDRON.defaultBlockState(), null, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.EVAPORATE, false)) { // avoid duplicate game event
-+                        level.setBlockAndUpdate(above, net.minecraft.world.level.block.Blocks.WATER_CAULDRON.defaultBlockState());
-+                        level.gameEvent(null, GameEvent.BLOCK_CHANGE, above);
-+                    }
-+                }
-+
-+                flag = true;
-+            } else {
-+                if (level.getRandom().nextDouble() < 0.1) {
-+                    level.playSound(null, above, net.minecraft.sounds.SoundEvents.POINTED_DRIPSTONE_DRIP_WATER_INTO_CAULDRON, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 0.1F);
-+                }
-+
-+                double x = (double) above.getX() + 0.5;
-+                double y = (double) above.getY() + 1.0;
-+                double z = (double) above.getZ() + 0.5;
-+                level.sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 10, 0.25, 0.1, 0.25, 1.0);
-+            }
-+        } else if (campfire.cauldronTemperature > 0) {
-+            campfire.cauldronTemperature = 0;
-+            flag = true;
-+        }
-+        // KioCG end - campfire boiling water
 +
          if (flag) {
              setChanged(level, pos, state);
@@ -198,7 +157,7 @@
  
      public static void cooldownTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
          boolean flag = false;
-@@ -112,14 +_,39 @@
+@@ -112,7 +_,7 @@
          for (int i = 0; i < blockEntity.items.size(); i++) {
              if (blockEntity.cookingProgress[i] > 0) {
                  flag = true;
@@ -207,38 +166,6 @@
              }
          }
  
-+        // KioCG start - campfire boiling water
-+        if (blockEntity.cauldronTemperature > 0) {
-+            flag = true;
-+            // blockEntity.cauldronTemperature = Math.max(0, blockEntity.cauldronTemperature - 2);
-+            blockEntity.cauldronTemperature = 0; // KioCG - optimize block entity
-+        }
-+        // KioCG end - campfire boiling water
-+
-         if (flag) {
-             setChanged(level, pos, state);
-         }
-     }
-+
-+    // KioCG start - campfire boiling water
-+    public boolean isCauldronBoiling() {
-+        return this.cauldronTemperature >= this.level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime;
-+    }
-+
-+    public void cauldronLevelChanged(int oldLevel, int newLevel) {
-+        if (newLevel > oldLevel) {
-+            this.cauldronTemperature = this.cauldronTemperature * oldLevel / newLevel;
-+            this.setChanged();
-+        }
-+    }
-+
-+    public void setCauldronTemperature(int temperature) {
-+        this.cauldronTemperature = temperature;
-+    }
-+    // KioCG end - campfire boiling water
- 
-     public static void particleTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
-         RandomSource randomSource = level.random;
 @@ -154,6 +_,7 @@
      protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
          super.loadAdditional(tag, registries);
@@ -247,24 +174,6 @@
          ContainerHelper.loadAllItems(tag, this.items, registries);
          if (tag.contains("CookingTimes", 11)) {
              int[] intArray = tag.getIntArray("CookingTimes");
-@@ -175,6 +_,8 @@
-             System.arraycopy(cookingState, 0, this.stopCooking, 0, Math.min(this.stopCooking.length, abyte.length));
-         }
-         // Paper end - Add more Campfire API
-+
-+        this.cauldronTemperature = tag.getInt("KioCG.CauldronTemperature"); // KioCG - campfire boiling water
-     }
- 
-     @Override
-@@ -190,6 +_,8 @@
-         }
-         tag.putByteArray("Paper.StopCooking", cookingState);
-         // Paper end - Add more Campfire API
-+
-+        tag.putInt("KioCG.CauldronTemperature", this.cauldronTemperature); // KioCG - campfire boiling water
-     }
- 
-     @Override
 @@ -204,8 +_,13 @@
          return compoundTag;
      }

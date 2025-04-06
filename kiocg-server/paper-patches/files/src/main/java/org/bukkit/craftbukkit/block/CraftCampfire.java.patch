@@ -8,15 +8,3 @@
      }
  
      @Override
-@@ -98,4 +_,11 @@
-         return getSnapshot().stopCooking[index];
-     }
-     // Paper end
-+
-+    // KioCG start - campfire boiling water
-+    @Override
-+    public boolean isCauldronBoiling() {
-+        return getSnapshot().isCauldronBoiling();
-+    }
-+    // KioCG end - campfire boiling water
- }

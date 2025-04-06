@@ -96,7 +96,7 @@
                  this.nibble = Mth.nextInt(this.random, 20, 40);
 -                this.getEntityData().set(DATA_BITING, true);
 +                // KioCG start - more realistic fishing
-+                this.fishWeight = Mth.nextDouble(this.random, 0.5F, 1.0F);
++                this.fishWeight = Mth.nextDouble(this.random, 0.5, 1.0);
 +                this.fishPosition = this.blockPosition();
 +                this.biting = true; // this.getEntityData().set(DATA_BITING, true); // 防止自动钓鱼
 +                this.setDeltaMovementSync(this.getDeltaMovement().x, -0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F), this.getDeltaMovement().z);
