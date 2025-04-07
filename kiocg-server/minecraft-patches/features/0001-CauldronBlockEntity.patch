@@ -107,12 +107,13 @@ index a2a674f18d7f2c2e50a6b25f9ac3bf4534275976..76173955d7a53c7b51b5ccbd34c4c5b9
  }
 diff --git a/net/minecraft/world/level/block/entity/CauldronBlockEntity.java b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..750c9ccabc2349d6afbd4b8e32e1e596203be755
+index 0000000000000000000000000000000000000000..1b0ae731898c410096436415d0c6c0431ebea2b5
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,104 @@
 +package net.minecraft.world.level.block.entity;
 +
++import com.mojang.math.Transformation;
 +import net.minecraft.core.BlockPos;
 +import net.minecraft.core.HolderLookup;
 +import net.minecraft.core.particles.ParticleTypes;
@@ -121,10 +122,14 @@ index 0000000000000000000000000000000000000000..750c9ccabc2349d6afbd4b8e32e1e596
 +import net.minecraft.sounds.SoundEvents;
 +import net.minecraft.sounds.SoundSource;
 +import net.minecraft.tags.BlockTags;
++import net.minecraft.world.entity.Display;
++import net.minecraft.world.entity.EntitySpawnReason;
++import net.minecraft.world.entity.EntityType;
 +import net.minecraft.world.level.block.Blocks;
 +import net.minecraft.world.level.block.LayeredCauldronBlock;
 +import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.level.gameevent.GameEvent;
++import org.joml.Vector3f;
 +
 +// KioCG start - CauldronBlockEntity: all class
 +public class CauldronBlockEntity extends BlockEntity {
@@ -185,6 +190,17 @@ index 0000000000000000000000000000000000000000..750c9ccabc2349d6afbd4b8e32e1e596
 +    public void levelChanged(int oldLevel, int newLevel) {
 +        if (newLevel > oldLevel) {
 +            setTemperature(this.temperature * oldLevel / newLevel);
++        }
++    }
++
++    public static void displayBlock(ServerLevel level, BlockPos pos, BlockState state, CauldronBlockEntity cauldron, BlockState displayState) {
++        Display.BlockDisplay display = EntityType.BLOCK_DISPLAY.create(level, EntitySpawnReason.COMMAND);
++        if (display != null) {
++            display.moveTo(pos.getX() + 0.125, pos.getY() + 0.25, pos.getZ() + 0.125, 0.0F, 0.0F);
++            display.persist = false;
++            display.setTransformation(new Transformation(null, null, new Vector3f(0.75F, 0.75F, 0.75F), null));
++            display.setBlockState(displayState);
++            level.addFreshEntity(display, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM);
 +        }
 +    }
 +
