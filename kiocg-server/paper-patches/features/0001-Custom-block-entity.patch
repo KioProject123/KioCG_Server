@@ -1,0 +1,96 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: KioProject <1105919949@qq.com>
+Date: Sun, 6 Apr 2025 22:11:52 +0800
+Subject: [PATCH] Custom block entity
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
+index 56453454cbd4b9e9270fc833f8ab38d5fa7a3763..58c2efbd21ee39e770fff8e1bf9ed9c1eb62afae 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
+@@ -180,6 +180,10 @@ public final class CraftBlockStates {
+         register(BlockEntityType.TRIAL_SPAWNER, CraftTrialSpawner.class, CraftTrialSpawner::new);
+         register(BlockEntityType.VAULT, CraftVault.class, CraftVault::new);
+         // Paper end
++        // KioCG start - custom block entity: 确保最后一个注册
++        register(BlockEntityType.CAULDRON, CraftCauldron.class, CraftCauldron::new);
++        register(BlockEntityType.FLOWER_POT, CraftFlowerPot.class, CraftFlowerPot::new);
++        // KioCG end - custom block entity: 确保最后一个注册
+     }
+ 
+     private static void register(Material blockType, BlockStateFactory<?> factory) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java b/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..cf7e0de37b3cd24f0fe42c1fea7250dad29630a9
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java
+@@ -0,0 +1,34 @@
++package org.bukkit.craftbukkit.block;
++
++import net.minecraft.world.level.block.entity.CauldronBlockEntity;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.bukkit.block.Cauldron;
++
++// KioCG start - custom block entity: all class
++public class CraftCauldron extends CraftBlockEntityState<CauldronBlockEntity> implements Cauldron {
++
++    public CraftCauldron(World world, CauldronBlockEntity tileEntity) {
++        super(world, tileEntity);
++    }
++
++    protected CraftCauldron(CraftCauldron state, Location location) {
++        super(state, location);
++    }
++
++    @Override
++    public boolean isBoiling() {
++        return getSnapshot().isBoiling();
++    }
++
++    @Override
++    public CraftCauldron copy() {
++        return new CraftCauldron(this, null);
++    }
++
++    @Override
++    public CraftCauldron copy(Location location) {
++        return new CraftCauldron(this, location);
++    }
++}
++// KioCG end - custom block entity: all class
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftFlowerPot.java b/src/main/java/org/bukkit/craftbukkit/block/CraftFlowerPot.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..7ccff50e3b7bf5f696fbda48268c01ec19ffc51c
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftFlowerPot.java
+@@ -0,0 +1,29 @@
++package org.bukkit.craftbukkit.block;
++
++import net.minecraft.world.level.block.entity.FlowerPotBlockEntity;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.bukkit.block.FlowerPot;
++
++// KioCG start - custom block entity: all class
++public class CraftFlowerPot extends CraftBlockEntityState<FlowerPotBlockEntity> implements FlowerPot {
++
++    public CraftFlowerPot(World world, FlowerPotBlockEntity tileEntity) {
++        super(world, tileEntity);
++    }
++
++    protected CraftFlowerPot(CraftFlowerPot state, Location location) {
++        super(state, location);
++    }
++
++    @Override
++    public CraftFlowerPot copy() {
++        return new CraftFlowerPot(this, null);
++    }
++
++    @Override
++    public CraftFlowerPot copy(Location location) {
++        return new CraftFlowerPot(this, location);
++    }
++}
++// KioCG end - custom block entity: all class

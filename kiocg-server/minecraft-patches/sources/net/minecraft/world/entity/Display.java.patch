@@ -1,0 +1,80 @@
+--- a/net/minecraft/world/entity/Display.java
++++ b/net/minecraft/world/entity/Display.java
+@@ -280,6 +_,77 @@
+         this.entityData.set(DATA_RIGHT_ROTATION_ID, transformation.getRightRotation());
+     }
+ 
++    // KioCG start - more general methods
++    public Vector3f getTranslation() {
++        return new Vector3f(this.entityData.get(DATA_TRANSLATION_ID));
++    }
++
++    public void setTranslation(Vector3f vector3f) {
++        this.entityData.set(DATA_TRANSLATION_ID, vector3f);
++    }
++
++    public Quaternionf getLeftRotation() {
++        return new Quaternionf(this.entityData.get(DATA_LEFT_ROTATION_ID));
++    }
++
++    public void setLeftRotation(Quaternionf quaternionf) {
++        this.entityData.set(DATA_LEFT_ROTATION_ID, quaternionf);
++    }
++
++    public Vector3f getScale() {
++        return new Vector3f(this.entityData.get(DATA_SCALE_ID));
++    }
++
++    public void setScale(Vector3f vector3f) {
++        this.entityData.set(DATA_SCALE_ID, vector3f);
++    }
++
++    public Quaternionf getRightRotation() {
++        return new Quaternionf(this.entityData.get(DATA_RIGHT_ROTATION_ID));
++    }
++
++    public void setRightRotation(Quaternionf quaternionf) {
++        this.entityData.set(DATA_RIGHT_ROTATION_ID, quaternionf);
++    }
++
++    public Display setScaleCenterFloor(double x, double y, double z, double floorY) {
++        this.setScale(new Vector3f((float) x, (float) y, (float) z));
++        this.setTranslation(new Vector3f((float) ((1.0 - x) / 2.0), (float) floorY, (float) ((1.0 - z) / 2.0)));
++        return this;
++    }
++
++    public Display setScaleCenterFloor(double x, double y, double z, double floorY, double shapeYsize) {
++        return setScaleCenterFloor(x, y, z, floorY);
++    }
++
++    public Display setScaleCenter(double x, double y, double z) {
++        return setScaleCenter(x, y, z, 1.0D);
++    }
++
++    public Display setScaleCenter(double x, double y, double z, double shapeYsize) {
++        return setScaleCenterFloor(x, y, z, (1.0 - y * shapeYsize) / 2.0);
++    }
++
++    public Display setScaleCenterCeil(double x, double y, double z, double ceilY) {
++        return setScaleCenterCeil(x, y, z, ceilY, 1.0D);
++    }
++
++    public Display setScaleCenterCeil(double x, double y, double z, double ceilY, double shapeYsize) {
++        return setScaleCenterFloor(x, y, z, (1.0 - y * shapeYsize) - (1.0 - ceilY));
++    }
++
++    public Display setInvert() {
++        return setInvert(1.0D);
++    }
++
++    public Display setInvert(double shapeYsize) {
++        this.setRightRotation(new Quaternionf(1.0, 0.0, 0.0, 0.0));
++        Vector3f scale = this.getScale();
++        this.setTranslation(this.getTranslation().add(0.0F, (float) shapeYsize * scale.y(), scale.z()));
++        return this;
++    }
++    // KioCG end - more general methods
++
+     @Override
+     protected void addAdditionalSaveData(CompoundTag tag) {
+         Transformation.EXTENDED_CODEC.encodeStart(NbtOps.INSTANCE, createTransformation(this.entityData)).ifSuccess(tag1 -> tag.put("transformation", tag1));

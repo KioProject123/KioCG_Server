@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/block/AbstractCandleBlock.java
++++ b/net/minecraft/world/level/block/AbstractCandleBlock.java
+@@ -68,21 +_,24 @@
+         float randomFloat = random.nextFloat();
+         if (randomFloat < 0.3F) {
+             level.addParticle(ParticleTypes.SMOKE, offset.x, offset.y, offset.z, 0.0, 0.0, 0.0);
++            ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, offset.x, offset.y, offset.z, 1, 0.0, 0.0, 0.0, 0.0); // KioCG - server animate tick
+             if (randomFloat < 0.17F) {
+-                level.playLocalSound(
+-                    offset.x + 0.5,
+-                    offset.y + 0.5,
+-                    offset.z + 0.5,
++                // KioCG start - server animate tick
++                level.playSound(null,
++                    offset.x,
++                    offset.y,
++                    offset.z,
++                // KioCG end - server animate tick
+                     SoundEvents.CANDLE_AMBIENT,
+                     SoundSource.BLOCKS,
+                     1.0F + random.nextFloat(),
+-                    random.nextFloat() * 0.7F + 0.3F,
+-                    false
++                    random.nextFloat() * 0.7F + 0.3F // KioCG - server animate tick
+                 );
+             }
+         }
+ 
+         level.addParticle(ParticleTypes.SMALL_FLAME, offset.x, offset.y, offset.z, 0.0, 0.0, 0.0);
++        ((ServerLevel) level).sendParticles(ParticleTypes.SMALL_FLAME, offset.x, offset.y, offset.z, 1, 0.0, 0.0, 0.0, 0.0); // KioCG - server animate tick
+     }
+ 
+     public static void extinguish(@Nullable Player player, BlockState state, LevelAccessor level, BlockPos pos) {
