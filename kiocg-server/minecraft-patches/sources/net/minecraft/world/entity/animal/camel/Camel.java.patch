@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -394,11 +_,11 @@
-                 this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
-             }
+@@ -396,9 +_,10 @@
  
--            boolean isBaby = this.isBaby();
-+            boolean isBaby = this.isBaby() && this.canFeed(); // KioCG - breeding animals
+             boolean isBaby = this.isBaby();
              if (isBaby) {
++                if (!this.canFeed(player)) return false; // KioCG - breeding animals
                  this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
                  if (!this.level().isClientSide) {
 -                    this.ageUp(10);

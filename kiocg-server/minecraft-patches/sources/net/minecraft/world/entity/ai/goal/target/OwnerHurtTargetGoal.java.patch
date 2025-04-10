@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
++++ b/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
+@@ -19,7 +_,7 @@
+ 
+     @Override
+     public boolean canUse() {
+-        if (this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit()) {
++        if (true || this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit()) { // KioCG - optimize entity behavior
+             LivingEntity owner = this.tameAnimal.getOwner();
+             if (owner == null) {
+                 return false;

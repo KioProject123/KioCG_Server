@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/LookAtPlayerGoal.java
++++ b/net/minecraft/world/entity/ai/goal/LookAtPlayerGoal.java
+@@ -75,6 +_,13 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return this.probability == 1.0F ? 10 : 1;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         return this.lookAt.isAlive() && !(this.mob.distanceToSqr(this.lookAt) > this.lookDistance * this.lookDistance) && this.lookTime > 0;

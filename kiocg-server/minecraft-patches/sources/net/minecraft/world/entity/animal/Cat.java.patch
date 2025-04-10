@@ -1,21 +1,44 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
-@@ -107,7 +_,14 @@
-         this.goalSelector.addGoal(8, new LeapAtTargetGoal(this, 0.3F));
-         this.goalSelector.addGoal(9, new OcelotAttackGoal(this));
-         this.goalSelector.addGoal(10, new BreedGoal(this, 0.8));
+@@ -98,19 +_,26 @@
+         this.temptGoal = new Cat.CatTemptGoal(this, 0.6, itemStack -> itemStack.is(ItemTags.CAT_FOOD), true);
+         this.goalSelector.addGoal(1, new FloatGoal(this));
+         this.goalSelector.addGoal(1, new TamableAnimal.TamableAnimalPanicGoal(1.5));
+-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
+-        this.goalSelector.addGoal(3, new Cat.CatRelaxOnOwnerGoal(this));
+-        this.goalSelector.addGoal(4, this.temptGoal);
+-        this.goalSelector.addGoal(5, new CatLieOnBedGoal(this, 1.1, 8));
+-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0F, 5.0F));
+-        this.goalSelector.addGoal(7, new CatSitOnBlockGoal(this, 0.8));
+-        this.goalSelector.addGoal(8, new LeapAtTargetGoal(this, 0.3F));
+-        this.goalSelector.addGoal(9, new OcelotAttackGoal(this));
+-        this.goalSelector.addGoal(10, new BreedGoal(this, 0.8));
 -        this.goalSelector.addGoal(11, new WaterAvoidingRandomStrollGoal(this, 0.8, 1.0000001E-5F));
 +        // KioCG start - optimize entity behavior
++        this.goalRegister.addGoal(2, new SitWhenOrderedToGoal(this), cat -> ((Cat) cat).isOrderedToSit());
++        this.goalRegister.addGoal(3, new Cat.CatRelaxOnOwnerGoal(this), cat -> ((Cat) cat).isTame() && !((Cat) cat).isOrderedToSit());
++        this.goalRegister.addGoal(4, this.temptGoal, cat -> !((Cat) cat).isTame());
++        this.goalRegister.addGoal(5, new CatLieOnBedGoal(this, 1.1, 8), cat -> ((Cat) cat).isTame() && !((Cat) cat).isOrderedToSit());
++        this.goalRegister.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0F, 5.0F), cat -> ((Cat) cat).isTame() && !((Cat) cat).isOrderedToSit() && ((Cat) cat).isFollowOwner());
++        this.goalRegister.addGoal(7, new CatSitOnBlockGoal(this, 0.8), cat -> ((Cat) cat).isTame() && !((Cat) cat).isOrderedToSit());
++        this.goalRegister.addGoal(8, new LeapAtTargetGoal(this, 0.3F), cat -> !((Cat) cat).isTame());
++        this.goalRegister.addGoal(9, new OcelotAttackGoal(this), cat -> !((Cat) cat).isTame());
++        this.goalRegister.addGoal(10, new BreedGoal(this, 0.8), cat -> ((Cat) cat).isTame());
 +        this.goalSelector.addGoal(11, new WaterAvoidingRandomStrollGoal(this, 0.8, 1.0000001E-5F) {
 +            @Override
 +            public boolean canUse() {
-+                return (!((TamableAnimal) this.mob).isOrderedToSit() || this.mob.isInWaterOrBubble()) && super.canUse();
++                return !((TamableAnimal) this.mob).isInSittingPose() && super.canUse();
 +            }
 +        });
-+        // KioCG end - optimize entity behavior
          this.goalSelector.addGoal(12, new LookAtPlayerGoal(this, Player.class, 10.0F));
-         this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Rabbit.class, false, null));
-         this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
+-        this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Rabbit.class, false, null));
+-        this.targetSelector.addGoal(1, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
++        this.goalRegister.addGoal(1, new NonTameRandomTargetGoal<>(this, Rabbit.class, false, null), cat -> !((Cat) cat).isTame());
++        this.goalRegister.addGoal(1, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR), cat -> !((Cat) cat).isTame());
++        // KioCG end - optimize entity behavior
+     }
+ 
+     @Override
 @@ -381,6 +_,18 @@
                      }
  
@@ -35,12 +58,32 @@
                  }
  
                  InteractionResult interactionResult = super.mobInteract(player, hand);
+@@ -485,9 +_,9 @@
+ 
+         @Override
+         public boolean canUse() {
+-            if (!this.cat.isTame()) {
++            if (false && !this.cat.isTame()) { // KioCG - optimize entity behavior
+                 return false;
+-            } else if (this.cat.isOrderedToSit()) {
++            } else if (false && this.cat.isOrderedToSit()) { // KioCG - optimize entity behavior
+                 return false;
+             } else {
+                 LivingEntity owner = this.cat.getOwner();
+@@ -593,6 +_,7 @@
+         public void tick() {
+             if (this.ownerPlayer != null && this.goalPos != null) {
+                 this.cat.setInSittingPose(false);
++                if (this.cat.getNavigation().isDone()) // KioCG - optimize entity behavior
+                 this.cat.getNavigation().moveTo(this.goalPos.getX(), this.goalPos.getY(), this.goalPos.getZ(), 1.1F);
+                 if (this.cat.distanceToSqr(this.ownerPlayer) < 2.5) {
+                     this.onBedTicks++;
 @@ -637,7 +_,7 @@
  
          @Override
          public boolean canUse() {
 -            return super.canUse() && !this.cat.isTame();
-+            return !this.cat.isTame() && super.canUse(); // KioCG - 优化判断顺序
++            return super.canUse(); // KioCG - optimize entity behavior
          }
      }
  }

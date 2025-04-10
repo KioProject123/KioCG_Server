@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
++++ b/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
+@@ -29,6 +_,13 @@
+         return !(this.eligiblePlayers = this.horse.level().findNearbyBukkitPlayers(this.horse.getX(), this.horse.getY(), this.horse.getZ(), 10.0, net.minecraft.world.entity.EntitySelector.PLAYER_AFFECTS_SPAWNING)).isEmpty(); // Paper - Affects Spawning API & SkeletonHorseTrapEvent
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 10;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public void tick() {
+         ServerLevel serverLevel = (ServerLevel)this.horse.level();

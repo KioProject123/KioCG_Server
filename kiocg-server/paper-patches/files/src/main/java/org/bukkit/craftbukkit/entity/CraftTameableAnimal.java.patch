@@ -6,11 +6,11 @@
  
 +    // KioCG start - dont kill my pet
 +    public boolean isFollowOwner() {
-+        return this.getHandle().followOwner;
++        return this.getHandle().isFollowOwner();
 +    }
 +
 +    public void setFollowOwner(boolean followOwner) {
-+        this.getHandle().followOwner = followOwner;
++        this.getHandle().setFollowOwner(followOwner);
 +    }
 +    // KioCG end - dont kill my pet
 +

@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/ai/goal/WrappedGoal.java
++++ b/net/minecraft/world/entity/ai/goal/WrappedGoal.java
+@@ -7,6 +_,7 @@
+     private final Goal goal;
+     private final int priority;
+     private boolean isRunning;
++    private int curRate = net.minecraft.world.entity.Entity.SHARED_RANDOM.nextInt(100); // KioCG - optimize entity behavior
+ 
+     public WrappedGoal(int priority, Goal goal) {
+         this.priority = priority;
+@@ -19,6 +_,7 @@
+ 
+     @Override
+     public boolean canUse() {
++        if (this.curRate++ % this.canUseDelay() != 0) return false; // KioCG - optimize entity behavior
+         return this.goal.canUse();
+     }
+ 

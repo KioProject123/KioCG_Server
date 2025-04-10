@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -109,14 +_,24 @@
+@@ -109,6 +_,16 @@
      }
  
      protected void addBehaviourGoals() {
@@ -15,10 +15,9 @@
 +        }
 +        // KioCG end - monster strengthens
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0, false));
--        this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors));
-+        // this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors)); // KioCG - optimize entity behavior
+         this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors));
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
-         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(ZombifiedPiglin.class));
+@@ -116,7 +_,7 @@
          this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
          if (this.level().spigotConfig.zombieAggressiveTowardsVillager) this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false)); // Spigot
          this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));

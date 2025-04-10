@@ -30,7 +30,7 @@
 +    public void ageUp() {
 +        if (!this.canFeed()) return; // 额外的保障
 +
-+        ageUp(net.minecraft.util.Mth.nextInt(random, 200, 400));
++        ageUp(240);
 +        this.feedingFeed();
 +    }
 +    // KioCG end - breeding animals
@@ -38,17 +38,31 @@
      public void setAge(int age) {
          int age1 = this.getAge();
          this.age = age;
-@@ -101,12 +_,36 @@
+@@ -101,12 +_,50 @@
          }
      }
  
 +    // KioCG start - breeding animals
 +    public boolean canFeed() {
-+        return this.feedingToday < (this.isHugeSimulate() ? 3 : 1);
++        return this.canFeed(null);
++    }
++
++    public boolean canFeed(@Nullable net.minecraft.world.entity.player.Player player) {
++        boolean success = this.feedingToday < (this.isHugeSimulate() ? 3 : 1);
++        if (!success && player != null) {
++            player.containerMenu.sendAllDataToRemote();
++        }
++        return success;
 +    }
 +
 +    public void feedingFeed() {
-+        ++this.feedingToday;
++        if (this.feedingToday++ == 0 && !this.isBaby()) {
++            if (++this.feedingDays >= this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeStartDays) {
++                if (!this.isHugeSimulate() && this.random.nextFloat() < (float) this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
++                    this.setHugeSimulate();
++                }
++            }
++        }
 +    }
 +
 +    public boolean canProduce() {

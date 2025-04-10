@@ -5,7 +5,7 @@
          this.mob = mob;
          this.speedModifier = speedModifier;
 -        this.interval = interval;
-+        this.interval = interval << 1; // KioCG - 降低生物寻路频率
++        this.interval = interval << 1; // KioCG - optimize entity behavior: 降低生物寻路频率
          this.checkNoActionTime = checkNoActionTime;
          this.setFlags(EnumSet.of(Goal.Flag.MOVE));
      }

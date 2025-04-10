@@ -333,7 +333,7 @@ index 648d22cdfcf261494038d589f5a5e32704083076..fb36d8e903b565b330790097a58c99d0
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/FlowerPotBlock.java b/net/minecraft/world/level/block/FlowerPotBlock.java
-index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..d634d236b0fa56d3c001f6c4ca0ba681f51f629b 100644
+index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268e6b9a87c 100644
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
 @@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
@@ -367,7 +367,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..d634d236b0fa56d3c001f6c4ca0ba681
 +                    InteractionResult interactionResult = onPut(stack, level, pos, player);
 +                    if (interactionResult == InteractionResult.SUCCESS) {
 +                        flowerPotBlockEntity.setPotted(block);
-+                        player.swing(hand, true);
++                        return InteractionResult.SUCCESS_SERVER;
 +                    }
 +                    return interactionResult;
 +                }).orElse(InteractionResult.CONSUME);
@@ -415,7 +415,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..d634d236b0fa56d3c001f6c4ca0ba681
 +                    InteractionResult interactionResult = onPick(level, pos, player, flowerPotBlockEntity.getPotted());
 +                    if (interactionResult == InteractionResult.SUCCESS) {
 +                        flowerPotBlockEntity.setPotted(Blocks.AIR);
-+                        player.swing(InteractionHand.MAIN_HAND, true);
++                        return InteractionResult.SUCCESS_SERVER;
 +                    }
 +                    return interactionResult;
 +                }

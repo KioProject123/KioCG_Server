@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/BegGoal.java
++++ b/net/minecraft/world/entity/ai/goal/BegGoal.java
+@@ -33,6 +_,13 @@
+         return this.player != null && this.playerHoldingInteresting(this.player);
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 10;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         return this.player.isAlive()

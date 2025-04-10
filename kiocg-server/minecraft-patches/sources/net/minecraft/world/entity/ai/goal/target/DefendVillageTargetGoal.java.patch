@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/target/DefendVillageTargetGoal.java
++++ b/net/minecraft/world/entity/ai/goal/target/DefendVillageTargetGoal.java
+@@ -46,6 +_,13 @@
+             && (!(this.potentialTarget instanceof Player) || !this.potentialTarget.isSpectator() && !((Player)this.potentialTarget).isCreative());
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 20;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public void start() {
+         this.golem.setTarget(this.potentialTarget, org.bukkit.event.entity.EntityTargetEvent.TargetReason.DEFEND_VILLAGE, true); // CraftBukkit - reason

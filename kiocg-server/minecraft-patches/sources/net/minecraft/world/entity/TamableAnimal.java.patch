@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
-@@ -38,6 +_,7 @@
+@@ -38,6 +_,8 @@
          TamableAnimal.class, EntityDataSerializers.OPTIONAL_UUID
      );
      private boolean orderedToSit;
-+    public boolean followOwner = true; // KioCG - pet follow owner api
++    private int ticketTicks; // KioCG - dont kill my pet
++    private boolean followOwner = true; // KioCG - pet follow owner api
  
      protected TamableAnimal(EntityType<? extends TamableAnimal> entityType, Level level) {
          super(entityType, level);
@@ -24,7 +25,15 @@
      }
  
      @Override
-@@ -252,11 +_,55 @@
+@@ -153,6 +_,7 @@
+         if (applyTamingSideEffects) {
+             this.applyTamingSideEffects();
+         }
++        this.goalRegister.reassess(); // KioCG - optimize entity behavior
+     }
+ 
+     protected void applyTamingSideEffects() {
+@@ -252,13 +_,86 @@
          super.die(cause);
      }
  
@@ -58,6 +67,13 @@
 +                this.setOrderedToSit(true);
 +            }
 +        }
++        this.keepChunkLoaded();
++    }
++
++    @Override
++    public void inactiveTick() {
++        super.inactiveTick();
++        this.keepChunkLoaded();
 +    }
 +
 +    public void addNearDeathParticles() {
@@ -69,6 +85,16 @@
 +                                             0.0);
 +        }
 +    }
++
++    private void keepChunkLoaded() {
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.petFollowKeepChunkLoaded) return;
++        if (this.isTame() && !this.unableToMoveToOwner()) {
++            if (this.tickCount >= ticketTicks) {
++                ticketTicks = this.tickCount + (int) net.minecraft.server.level.TicketType.PET_FOLLOW.timeout() - 1;
++                this.serverLevel().getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.PET_FOLLOW, this.chunkPosition(), 2, this.getId());
++            }
++        }
++    }
 +    // KioCG end - dont kill my pet
 +
      public boolean isOrderedToSit() {
@@ -78,9 +104,24 @@
      public void setOrderedToSit(boolean orderedToSit) {
 +        if (!orderedToSit && this.nearDeath()) return; // KioCG - dont kill my pet
          this.orderedToSit = orderedToSit;
-     }
+-    }
++        this.goalRegister.reassess(); // KioCG - optimize entity behavior
++    }
++
++    // KioCG start - pet follow owner api
++    public boolean isFollowOwner() {
++        return this.followOwner;
++    }
++
++    public void setFollowOwner(boolean followOwner) {
++        this.followOwner = followOwner;
++        this.goalRegister.reassess(); // KioCG - optimize entity behavior
++    }
++    // KioCG end - pet follow owner api
  
-@@ -269,7 +_,7 @@
+     public void tryToTeleportToOwner() {
+         LivingEntity owner = this.getOwner();
+@@ -269,15 +_,18 @@
  
      public boolean shouldTryTeleportToOwner() {
          LivingEntity owner = this.getOwner();
@@ -89,6 +130,21 @@
      }
  
      private void teleportToAroundBlockPos(BlockPos pos) {
+-        for (int i = 0; i < 10; i++) {
+-            int randomInt = this.random.nextIntBetweenInclusive(-3, 3);
+-            int randomInt1 = this.random.nextIntBetweenInclusive(-3, 3);
++        // KioCG start - pet teleport distance
++        if (!this.getOwner().serverLevel().isLoaded(pos)) return; // 防止区块未加载时传送到空中
++        /*for (int i = 0; i < 10; i++)*/ {
++            int randomInt = this.random.nextIntBetweenInclusive(-8, 8);
++            int randomInt1 = this.random.nextIntBetweenInclusive(-8, 8);
+             if (Math.abs(randomInt) >= 2 || Math.abs(randomInt1) >= 2) {
+-                int randomInt2 = this.random.nextIntBetweenInclusive(-1, 1);
++                int randomInt2 = this.random.nextIntBetweenInclusive(-2, 2);
++        // KioCG end - pet teleport distance
+                 if (this.maybeTeleportTo(pos.getX() + randomInt, pos.getY() + randomInt2, pos.getZ() + randomInt1)) {
+                     return;
+                 }
 @@ -318,6 +_,7 @@
      }
  

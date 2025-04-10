@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/AvoidEntityGoal.java
++++ b/net/minecraft/world/entity/ai/goal/AvoidEntityGoal.java
+@@ -91,6 +_,13 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 10;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         return !this.pathNav.isDone();

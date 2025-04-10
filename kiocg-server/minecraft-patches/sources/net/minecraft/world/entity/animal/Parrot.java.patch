@@ -1,27 +1,25 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -155,9 +_,23 @@
+@@ -153,11 +_,18 @@
+         this.goalSelector.addGoal(0, new TamableAnimal.TamableAnimalPanicGoal(1.25));
+         this.goalSelector.addGoal(0, new FloatGoal(this));
          this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
-         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
+-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
+-        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
 -        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0));
+-        this.goalSelector.addGoal(3, new LandOnOwnersShoulderGoal(this));
+-        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F));
 +        // KioCG start - optimize entity behavior
++        this.goalRegister.addGoal(2, new SitWhenOrderedToGoal(this), parrot -> ((Parrot) parrot).isOrderedToSit());
++        this.goalRegister.addGoal(2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F), parrot -> ((Parrot) parrot).isTame() && !((Parrot) parrot).isOrderedToSit() && ((Parrot) parrot).isFollowOwner());
 +        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0) {
 +            @Override
 +            public boolean canUse() {
-+                return (!((TamableAnimal) this.mob).isOrderedToSit() || this.mob.isInWaterOrBubble()) && super.canUse();
++                return !((TamableAnimal) this.mob).isInSittingPose() && super.canUse();
 +            }
 +        });
-+        // KioCG end - optimize entity behavior
-         this.goalSelector.addGoal(3, new LandOnOwnersShoulderGoal(this));
--        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F));
-+        // KioCG start - optimize entity behavior
-+        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F) {
-+            @Override
-+            public boolean canUse() {
-+                return !((TamableAnimal) this.mob).isOrderedToSit() && super.canUse();
-+            }
-+        });
++        this.goalRegister.addGoal(3, new LandOnOwnersShoulderGoal(this), parrot -> ((Parrot) parrot).isTame() && !((Parrot) parrot).isOrderedToSit());
++        this.goalRegister.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F), parrot -> !((Parrot) parrot).isOrderedToSit());
 +        // KioCG end - optimize entity behavior
      }
  

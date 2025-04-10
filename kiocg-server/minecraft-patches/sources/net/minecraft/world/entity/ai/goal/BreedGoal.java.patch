@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/BreedGoal.java
++++ b/net/minecraft/world/entity/ai/goal/BreedGoal.java
+@@ -39,6 +_,13 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 10;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         return this.partner.isAlive() && this.partner.isInLove() && this.loveTime < 60 && !this.partner.isPanicking();

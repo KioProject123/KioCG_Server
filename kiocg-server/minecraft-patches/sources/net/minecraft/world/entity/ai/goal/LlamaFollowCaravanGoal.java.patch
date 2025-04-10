@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/LlamaFollowCaravanGoal.java
++++ b/net/minecraft/world/entity/ai/goal/LlamaFollowCaravanGoal.java
+@@ -69,6 +_,13 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 20;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         if (this.llama.inCaravan() && this.llama.getCaravanHead().isAlive() && this.firstIsLeashed(this.llama, 0)) {

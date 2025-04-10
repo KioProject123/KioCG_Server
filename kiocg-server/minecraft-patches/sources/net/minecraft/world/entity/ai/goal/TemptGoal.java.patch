@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/TemptGoal.java
++++ b/net/minecraft/world/entity/ai/goal/TemptGoal.java
+@@ -57,6 +_,13 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return this.calmDown > 0 ? 1 : 10;
++    }
++    // KioCG end - optimize entity behavior
++
+     private boolean shouldFollow(LivingEntity entity) {
+         return this.items.test(entity.getMainHandItem()) || this.items.test(entity.getOffhandItem());
+     }

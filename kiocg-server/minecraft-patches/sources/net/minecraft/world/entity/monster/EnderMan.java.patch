@@ -24,6 +24,20 @@
                      level.gameEvent(GameEvent.BLOCK_PLACE, blockPos, GameEvent.Context.of(this.enderman, carriedBlock));
                      this.enderman.setCarriedBlock(null);
                      } // CraftBukkit
+@@ -555,6 +_,13 @@
+             return this.pendingTarget != null;
+         }
+ 
++        // KioCG start - optimize entity behavior
++        @Override
++        protected int canUseDelay() {
++            return 10;
++        }
++        // KioCG end - optimize entity behavior
++
+         @Override
+         public void start() {
+             this.aggroTime = this.adjustedTickDelay(5);
 @@ -634,7 +_,7 @@
          @Override
          public boolean canUse() {

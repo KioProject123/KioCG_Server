@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/ai/goal/Goal.java
++++ b/net/minecraft/world/entity/ai/goal/Goal.java
+@@ -19,6 +_,12 @@
+ 
+     public abstract boolean canUse();
+ 
++    // KioCG start - optimize entity behavior
++    protected int canUseDelay() {
++        return 1;
++    }
++    // KioCG end - optimize entity behavior
++
+     public boolean canContinueToUse() {
+         return this.canUse();
+     }

@@ -18,12 +18,11 @@
                  flag = true;
                  this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
              }
-@@ -577,10 +_,11 @@
-             flag = true;
+@@ -578,9 +_,11 @@
          }
  
--        if (this.isBaby() && i > 0) {
-+        if (this.isBaby() && i > 0 && this.canFeed()) { // KioCG - breeding animals
+         if (this.isBaby() && i > 0) {
++            if (!this.canFeed(player)) return false; // KioCG - breeding animals
              this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
              if (!this.level().isClientSide) {
                  this.ageUp(i);

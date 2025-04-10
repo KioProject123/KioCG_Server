@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/FollowBoatGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FollowBoatGoal.java
+@@ -40,6 +_,13 @@
+         return this.following != null && (Mth.abs(this.following.xxa) > 0.0F || Mth.abs(this.following.zza) > 0.0F) || flag;
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 20;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean isInterruptable() {
+         return true;

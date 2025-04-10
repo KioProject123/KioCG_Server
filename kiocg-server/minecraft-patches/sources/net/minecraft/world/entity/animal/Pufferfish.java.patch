@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/animal/Pufferfish.java
++++ b/net/minecraft/world/entity/animal/Pufferfish.java
+@@ -222,6 +_,13 @@
+             return !entitiesOfClass.isEmpty();
+         }
+ 
++        // KioCG start - optimize entity behavior
++        @Override
++        protected int canUseDelay() {
++            return 10;
++        }
++        // KioCG end - optimize entity behavior
++
+         @Override
+         public void start() {
+             this.fish.inflateCounter = 1;

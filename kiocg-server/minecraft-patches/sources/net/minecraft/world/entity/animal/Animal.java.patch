@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -150,9 +_,9 @@
-                 return InteractionResult.SUCCESS_SERVER;
+@@ -151,8 +_,9 @@
              }
  
--            if (this.isBaby()) {
-+            if (this.isBaby() && this.canFeed()) { // KioCG - breeding animals
+             if (this.isBaby()) {
++                if (!this.canFeed(player)) return InteractionResult.PASS; // KioCG - breeding animals
                  this.usePlayerItem(player, hand, itemInHand);
 -                this.ageUp(getSpeedUpSecondsWhenFeeding(-age), true);
 +                this.ageUp(); // KioCG - breeding animals
@@ -32,7 +31,7 @@
          // CraftBukkit end
          if (player != null) {
              this.loveCause = player.getUUID();
-@@ -206,6 +_,25 @@
+@@ -206,6 +_,21 @@
          this.level().broadcastEntityEvent(this, (byte)18);
      }
  
@@ -48,10 +47,6 @@
 +        this.dropFromLootTable((ServerLevel) this.level(), this.damageSources().generic(), false);
 +        this.forceDrops = false;
 +        this.lootTable = lootTable;
-+
-+        if (!this.isHugeSimulate() && this.random.nextFloat() < (float) this.level().paperConfig().kiocgConfig.entity.animal.feedingHugeChance) {
-+            this.setHugeSimulate();
-+        }
 +    }
 +    // KioCG end - breeding animals
 +

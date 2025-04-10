@@ -1,5 +1,19 @@
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
+@@ -389,6 +_,13 @@
+             }
+         }
+ 
++        // KioCG start - optimize entity behavior
++        @Override
++        protected int canUseDelay() {
++            return 20;
++        }
++        // KioCG end - optimize entity behavior
++
+         @Override
+         public boolean canContinueToUse() {
+             return this.pursuedBannerItemEntity != null
 @@ -399,7 +_,7 @@
          }
  

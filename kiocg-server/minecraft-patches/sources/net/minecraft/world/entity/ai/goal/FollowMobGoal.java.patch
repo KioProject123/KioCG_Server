@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/FollowMobGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FollowMobGoal.java
+@@ -51,6 +_,13 @@
+         return false;
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 20;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         return this.followingMob != null && !this.navigation.isDone() && this.mob.distanceToSqr(this.followingMob) > this.stopDistance * this.stopDistance;

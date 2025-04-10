@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/MoveBackToVillageGoal.java
++++ b/net/minecraft/world/entity/ai/goal/MoveBackToVillageGoal.java
+@@ -24,6 +_,13 @@
+         return !serverLevel.isVillage(blockPos) && super.canUse();
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    protected int canUseDelay() {
++        return 20;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Nullable
+     @Override
+     protected Vec3 getPosition() {

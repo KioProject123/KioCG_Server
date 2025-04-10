@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/CatLieOnBedGoal.java
++++ b/net/minecraft/world/entity/ai/goal/CatLieOnBedGoal.java
+@@ -19,7 +_,7 @@
+ 
+     @Override
+     public boolean canUse() {
+-        return this.cat.isTame() && !this.cat.isOrderedToSit() && !this.cat.isLying() && super.canUse();
++        return !this.cat.isLying() && super.canUse(); // KioCG - optimize entity behavior
+     }
+ 
+     @Override

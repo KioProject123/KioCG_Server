@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -126,6 +_,7 @@
+     public GoalSelector goalSelector;
+     @Nullable public net.minecraft.world.entity.ai.goal.FloatGoal goalFloat; // Paper - Allow nerfed mobs to jump and float
+     public GoalSelector targetSelector;
++    public com.kiocg.entity.GoalRegister<Mob> goalRegister = new com.kiocg.entity.GoalRegister<>(this); // KioCG - optimize entity behavior
+     @Nullable
+     private LivingEntity target;
+     private final Sensing sensing;
 @@ -145,6 +_,13 @@
      private BlockPos restrictCenter = BlockPos.ZERO;
      private float restrictRadius = -1.0F;
@@ -14,6 +22,19 @@
  
      protected Mob(EntityType<? extends Mob> entityType, Level level) {
          super(entityType, level);
+@@ -328,6 +_,12 @@
+ 
+     @Override
+     public void baseTick() {
++        // KioCG start - optimize entity behavior
++        if (this.firstTick) {
++            this.goalRegister.reassess();
++        }
++        // KioCG end - optimize entity behavior
++
+         super.baseTick();
+         ProfilerFiller profilerFiller = Profiler.get();
+         profilerFiller.push("mobBaseTick");
 @@ -399,7 +_,37 @@
          if (!this.level().isClientSide && this.tickCount % 5 == 0) {
              this.updateControlFlags();

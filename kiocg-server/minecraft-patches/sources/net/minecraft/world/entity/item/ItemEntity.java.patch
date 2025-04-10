@@ -21,7 +21,7 @@
              }
  
              boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX())
-@@ -231,6 +_,38 @@
+@@ -231,6 +_,37 @@
          }
      }
  
@@ -36,10 +36,9 @@
 +            return;
 +        }
 +
-+        java.util.List<ItemEntity> entities = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox());
++        java.util.List<ItemEntity> entities = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox(), itemEntity -> itemEntity.isAlive() && itemEntity != this);
 +        // Paper start - Cap entity collisions
 +        for (Entity entity1 : entities) {
-+            if (entity1 == this) continue;
 +            if (this.numCollisions >= this.level().paperConfig().collisions.maxEntityCollisions) {
 +                break;
 +            }

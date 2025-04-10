@@ -1,14 +1,27 @@
 --- a/net/minecraft/world/entity/animal/Panda.java
 +++ b/net/minecraft/world/entity/animal/Panda.java
-@@ -625,9 +_,9 @@
-                 this.gotBamboo = true;
+@@ -626,8 +_,9 @@
              }
  
--            if (this.isBaby()) {
-+            if (this.isBaby() && this.canFeed()) { // KioCG - breeding animals
+             if (this.isBaby()) {
++                if (!this.canFeed(player)) return InteractionResult.PASS; // KioCG - breeding animals
                  this.usePlayerItem(player, hand, itemInHand);
 -                this.ageUp((int)(-this.getAge() / 20 * 0.1F), true);
 +                this.ageUp(); // KioCG - breeding animals
              } else if (!this.level().isClientSide && this.getAge() == 0 && this.canFallInLove()) {
                  final ItemStack breedCopy = itemInHand.copy(); // Paper - Fix EntityBreedEvent copying
                  this.usePlayerItem(player, hand, itemInHand);
+@@ -1064,6 +_,13 @@
+                             .isEmpty()
+                 );
+         }
++
++        // KioCG start - optimize entity behavior
++        @Override
++        protected int canUseDelay() {
++            return 20;
++        }
++        // KioCG end - optimize entity behavior
+ 
+         @Override
+         public boolean canContinueToUse() {

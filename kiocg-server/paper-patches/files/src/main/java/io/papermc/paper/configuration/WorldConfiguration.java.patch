@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -577,4 +_,100 @@
+@@ -577,4 +_,101 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -74,7 +74,8 @@
 +            public KiocgConfig.Entity.Animal animal;
 +            public class Animal extends ConfigurationPart {
 +                public boolean villagerCanBreed = false;
-+                public double feedingHugeChance = 0.01;
++                public int feedingHugeStartDays = 12;
++                public double feedingHugeChance = 0.1;
 +                public int lobotomizeCheckInterval = 100;
 +            }
 +
