@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/ai/behavior/DoNothing.java
++++ b/net/minecraft/world/entity/ai/behavior/DoNothing.java
+@@ -10,8 +_,8 @@
+     private long endTimestamp;
+ 
+     public DoNothing(int minDuration, int maxDuration) {
+-        this.minDuration = minDuration;
+-        this.maxDuration = maxDuration;
++        this.minDuration = minDuration << 2; // KioCG - optimize entity behavior: 降低生物活跃频率
++        this.maxDuration = maxDuration << 2; // KioCG - optimize entity behavior: 降低生物活跃频率
+     }
+ 
+     @Override
