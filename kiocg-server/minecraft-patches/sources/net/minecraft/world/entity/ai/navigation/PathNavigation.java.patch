@@ -1,14 +1,48 @@
 --- a/net/minecraft/world/entity/ai/navigation/PathNavigation.java
 +++ b/net/minecraft/world/entity/ai/navigation/PathNavigation.java
-@@ -219,7 +_,20 @@
-         return this.moveTo(this.createPath(x, y, z, accuracy), speed);
+@@ -210,16 +_,52 @@
+     private int lastFailure = 0;
+     private int pathfindFailures = 0;
+     // Paper end - Perf: Optimise pathfinding
++    // KioCG start - optimize entity behavior
++    private double xo = 0.0;
++    private double yo = 0.0;
++    private double zo = 0.0;
++    // KioCG end - optimize entity behavior
+ 
+     public boolean moveTo(double x, double y, double z, double speed) {
+-        return this.moveTo(this.createPath(x, y, z, 1), speed);
++        return this.moveTo(x, y, z, 1, speed); // KioCG - optimize entity behavior
      }
  
+     public boolean moveTo(double x, double y, double z, int accuracy, double speed) {
+-        return this.moveTo(this.createPath(x, y, z, accuracy), speed);
++        // KioCG start - optimize entity behavior
++        // 能够缓解特定情况下拴着的马匹运算量爆炸的问题https://github.com/PaperMC/Paper/issues/8587
++        if (this.pathfindFailures > 0 && this.xo == x && this.yo == y && this.zo == z && net.minecraft.server.MinecraftServer.currentTick < this.lastFailure + 40) {
++            return false;
++        }
++        this.xo = x;
++        this.yo = y;
++        this.zo = z;
++
++        if (this.moveTo(this.createPath(x, y, z, accuracy), speed)) {
++            this.lastFailure = 0;
++            this.pathfindFailures = 0;
++            return true;
++        } else {
++            this.pathfindFailures++;
++            this.lastFailure = net.minecraft.server.MinecraftServer.currentTick;
++            return false;
++        }
++        // KioCG end - optimize entity behavior
+     }
++
 +    // KioCG start - optimize entity behavior
 +    private Entity prevEntity = null;
 +    private int tickPause;
 +    // KioCG end - optimize entity behavior
-+
+ 
      public boolean moveTo(Entity entity, double speed) {
 +        // KioCG start - optimize entity behavior
 +        if (prevEntity == entity && entity.tickCount <= tickPause) {
