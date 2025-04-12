@@ -33,7 +33,7 @@ public class ChunkHotCommand {
             long chunkhot = chunk != null ? chunk.getChunkHot().getAverage() : 0L;
             Component component = MiniMessage.miniMessage().deserialize("<green>[<aqua>豆渣子<green>] <gold>玩家<target>的区域SAN: <totalhot>, 所处区块SAN: <white><chunkhot>",
                                                                         Placeholder.parsed("target", player.getGameProfile().getName()),
-                                                                        Placeholder.component("totalhot", TPSBarTask.instance().getChunkHotColor(player)),
+                                                                        Placeholder.component("totalhot", TPSBarTask.instance().getChunkHotColor(player, false)),
                                                                         Placeholder.parsed("chunkhot", String.valueOf(chunkhot)));
             sender.sendSuccess(() -> PaperAdventure.asVanilla(component), false);
         }

@@ -45,7 +45,7 @@ public class TPSBarTask extends BossBarTask {
         bossbar.progress(getBossBarProgress((float) serverPlayer.getNearbyChunkHot(), (float) serverPlayer.level().paperConfig().kiocgConfig.chunkHot.phaseGood));
         bossbar.color(getBossBarColor(serverPlayer));
         bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTpsBarTitle,
-                                                           Placeholder.component("totalhot", getChunkHotColor(serverPlayer)),
+                                                           Placeholder.component("hotpct", getChunkHotColor(serverPlayer, true)),
                                                            Placeholder.component("tps", getTPSColor()),
                                                            Placeholder.component("mspt", getMSPTColor()),
                                                            Placeholder.component("ping", getPingColor(player.getPing()))
@@ -96,12 +96,13 @@ public class TPSBarTask extends BossBarTask {
         return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", ping)));
     }
 
-    public Component getChunkHotColor(net.minecraft.server.level.ServerPlayer player) {
+    public Component getChunkHotColor(net.minecraft.server.level.ServerPlayer player, boolean pct) {
         WorldConfiguration.KiocgConfig.ChunkHot hotCfg = player.level().paperConfig().kiocgConfig.chunkHot;
         Predicate<Long> GOOD_HOT = value -> value < hotCfg.phaseGood;
         Predicate<Long> Medium_HOT = value -> value < hotCfg.phaseMedium;
         long hot = player.getNearbyChunkHot();
         String color = getColor(hot, GOOD_HOT, Medium_HOT);
+        hot = pct ? GOOD_HOT.test(hot) ? (hotCfg.phaseGood - hot) * 100 / hotCfg.phaseGood : (hotCfg.phaseMedium - hot) * 100 / hotCfg.phaseMedium : hot;
         return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", hot)));
     }
 

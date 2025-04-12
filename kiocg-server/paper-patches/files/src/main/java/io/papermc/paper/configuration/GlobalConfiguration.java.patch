@@ -105,14 +105,14 @@
 +        public Component sleepProgressRight = Component.text("☀", NamedTextColor.YELLOW);
 +        public String sleepProgressContent = "                              ";
 +
-+        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms SAN<yellow>:</yellow> <totalhot>";
++        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms SAN<yellow>:</yellow> <hotpct>%";
 +        public net.kyori.adventure.bossbar.BossBar.Overlay commandTpsBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
 +        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
 +        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
 +        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorLow = net.kyori.adventure.bossbar.BossBar.Color.RED;
-+        public String commandTpsBarTextColorGood = "<gradient:#55ff55:#00aa00><text></gradient>";
-+        public String commandTpsBarTextColorMedium = "<gradient:#ffff55:#ffaa00><text></gradient>";
-+        public String commandTpsBarTextColorLow = "<gradient:#ff5555:#aa0000><text></gradient>";
++        public String commandTpsBarTextColorGood = "<green><text>";
++        public String commandTpsBarTextColorMedium = "<yellow><text>";
++        public String commandTpsBarTextColorLow = "<red><text>";
 +        public int commandTpsBarTickInterval = 20;
 +
 +        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap", "challenges");
