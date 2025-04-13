@@ -6,10 +6,10 @@ Subject: [PATCH] Custom block entity
 
 diff --git a/net/minecraft/core/flowerpot/FlowerPotInteraction.java b/net/minecraft/core/flowerpot/FlowerPotInteraction.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d6477041856979
+index 0000000000000000000000000000000000000000..b1a48f4050dc3235306e9012b4b74b67b6fcec95
 --- /dev/null
 +++ b/net/minecraft/core/flowerpot/FlowerPotInteraction.java
-@@ -0,0 +1,311 @@
+@@ -0,0 +1,286 @@
 +package net.minecraft.core.flowerpot;
 +
 +import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -28,7 +28,6 @@ index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d64770
 +import net.minecraft.world.phys.AABB;
 +import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.jetbrains.annotations.Nullable;
-+import org.joml.Vector3f;
 +
 +import java.util.List;
 +import java.util.Optional;
@@ -76,8 +75,7 @@ index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d64770
 +            double size = 0.7;
 +            return consumer(state, size, 1.0, size)
 +                    .andThen(blockDisplay -> {
-+                        Vector3f translation = blockDisplay.getTranslation();
-+                        blockDisplay.setTranslation(translation.set((float) (pixel8 - pixel4 * size), translation.y(), (float) (pixel8 - pixel4 * size)));
++                        blockDisplay.setTranslation(blockDisplay.getTranslation().add((float) (pixel4 * size), 0.0F, (float) (pixel4 * size)));
 +                    });
 +        }));
 +        map.put(Blocks.SPORE_BLOSSOM, Data.get((level, pos, state) -> consumer(state, pixel6 / pixel12).andThen(consumerInvert()).andThen(consumerFlat())));
@@ -116,8 +114,8 @@ index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d64770
 +                        Direction facing = state.getValue(BigDripleafBlock.FACING);
 +                        blockDisplay.setTranslation(blockDisplay.getTranslation().add((float) (facing.getStepX() * (pixel4 * size)), 0.0F, (float) (facing.getStepZ() * (pixel4 * size))));
 +                    });
-+        }).randomProperty(BlockStateProperties.TILT, BigDripleafBlock.FACING));
-+        map.put(Blocks.SMALL_DRIPLEAF, doublePlantData.randomProperty(SmallDripleafBlock.FACING));
++        }).randomProperty(BlockStateProperties.TILT));
++        map.put(Blocks.SMALL_DRIPLEAF, doublePlantData);
 +        map.put(Blocks.CHORUS_PLANT, Data.get((level, pos, state) -> {
 +            // 每次加载都随机样式
 +            state = state.setValue(ChorusPlantBlock.NORTH, RANDOM.nextBoolean())
@@ -137,7 +135,7 @@ index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d64770
 +                        Direction facing = state.getValue(BigDripleafBlock.FACING);
 +                        blockDisplay.setTranslation(blockDisplay.getTranslation().add((float) -(facing.getStepX() * (pixel3 * size)), 0.0F, (float) -(facing.getStepZ() * (pixel3 * size))));
 +                    });
-+        }, state -> state.setValue(CocoaBlock.AGE, CocoaBlock.MAX_AGE)).randomProperty(CocoaBlock.FACING));
++        }, state -> state.setValue(CocoaBlock.AGE, CocoaBlock.MAX_AGE)));
 +        map.put(Blocks.PUMPKIN_STEM, Data.get(FlowerPotInteraction::cropInteraction, state -> state.setValue(StemBlock.AGE, RANDOM.nextInt(1, StemBlock.MAX_AGE))));
 +        map.put(Blocks.MELON_STEM, Data.get(FlowerPotInteraction::cropInteraction, state -> state.setValue(StemBlock.AGE, RANDOM.nextInt(1, StemBlock.MAX_AGE))));
 +        map.put(Blocks.BEETROOTS, Data.get(FlowerPotInteraction::cropCircularInteraction).randomProperty(BeetrootBlock.AGE));
@@ -177,29 +175,6 @@ index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d64770
 +            double size = pixel6 / pixel14 - pixel1;
 +            return consumer(state, size, size, size, pixel6 - pixel8 * size + (pixel1 / 2));
 +        }));
-+
-+        bootStrapCandles();
-+    }
-+
-+    private static void bootStrapCandles() {
-+        Data candleData = Data.get(FlowerPotInteraction::originalInteraction);
-+        map.put(Blocks.CANDLE, candleData);
-+        map.put(Blocks.WHITE_CANDLE, candleData);
-+        map.put(Blocks.ORANGE_CANDLE, candleData);
-+        map.put(Blocks.MAGENTA_CANDLE, candleData);
-+        map.put(Blocks.LIGHT_BLUE_CANDLE, candleData);
-+        map.put(Blocks.YELLOW_CANDLE, candleData);
-+        map.put(Blocks.LIME_CANDLE, candleData);
-+        map.put(Blocks.PINK_CANDLE, candleData);
-+        map.put(Blocks.GRAY_CANDLE, candleData);
-+        map.put(Blocks.LIGHT_GRAY_CANDLE, candleData);
-+        map.put(Blocks.CYAN_CANDLE, candleData);
-+        map.put(Blocks.PURPLE_CANDLE, candleData);
-+        map.put(Blocks.BLUE_CANDLE, candleData);
-+        map.put(Blocks.BROWN_CANDLE, candleData);
-+        map.put(Blocks.GREEN_CANDLE, candleData);
-+        map.put(Blocks.RED_CANDLE, candleData);
-+        map.put(Blocks.BLACK_CANDLE, candleData);
 +    }
 +
 +    private static Consumer<Display.BlockDisplay> normalInteraction(Level level, BlockPos pos, BlockState blockState) {
@@ -346,10 +321,10 @@ index 35b91f4daba4ac9751fa388d9da7d127db1356b0..21a5dbf16390f3b0c671f7c51abc979f
                      BuiltInRegistries.bootStrap(() -> {
                          io.papermc.paper.world.worldgen.OptionallyFlatBedrockConditionSource.bootstrap(); // Paper - Flat bedrock generator settings
 diff --git a/net/minecraft/world/entity/Display.java b/net/minecraft/world/entity/Display.java
-index d858fbc7c501029d69f0e4685d2daae8f7a8f447..16b58272fba54a14dd5ec445068f3ef02de39ed3 100644
+index f695c9d2ffedc887ec13f6e47eeecfa23aaddad9..8752f6f20b58fcd39d3cf7a46268c49f15f4ffee 100644
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -674,6 +674,34 @@ public abstract class Display extends Entity {
+@@ -674,6 +674,35 @@ public abstract class Display extends Entity {
  
          public record BlockRenderState(BlockState blockState) {
          }
@@ -357,7 +332,7 @@ index d858fbc7c501029d69f0e4685d2daae8f7a8f447..16b58272fba54a14dd5ec445068f3ef0
 +        // KioCG start - custom block entity
 +        @Nullable
 +        public static Display.BlockDisplay getDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos) {
-+            double x = pos.getX(), y = pos.getY(), z = pos.getZ();
++            double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
 +            List<Display.BlockDisplay> entitiesOfClass = level.getEntitiesOfClass(Display.BlockDisplay.class, new AABB(x, y, z, x, y, z).inflate(1.0E-5), display -> {
 +                return !display.persist;
 +            });
@@ -367,7 +342,8 @@ index d858fbc7c501029d69f0e4685d2daae8f7a8f447..16b58272fba54a14dd5ec445068f3ef0
 +        public static void createDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos, java.util.function.Consumer<BlockDisplay> consumer) {
 +            Display.BlockDisplay display = EntityType.BLOCK_DISPLAY.create(level, EntitySpawnReason.COMMAND);
 +            if (display != null) {
-+                display.moveTo(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
++                display.moveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
++                display.setTranslation(new Vector3f(-0.5F, -0.5F, -0.5F));
 +                display.persist = false;
 +                consumer.accept(display);
 +                level.addFreshEntity(display, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM);
@@ -416,7 +392,7 @@ index 648d22cdfcf261494038d589f5a5e32704083076..fb36d8e903b565b330790097a58c99d0
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/FlowerPotBlock.java b/net/minecraft/world/level/block/FlowerPotBlock.java
-index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..236c0a676881c61242c86bc2600863535f0d9176 100644
+index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20bce51ce7 100644
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
 @@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
@@ -449,8 +425,8 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..236c0a676881c61242c86bc260086353
 +                            return InteractionResult.CONSUME;
 +                        }
 +                        // CraftBukkit end
-+                        player.sendSoundEffect(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
-+                        flowerPotBlockEntity.setPotted(flowerPotBlockEntity.getPotted(), pottedState.setValue(AbstractCandleBlock.LIT, true));
++                        Player.sendSoundEffect(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
++                        flowerPotBlockEntity.updatePottedState(pottedState.setValue(AbstractCandleBlock.LIT, true));
 +                        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 +                        stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
 +                        return InteractionResult.SUCCESS_SERVER;
@@ -461,7 +437,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..236c0a676881c61242c86bc260086353
 +                        InteractionResult interactionResult = onPut(stack, level, pos, player);
 +                        if (interactionResult == InteractionResult.SUCCESS) {
 +                            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
-+                            flowerPotBlockEntity.setPotted(flowerPotBlockEntity.getPotted(), CandleCakeBlock.byCandle(candleBlock));
++                            flowerPotBlockEntity.updatePottedState(CandleCakeBlock.byCandle(candleBlock));
 +                            player.awardStat(Stats.ITEM_USED.get(item));
 +                            return InteractionResult.SUCCESS_SERVER;
 +                        }
@@ -477,7 +453,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..236c0a676881c61242c86bc260086353
 +                return optional.map(pottedState -> {
 +                    InteractionResult interactionResult = onPut(stack, level, pos, player);
 +                    if (interactionResult == InteractionResult.SUCCESS) {
-+                        flowerPotBlockEntity.setPotted(block, pottedState);
++                        flowerPotBlockEntity.setPotted(block, pottedState, player.getDirection().getOpposite());
 +                        return InteractionResult.SUCCESS_SERVER;
 +                    }
 +                    return interactionResult;
@@ -780,17 +756,20 @@ index 0000000000000000000000000000000000000000..4f44d4f85e85f99815f513fc6261f9bb
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67e29cc678
+index 0000000000000000000000000000000000000000..534574defcb08da283310db982d0a3cbcc4b03b3
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
-@@ -0,0 +1,161 @@
+@@ -0,0 +1,198 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
++import net.minecraft.core.Direction;
 +import net.minecraft.core.HolderGetter;
 +import net.minecraft.core.HolderLookup;
 +import net.minecraft.core.flowerpot.FlowerPotInteraction;
++import net.minecraft.core.particles.DustParticleOptions;
 +import net.minecraft.core.particles.ParticleTypes;
++import net.minecraft.core.particles.SimpleParticleType;
 +import net.minecraft.core.registries.BuiltInRegistries;
 +import net.minecraft.core.registries.Registries;
 +import net.minecraft.nbt.CompoundTag;
@@ -802,9 +781,11 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +import net.minecraft.world.level.block.AbstractCandleBlock;
 +import net.minecraft.world.level.block.Block;
 +import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.RedstoneTorchBlock;
 +import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.phys.Vec3;
 +
++import java.util.Objects;
 +import java.util.Optional;
 +import java.util.function.Consumer;
 +
@@ -813,6 +794,7 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +    private Block potted = Blocks.AIR;
 +    private BlockState pottedState = potted.defaultBlockState();
 +    private PottedTick pottedTick = PottedTick.NONE;
++    private Direction facing = Direction.SOUTH;
 +    private boolean firstTick;
 +
 +    public FlowerPotBlockEntity(BlockPos pos, BlockState blockState) {
@@ -842,7 +824,7 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +
 +    public Block getPottedAndRemove() {
 +        Block temp = this.potted;
-+        this.setPotted(Blocks.AIR, Blocks.AIR.defaultBlockState());
++        this.setPotted(Blocks.AIR, Blocks.AIR.defaultBlockState(), Direction.SOUTH);
 +        return temp;
 +    }
 +
@@ -850,17 +832,19 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +        return this.potted == Blocks.AIR;
 +    }
 +
-+    public void setPotted(Block potted, BlockState pottedState) {
-+        if (this.potted != potted || this.pottedState != pottedState) {
-+            this.potted = potted;
-+            this.pottedState = pottedState;
-+            this.pottedTick = PottedTick.pottedTick(this);
++    public void updatePottedState(BlockState pottedState) {
++        setPotted(this.potted, pottedState, this.facing);
++    }
 +
-+            if (this.hasLevel()) {
-+                this.refreshDisplayBlock((ServerLevel) this.getLevel(), this.getBlockPos());
-+                if (this.pottedTick != PottedTick.NONE) {
-+                    this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
-+                }
++    public void setPotted(Block potted, BlockState pottedState, Direction facing) {
++        this.potted = potted;
++        this.pottedState = pottedState;
++        this.pottedTick = PottedTick.pottedTick(this);
++        this.facing = facing;
++        if (this.hasLevel()) {
++            this.refreshDisplayBlock((ServerLevel) this.getLevel(), this.getBlockPos());
++            if (this.pottedTick != PottedTick.NONE) {
++                this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
 +            }
 +        }
 +    }
@@ -873,6 +857,7 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +
 +        Optional<Consumer<Display.BlockDisplay>> optional = FlowerPotInteraction.getInteract(level, pos, this.getPotted(), this.getPottedState());
 +        optional.ifPresent(consumer -> {
++            consumer = consumer.andThen(display -> display.setYRot(facing.toYRot()));
 +            Display.BlockDisplay displayBlock = Display.BlockDisplay.getDisplayBlock(level, pos);
 +            if (displayBlock != null) {
 +                consumer.accept(displayBlock);
@@ -886,8 +871,11 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 +        if (tag.contains("KioCG.Potted")) {
 +            ResourceLocation resourceLocation = ResourceLocation.tryParse(tag.getString("KioCG.Potted"));
++            Block potted = BuiltInRegistries.BLOCK.getValue(resourceLocation);
 +            HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
-+            this.setPotted(BuiltInRegistries.BLOCK.getValue(resourceLocation), NbtUtils.readBlockState(holderGetter, tag.getCompound("KioCG.PottedState")));
++            BlockState pottedState = NbtUtils.readBlockState(holderGetter, tag.getCompound("KioCG.PottedState"));
++            Direction facing = Direction.byName(tag.getString("KioCG.Facing"));
++            this.setPotted(potted, pottedState, Objects.requireNonNullElse(facing, Direction.SOUTH));
 +        }
 +    }
 +
@@ -896,6 +884,7 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +        if (!this.isEmpty()) {
 +            tag.putString("KioCG.Potted", BuiltInRegistries.BLOCK.getKey(this.getPotted()).toString());
 +            tag.put("KioCG.PottedState", NbtUtils.writeBlockState(this.getPottedState()));
++            tag.putString("KioCG.Facing", this.facing.getName());
 +        }
 +    }
 +
@@ -908,18 +897,51 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +        private static PottedTick pottedTick(FlowerPotBlockEntity flowerPot) {
 +            if (!flowerPot.isEmpty()) {
 +                BlockState pottedState = flowerPot.getPottedState();
-+                boolean isCandle = pottedState.is(BlockTags.CANDLES);
-+                if (isCandle || pottedState.is(BlockTags.CANDLE_CAKES)) {
-+                    if (pottedState.getValueOrElse(AbstractCandleBlock.LIT, false)) {
-+                        return (level, pos, state, flowerPot1) -> {
-+                            PottedTick.candleTick(level, pos, state, flowerPot1, isCandle ? 0.75 : 0.65);
-+                        };
++                if (pottedState.is(Blocks.TORCH)) {
++                    return (level, pos, state, flowerPot1) -> {
++                        PottedTick.torchTick(level, pos, state, flowerPot1, ParticleTypes.FLAME);
++                    };
++                } else if (pottedState.is(Blocks.SOUL_TORCH)) {
++                    return (level, pos, state, flowerPot1) -> {
++                        PottedTick.torchTick(level, pos, state, flowerPot1, ParticleTypes.SOUL_FIRE_FLAME);
++                    };
++                } else if (pottedState.is(Blocks.REDSTONE_TORCH)) {
++                    if (pottedState.getValue(RedstoneTorchBlock.LIT)) {
++                        return PottedTick::redstoneTorchTick;
 +                    }
 +                } else if (pottedState.is(Blocks.SPORE_BLOSSOM)) {
 +                    return PottedTick::sporeBlossomTick;
++                } else {
++                    boolean isCandle = pottedState.is(BlockTags.CANDLES);
++                    if (isCandle || pottedState.is(BlockTags.CANDLE_CAKES)) {
++                        if (pottedState.getValueOrElse(AbstractCandleBlock.LIT, false)) {
++                            return (level, pos, state, flowerPot1) -> {
++                                PottedTick.candleTick(level, pos, state, flowerPot1, isCandle ? 0.5 + 0.25 : 0.65);
++                            };
++                        }
++                    }
 +                }
 +            }
 +            return NONE;
++        }
++
++        private static void torchTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot, SimpleParticleType flameParticle) {
++            if (level.random.nextFloat() < (float) (1.0 / 8.0)) {
++                double d = pos.getX() + 0.5;
++                double d1 = pos.getY() + 0.7 + 0.25;
++                double d2 = pos.getZ() + 0.5;
++                level.sendParticles(ParticleTypes.SMOKE, d, d1, d2, 1, 0.0, 0.0, 0.0, 0.0);
++                level.sendParticles(flameParticle, d, d1, d2, 1, 0.0, 0.0, 0.0, 0.0);
++            }
++        }
++
++        private static void redstoneTorchTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot) {
++            if (level.random.nextFloat() < (float) (1.0 / 8.0)) {
++                double d = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.2;
++                double d1 = pos.getY() + 0.7 + 0.25 + (level.random.nextDouble() - 0.5) * 0.2;
++                double d2 = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.2;
++                level.sendParticles(DustParticleOptions.REDSTONE, d, d1, d2, 1, 0.0, 0.0, 0.0, 0.0);
++            }
 +        }
 +
 +        private static void candleTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot, double yoffset) {
@@ -930,16 +952,7 @@ index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67
 +
 +        private static void sporeBlossomTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot) {
 +            if (level.random.nextFloat() < (float) (1.0 / 20.0)) {
-+                level.sendParticles(
-+                        ParticleTypes.SPORE_BLOSSOM_AIR,
-+                        pos.getX() + 0.5,
-+                        pos.getY() + 1.0,
-+                        pos.getZ() + 0.5,
-+                        2,
-+                        0.5,
-+                        0.5,
-+                        0.5,
-+                        0.0);
++                level.sendParticles(ParticleTypes.SPORE_BLOSSOM_AIR, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 2, 0.5, 0.5, 0.5, 0.0);
 +            }
 +        }
 +    }

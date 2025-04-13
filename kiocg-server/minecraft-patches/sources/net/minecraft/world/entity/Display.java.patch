@@ -39,7 +39,7 @@
 +
 +    public Display setScaleCenterFloor(double x, double y, double z, double floorY) {
 +        this.setScale(new Vector3f((float) x, (float) y, (float) z));
-+        this.setTranslation(new Vector3f((float) ((1.0 - x) / 2.0), (float) floorY, (float) ((1.0 - z) / 2.0)));
++        this.setTranslation(this.getTranslation().add((float) ((1.0 - x) / 2.0), (float) floorY, (float) ((1.0 - z) / 2.0)));
 +        return this;
 +    }
 +
