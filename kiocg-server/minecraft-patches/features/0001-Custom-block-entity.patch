@@ -6,182 +6,233 @@ Subject: [PATCH] Custom block entity
 
 diff --git a/net/minecraft/core/flowerpot/FlowerPotInteraction.java b/net/minecraft/core/flowerpot/FlowerPotInteraction.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4c5f5bb84beab6c74a209161670fff01c85b9cb1
+index 0000000000000000000000000000000000000000..8195d972846295327e131595c3d6477041856979
 --- /dev/null
 +++ b/net/minecraft/core/flowerpot/FlowerPotInteraction.java
-@@ -0,0 +1,228 @@
+@@ -0,0 +1,311 @@
 +package net.minecraft.core.flowerpot;
 +
 +import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 +import net.minecraft.core.BlockPos;
-+import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.core.Direction;
 +import net.minecraft.tags.BlockTags;
++import net.minecraft.util.RandomSource;
 +import net.minecraft.world.entity.Display;
 +import net.minecraft.world.level.Level;
 +import net.minecraft.world.level.block.*;
 +import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.block.state.properties.*;
++import net.minecraft.world.level.block.state.properties.BlockStateProperties;
++import net.minecraft.world.level.block.state.properties.BooleanProperty;
++import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
++import net.minecraft.world.level.block.state.properties.Property;
 +import net.minecraft.world.phys.AABB;
 +import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.jetbrains.annotations.Nullable;
 +import org.joml.Vector3f;
 +
++import java.util.List;
 +import java.util.Optional;
 +import java.util.function.Consumer;
++import java.util.function.Function;
 +
 +// KioCG start - custom block entity: all class
 +public interface FlowerPotInteraction {
++    RandomSource RANDOM = RandomSource.create();
 +    double pixel1 = 1.0 / 16.0, pixel2 = 2.0 / 16.0, pixel3 = 3.0 / 16.0, pixel4 = 4.0 / 16.0;
 +    double pixel5 = 5.0 / 16.0, pixel6 = 6.0 / 16.0, pixel7 = 7.0 / 16.0, pixel8 = 8.0 / 16.0;
 +    double pixel9 = 9.0 / 16.0, pixel10 = 10.0 / 16.0, pixel11 = 11.0 / 16.0, pixel12 = 12.0 / 16.0;
 +    double pixel13 = 13.0 / 16.0, pixel14 = 14.0 / 16.0, pixel15 = 15.0 / 16.0, pixel16 = 16.0 / 16.0;
 +
-+    Consumer<Display.BlockDisplay> interact(Level level, BlockPos pos, Block block);
++    @Nullable Consumer<Display.BlockDisplay> interact(Level level, BlockPos pos, BlockState blockState);
 +
-+    Object2ObjectOpenHashMap<Block, FlowerPotInteraction> map = new Object2ObjectOpenHashMap<>();
++    Object2ObjectOpenHashMap<Block, Data> map = new Object2ObjectOpenHashMap<>();
 +
-+    static Optional<Consumer<Display.BlockDisplay>> get(Level level, BlockPos pos, Block block) {
-+        FlowerPotInteraction flowerPotInteraction = FlowerPotInteraction.map.get(block);
-+        return Optional.ofNullable(flowerPotInteraction.interact(level, pos, block));
++    static Optional<BlockState> getBlockState(Level level, BlockPos pos, Block block) {
++        Data data = FlowerPotInteraction.map.get(block);
++        BlockState blockState = data.blockStateGenerator().apply(block);
++        return Optional.ofNullable(data.interaction().interact(level, pos, blockState)).map(consumer -> blockState);
++    }
++
++    static Optional<Consumer<Display.BlockDisplay>> getInteract(Level level, BlockPos pos, Block potted, BlockState pottedState) {
++        Data data = FlowerPotInteraction.map.get(potted);
++        return Optional.ofNullable(data.interaction().interact(level, pos, pottedState));
 +    }
 +
 +    static void bootStrap() {
-+        map.defaultReturnValue(FlowerPotInteraction::defaultInteraction);
-+        map.put(Blocks.PALE_HANGING_MOSS, FlowerPotInteraction::hangingInteraction);
-+        map.put(Blocks.SMALL_AMETHYST_BUD, (level, pos, block) -> consumer(block.defaultBlockState(), 0.65));
-+        map.put(Blocks.MEDIUM_AMETHYST_BUD, (level, pos, block) -> consumer(block.defaultBlockState(), 0.65));
-+        map.put(Blocks.LARGE_AMETHYST_BUD, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.AMETHYST_CLUSTER, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.SHORT_GRASS, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.PINK_PETALS, (level, pos, block) -> blockDisplay -> {
-+            double size = 0.7;
-+            blockDisplay.setScale(new Vector3f((float) size, 1.0F, (float) size));
-+            blockDisplay.setTranslation(new Vector3f((float) (pixel8 - pixel4 * size), (float) pixel4, (float) (pixel8 - pixel4 * size)));
-+            blockDisplay.setBlockState(block.defaultBlockState());
-+        });
-+        map.put(Blocks.SPORE_BLOSSOM, (level, pos, block) -> consumer(block.defaultBlockState(), pixel6 / pixel12).andThen(consumerInvert()).andThen(consumerFlat()));
-+        map.put(Blocks.SUGAR_CANE, (level, pos, block) -> consumer(block.defaultBlockState(), 0.45, pixel12, 0.45));
-+        map.put(Blocks.NETHER_SPROUTS, (level, pos, block) -> consumer(block.defaultBlockState(), 0.45));
-+        map.put(Blocks.WEEPING_VINES, (level, pos, block) -> consumer(Blocks.WEEPING_VINES_PLANT.defaultBlockState()).andThen(consumerInvert()));
-+        map.put(Blocks.TWISTING_VINES, (level, pos, block) -> normalInteraction(level, pos, Blocks.TWISTING_VINES_PLANT));
-+        map.put(Blocks.VINE, FlowerPotInteraction::sphericalInteraction);
-+        map.put(Blocks.TALL_GRASS, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.LARGE_FERN, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.SUNFLOWER, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.LILAC, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.ROSE_BUSH, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.PEONY, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.PITCHER_PLANT, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.BIG_DRIPLEAF, (level, pos, block) -> {
-+            double size = pixel12;
-+            return consumer(block.defaultBlockState().setValue(BlockStateProperties.TILT, Tilt.FULL), size)
-+                    .andThen(blockDisplay -> {
-+                        Vector3f translation = blockDisplay.getTranslation();
-+                        blockDisplay.setTranslation(translation.set(translation.x(), translation.y(), (float) (pixel8 - pixel12 * size)));
-+                    });
-+        });
-+        map.put(Blocks.SMALL_DRIPLEAF, FlowerPotInteraction::doublePlantInteraction);
-+        map.put(Blocks.CHORUS_PLANT, (level, pos, block) -> consumer(block.defaultBlockState().setValue(ChorusPlantBlock.UP, true).setValue(ChorusPlantBlock.DOWN, true), pixel4 / pixel8, pixel12, pixel4 / pixel8));
-+        map.put(Blocks.GLOW_LICHEN, FlowerPotInteraction::sphericalInteraction);
-+        map.put(Blocks.HANGING_ROOTS, FlowerPotInteraction::hangingInteraction);
-+        map.put(Blocks.WHEAT, FlowerPotInteraction::cropCircularInteraction);
-+        map.put(Blocks.COCOA, (level, pos, block) -> {
-+            double size = pixel4 / pixel8 + pixel1;
-+            return consumer(block.defaultBlockState().setValue(CocoaBlock.AGE, CocoaBlock.MAX_AGE), size, size, size, pixel4 - pixel3 * size)
-+                    .andThen(blockDisplay -> {
-+                        Vector3f translation = blockDisplay.getTranslation();
-+                        blockDisplay.setTranslation(translation.set(translation.x(), translation.y(), (float) (pixel8 - pixel5 * size)));
-+                    });
-+        });
-+        map.put(Blocks.PUMPKIN_STEM, FlowerPotInteraction::cropInteraction);
-+        map.put(Blocks.MELON_STEM, FlowerPotInteraction::cropInteraction);
-+        map.put(Blocks.BEETROOTS, FlowerPotInteraction::cropCircularInteraction);
-+        map.put(Blocks.TORCHFLOWER_CROP, FlowerPotInteraction::cropInteraction);
-+        map.put(Blocks.PITCHER_CROP, (level, pos, block) -> consumer(block.defaultBlockState().setValue(PitcherCropBlock.AGE, 2), pixel4 / pixel10 + pixel1).andThen(consumerFlat()));
-+        map.put(Blocks.CAVE_VINES, (level, pos, block) -> consumer(block.defaultBlockState().setValue(CaveVines.BERRIES, true)).andThen(consumerInvert()));
-+        map.put(Blocks.SWEET_BERRY_BUSH, FlowerPotInteraction::cropInteraction);
-+        map.put(Blocks.NETHER_WART, FlowerPotInteraction::cropCircularInteraction);
-+        map.put(Blocks.LILY_PAD, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.SEAGRASS, (level, pos, block) -> consumer(block.defaultBlockState(), pixel8 - 1.0E-4, pixel10, pixel8 - 1.0E-4));
-+        map.put(Blocks.SEA_PICKLE, (level, pos, block) -> consumer(block.defaultBlockState(), pixel16));
-+        map.put(Blocks.KELP, (level, pos, block) -> consumer(block.defaultBlockState(), pixel12, pixel16, pixel12));
-+        map.put(Blocks.TUBE_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.BRAIN_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.BUBBLE_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.FIRE_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.HORN_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.DEAD_TUBE_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.DEAD_BRAIN_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.DEAD_BUBBLE_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.DEAD_FIRE_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.DEAD_HORN_CORAL, FlowerPotInteraction::normalInteraction);
-+        map.put(Blocks.TUBE_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.BRAIN_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.BUBBLE_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.FIRE_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.HORN_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.DEAD_TUBE_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.DEAD_BRAIN_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.DEAD_BUBBLE_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.DEAD_FIRE_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.DEAD_HORN_CORAL_FAN, FlowerPotInteraction::flatInteraction);
-+        map.put(Blocks.SCULK_VEIN, FlowerPotInteraction::sphericalInteraction);
-+        map.put(Blocks.CARROTS, FlowerPotInteraction::cropCircularInteraction);
-+        map.put(Blocks.POTATOES, FlowerPotInteraction::cropCircularInteraction);
-+        map.put(Blocks.CAKE, (level, pos, block) -> {
-+            double size = pixel6 / pixel14 - pixel1;
-+            return consumer(block.defaultBlockState(), size, size, size, pixel6 - pixel8 * size + (pixel1 / 2));
-+        });
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> normalInteraction(Level level, BlockPos pos, Block block) {
-+        return consumer(block.defaultBlockState());
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> hangingInteraction(Level level, BlockPos pos, Block block) {
-+        return normalInteraction(level, pos, block).andThen(consumerInvert());
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> flatInteraction(Level level, BlockPos pos, Block block) {
-+        return normalInteraction(level, pos, block).andThen(consumerFlat());
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> sphericalInteraction(Level level, BlockPos pos, Block block) {
-+        return consumer(block.defaultBlockState(), pixel8);
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> doublePlantInteraction(Level level, BlockPos pos, Block block) {
-+        BlockState blockState = block.defaultBlockState();
-+        if (blockState.hasProperty(DoublePlantBlock.HALF)) {
-+            return consumer(blockState.setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER));
-+        }
-+        throw new IllegalStateException("方块" + BuiltInRegistries.BLOCK.wrapAsHolder(block).getRegisteredName() + "没有HALF属性");
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> cropInteraction(Level level, BlockPos pos, Block block) {
-+        return ageInteraction(block, pixel12, pixel12, pixel12);
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> cropCircularInteraction(Level level, BlockPos pos, Block block) {
-+        return ageInteraction(block, pixel8 - 1.0E-4, pixel8 + pixel1, pixel8 - 1.0E-4).andThen(consumerFlat());
-+    }
-+
-+    private static Consumer<Display.BlockDisplay> ageInteraction(Block block, double xsize, double ysize, double zsize) {
-+        BlockState blockState = block.defaultBlockState();
-+        for (Property<?> property : blockState.getProperties()) {
-+            if (property instanceof IntegerProperty integerProperty && "age".equals(property.getName())) {
-+                return consumer(blockState.setValue(integerProperty, integerProperty.max), xsize, ysize, zsize);
++        map.defaultReturnValue(Data.get(FlowerPotInteraction::defaultInteraction));
++        map.put(Blocks.PALE_HANGING_MOSS, Data.get((level, pos, state) -> {
++            if (state.getValue(HangingMossBlock.TIP)) {
++                return FlowerPotInteraction.hangingInteraction(level, pos, state);
++            } else {
++                return FlowerPotInteraction.normalInteraction(level, pos, state);
 +            }
-+        }
-+        throw new IllegalStateException("方块" + BuiltInRegistries.BLOCK.wrapAsHolder(block).getRegisteredName() + "没有AGE属性");
++        }).randomProperty(HangingMossBlock.TIP));
++        map.put(Blocks.SMALL_AMETHYST_BUD, Data.get((level, pos, state) -> consumer(state, 0.65)));
++        map.put(Blocks.MEDIUM_AMETHYST_BUD, Data.get((level, pos, state) -> consumer(state, 0.65)));
++        map.put(Blocks.LARGE_AMETHYST_BUD, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.AMETHYST_CLUSTER, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.SHORT_GRASS, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.PINK_PETALS, Data.get((level, pos, state) -> {
++            double size = 0.7;
++            return consumer(state, size, 1.0, size)
++                    .andThen(blockDisplay -> {
++                        Vector3f translation = blockDisplay.getTranslation();
++                        blockDisplay.setTranslation(translation.set((float) (pixel8 - pixel4 * size), translation.y(), (float) (pixel8 - pixel4 * size)));
++                    });
++        }));
++        map.put(Blocks.SPORE_BLOSSOM, Data.get((level, pos, state) -> consumer(state, pixel6 / pixel12).andThen(consumerInvert()).andThen(consumerFlat())));
++        map.put(Blocks.SUGAR_CANE, Data.get((level, pos, state) -> consumer(state, 0.45, pixel12, 0.45)));
++        map.put(Blocks.NETHER_SPROUTS, Data.get((level, pos, state) -> consumer(state, 0.45)));
++        map.put(Blocks.WEEPING_VINES, Data.get(FlowerPotInteraction::hangingInteraction, Blocks.WEEPING_VINES_PLANT));
++        map.put(Blocks.TWISTING_VINES, Data.get(FlowerPotInteraction::normalInteraction, Blocks.TWISTING_VINES_PLANT));
++        map.put(Blocks.VINE, Data.get(FlowerPotInteraction::sphericalInteraction));
++
++        Data doublePlantData = Data.get(FlowerPotInteraction::normalInteraction).randomProperty(DoublePlantBlock.HALF);
++        Data doublePlantLowerInvertData = Data.get((level, pos, state) -> {
++            if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER) {
++                return FlowerPotInteraction.normalInteraction(level, pos, state);
++            } else {
++                return FlowerPotInteraction.hangingInteraction(level, pos, state);
++            }
++        }).randomProperty(DoublePlantBlock.HALF);
++        map.put(Blocks.TALL_GRASS, doublePlantData);
++        map.put(Blocks.LARGE_FERN, doublePlantLowerInvertData);
++        map.put(Blocks.SUNFLOWER, doublePlantData);
++        map.put(Blocks.LILAC, doublePlantData);
++        map.put(Blocks.ROSE_BUSH, doublePlantData);
++        map.put(Blocks.PEONY, doublePlantLowerInvertData);
++        map.put(Blocks.PITCHER_PLANT, Data.get((level, pos, state) -> {
++            double size = pixel12;
++            if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER) {
++                return consumer(state, size, size, size, pixel4 + pixel5 * size);
++            } else {
++                return consumer(state, size, size, size, pixel4 - pixel5 * size).andThen(consumerInvert());
++            }
++        }).randomProperty(DoublePlantBlock.HALF));
++        map.put(Blocks.BIG_DRIPLEAF, Data.get((level, pos, state) -> {
++            double size = pixel12;
++            return consumer(state, size)
++                    .andThen(blockDisplay -> {
++                        Direction facing = state.getValue(BigDripleafBlock.FACING);
++                        blockDisplay.setTranslation(blockDisplay.getTranslation().add((float) (facing.getStepX() * (pixel4 * size)), 0.0F, (float) (facing.getStepZ() * (pixel4 * size))));
++                    });
++        }).randomProperty(BlockStateProperties.TILT, BigDripleafBlock.FACING));
++        map.put(Blocks.SMALL_DRIPLEAF, doublePlantData.randomProperty(SmallDripleafBlock.FACING));
++        map.put(Blocks.CHORUS_PLANT, Data.get((level, pos, state) -> {
++            // 每次加载都随机样式
++            state = state.setValue(ChorusPlantBlock.NORTH, RANDOM.nextBoolean())
++                         .setValue(ChorusPlantBlock.EAST, RANDOM.nextBoolean())
++                         .setValue(ChorusPlantBlock.SOUTH, RANDOM.nextBoolean())
++                         .setValue(ChorusPlantBlock.WEST, RANDOM.nextBoolean())
++                         .setValue(ChorusPlantBlock.UP, RANDOM.nextBoolean());
++            return consumer(state, pixel4 / pixel8, pixel12, pixel4 / pixel8);
++        }, state -> state.setValue(ChorusPlantBlock.UP, true).setValue(ChorusPlantBlock.DOWN, true)));
++        map.put(Blocks.GLOW_LICHEN, Data.get(FlowerPotInteraction::sphericalInteraction));
++        map.put(Blocks.HANGING_ROOTS, Data.get(FlowerPotInteraction::hangingInteraction));
++        map.put(Blocks.WHEAT, Data.get(FlowerPotInteraction::cropCircularInteraction).randomProperty(CropBlock.AGE));
++        map.put(Blocks.COCOA, Data.get((level, pos, state) -> {
++            double size = pixel4 / pixel8 + pixel1;
++            return consumer(state, size, size, size, pixel4 - pixel3 * size)
++                    .andThen(blockDisplay -> {
++                        Direction facing = state.getValue(BigDripleafBlock.FACING);
++                        blockDisplay.setTranslation(blockDisplay.getTranslation().add((float) -(facing.getStepX() * (pixel3 * size)), 0.0F, (float) -(facing.getStepZ() * (pixel3 * size))));
++                    });
++        }, state -> state.setValue(CocoaBlock.AGE, CocoaBlock.MAX_AGE)).randomProperty(CocoaBlock.FACING));
++        map.put(Blocks.PUMPKIN_STEM, Data.get(FlowerPotInteraction::cropInteraction, state -> state.setValue(StemBlock.AGE, RANDOM.nextInt(1, StemBlock.MAX_AGE))));
++        map.put(Blocks.MELON_STEM, Data.get(FlowerPotInteraction::cropInteraction, state -> state.setValue(StemBlock.AGE, RANDOM.nextInt(1, StemBlock.MAX_AGE))));
++        map.put(Blocks.BEETROOTS, Data.get(FlowerPotInteraction::cropCircularInteraction).randomProperty(BeetrootBlock.AGE));
++        map.put(Blocks.TORCHFLOWER_CROP, Data.get(FlowerPotInteraction::cropInteraction).randomProperty(TorchflowerCropBlock.AGE));
++        map.put(Blocks.PITCHER_CROP, Data.get((level, pos, state) -> consumer(state, pixel4 / pixel10 + pixel1).andThen(consumerFlat()), state -> state.setValue(PitcherCropBlock.AGE, RANDOM.nextInt(1, 3))));
++        map.put(Blocks.CAVE_VINES, Data.get(FlowerPotInteraction::hangingInteraction).randomProperty(CaveVines.BERRIES));
++        map.put(Blocks.SWEET_BERRY_BUSH, Data.get(FlowerPotInteraction::cropInteraction).randomProperty(SweetBerryBushBlock.AGE));
++        map.put(Blocks.NETHER_WART, Data.get(FlowerPotInteraction::cropCircularInteraction).randomProperty(NetherWartBlock.AGE));
++        map.put(Blocks.LILY_PAD, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.SEAGRASS, Data.get((level, pos, state) -> consumer(state, pixel8 - 1.0E-4, pixel10, pixel8 - 1.0E-4)));
++        map.put(Blocks.SEA_PICKLE, Data.get(FlowerPotInteraction::originalInteraction).randomProperty(SeaPickleBlock.WATERLOGGED));
++        map.put(Blocks.KELP, Data.get((level, pos, state) -> consumer(state, pixel12, pixel16, pixel12)));
++        map.put(Blocks.TUBE_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.BRAIN_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.BUBBLE_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.FIRE_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.HORN_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.DEAD_TUBE_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.DEAD_BRAIN_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.DEAD_BUBBLE_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.DEAD_FIRE_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.DEAD_HORN_CORAL, Data.get(FlowerPotInteraction::normalInteraction));
++        map.put(Blocks.TUBE_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.BRAIN_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.BUBBLE_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.FIRE_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.HORN_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.DEAD_TUBE_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.DEAD_BRAIN_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.DEAD_BUBBLE_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.DEAD_FIRE_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.DEAD_HORN_CORAL_FAN, Data.get(FlowerPotInteraction::flatInteraction));
++        map.put(Blocks.SCULK_VEIN, Data.get(FlowerPotInteraction::sphericalInteraction));
++        map.put(Blocks.CARROTS, Data.get(FlowerPotInteraction::cropCircularInteraction).randomProperty(CarrotBlock.AGE));
++        map.put(Blocks.POTATOES, Data.get(FlowerPotInteraction::cropCircularInteraction).randomProperty(PotatoBlock.AGE));
++        map.put(Blocks.CAKE, Data.get((level, pos, state) -> {
++            double size = pixel6 / pixel14 - pixel1;
++            return consumer(state, size, size, size, pixel6 - pixel8 * size + (pixel1 / 2));
++        }));
++
++        bootStrapCandles();
 +    }
 +
-+    static @Nullable Consumer<Display.BlockDisplay> defaultInteraction(Level level, BlockPos pos, Block block) {
-+        BlockState blockState = block.defaultBlockState();
++    private static void bootStrapCandles() {
++        Data candleData = Data.get(FlowerPotInteraction::originalInteraction);
++        map.put(Blocks.CANDLE, candleData);
++        map.put(Blocks.WHITE_CANDLE, candleData);
++        map.put(Blocks.ORANGE_CANDLE, candleData);
++        map.put(Blocks.MAGENTA_CANDLE, candleData);
++        map.put(Blocks.LIGHT_BLUE_CANDLE, candleData);
++        map.put(Blocks.YELLOW_CANDLE, candleData);
++        map.put(Blocks.LIME_CANDLE, candleData);
++        map.put(Blocks.PINK_CANDLE, candleData);
++        map.put(Blocks.GRAY_CANDLE, candleData);
++        map.put(Blocks.LIGHT_GRAY_CANDLE, candleData);
++        map.put(Blocks.CYAN_CANDLE, candleData);
++        map.put(Blocks.PURPLE_CANDLE, candleData);
++        map.put(Blocks.BLUE_CANDLE, candleData);
++        map.put(Blocks.BROWN_CANDLE, candleData);
++        map.put(Blocks.GREEN_CANDLE, candleData);
++        map.put(Blocks.RED_CANDLE, candleData);
++        map.put(Blocks.BLACK_CANDLE, candleData);
++    }
++
++    private static Consumer<Display.BlockDisplay> normalInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return consumer(blockState);
++    }
++
++    private static Consumer<Display.BlockDisplay> originalInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return consumer(blockState, 1.0);
++    }
++
++    private static Consumer<Display.BlockDisplay> hangingInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return normalInteraction(level, pos, blockState).andThen(consumerInvert());
++    }
++
++    private static Consumer<Display.BlockDisplay> flatInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return normalInteraction(level, pos, blockState).andThen(consumerFlat());
++    }
++
++    private static Consumer<Display.BlockDisplay> sphericalInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return consumer(blockState, pixel8);
++    }
++
++    private static Consumer<Display.BlockDisplay> cropInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return consumer(blockState, pixel12);
++    }
++
++    private static Consumer<Display.BlockDisplay> cropCircularInteraction(Level level, BlockPos pos, BlockState blockState) {
++        return consumer(blockState, pixel8 - 1.0E-4, pixel8 + pixel1, pixel8 - 1.0E-4).andThen(consumerFlat());
++    }
++
++    static @Nullable Consumer<Display.BlockDisplay> defaultInteraction(Level level, BlockPos pos, BlockState blockState) {
 +        if (blockState.is(BlockTags.WALLS)) {
 +            return consumer(blockState, pixel4 / pixel8, pixel12, pixel4 / pixel8);
-+        } else if (blockState.is(BlockTags.CANDLES)) {
-+            return consumer(blockState.setValue(CandleBlock.LIT, true), pixel16);
 +        }
 +
 +        if (blockState.hasProperty(HorizontalDirectionalBlock.FACING)) {
@@ -202,9 +253,9 @@ index 0000000000000000000000000000000000000000..4c5f5bb84beab6c74a209161670fff01
 +        double ysize = bounds.getYsize();
 +        double zsize = bounds.getZsize();
 +        if (xsize <= pixel4 && zsize <= pixel4 && ysize >= pixel4 && ysize <= pixel12) {
-+            return consumer(blockState, 1.0);
++            return FlowerPotInteraction.originalInteraction(level, pos, blockState);
 +        } else if (xsize <= pixel6 && zsize <= pixel6 && ysize >= pixel6) {
-+            return consumer(blockState);
++            return FlowerPotInteraction.normalInteraction(level, pos, blockState);
 +        } else {
 +            return null;
 +        }
@@ -236,6 +287,38 @@ index 0000000000000000000000000000000000000000..4c5f5bb84beab6c74a209161670fff01
 +    private static Consumer<Display.BlockDisplay> consumerFlat() {
 +        return display -> display.setTranslation(display.getTranslation().add(0.0F, (float) pixel2, 0.0F));
 +    }
++
++    record Data(FlowerPotInteraction interaction, Function<Block, BlockState> blockStateGenerator) {
++        private static Data get(FlowerPotInteraction interaction) {
++            return new Data(interaction, Block::defaultBlockState);
++        }
++
++        private static Data get(FlowerPotInteraction interaction, Block fixed) {
++            return new Data(interaction, block -> fixed.defaultBlockState());
++        }
++
++        private static Data get(FlowerPotInteraction interaction, Function<BlockState, BlockState> defaultStateFunction) {
++            return new Data(interaction, block -> defaultStateFunction.apply(block.defaultBlockState()));
++        }
++
++        private static Data get(FlowerPotInteraction interaction, Block fixed, Function<BlockState, BlockState> defaultStateFunction) {
++            return new Data(interaction, block -> defaultStateFunction.apply(fixed.defaultBlockState()));
++        }
++
++        private <T extends Comparable<T>, V extends T> Data randomProperty(Property<?>... properties) {
++            return new Data(this.interaction, this.blockStateGenerator.andThen(blockState -> {
++                for (Property<?> property : properties) {
++                    if (property instanceof BooleanProperty booleanProperty) {
++                        blockState = blockState.setValue(booleanProperty, RANDOM.nextBoolean());
++                    } else {
++                        List<?> possibleValues = property.getPossibleValues();
++                        blockState = blockState.setValue((Property<T>) property, (V) possibleValues.get(RANDOM.nextInt(possibleValues.size())));
++                    }
++                }
++                return blockState;
++            }));
++        }
++    }
 +}
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java b/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
@@ -263,7 +346,7 @@ index 35b91f4daba4ac9751fa388d9da7d127db1356b0..21a5dbf16390f3b0c671f7c51abc979f
                      BuiltInRegistries.bootStrap(() -> {
                          io.papermc.paper.world.worldgen.OptionallyFlatBedrockConditionSource.bootstrap(); // Paper - Flat bedrock generator settings
 diff --git a/net/minecraft/world/entity/Display.java b/net/minecraft/world/entity/Display.java
-index d858fbc7c501029d69f0e4685d2daae8f7a8f447..097753b41ca92fbf9940bdf2d1480c19ef51f93b 100644
+index d858fbc7c501029d69f0e4685d2daae8f7a8f447..16b58272fba54a14dd5ec445068f3ef02de39ed3 100644
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
 @@ -674,6 +674,34 @@ public abstract class Display extends Entity {
@@ -281,7 +364,7 @@ index d858fbc7c501029d69f0e4685d2daae8f7a8f447..097753b41ca92fbf9940bdf2d1480c19
 +            return !entitiesOfClass.isEmpty() ? entitiesOfClass.getFirst() : null;
 +        }
 +
-+        public static void setDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos, java.util.function.Consumer<BlockDisplay> consumer) {
++        public static void createDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos, java.util.function.Consumer<BlockDisplay> consumer) {
 +            Display.BlockDisplay display = EntityType.BLOCK_DISPLAY.create(level, EntitySpawnReason.COMMAND);
 +            if (display != null) {
 +                display.moveTo(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
@@ -291,7 +374,7 @@ index d858fbc7c501029d69f0e4685d2daae8f7a8f447..097753b41ca92fbf9940bdf2d1480c19
 +            }
 +        }
 +
-+        public static void removeDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos) {
++        public static void discardDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos) {
 +            Display.BlockDisplay displayBlock = getDisplayBlock(level, pos);
 +            if (displayBlock != null) {
 +                displayBlock.discard();
@@ -333,7 +416,7 @@ index 648d22cdfcf261494038d589f5a5e32704083076..fb36d8e903b565b330790097a58c99d0
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/FlowerPotBlock.java b/net/minecraft/world/level/block/FlowerPotBlock.java
-index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268e6b9a87c 100644
+index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..236c0a676881c61242c86bc2600863535f0d9176 100644
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
 @@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
@@ -345,7 +428,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
      public static final MapCodec<FlowerPotBlock> CODEC = RecordCodecBuilder.mapCodec(
          instance -> instance.group(
                  BuiltInRegistries.BLOCK.byNameCodec().fieldOf("potted").forGetter(flowerPotBlock -> flowerPotBlock.potted), propertiesCodec()
-@@ -60,13 +60,47 @@ public class FlowerPotBlock extends Block {
+@@ -60,13 +60,75 @@ public class FlowerPotBlock extends Block {
      protected InteractionResult useItemOn(
          ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult
      ) {
@@ -357,16 +440,44 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
 +        // KioCG start - custom block entity
 +        if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.FlowerPotBlockEntity flowerPotBlockEntity) {
 +            if (!flowerPotBlockEntity.isEmpty()) {
++                BlockState pottedState = flowerPotBlockEntity.getPottedState();
++                if (pottedState.is(net.minecraft.tags.BlockTags.CANDLES) || pottedState.is(net.minecraft.tags.BlockTags.CANDLE_CAKES)) {
++                    if (pottedState.hasProperty(AbstractCandleBlock.LIT) && !pottedState.getValue(AbstractCandleBlock.LIT) && stack.is(net.minecraft.world.item.Items.FLINT_AND_STEEL)) {
++                        // CraftBukkit start - Store the clicked block
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(level, pos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {
++                            stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
++                            return InteractionResult.CONSUME;
++                        }
++                        // CraftBukkit end
++                        player.sendSoundEffect(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
++                        flowerPotBlockEntity.setPotted(flowerPotBlockEntity.getPotted(), pottedState.setValue(AbstractCandleBlock.LIT, true));
++                        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
++                        stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
++                        return InteractionResult.SUCCESS_SERVER;
++                    }
++                } else if (pottedState.is(Blocks.CAKE)) {
++                    net.minecraft.world.item.Item item = stack.getItem();
++                    if (pottedState.getValue(CakeBlock.BITES) == 0 && stack.is(net.minecraft.tags.ItemTags.CANDLES) && Block.byItem(item) instanceof CandleBlock candleBlock) {
++                        InteractionResult interactionResult = onPut(stack, level, pos, player);
++                        if (interactionResult == InteractionResult.SUCCESS) {
++                            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
++                            flowerPotBlockEntity.setPotted(flowerPotBlockEntity.getPotted(), CandleCakeBlock.byCandle(candleBlock));
++                            player.awardStat(Stats.ITEM_USED.get(item));
++                            return InteractionResult.SUCCESS_SERVER;
++                        }
++                        return InteractionResult.CONSUME;
++                    }
++                }
 +                return InteractionResult.TRY_WITH_EMPTY_HAND;
 +            }
 +
 +            if (blockState.isAir() && stack.getItem() instanceof BlockItem blockItem) {
 +                Block block = blockItem.getBlock();
-+                java.util.Optional<java.util.function.Consumer<net.minecraft.world.entity.Display.BlockDisplay>> optional = net.minecraft.core.flowerpot.FlowerPotInteraction.get(level, pos, block);
-+                return optional.map(consumer -> {
++                java.util.Optional<BlockState> optional = net.minecraft.core.flowerpot.FlowerPotInteraction.getBlockState(level, pos, block);
++                return optional.map(pottedState -> {
 +                    InteractionResult interactionResult = onPut(stack, level, pos, player);
 +                    if (interactionResult == InteractionResult.SUCCESS) {
-+                        flowerPotBlockEntity.setPotted(block);
++                        flowerPotBlockEntity.setPotted(block, pottedState);
 +                        return InteractionResult.SUCCESS_SERVER;
 +                    }
 +                    return interactionResult;
@@ -395,7 +506,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
              // Paper start - Add PlayerFlowerPotManipulateEvent
              org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos);
              org.bukkit.inventory.ItemStack placedStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(stack);
-@@ -79,7 +113,7 @@ public class FlowerPotBlock extends Block {
+@@ -79,7 +141,7 @@ public class FlowerPotBlock extends Block {
                  return InteractionResult.CONSUME;
              }
              // Paper end - Add PlayerFlowerPotManipulateEvent
@@ -404,7 +515,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
              level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
              player.awardStat(Stats.POT_FLOWER);
              stack.consume(1, player);
-@@ -90,12 +124,38 @@ public class FlowerPotBlock extends Block {
+@@ -90,12 +152,44 @@ public class FlowerPotBlock extends Block {
      @Override
      protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
          if (this.isEmpty()) {
@@ -414,7 +525,13 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
 +                    player.containerMenu.sendAllDataToRemote();
 +                    InteractionResult interactionResult = onPick(level, pos, player, flowerPotBlockEntity.getPotted());
 +                    if (interactionResult == InteractionResult.SUCCESS) {
-+                        flowerPotBlockEntity.setPotted(Blocks.AIR);
++                        if (flowerPotBlockEntity.getPottedState().getBlock() instanceof CandleCakeBlock candleCakeBlock) {
++                            ItemStack itemStack = new ItemStack(candleCakeBlock.candleBlock);
++                            if (!player.addItem(itemStack)) {
++                                player.drop(itemStack, false);
++                            }
++                        }
++                        flowerPotBlockEntity.getPottedAndRemove();
 +                        return InteractionResult.SUCCESS_SERVER;
 +                    }
 +                    return interactionResult;
@@ -445,7 +562,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
  
              io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent event = new io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent((org.bukkit.entity.Player) player.getBukkitEntity(), block, pottedStack, false);
              if (!event.callEvent()) {
-@@ -109,12 +169,25 @@ public class FlowerPotBlock extends Block {
+@@ -109,12 +203,25 @@ public class FlowerPotBlock extends Block {
                  player.drop(itemStack, false);
              }
  
@@ -461,7 +578,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
 +        for (net.minecraft.world.item.Item item : BuiltInRegistries.ITEM) {
 +            if (item instanceof BlockItem blockItem) {
 +                Block block = blockItem.getBlock();
-+                if (!POTTED_BY_CONTENT.containsKey(block) && net.minecraft.core.flowerpot.FlowerPotInteraction.defaultInteraction(level, pos, block) != null) {
++                if (!POTTED_BY_CONTENT.containsKey(block) && net.minecraft.core.flowerpot.FlowerPotInteraction.defaultInteraction(level, pos, block.defaultBlockState()) != null) {
 +                    org.bukkit.Bukkit.getLogger().info(BuiltInRegistries.BLOCK.wrapAsHolder(block).getRegisteredName());
 +                }
 +            }
@@ -472,7 +589,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..6cc5c2dbd21bc349fd5fa1cb58fe2268
      @Override
      protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
          return this.isEmpty() ? super.getCloneItemStack(level, pos, state, includeData) : new ItemStack(this.potted);
-@@ -177,4 +250,30 @@ public class FlowerPotBlock extends Block {
+@@ -177,4 +284,30 @@ public class FlowerPotBlock extends Block {
              return state.is(Blocks.POTTED_CLOSED_EYEBLOSSOM) ? Blocks.POTTED_OPEN_EYEBLOSSOM.defaultBlockState() : state;
          }
      }
@@ -568,10 +685,10 @@ index a2a674f18d7f2c2e50a6b25f9ac3bf4534275976..9d5087d67514faa519cf3eb180f5afb8
  }
 diff --git a/net/minecraft/world/level/block/entity/CauldronBlockEntity.java b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c252b3ab982f6338e15e0bb582ef2f1a50ab4272
+index 0000000000000000000000000000000000000000..4f44d4f85e85f99815f513fc6261f9bb97bde9ef
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,89 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
@@ -583,6 +700,7 @@ index 0000000000000000000000000000000000000000..c252b3ab982f6338e15e0bb582ef2f1a
 +import net.minecraft.sounds.SoundSource;
 +import net.minecraft.tags.BlockTags;
 +import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.CampfireBlock;
 +import net.minecraft.world.level.block.LayeredCauldronBlock;
 +import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.level.gameevent.GameEvent;
@@ -599,7 +717,7 @@ index 0000000000000000000000000000000000000000..c252b3ab982f6338e15e0bb582ef2f1a
 +        boolean flag = false;
 +
 +        BlockState belowState = level.getBlockState(pos.below());
-+        if (belowState.is(BlockTags.CAMPFIRES) || belowState.is(Blocks.FIRE) || belowState.is(Blocks.LAVA)) {
++        if (belowState.is(BlockTags.CAMPFIRES, blockStateBase -> blockStateBase.getValueOrElse(CampfireBlock.LIT, false)) || belowState.is(Blocks.FIRE) || belowState.is(Blocks.LAVA)) {
 +            if (!cauldron.isBoiling()) {
 +                int per = LayeredCauldronBlock.MAX_FILL_LEVEL - state.getValue(LayeredCauldronBlock.LEVEL) + 1;
 +                cauldron.temperature = Math.min(cauldron.temperature + per, level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime);
@@ -662,18 +780,21 @@ index 0000000000000000000000000000000000000000..c252b3ab982f6338e15e0bb582ef2f1a
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a6007230f
+index 0000000000000000000000000000000000000000..2b4a21dddfe4f5afc02b13a7fb547c67e29cc678
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
-@@ -0,0 +1,136 @@
+@@ -0,0 +1,161 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
++import net.minecraft.core.HolderGetter;
 +import net.minecraft.core.HolderLookup;
 +import net.minecraft.core.flowerpot.FlowerPotInteraction;
 +import net.minecraft.core.particles.ParticleTypes;
 +import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.core.registries.Registries;
 +import net.minecraft.nbt.CompoundTag;
++import net.minecraft.nbt.NbtUtils;
 +import net.minecraft.resources.ResourceLocation;
 +import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.tags.BlockTags;
@@ -690,6 +811,7 @@ index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a
 +// KioCG start - custom block entity: all class
 +public class FlowerPotBlockEntity extends BlockEntity {
 +    private Block potted = Blocks.AIR;
++    private BlockState pottedState = potted.defaultBlockState();
 +    private PottedTick pottedTick = PottedTick.NONE;
 +    private boolean firstTick;
 +
@@ -714,9 +836,13 @@ index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a
 +        return this.potted;
 +    }
 +
++    public BlockState getPottedState() {
++        return this.pottedState;
++    }
++
 +    public Block getPottedAndRemove() {
 +        Block temp = this.potted;
-+        this.setPotted(Blocks.AIR);
++        this.setPotted(Blocks.AIR, Blocks.AIR.defaultBlockState());
 +        return temp;
 +    }
 +
@@ -724,9 +850,10 @@ index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a
 +        return this.potted == Blocks.AIR;
 +    }
 +
-+    public void setPotted(Block potted) {
-+        if (this.potted != potted) {
++    public void setPotted(Block potted, BlockState pottedState) {
++        if (this.potted != potted || this.pottedState != pottedState) {
 +            this.potted = potted;
++            this.pottedState = pottedState;
 +            this.pottedTick = PottedTick.pottedTick(this);
 +
 +            if (this.hasLevel()) {
@@ -739,25 +866,36 @@ index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a
 +    }
 +
 +    private void refreshDisplayBlock(ServerLevel level, BlockPos pos) {
-+        Display.BlockDisplay.removeDisplayBlock(level, pos);
-+        if (!this.isEmpty()) {
-+            Optional<Consumer<Display.BlockDisplay>> optional = FlowerPotInteraction.get(level, pos, this.getPotted());
-+            optional.ifPresent(consumer -> Display.BlockDisplay.setDisplayBlock(level, pos, consumer));
++        if (this.isEmpty()) {
++            Display.BlockDisplay.discardDisplayBlock(level, pos);
++            return;
 +        }
++
++        Optional<Consumer<Display.BlockDisplay>> optional = FlowerPotInteraction.getInteract(level, pos, this.getPotted(), this.getPottedState());
++        optional.ifPresent(consumer -> {
++            Display.BlockDisplay displayBlock = Display.BlockDisplay.getDisplayBlock(level, pos);
++            if (displayBlock != null) {
++                consumer.accept(displayBlock);
++            } else {
++                Display.BlockDisplay.createDisplayBlock(level, pos, consumer);
++            }
++        });
 +    }
 +
 +    @Override
 +    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-+        if (tag.contains("KioCG.Item")) {
-+            ResourceLocation resourceLocation = ResourceLocation.tryParse(tag.getString("KioCG.Item"));
-+            this.setPotted(BuiltInRegistries.BLOCK.getValue(resourceLocation));
++        if (tag.contains("KioCG.Potted")) {
++            ResourceLocation resourceLocation = ResourceLocation.tryParse(tag.getString("KioCG.Potted"));
++            HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
++            this.setPotted(BuiltInRegistries.BLOCK.getValue(resourceLocation), NbtUtils.readBlockState(holderGetter, tag.getCompound("KioCG.PottedState")));
 +        }
 +    }
 +
 +    @Override
 +    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 +        if (!this.isEmpty()) {
-+            tag.putString("KioCG.Item", BuiltInRegistries.BLOCK.getKey(this.getPotted()).toString());
++            tag.putString("KioCG.Potted", BuiltInRegistries.BLOCK.getKey(this.getPotted()).toString());
++            tag.put("KioCG.PottedState", NbtUtils.writeBlockState(this.getPottedState()));
 +        }
 +    }
 +
@@ -769,9 +907,14 @@ index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a
 +
 +        private static PottedTick pottedTick(FlowerPotBlockEntity flowerPot) {
 +            if (!flowerPot.isEmpty()) {
-+                BlockState pottedState = flowerPot.getPotted().defaultBlockState();
-+                if (pottedState.is(BlockTags.CANDLES)) {
-+                    return PottedTick::candleTick;
++                BlockState pottedState = flowerPot.getPottedState();
++                boolean isCandle = pottedState.is(BlockTags.CANDLES);
++                if (isCandle || pottedState.is(BlockTags.CANDLE_CAKES)) {
++                    if (pottedState.getValueOrElse(AbstractCandleBlock.LIT, false)) {
++                        return (level, pos, state, flowerPot1) -> {
++                            PottedTick.candleTick(level, pos, state, flowerPot1, isCandle ? 0.75 : 0.65);
++                        };
++                    }
 +                } else if (pottedState.is(Blocks.SPORE_BLOSSOM)) {
 +                    return PottedTick::sporeBlossomTick;
 +                }
@@ -779,9 +922,9 @@ index 0000000000000000000000000000000000000000..f6803dcd68eb4324c1f50e52bb49dd6a
 +            return NONE;
 +        }
 +
-+        private static void candleTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot) {
++        private static void candleTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot, double yoffset) {
 +            if (level.random.nextFloat() < (float) (1.0 / 8.0)) {
-+                AbstractCandleBlock.addParticlesAndSound(level, new Vec3(pos.getX() + 0.5, pos.getY() + 0.5 + 0.25, pos.getZ() + 0.5), level.random);
++                AbstractCandleBlock.addParticlesAndSound(level, new Vec3(pos.getX() + 0.5, pos.getY() + yoffset, pos.getZ() + 0.5), level.random);
 +            }
 +        }
 +

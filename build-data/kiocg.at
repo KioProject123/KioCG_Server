@@ -4,8 +4,10 @@ protected net.minecraft.world.entity.ai.goal.FollowMobGoal mob
 public net.minecraft.server.rcon.thread.RconClient sendCmdResponse(ILjava/lang/String;)V
 public net.minecraft.world.entity.Entity DATA_AIR_SUPPLY_ID
 public net.minecraft.world.entity.Entity numCollisions
+public net.minecraft.world.entity.player.Player sendSoundEffect(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V
 public net.minecraft.world.entity.projectile.FishingHook biting
 public net.minecraft.world.level.block.AbstractCandleBlock addParticlesAndSound(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/util/RandomSource;)V
+public net.minecraft.world.level.block.CandleCakeBlock candleBlock
 public net.minecraft.world.level.block.entity.HopperBlockEntity isFullContainer(Lnet/minecraft/world/Container;Lnet/minecraft/core/Direction;)Z
 public net.minecraft.world.level.chunk.LevelChunk removeBlockEntityTicker(Lnet/minecraft/core/BlockPos;)V
 public net.minecraft.world.level.chunk.LevelChunk updateBlockEntityTicker(Lnet/minecraft/world/level/block/entity/BlockEntity;)V
