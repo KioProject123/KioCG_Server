@@ -9,7 +9,7 @@
  
      /**
       * Gets the entity's current position
-@@ -1113,6 +_,23 @@
+@@ -1122,6 +_,23 @@
       * @since 1.17.1
       */
      boolean spawnAt(@NotNull Location location, @NotNull CreatureSpawnEvent.SpawnReason reason);

@@ -11,7 +11,7 @@
      private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
      // Paper start - void damage configuration
      private boolean voidDamageEnabled;
-@@ -2375,6 +_,13 @@
+@@ -2380,6 +_,13 @@
      public PersistentDataContainer getPersistentDataContainer() {
          return this.persistentDataContainer;
      }

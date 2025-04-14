@@ -267,13 +267,11 @@
                          AttributeInstance instance = this.attributes.getInstance(holder);
                          if (instance != null) {
                              instance.removeModifier(attributeModifier.id());
-@@ -3497,8 +_,12 @@
-         profilerFiller.pop();
+@@ -3498,7 +_,11 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profilerFiller.push("freezing");
--            if (!this.isInPowderSnow || !this.canFreeze() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
+             if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
 -                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
-+            if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
 +                // KioCG start - the long dark
 +                if (this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen(player)) {
 +                    player.setTicksFrozen(Math.min(player.getTicksRequiredToFreeze(), player.getTicksFrozen() + 1));
