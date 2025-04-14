@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FenceGateBlock.java
 +++ b/net/minecraft/world/level/block/FenceGateBlock.java
-@@ -241,6 +_,24 @@
+@@ -227,6 +_,24 @@
          }
      }
  

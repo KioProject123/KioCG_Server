@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -178,7 +_,10 @@
+@@ -185,7 +_,10 @@
                  }
              }
  
@@ -12,7 +12,7 @@
                  this.move(MoverType.SELF, this.getDeltaMovement());
                  this.applyEffectsFromBlocks();
                  float f = 0.98F;
-@@ -197,6 +_,8 @@
+@@ -204,6 +_,8 @@
                          this.setDeltaMovement(deltaMovement1.multiply(1.0, -0.5, 1.0));
                      }
                  }
@@ -21,7 +21,7 @@
              }
  
              boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX())
-@@ -231,6 +_,37 @@
+@@ -238,6 +_,37 @@
          }
      }
  
@@ -59,7 +59,7 @@
      @Override
      public BlockPos getBlockPosBelowThatAffectsMyMovement() {
          return this.getOnPos(0.999999F);
-@@ -339,7 +_,7 @@
+@@ -346,7 +_,7 @@
      public final boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
          if (this.isInvulnerableToBase(damageSource)) {
              return false;
@@ -68,7 +68,7 @@
              return false;
          } else if (!this.getItem().canBeHurtBy(damageSource)) {
              return false;
-@@ -363,6 +_,7 @@
+@@ -370,6 +_,7 @@
  
      @Override
      public boolean ignoreExplosion(Explosion explosion) {

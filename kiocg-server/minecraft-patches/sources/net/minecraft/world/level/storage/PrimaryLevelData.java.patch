@@ -16,7 +16,7 @@
          this.version = version;
          this.clearWeatherTime = clearWeatherTime;
          this.rainTime = rainTime;
-@@ -323,9 +_,23 @@
+@@ -318,9 +_,23 @@
  
      @Override
      public long getDayTime() {
@@ -40,7 +40,7 @@
      @Nullable
      @Override
      public CompoundTag getLoadedPlayerTag() {
-@@ -340,6 +_,7 @@
+@@ -335,6 +_,7 @@
      @Override
      public void setDayTime(long time) {
          this.dayTime = time;
@@ -48,7 +48,7 @@
      }
  
      @Override
-@@ -360,6 +_,11 @@
+@@ -355,6 +_,11 @@
  
      @Override
      public int getClearWeatherTime() {
@@ -60,7 +60,7 @@
          return this.clearWeatherTime;
      }
  
-@@ -370,6 +_,11 @@
+@@ -365,6 +_,11 @@
  
      @Override
      public boolean isThundering() {
@@ -72,7 +72,7 @@
          return this.thundering;
      }
  
-@@ -399,6 +_,11 @@
+@@ -394,6 +_,11 @@
  
      @Override
      public int getThunderTime() {
@@ -84,7 +84,7 @@
          return this.thunderTime;
      }
  
-@@ -409,6 +_,11 @@
+@@ -404,6 +_,11 @@
  
      @Override
      public boolean isRaining() {
@@ -96,7 +96,7 @@
          return this.raining;
      }
  
-@@ -439,6 +_,11 @@
+@@ -434,6 +_,11 @@
  
      @Override
      public int getRainTime() {

@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/entity/projectile/ThrownTrident.java
 +++ b/net/minecraft/world/entity/projectile/ThrownTrident.java
-@@ -29,15 +_,19 @@
-     private static final float WATER_INERTIA = 0.99F;
-     public boolean dealtDamage;
+@@ -30,15 +_,19 @@
+     private static final boolean DEFAULT_DEALT_DAMAGE = false;
+     public boolean dealtDamage = false;
      public int clientSideReturnTridentTickCount;
 +    private long ticketTimer = 0L; // KioCG - adjust enchantment
 +    private net.minecraft.world.phys.AABB ticketCheck; // KioCG - optimize entity behavior
@@ -20,7 +20,7 @@
          this.entityData.set(ID_LOYALTY, this.getLoyaltyFromItem(pickupItemStack));
          this.entityData.set(ID_FOIL, pickupItemStack.hasFoil());
      }
-@@ -45,6 +_,7 @@
+@@ -46,6 +_,7 @@
      public ThrownTrident(Level level, double x, double y, double z, ItemStack pickupItemStack) {
          super(EntityType.TRIDENT, x, y, z, level, pickupItemStack, pickupItemStack);
          this.setBaseDamage(net.minecraft.world.item.TridentItem.BASE_DAMAGE); // Paper - Allow trident custom damage
@@ -28,7 +28,7 @@
          this.entityData.set(ID_LOYALTY, this.getLoyaltyFromItem(pickupItemStack));
          this.entityData.set(ID_FOIL, pickupItemStack.hasFoil());
      }
-@@ -59,11 +_,17 @@
+@@ -60,11 +_,17 @@
      @Override
      public void tick() {
          if (this.inGroundTime > 4) {
@@ -47,7 +47,7 @@
          if (i > 0 && (this.dealtDamage || this.isNoPhysics()) && owner != null) {
              if (!this.isAcceptibleReturnOwner()) {
                  if (this.level() instanceof ServerLevel serverLevel && this.pickup == AbstractArrow.Pickup.ALLOWED) {
-@@ -91,7 +_,57 @@
+@@ -92,7 +_,57 @@
          }
  
          super.tick();
@@ -78,7 +78,7 @@
 +        ServerLevel serverLevel = this.serverLevel();
 +        net.minecraft.world.level.ChunkPos chunkPos = this.chunkPosition();
 +        serverLevel.resetEmptyTime();
-+        serverLevel.getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.TRIDENT, chunkPos, 2, chunkPos);
++        serverLevel.getChunkSource().addTicketWithRadius(net.minecraft.server.level.TicketType.TRIDENT, chunkPos, 2);
 +        return net.minecraft.server.level.TicketType.TRIDENT.timeout() - 1L;
 +    }
 +
@@ -106,7 +106,7 @@
  
      private boolean isAcceptibleReturnOwner() {
          Entity owner = this.getOwner();
-@@ -132,6 +_,7 @@
+@@ -133,6 +_,7 @@
              f = EnchantmentHelper.modifyDamage(serverLevel, this.getWeaponItem(), entity, damageSource, f);
          }
  
@@ -114,7 +114,7 @@
          this.dealtDamage = true;
          if (entity.hurtOrSimulate(damageSource, f)) {
              if (entity.getType() == EntityType.ENDERMAN) {
-@@ -142,6 +_,8 @@
+@@ -143,6 +_,8 @@
                  EnchantmentHelper.doPostAttackEffectsWithItemSourceOnBreak(
                      serverLevel, entity, damageSource, this.getWeaponItem(), item -> this.kill(serverLevel)
                  );
@@ -123,7 +123,7 @@
              }
  
              if (entity instanceof LivingEntity livingEntity) {
-@@ -168,7 +_,25 @@
+@@ -169,7 +_,25 @@
              level.getBlockState(hitResult.getBlockPos()),
              item -> this.kill(level)
          );

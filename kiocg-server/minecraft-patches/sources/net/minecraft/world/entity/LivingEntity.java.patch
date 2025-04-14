@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -301,6 +_,13 @@
-     public org.bukkit.craftbukkit.entity.CraftLivingEntity getBukkitLivingEntity() { return (org.bukkit.craftbukkit.entity.CraftLivingEntity) super.getBukkitEntity(); } // Paper
-     public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
+@@ -274,6 +_,13 @@
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
+     public int shieldBlockingDelay = this.level().paperConfig().misc.shieldBlockingDelay; // Paper - Make shield blocking delay configurable
+     // CraftBukkit end
 +    // KioCG start - entity baby api
 +    private ScaleSimulate scaleSimulate = ScaleSimulate.NORMAL;
 +    private static final ResourceLocation SCALE_MODIFIER_ID = ResourceLocation.withDefaultNamespace("scale_simulate");
@@ -12,15 +12,15 @@
 +    // KioCG end - entity baby api
 +    private boolean damagedKnockback; // KioCG - fix damage knockback
  
-     @Override
-     public float getBukkitYaw() {
-@@ -465,12 +_,14 @@
+     protected LivingEntity(EntityType<? extends LivingEntity> entityType, Level level) {
+         super(entityType, level);
+@@ -435,12 +_,14 @@
                  }
              }
  
 +            if (this instanceof ServerPlayer serverPlayer) serverPlayer.thirstData.underWater = false; // KioCG - the long dark
              if (this.isEyeInFluid(FluidTags.WATER)
-                 && !this.level().getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
+                 && !serverLevel1.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
                  boolean flag1 = !this.canBreatheUnderwater()
                      && !MobEffectUtil.hasWaterBreathing(this)
                      && (!flag || !((Player)this).getAbilities().invulnerable);
@@ -29,7 +29,7 @@
                      this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
                      if (this.getAirSupply() == -20) {
                          this.setAirSupply(0);
-@@ -572,7 +_,7 @@
+@@ -523,7 +_,7 @@
      }
  
      protected void tryAddFrost() {
@@ -38,7 +38,7 @@
              int ticksFrozen = this.getTicksFrozen();
              if (ticksFrozen > 0) {
                  AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
-@@ -594,6 +_,70 @@
+@@ -545,6 +_,70 @@
          return false;
      }
  
@@ -109,7 +109,7 @@
      public float getAgeScale() {
          return this.isBaby() ? 0.5F : 1.0F;
      }
-@@ -613,18 +_,21 @@
+@@ -564,18 +_,21 @@
  
      protected void tickDeath() {
          this.deathTime++;
@@ -119,7 +119,7 @@
 +        if (this.deathTime >= maxDeathTime && !this.level().isClientSide() && !this.isRemoved()) {
 +        // KioCG end - mob spawning or dying animation
              this.level().broadcastEntityEvent(this, (byte)60);
-             this.remove(Entity.RemovalReason.KILLED, EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
+             this.remove(Entity.RemovalReason.KILLED, org.bukkit.event.entity.EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
          }
      }
  
@@ -134,10 +134,10 @@
      }
  
      protected int decreaseAirSupply(int currentAir) {
-@@ -799,6 +_,12 @@
-         });
-         DataResult<Tag> dataResult = this.brain.serializeStart(NbtOps.INSTANCE);
-         dataResult.resultOrPartial(LOGGER::error).ifPresent(brain -> compound.put("Brain", brain));
+@@ -771,6 +_,12 @@
+         if (!this.equipment.isEmpty()) {
+             compound.store("equipment", EntityEquipment.CODEC, registryOps, this.equipment);
+         }
 +
 +        // KioCG start - entity baby api
 +        if (this.scaleSimulate != ScaleSimulate.NORMAL) {
@@ -146,26 +146,25 @@
 +        // KioCG end - entity baby api
      }
  
-     @Override
-@@ -882,6 +_,17 @@
-         if (compound.contains("Brain", 10)) {
-             this.brain = this.makeBrain(new Dynamic<>(NbtOps.INSTANCE, compound.get("Brain")));
-         }
+     // Paper start - Extend dropItem API
+@@ -886,6 +_,16 @@
+         this.lastHurtByMob = EntityReference.read(compound, "last_hurt_by_mob");
+         this.lastHurtByMobTimestamp = compound.getIntOr("ticks_since_last_hurt_by_mob", 0) + this.tickCount;
+         this.equipment.setAll(compound.read("equipment", EntityEquipment.CODEC, registryOps).orElseGet(EntityEquipment::new));
 +
 +        // KioCG start - entity baby api
-+        if (compound.contains("KioCG.ScaleSimulate")) {
-+            String ss = compound.getString("KioCG.ScaleSimulate");
++        compound.getString("KioCG.ScaleSimulate").ifPresent(scaleSimulate -> {
 +            try {
-+                this.setScaleSimulate(ScaleSimulate.valueOf(ss));
++                this.setScaleSimulate(ScaleSimulate.valueOf(scaleSimulate));
 +            } catch (Exception ignored) {
-+                LOGGER.error("Unknown scale simulate " + ss + " for " + this);
++                LOGGER.error("Unknown scale simulate " + scaleSimulate + " for " + this);
 +            }
-+        }
++        });
 +        // KioCG end - entity baby api
      }
  
      // CraftBukkit start
-@@ -1307,6 +_,7 @@
+@@ -1320,6 +_,7 @@
  
      public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason, boolean isFastRegen) {
          // Paper end - Forward
@@ -173,7 +172,7 @@
          float health = this.getHealth();
          if (health > 0.0F) {
              EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), healAmount, regainReason, isFastRegen); // Paper
-@@ -1317,9 +_,11 @@
+@@ -1330,9 +_,11 @@
  
              if (!event.isCancelled()) {
                  this.setHealth((float) (this.getHealth() + event.getAmount()));
@@ -185,7 +184,7 @@
      }
  
      public float getHealth() {
-@@ -1444,11 +_,12 @@
+@@ -1445,11 +_,12 @@
                  // CraftBukkit end
                  this.hurtDuration = 10;
                  this.hurtTime = this.hurtDuration;
@@ -196,10 +195,10 @@
              this.resolvePlayerResponsibleForDamage(damageSource);
 -            if (flag1) {
 +            if (flag1 || !this.damagedKnockback) { // KioCG - fix damage knockback
-                 if (flag) {
-                     level.broadcastEntityEvent(this, (byte)29);
-                 } else {
-@@ -1755,11 +_,17 @@
+                 BlocksAttacks blocksAttacks = this.getUseItem().get(DataComponents.BLOCKS_ATTACKS);
+                 if (flag && blocksAttacks != null) {
+                     blocksAttacks.onBlocked(level, this);
+@@ -1841,11 +_,17 @@
          }
      }
  
@@ -218,7 +217,7 @@
                      BlockPos blockPos = this.blockPosition();
                      BlockState blockState = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
-@@ -1944,9 +_,14 @@
+@@ -2030,9 +_,14 @@
                  return;
              }
  
@@ -233,7 +232,7 @@
          }
      }
  
-@@ -2389,7 +_,15 @@
+@@ -2439,7 +_,15 @@
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damageSource, amount);
@@ -250,7 +249,7 @@
                  // CraftBukkit start
                  if (!human) {
                      this.setAbsorptionAmount(this.getAbsorptionAmount() - amount);
-@@ -2750,7 +_,7 @@
+@@ -2801,7 +_,7 @@
      }
  
      public float getVoicePitch() {
@@ -259,25 +258,31 @@
              ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F
              : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
      }
-@@ -3283,6 +_,8 @@
+@@ -3323,6 +_,8 @@
                  ItemStack itemBySlot = entry.getValue();
                  if (!itemBySlot.isEmpty() && !itemBySlot.isBroken()) {
-                     itemBySlot.forEachModifier(equipmentSlot1, (attribute, modifier) -> {
-+                        if (this instanceof net.minecraft.world.entity.monster.Zombie && attribute == Attributes.SPAWN_REINFORCEMENTS_CHANCE) return; // KioCG - the long dark: 属性用于玩家温度
+                     itemBySlot.forEachModifier(equipmentSlot1, (holder, attributeModifier) -> {
++                        if (this instanceof net.minecraft.world.entity.monster.Zombie && holder == Attributes.SPAWN_REINFORCEMENTS_CHANCE) return; // KioCG - the long dark: 属性用于玩家温度
 +
-                         AttributeInstance instance = this.attributes.getInstance(attribute);
+                         AttributeInstance instance = this.attributes.getInstance(holder);
                          if (instance != null) {
-                             instance.removeModifier(modifier.id());
-@@ -3481,7 +_,7 @@
-         profilerFiller.push("freezing");
-         if (!this.level().isClientSide && !this.isDeadOrDying() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
-             int ticksFrozen = this.getTicksFrozen();
--            if (this.isInPowderSnow && this.canFreeze()) {
-+            if (this.isInPowderSnow && this.canFreeze() || this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen(player)) { // KioCG - the long dark
-                 this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), ticksFrozen + 1));
-             } else {
-                 this.setTicksFrozen(Math.max(0, ticksFrozen - 2));
-@@ -3501,11 +_,12 @@
+                             instance.removeModifier(attributeModifier.id());
+@@ -3497,8 +_,12 @@
+         profilerFiller.pop();
+         if (this.level() instanceof ServerLevel serverLevel) {
+             profilerFiller.push("freezing");
+-            if (!this.isInPowderSnow || !this.canFreeze() && !this.freezeLocked) { // Paper - Freeze Tick Lock API
+-                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
++            if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
++                // KioCG start - the long dark
++                if (this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen(player)) {
++                    player.setTicksFrozen(Math.min(player.getTicksRequiredToFreeze(), player.getTicksFrozen() + 1));
++                } else this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
++                // KioCG end - the long dark
+             }
+ 
+             this.removeFrost();
+@@ -3516,11 +_,12 @@
              this.checkAutoSpinAttack(boundingBox, this.getBoundingBox());
          }
  
@@ -292,7 +297,7 @@
                  Location from = new Location(this.level().getWorld(), this.xo, this.yo, this.zo, this.yRotO, this.xRotO);
                  Location to = new Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
                  io.papermc.paper.event.entity.EntityMoveEvent event = new io.papermc.paper.event.entity.EntityMoveEvent(this.getBukkitLivingEntity(), from, to.clone());
-@@ -3566,7 +_,10 @@
+@@ -3589,7 +_,10 @@
      protected void serverAiStep() {
      }
  
@@ -301,6 +306,6 @@
 +    protected void pushEntities(boolean moved) {
 +        if (!moved) return;
 +        // KioCG end - optimize entity collide
-         if (!(this.level() instanceof ServerLevel serverLevel)) {
-             this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
-         } else {
+         // Paper start - don't run getEntities if we're not going to use its result
+         if (!this.isPushable()) {
+             return;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -531,7 +_,7 @@
+@@ -558,7 +_,7 @@
          @Override
          public boolean canUse() {
              if (this.nextStartTick <= 0) {
@@ -9,7 +9,7 @@
                      return false;
                  }
  
-@@ -561,6 +_,7 @@
+@@ -588,6 +_,7 @@
                  if (this.canRaid && block instanceof CarrotBlock) {
                      int ageValue = blockState.getValue(CarrotBlock.AGE);
                      if (ageValue == 0) {

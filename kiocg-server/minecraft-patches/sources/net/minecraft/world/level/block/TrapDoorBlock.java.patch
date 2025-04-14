@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -192,6 +_,24 @@
+@@ -171,6 +_,24 @@
          }
      }
  

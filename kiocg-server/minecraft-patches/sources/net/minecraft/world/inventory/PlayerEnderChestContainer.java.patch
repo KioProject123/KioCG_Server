@@ -30,11 +30,11 @@
          }
  
          for (int i = 0; i < tag.size(); i++) {
-             CompoundTag compound = tag.getCompound(i);
-             int i1 = compound.getByte("Slot") & 255;
+             CompoundTag compoundOrEmpty = tag.getCompoundOrEmpty(i);
+             int i1 = compoundOrEmpty.getByteOr("Slot", (byte)0) & 255;
 -            if (i1 >= 0 && i1 < this.getContainerSize()) {
 +            if (i1 >= 0 && i1 < 6 * 9) { // KioCG - expand container rows: 始终加载最大末影箱
-                 this.setItem(i1, ItemStack.parse(levelRegistry, compound).orElse(ItemStack.EMPTY));
+                 this.setItem(i1, ItemStack.parse(levelRegistry, compoundOrEmpty).orElse(ItemStack.EMPTY));
              }
          }
 @@ -57,7 +_,7 @@

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -64,14 +_,15 @@
+@@ -65,14 +_,15 @@
          if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
          if (level instanceof ServerLevel serverLevel && entity.isOnFire() && this.isEntityInsideContent(state, pos, entity)) {
              // CraftBukkit start - moved down
@@ -23,6 +23,6 @@
              return false;
          }
 +
-         newState.update(true);
+         newState.place(3);
          if (sendGameEvent) level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
          return true;

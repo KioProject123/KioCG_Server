@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Abilities.java
 +++ b/net/minecraft/world/entity/player/Abilities.java
-@@ -11,6 +_,18 @@
+@@ -18,6 +_,18 @@
      public float flyingSpeed = 0.05F;
      public float walkingSpeed = 0.1F;
  

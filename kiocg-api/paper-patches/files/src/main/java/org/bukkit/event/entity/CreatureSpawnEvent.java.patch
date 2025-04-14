@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/CreatureSpawnEvent.java
-@@ -221,6 +_,12 @@
+@@ -222,6 +_,12 @@
           * {@link org.bukkit.potion.PotionType#OOZING}, {@link org.bukkit.potion.PotionType#INFESTED}
           */
          POTION_EFFECT,

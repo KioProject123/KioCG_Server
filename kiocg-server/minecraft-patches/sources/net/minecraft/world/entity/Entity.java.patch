@@ -1,20 +1,19 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -353,6 +_,13 @@
-         this.originWorld = location.getWorld().getUID();
-     }
- 
+@@ -339,6 +_,12 @@
+     // Paper start
+     public @Nullable Vec3 origin;
+     public @Nullable UUID originWorld;
 +    // KioCG start - fix converted entity data
 +    public void copyOrigin(Entity entity) {
 +        this.origin = entity.origin;
 +        this.originWorld = entity.originWorld;
 +    }
 +    // KioCG end - fix converted entity data
-+
-     @javax.annotation.Nullable
-     public org.bukkit.util.Vector getOriginVector() {
-         return this.origin != null ? this.origin.clone() : null;
-@@ -2178,7 +_,11 @@
+     // Paper end
+     public boolean freezeLocked = false; // Paper - Freeze Tick Lock API
+     public boolean fixedPose = false; // Paper - Expand Pose API
+@@ -2171,7 +_,11 @@
                          this.push(-d, 0.0, -d1);
                      }
  
@@ -27,7 +26,7 @@
                          entity.push(d, 0.0, d1);
                      }
                  }
-@@ -3459,6 +_,7 @@
+@@ -3390,6 +_,7 @@
      }
  
      public int getAirSupply() {
@@ -35,7 +34,7 @@
          return this.entityData.get(DATA_AIR_SUPPLY_ID);
      }
  
-@@ -3473,6 +_,7 @@
+@@ -3404,6 +_,7 @@
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
@@ -43,7 +42,7 @@
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
-@@ -4970,6 +_,12 @@
+@@ -4943,6 +_,12 @@
          return this.level;
      }
  
@@ -56,8 +55,8 @@
      public void setLevel(Level level) {
          this.level = level;
      }
-@@ -5078,4 +_,10 @@
-         return ((ServerLevel) this.level).isPositionEntityTicking(this.blockPosition());
+@@ -5097,4 +_,10 @@
+         return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
      }
      // Paper end - Expose entity id counter
 +

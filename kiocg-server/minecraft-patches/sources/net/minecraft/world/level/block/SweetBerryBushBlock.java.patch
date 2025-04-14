@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
-@@ -62,13 +_,20 @@
+@@ -64,13 +_,20 @@
  
      @Override
      protected boolean isRandomlyTicking(BlockState state) {
@@ -17,8 +17,8 @@
      @Override
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
          int ageValue = state.getValue(AGE);
--        if (ageValue < 3 && random.nextFloat() < (level.spigotConfig.sweetBerryModifier / (100.0f * 5)) && level.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
-+        if (ageValue < 3 && random.nextFloat() < (level.spigotConfig.sweetBerryModifier / 100.0f) && level.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
-             BlockState blockState = state.setValue(AGE, Integer.valueOf(ageValue + 1));
+-        if (ageValue < 3 && random.nextFloat() < (level.spigotConfig.sweetBerryModifier / (100.0F * 5)) && level.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (ageValue < 3 && random.nextFloat() < (level.spigotConfig.sweetBerryModifier / 100.0F) && level.getRawBrightness(pos.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+             BlockState blockState = state.setValue(AGE, ageValue + 1);
              if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(level, pos, blockState, 2)) return; // CraftBukkit
              level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));

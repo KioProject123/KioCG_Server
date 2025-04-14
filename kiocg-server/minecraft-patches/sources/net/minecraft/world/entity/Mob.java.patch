@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -126,6 +_,7 @@
+@@ -122,6 +_,7 @@
      public GoalSelector goalSelector;
-     @Nullable public net.minecraft.world.entity.ai.goal.FloatGoal goalFloat; // Paper - Allow nerfed mobs to jump and float
+     public @Nullable net.minecraft.world.entity.ai.goal.FloatGoal goalFloat; // Paper - Allow nerfed mobs to jump and float
      public GoalSelector targetSelector;
 +    public com.kiocg.entity.GoalRegister<Mob> goalRegister = new com.kiocg.entity.GoalRegister<>(this); // KioCG - optimize entity behavior
      @Nullable
      private LivingEntity target;
      private final Sensing sensing;
-@@ -145,6 +_,13 @@
+@@ -136,6 +_,13 @@
      private BlockPos restrictCenter = BlockPos.ZERO;
      private float restrictRadius = -1.0F;
      public boolean aware = true; // CraftBukkit
@@ -22,7 +22,7 @@
  
      protected Mob(EntityType<? extends Mob> entityType, Level level) {
          super(entityType, level);
-@@ -328,6 +_,12 @@
+@@ -315,6 +_,12 @@
  
      @Override
      public void baseTick() {
@@ -35,7 +35,7 @@
          super.baseTick();
          ProfilerFiller profilerFiller = Profiler.get();
          profilerFiller.push("mobBaseTick");
-@@ -399,7 +_,37 @@
+@@ -379,7 +_,37 @@
          if (!this.level().isClientSide && this.tickCount % 5 == 0) {
              this.updateControlFlags();
          }
@@ -74,7 +74,7 @@
  
      protected void updateControlFlags() {
          boolean flag = !(this.getControllingPassenger() instanceof Mob);
-@@ -486,6 +_,12 @@
+@@ -420,6 +_,12 @@
              compound.putBoolean("NoAI", this.isNoAi());
          }
          compound.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
@@ -87,20 +87,20 @@
      }
  
      @Override
-@@ -568,6 +_,12 @@
-             this.aware = compound.getBoolean("Bukkit.Aware");
-         }
-         // CraftBukkit end
+@@ -443,6 +_,12 @@
+         this.lootTableSeed = compound.getLongOr("DeathLootTableSeed", 0L);
+         this.setNoAi(compound.getBooleanOr("NoAI", false));
+         this.aware = compound.getBooleanOr("Bukkit.Aware", true); // CraftBukkit
 +
 +        // KioCG start - entity bossbar api
-+        if (compound.contains("KioCG.Bossbar")) {
-+            this.bossbar = net.minecraft.server.level.ServerBossEvent.load(compound.getCompound("KioCG.Bossbar"), this.registryAccess());
-+        }
++        compound.getCompound("KioCG.Bossbar").ifPresent(bossbar -> {
++            this.bossbar = net.minecraft.server.level.ServerBossEvent.load(bossbar, this.registryAccess());
++        });
 +        // KioCG end - entity bossbar api
      }
  
      @Override
-@@ -620,7 +_,7 @@
+@@ -495,7 +_,7 @@
              && this.canPickUpLoot()
              && this.isAlive()
              && !this.dead
@@ -109,7 +109,7 @@
              Vec3i pickupReach = this.getPickupReach();
  
              for (ItemEntity itemEntity : this.level()
-@@ -700,6 +_,7 @@
+@@ -579,6 +_,7 @@
      protected void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
          this.setItemSlot(slot, stack);
          this.setGuaranteedDrop(slot);
@@ -117,7 +117,7 @@
          this.persistenceRequired = true;
      }
  
-@@ -811,6 +_,7 @@
+@@ -681,6 +_,7 @@
      @Override
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
@@ -125,7 +125,7 @@
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity nearestPlayer = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
-@@ -825,11 +_,13 @@
+@@ -695,11 +_,13 @@
                  final double distanceSquared = dxSqr + dzSqr + dySqr;
                  // Despawn if hard/soft limit is exceeded
                  if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
@@ -139,7 +139,7 @@
                          this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
                      }
                  } else {
-@@ -842,6 +_,16 @@
+@@ -712,6 +_,16 @@
          }
      }
  
@@ -156,7 +156,7 @@
      @Override
      protected final void serverAiStep() {
          this.noActionTime++;
-@@ -1282,6 +_,7 @@
+@@ -1167,6 +_,7 @@
              );
          }
  
@@ -164,7 +164,7 @@
          this.setLeftHanded(random.nextFloat() < 0.05F);
          return spawnGroupData;
      }
-@@ -1562,8 +_,23 @@
+@@ -1440,8 +_,23 @@
          return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
      }
  
@@ -190,8 +190,8 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1686,6 +_,58 @@
-             this.getNavigation().updatePathfinderMaxVisitedNodes();
+@@ -1529,6 +_,58 @@
+             this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.3, 0.0));
          }
      }
 +
@@ -248,4 +248,4 @@
 +    // KioCG end - chunk hot
  
      @VisibleForTesting
-     public float[] getHandDropChances() {
+     public void removeFreeWill() {

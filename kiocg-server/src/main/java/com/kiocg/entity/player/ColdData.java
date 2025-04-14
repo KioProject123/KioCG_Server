@@ -64,8 +64,8 @@ public class ColdData {
                 playerTemperature += Math.min(blockLight, 12) * config.playerLightBlockMultiplier;
             }
 
-            if (config.isInWaterOrBubble != 0 && (this.isInWater || player.isInPowderSnow || player.isInWaterOrBubble())) {
-                playerTemperature += config.isInWaterOrBubble;
+            if (config.isInWater != 0 && (this.isInWater || player.isInPowderSnow || player.isInWater())) {
+                playerTemperature += config.isInWater;
             } else if (config.isInRain != 0 && player.isInRain()) {
                 playerTemperature += config.isInRain;
             }
@@ -86,9 +86,7 @@ public class ColdData {
     }
 
     public void readAdditionalSaveData(CompoundTag nbt) {
-        if (nbt.contains("KioCG.ColdValue")) {
-            coldValue = nbt.getInt("KioCG.ColdValue");
-        }
+        coldValue = nbt.getIntOr("KioCG.ColdValue", MAX_VALUE);
     }
 
     public void addAdditionalSaveData(CompoundTag nbt) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -163,6 +_,8 @@
+@@ -173,6 +_,8 @@
      public final InventoryMenu inventoryMenu;
      public AbstractContainerMenu containerMenu;
      protected FoodData foodData = new FoodData();
@@ -9,15 +9,15 @@
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
      protected int clientLoadedTimeoutTimer = 60;
-@@ -200,6 +_,7 @@
-     private int currentImpulseContextResetGraceTime;
+@@ -210,6 +_,7 @@
+     private int currentImpulseContextResetGraceTime = 0;
      public boolean affectsSpawning = true; // Paper - Affects Spawning API
      public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
 +    public int enderchestRows; // KioCG - expand container rows
  
      // CraftBukkit start
      public boolean fauxSleeping;
-@@ -246,7 +_,8 @@
+@@ -261,7 +_,8 @@
              .add(Attributes.SUBMERGED_MINING_SPEED)
              .add(Attributes.SNEAKING_SPEED)
              .add(Attributes.MINING_EFFICIENCY)
@@ -27,7 +27,7 @@
      }
  
      @Override
-@@ -271,6 +_,8 @@
+@@ -286,6 +_,8 @@
              this.takeXpDelay--;
          }
  
@@ -36,7 +36,7 @@
          if (this.isSleeping()) {
              this.sleepCounter++;
              // Paper start - Add PlayerDeepSleepEvent
-@@ -282,9 +_,32 @@
+@@ -297,9 +_,32 @@
              // Paper end - Add PlayerDeepSleepEvent
              if (this.sleepCounter > 100) {
                  this.sleepCounter = 100;
@@ -65,12 +65,12 @@
 +                // KioCG end - sleep progress
              }
  
--            if (!this.level().isClientSide && this.level().isDay()) {
-+            if (false && !this.level().isClientSide && this.level().isDay()) { // KioCG - sleep any time
+-            if (!this.level().isClientSide && this.level().isBrightOutside()) {
++            if (false && !this.level().isClientSide && this.level().isBrightOutside()) { // KioCG - sleep any time
                  this.stopSleepInBed(false, true);
              }
          } else if (this.sleepCounter > 0) {
-@@ -304,6 +_,8 @@
+@@ -319,6 +_,8 @@
          this.moveCloak();
          if (this instanceof ServerPlayer serverPlayer) {
              this.foodData.tick(serverPlayer);
@@ -79,9 +79,9 @@
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
-@@ -828,6 +_,10 @@
+@@ -813,6 +_,10 @@
  
-         this.setScore(compound.getInt("Score"));
+         this.setScore(compound.getIntOr("Score", 0));
          this.foodData.readAdditionalSaveData(compound);
 +        // KioCG start - the long dark
 +        this.coldData.readAdditionalSaveData(compound);
@@ -89,8 +89,8 @@
 +        // KioCG end - the long dark
          this.abilities.loadSaveData(compound);
          this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.abilities.getWalkingSpeed());
-         if (compound.contains("EnderItems", 9)) {
-@@ -870,6 +_,10 @@
+         compound.getList("EnderItems").ifPresent(listTag -> this.enderChestInventory.fromTag(listTag, this.registryAccess()));
+@@ -837,6 +_,10 @@
          compound.putInt("XpSeed", this.enchantmentSeed);
          compound.putInt("Score", this.getScore());
          this.foodData.addAdditionalSaveData(compound);
@@ -101,7 +101,7 @@
          this.abilities.addSaveData(compound);
          compound.put("EnderItems", this.enderChestInventory.createTag(this.registryAccess()));
          if (!this.getShoulderEntityLeft().isEmpty()) {
-@@ -944,6 +_,28 @@
+@@ -906,6 +_,28 @@
          }
      }
  
@@ -128,9 +128,9 @@
 +    // KioCG end - campfire healing
 +
      @Override
-     protected void blockUsingShield(LivingEntity entity) {
-         super.blockUsingShield(entity);
-@@ -2422,6 +_,13 @@
+     protected void blockUsingItem(ServerLevel level, LivingEntity entity) {
+         super.blockUsingItem(level, entity);
+@@ -2305,6 +_,13 @@
      public boolean onClimbable() {
          return !this.abilities.flying && super.onClimbable();
      }
@@ -142,5 +142,5 @@
 +    }
 +    // KioCG end - chunk hot
  
-     public static enum BedSleepingProblem {
-         NOT_POSSIBLE_HERE,
+     public String debugInfo() {
+         return MoreObjects.toStringHelper(this)

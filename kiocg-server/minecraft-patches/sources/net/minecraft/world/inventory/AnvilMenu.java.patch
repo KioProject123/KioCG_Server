@@ -10,7 +10,7 @@
 +        org.bukkit.inventory.ItemStack oldResult = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(stack);
 +        // KioCG end - AnvilResultTakenEvent
 +
-         if (!player.getAbilities().instabuild) {
+         if (!player.hasInfiniteMaterials()) {
              player.giveExperienceLevels(-this.cost.get());
          }
 @@ -97,9 +_,10 @@
@@ -25,7 +25,7 @@
                  BlockState blockState1 = AnvilBlock.damage(blockState);
                  // Paper start - AnvilDamageEvent
                  com.destroystokyo.paper.event.block.AnvilDamagedEvent event = new com.destroystokyo.paper.event.block.AnvilDamagedEvent(getBukkitView(), blockState1 != null ? org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(blockState1) : null);
-@@ -129,17 +_,28 @@
+@@ -129,16 +_,27 @@
          ItemStack item = this.inputSlots.getItem(0);
          this.onlyRenaming = false;
          this.cost.set(1);
@@ -41,8 +41,7 @@
 -            ItemStack item1 = this.inputSlots.getItem(1);
 +            ItemStack item1 = this.inputSlots.getItem(1); ItemStack itemAtSlot2 = item1; // KioCG - OBFHELPER
              ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemStack));
-             l += (long)item.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue()
-                 + item1.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue();
+             l += (long)item.getOrDefault(DataComponents.REPAIR_COST, 0).intValue() + item1.getOrDefault(DataComponents.REPAIR_COST, 0).intValue();
 +            l = Math.min(l, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.anvil.maxCumulativeCost); // KioCG - adjust anvil
              this.repairItemCountCost = 0;
              if (!item1.isEmpty()) {
@@ -58,7 +57,7 @@
                  boolean hasStoredEnchantments = item1.has(DataComponents.STORED_ENCHANTMENTS);
                  if (itemStack.isDamageableItem() && item.isValidRepairItem(item1)) {
                      int min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);
-@@ -154,6 +_,12 @@
+@@ -153,6 +_,12 @@
                          int i3 = itemStack.getDamageValue() - min;
                          itemStack.setDamageValue(i3);
                          i++;
@@ -71,7 +70,7 @@
                          min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);
                      }
  
-@@ -236,21 +_,33 @@
+@@ -235,21 +_,33 @@
                  if (!this.itemName.equals(item.getHoverName().getString())) {
                      i1 = 1;
                      i += i1;
@@ -108,7 +107,7 @@
                  // CraftBukkit start
                  if (this.cost.get() >= this.maximumRepairCost) {
                      this.cost.set(this.maximumRepairCost - 1);
-@@ -271,6 +_,7 @@
+@@ -270,6 +_,7 @@
                  }
  
                  if (i1 != i || i1 == 0) {
@@ -116,7 +115,7 @@
                      minxx = calculateIncreasedRepairCost(minxx);
                  }
  
-@@ -291,11 +_,52 @@
+@@ -290,11 +_,52 @@
          return (int)Math.min(oldRepairCost * 2L + 1L, 2147483647L);
      }
  

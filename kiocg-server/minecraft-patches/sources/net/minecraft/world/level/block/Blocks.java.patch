@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
-@@ -658,6 +_,7 @@
+@@ -681,6 +_,7 @@
          "note_block",
          NoteBlock::new,
          BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).sound(SoundType.WOOD).strength(0.8F).ignitedByLava()
@@ -8,7 +8,7 @@
      );
      public static final Block WHITE_BED = registerBed("white_bed", DyeColor.WHITE);
      public static final Block ORANGE_BED = registerBed("orange_bed", DyeColor.ORANGE);
-@@ -2236,16 +_,19 @@
+@@ -2308,16 +_,19 @@
          "brown_mushroom_block",
          HugeMushroomBlock::new,
          BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).instrument(NoteBlockInstrument.BASS).strength(0.2F).sound(SoundType.WOOD).ignitedByLava()
@@ -27,8 +27,8 @@
 +            .pushReaction(PushReaction.BLOCK) // KioCG - block piston push
      );
      public static final Block IRON_BARS = register(
-         "iron_bars", IronBarsBlock::new, BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion()
-@@ -2457,6 +_,7 @@
+         "iron_bars", IronBarsBlock::new, BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.IRON).noOcclusion()
+@@ -2529,6 +_,7 @@
      );
      public static final Block CAULDRON = register(
          "cauldron", CauldronBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0F).noOcclusion()

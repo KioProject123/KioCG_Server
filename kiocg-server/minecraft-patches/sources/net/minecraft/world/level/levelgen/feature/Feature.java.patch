@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
 +++ b/net/minecraft/world/level/levelgen/feature/Feature.java
-@@ -216,7 +_,7 @@
+@@ -218,7 +_,7 @@
      }
  
      public static boolean isAdjacentToAir(Function<BlockPos, BlockState> adjacentStateAccessor, BlockPos pos) {

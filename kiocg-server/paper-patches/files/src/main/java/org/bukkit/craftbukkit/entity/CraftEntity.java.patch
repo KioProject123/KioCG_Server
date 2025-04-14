@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -73,11 +_,31 @@
+@@ -81,11 +_,31 @@
      private final EntityType entityType;
      private EntityDamageEvent lastDamageEvent;
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftEntity.DATA_TYPE_REGISTRY);
@@ -32,7 +32,7 @@
      @Override
      public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
          return this.apiScheduler;
-@@ -916,6 +_,13 @@
+@@ -906,6 +_,13 @@
          return this.persistentDataContainer;
      }
  
@@ -46,7 +46,7 @@
      @Override
      public Pose getPose() {
          return Pose.values()[this.getHandle().getPose().ordinal()];
-@@ -1242,6 +_,49 @@
+@@ -1187,6 +_,49 @@
          this.entity.getIndirectPassengers().forEach(e -> e.level().addFreshEntity(e, reason));
          return true;
      }
@@ -94,5 +94,5 @@
 +    }
 +    // KioCG end - send virtual entity api
  
-     // Paper start - entity powdered snow API
      @Override
+     public boolean isInPowderedSnow() {

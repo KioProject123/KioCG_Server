@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -45,9 +_,21 @@
+@@ -44,9 +_,21 @@
          return SHAPE;
      }
  
@@ -18,8 +18,8 @@
 +
      @Override
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
--        if (random.nextFloat() < (level.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+        if (random.nextFloat() < (level.spigotConfig.mushroomModifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+-        if (random.nextFloat() < (level.spigotConfig.mushroomModifier / (100.0F * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
++        if (random.nextFloat() < (level.spigotConfig.mushroomModifier / 100.0F)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
              int i = 5;
              int i1 = 4;
  

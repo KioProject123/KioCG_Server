@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -1248,6 +_,12 @@
+@@ -1277,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
      }
  
@@ -13,13 +13,13 @@
      public boolean isEnchanted() {
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
-@@ -1256,6 +_,14 @@
+@@ -1285,6 +_,14 @@
          return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
      }
  
 +    // KioCG start - adjust enchantment
 +    public int getEnchantmentLevel(net.minecraft.core.RegistryAccess registryManager, net.minecraft.resources.ResourceKey<Enchantment> enchantmentKey) {
-+        return registryManager.lookupOrThrow(Registries.ENCHANTMENT).get(enchantmentKey)
++        return registryManager.lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).get(enchantmentKey)
 +                              .map(reference -> getEnchantments().getLevel(reference))
 +                              .orElse(0);
 +    }
@@ -28,7 +28,7 @@
      public boolean isFramed() {
          return this.entityRepresentation instanceof ItemFrame;
      }
-@@ -1392,6 +_,15 @@
+@@ -1416,6 +_,15 @@
  
      public boolean isValidRepairItem(ItemStack item) {
          Repairable repairable = this.get(DataComponents.REPAIRABLE);
@@ -43,4 +43,4 @@
 +        // KioCG end - more repair item
          return repairable != null && repairable.isValidRepairItem(item);
      }
- }
+ 

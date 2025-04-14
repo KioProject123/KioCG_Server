@@ -1,8 +1,8 @@
 --- a/src/main/java/org/bukkit/entity/Wolf.java
 +++ b/src/main/java/org/bukkit/entity/Wolf.java
-@@ -90,6 +_,11 @@
+@@ -105,6 +_,11 @@
       */
-     void setVariant(@NotNull Variant variant);
+     void setSoundVariant(@NotNull SoundVariant soundVariant);
  
 +    // KioCG start - dont kill my pet
 +    public boolean isFollowOwner();

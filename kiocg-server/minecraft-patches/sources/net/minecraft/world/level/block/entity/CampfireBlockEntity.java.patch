@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -38,10 +_,31 @@
+@@ -40,10 +_,31 @@
      public final int[] cookingTime = new int[4];
      public final boolean[] stopCooking = new boolean[4]; // Paper - Add more Campfire API
  
@@ -32,7 +32,7 @@
      public static void cookTick(
          ServerLevel level,
          BlockPos pos,
-@@ -52,16 +_,26 @@
+@@ -54,16 +_,26 @@
          boolean flag = false;
  
          for (int i = 0; i < campfire.items.size(); i++) {
@@ -59,7 +59,7 @@
                      ItemStack itemStack1 = optionalCookingRecipe
                          .map(recipe -> recipe.value().assemble(singleRecipeInput, level.registryAccess()))
                          .orElse(itemStack);
-@@ -77,14 +_,23 @@
+@@ -79,14 +_,23 @@
                              result,
                              (org.bukkit.inventory.CookingRecipe<?>) optionalCookingRecipe.map(RecipeHolder::toBukkitRecipe).orElse(null) // Paper -Add recipe to cook events
                          );
@@ -84,7 +84,7 @@
                          // Paper start - Fix item locations dropped from campfires
                          double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
                          while (!itemStack1.isEmpty()) {
-@@ -93,7 +_,18 @@
+@@ -95,7 +_,18 @@
                              level.addFreshEntity(droppedItem);
                          }
                          // Paper end - Fix item locations dropped from campfires
@@ -103,7 +103,7 @@
                          level.sendBlockUpdated(pos, state, state, 3);
                          level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
-@@ -101,10 +_,53 @@
+@@ -103,10 +_,53 @@
              }
          }
  
@@ -157,7 +157,7 @@
  
      public static void cooldownTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
          boolean flag = false;
-@@ -112,7 +_,7 @@
+@@ -114,7 +_,7 @@
          for (int i = 0; i < blockEntity.items.size(); i++) {
              if (blockEntity.cookingProgress[i] > 0) {
                  flag = true;
@@ -166,15 +166,15 @@
              }
          }
  
-@@ -154,6 +_,7 @@
+@@ -156,6 +_,7 @@
      protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
          super.loadAdditional(tag, registries);
          this.items.clear();
 +        this.shouldTick = new boolean[]{true, true, true, true}; // KioCG - optimize block entity
          ContainerHelper.loadAllItems(tag, this.items, registries);
-         if (tag.contains("CookingTimes", 11)) {
-             int[] intArray = tag.getIntArray("CookingTimes");
-@@ -204,8 +_,13 @@
+         tag.getIntArray("CookingTimes")
+             .ifPresentOrElse(
+@@ -205,8 +_,13 @@
          return compoundTag;
      }
  
@@ -190,7 +190,7 @@
              ItemStack itemStack = this.items.get(i);
              if (itemStack.isEmpty()) {
                  Optional<RecipeHolder<CampfireCookingRecipe>> recipeFor = level.recipeAccess()
-@@ -213,6 +_,13 @@
+@@ -214,6 +_,13 @@
                  if (recipeFor.isEmpty()) {
                      return false;
                  }
@@ -204,7 +204,7 @@
  
                  // CraftBukkit start
                  org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(
-@@ -225,6 +_,7 @@
+@@ -226,6 +_,7 @@
                  // CraftBukkit end
                  this.cookingProgress[i] = 0;
                  this.items.set(i, stack.consumeAndReturn(1, entity));
@@ -212,11 +212,3 @@
                  level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
                  this.markUpdated();
                  return true;
-@@ -247,6 +_,7 @@
-     public void dowse() {
-         if (this.level != null) {
-             this.markUpdated();
-+            cooldownTick(this.level, this.getBlockPos(), this.getBlockState(), this); // KioCG - optimize block entity
-         }
-     }
- 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -156,6 +_,7 @@
+@@ -133,6 +_,7 @@
              }
          }
  
@@ -8,7 +8,7 @@
          if (signalGetter.hasSignal(pos, Direction.DOWN)) {
              return true;
          } else {
-@@ -173,6 +_,11 @@
+@@ -150,6 +_,11 @@
  
      @Override
      protected boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
@@ -20,7 +20,7 @@
          Direction direction = state.getValue(FACING);
          // Paper start - Protect Bedrock and End Portal/Frames from being destroyed; prevent retracting when we're facing the wrong way (we were replaced before retraction could occur)
          Direction directionQueuedAs = Direction.from3DDataValue(param & 7); // Paper - copied from below
-@@ -272,6 +_,7 @@
+@@ -249,6 +_,7 @@
              level.gameEvent(GameEvent.BLOCK_DEACTIVATE, pos, GameEvent.Context.of(blockState1));
          }
  

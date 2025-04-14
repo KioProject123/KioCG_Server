@@ -22,7 +22,7 @@
 +                        entitylightning.cause = this.cause;
 +                        entitylightning.isEffect = this.isEffect;
 +                        entitylightning.times = --this.times;
-+                        entitylightning.moveTo(this.position());
++                        entitylightning.snapTo(this.position());
 +                        this.serverLevel().strikeLightning(entitylightning);
 +                    }
 +                }

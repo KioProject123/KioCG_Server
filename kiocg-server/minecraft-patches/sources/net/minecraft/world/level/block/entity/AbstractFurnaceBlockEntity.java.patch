@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -146,6 +_,7 @@
+@@ -156,6 +_,7 @@
      protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
          super.loadAdditional(tag, registries);
          this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 +        this.shouldTick = true; // KioCG - optimize block entity
          ContainerHelper.loadAllItems(tag, this.items, registries);
-         this.cookingTimer = tag.getShort("cooking_time_spent");
-         this.cookingTotalTime = tag.getShort("cooking_total_time");
-@@ -183,11 +_,19 @@
-         tag.put("RecipesUsed", compoundTag);
+         this.cookingTimer = tag.getShortOr("cooking_time_spent", (short)0);
+         this.cookingTotalTime = tag.getShortOr("cooking_total_time", (short)0);
+@@ -178,11 +_,19 @@
+         tag.store("RecipesUsed", RECIPES_USED_CODEC, this.recipesUsed);
      }
  
 +    private boolean shouldTick = true; // KioCG - optimize block entity
@@ -28,7 +28,7 @@
          }
  
          ItemStack itemStack = furnace.items.get(1);
-@@ -218,7 +_,7 @@
+@@ -213,7 +_,7 @@
  
                  furnace.litTimeRemaining = furnaceBurnEvent.getBurnTime(); // CraftBukkit - respect event output
                  furnace.litTotalTime = furnace.litTimeRemaining;
@@ -37,7 +37,7 @@
                      flag = true;
                      if (flag2 && furnaceBurnEvent.willConsumeFuel()) { // Paper - add consumeFuel to FurnaceBurnEvent
                          Item item = itemStack.getItem();
-@@ -252,10 +_,33 @@
+@@ -247,10 +_,33 @@
                  if (furnace.cookingTimer >= furnace.cookingTotalTime) { // Paper - cook speed multiplier API
                      furnace.cookingTimer = 0;
                      furnace.cookingTotalTime = getTotalCookTime(level, furnace, furnace.recipeType, furnace.cookSpeedMultiplier); // Paper - cook speed multiplier API
@@ -72,7 +72,7 @@
                      flag = true;
                  }
              } else {
-@@ -263,6 +_,7 @@
+@@ -258,6 +_,7 @@
              }
          } else if (!furnace.isLit() && furnace.cookingTimer > 0) {
              furnace.cookingTimer = Mth.clamp(furnace.cookingTimer - 2, 0, furnace.cookingTotalTime);
@@ -80,7 +80,7 @@
          }
  
          if (isLit != furnace.isLit()) {
-@@ -288,6 +_,13 @@
+@@ -283,6 +_,13 @@
              if (itemStack.isEmpty()) {
                  return false;
              } else {
@@ -94,7 +94,7 @@
                  ItemStack itemStack1 = items.get(2);
                  return itemStack1.isEmpty()
                      || ItemStack.isSameItemSameComponents(itemStack1, itemStack)
-@@ -330,6 +_,10 @@
+@@ -325,6 +_,10 @@
              itemStack1 = result = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(apiResult);
  
              if (!result.isEmpty()) {
@@ -105,7 +105,7 @@
                  if (existingResults.isEmpty()) {
                      items.set(2, result.copy());
                  } else if (org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(existingResults).isSimilar(apiResult)) {
-@@ -349,7 +_,10 @@
+@@ -344,7 +_,10 @@
              // CraftBukkit end
  
              if (itemStack.is(Blocks.WET_SPONGE.asItem()) && !items.get(1).isEmpty() && items.get(1).is(Items.BUCKET)) {
@@ -117,10 +117,10 @@
              }
  
              itemStack.shrink(1);
-@@ -371,12 +_,14 @@
-             ? furnace.quickCheck.getRecipeFor(singleRecipeInput, level).map(holder -> holder.value().cookingTime()).orElse(200)
+@@ -366,12 +_,14 @@
+             ? furnace.quickCheck.getRecipeFor(singleRecipeInput, level).map(recipeHolder -> recipeHolder.value().cookingTime()).orElse(200)
              /* passing a null level here is safe. world is only used for map extending recipes which won't happen here */
-             : (net.minecraft.server.MinecraftServer.getServer().getRecipeManager().getRecipeFor(recipeType, singleRecipeInput, level).map(holder -> holder.value().cookingTime()).orElse(200));
+             : (net.minecraft.server.MinecraftServer.getServer().getRecipeManager().getRecipeFor(recipeType, singleRecipeInput, level).map(recipeHolder -> recipeHolder.value().cookingTime()).orElse(200));
 +        if (furnace instanceof BlastFurnaceBlockEntity || furnace instanceof SmokerBlockEntity) cookTime *= 2; // KioCG - change container behavior: 不要加速高炉和烟熏炉
          return (int) Math.ceil (cookTime / cookSpeedMultiplier);
          // Paper end - cook speed multiplier API
@@ -132,7 +132,7 @@
          if (side == Direction.DOWN) {
              return SLOTS_FOR_DOWN;
          } else {
-@@ -420,6 +_,7 @@
+@@ -415,6 +_,7 @@
              this.cookingTimer = 0;
              this.setChanged();
          }
@@ -140,7 +140,7 @@
      }
  
      @Override
-@@ -430,7 +_,7 @@
+@@ -425,7 +_,7 @@
              return true;
          } else {
              ItemStack itemStack = this.items.get(1);

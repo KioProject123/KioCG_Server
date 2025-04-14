@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
-@@ -117,6 +_,15 @@
+@@ -112,6 +_,15 @@
              entity.hurt(level.damageSources().campfire().eventBlockDamager(level, pos), (float) this.fireDamage); // CraftBukkit
          }
  
@@ -13,10 +13,22 @@
 +        }
 +        // KioCG end - campfire healing
 +
-         super.entityInside(state, level, pos, entity);
+         super.entityInside(state, level, pos, entity, effectApplier);
      }
  
-@@ -337,6 +_,7 @@
+@@ -190,6 +_,11 @@
+             }
+         }
+ 
++        // KioCG start - optimize block entity
++        if (level.getBlockEntity(pos) instanceof CampfireBlockEntity campfireBlockEntity) {
++            CampfireBlockEntity.cooldownTick((net.minecraft.world.level.Level) level, pos, state, campfireBlockEntity);
++        }
++        // KioCG end - optimize block entity
+         level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
+     }
+ 
+@@ -315,6 +_,7 @@
                      (level1, pos, state1, blockEntity) -> CampfireBlockEntity.cookTick(serverLevel, pos, state1, blockEntity, cachedCheck)
                  );
              } else {

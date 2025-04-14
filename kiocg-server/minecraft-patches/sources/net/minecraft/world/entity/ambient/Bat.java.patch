@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ambient/Bat.java
 +++ b/net/minecraft/world/entity/ambient/Bat.java
-@@ -94,7 +_,7 @@
+@@ -95,7 +_,7 @@
      }
  
      @Override

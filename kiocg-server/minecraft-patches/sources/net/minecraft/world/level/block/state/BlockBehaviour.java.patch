@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -316,6 +_,25 @@
+@@ -313,6 +_,25 @@
          return true;
      }
  
@@ -26,7 +26,7 @@
      protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
          return state.isCollisionShapeFullBlock(level, pos) ? 0.2F : 1.0F;
      }
-@@ -343,6 +_,12 @@
+@@ -344,6 +_,12 @@
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
      }
  
@@ -39,7 +39,7 @@
      protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
      }
  
-@@ -396,6 +_,12 @@
+@@ -393,6 +_,12 @@
          return this.isRandomlyTicking;
      }
  
@@ -52,7 +52,7 @@
      protected SoundType getSoundType(BlockState state) {
          return this.soundType;
      }
-@@ -449,6 +_,7 @@
+@@ -446,6 +_,7 @@
          private BlockBehaviour.BlockStateBase.Cache cache;
          private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
          private boolean isRandomlyTicking;
@@ -60,7 +60,7 @@
          private boolean solidRender;
          private VoxelShape occlusionShape;
          private VoxelShape[] occlusionShapesByFace;
-@@ -581,6 +_,7 @@
+@@ -578,6 +_,7 @@
          public void initCache() {
              this.fluidState = this.owner.getFluidState(this.asState());
              this.isRandomlyTicking = this.owner.isRandomlyTicking(this.asState());
@@ -68,7 +68,7 @@
              if (!this.getBlock().hasDynamicShape()) {
                  this.cache = new BlockBehaviour.BlockStateBase.Cache(this.asState());
              }
-@@ -882,6 +_,12 @@
+@@ -883,6 +_,12 @@
              this.getBlock().randomTick(this.asState(), level, pos, random);
          }
  
@@ -78,10 +78,10 @@
 +        }
 +        // KioCG end - crops grow every day
 +
-         public void entityInside(Level level, BlockPos pos, Entity entity) {
-             this.getBlock().entityInside(this.asState(), level, pos, entity);
+         public void entityInside(Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+             this.getBlock().entityInside(this.asState(), level, pos, entity, effectApplier);
          }
-@@ -1004,6 +_,12 @@
+@@ -1001,6 +_,12 @@
          public final boolean isRandomlyTicking() { // Paper - Perf: Final for inlining
              return this.isRandomlyTicking;
          }

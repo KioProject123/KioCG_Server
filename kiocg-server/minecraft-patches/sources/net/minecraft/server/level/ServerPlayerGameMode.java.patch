@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -72,7 +_,7 @@
+@@ -73,7 +_,7 @@
                  return event; // Paper - Expand PlayerGameModeChangeEvent
              }
              // CraftBukkit end
@@ -9,7 +9,7 @@
              this.player.onUpdateAbilities();
              this.player
                  .server
-@@ -87,12 +_,33 @@
+@@ -88,12 +_,33 @@
          }
      }
  
@@ -44,7 +44,7 @@
      public GameType getGameModeForPlayer() {
          return this.gameModeForPlayer;
      }
-@@ -420,11 +_,42 @@
+@@ -417,11 +_,42 @@
      }
  
      public InteractionResult useItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand) {
@@ -87,7 +87,7 @@
              int count = stack.getCount();
              int damageValue = stack.getDamageValue();
              InteractionResult interactionResult = stack.use(level, player, hand);
-@@ -463,6 +_,13 @@
+@@ -460,6 +_,13 @@
      public BlockPos interactPosition;
      public InteractionHand interactHand;
      public ItemStack interactItemStack;
@@ -101,7 +101,7 @@
      public InteractionResult useItemOn(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult hitResult) {
          BlockPos blockPos = hitResult.getBlockPos();
          BlockState blockState = level.getBlockState(blockPos);
-@@ -494,6 +_,21 @@
+@@ -491,6 +_,21 @@
              }
              player.getBukkitEntity().updateInventory(); // SPIGOT-2867
              this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
@@ -123,7 +123,7 @@
              return (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider menuProvider = blockState.getMenuProvider(level, blockPos);
-@@ -521,6 +_,20 @@
+@@ -518,6 +_,20 @@
                      }
                  }
              }

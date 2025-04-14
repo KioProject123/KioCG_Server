@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartHopper.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartHopper.java
-@@ -21,6 +_,7 @@
- public class MinecartHopper extends AbstractMinecartContainer implements Hopper {
+@@ -22,6 +_,7 @@
+     private static final boolean DEFAULT_ENABLED = true;
      private boolean enabled = true;
      private boolean consumedItemThisFrame = false;
 +    @javax.annotation.Nullable public java.util.Set<net.minecraft.world.item.Item> itemFilter; // KioCG - hopper filter
  
      public MinecartHopper(EntityType<? extends MinecartHopper> entityType, Level level) {
          super(entityType, level);
-@@ -99,7 +_,16 @@
+@@ -100,7 +_,16 @@
          }
      }
  

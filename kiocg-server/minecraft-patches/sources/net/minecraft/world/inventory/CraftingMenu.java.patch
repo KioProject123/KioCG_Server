@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
-@@ -91,6 +_,13 @@
+@@ -89,6 +_,13 @@
                  ItemStack itemStack1 = craftingRecipe.assemble(craftInput, level.registryAccess());
                  if (itemStack1.isItemEnabled(level.enabledFeatures())) {
                      itemStack = itemStack1;

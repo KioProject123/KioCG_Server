@@ -1,9 +1,9 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -1211,4 +_,36 @@
+@@ -1167,4 +_,36 @@
+     public boolean canUseEquipmentSlot(org.bukkit.inventory.EquipmentSlot slot) {
          return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
      }
-     // Paper end - Expose canUseSlot
 +
 +    // KioCG start - entity baby api
 +    @Override

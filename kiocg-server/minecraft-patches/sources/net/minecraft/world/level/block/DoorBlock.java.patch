@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DoorBlock.java
 +++ b/net/minecraft/world/level/block/DoorBlock.java
-@@ -211,10 +_,46 @@
+@@ -204,10 +_,46 @@
              level.setBlock(pos, state, 10);
              this.playSound(player, level, pos, state.getValue(OPEN));
              level.gameEvent(player, this.isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
@@ -47,14 +47,14 @@
      public boolean isOpen(BlockState state) {
          return state.getValue(OPEN);
      }
-@@ -227,6 +_,15 @@
+@@ -220,6 +_,15 @@
          }
      }
  
 +    // KioCG start - double door opening
 +    public void setOpenWithoutSound(@Nullable Entity entity, Level level, BlockState state, BlockPos pos, boolean _open) {
 +        if (state.is(this) && state.getValue(OPEN) != _open) {
-+            level.setBlockAndUpdate(pos, state.setValue(OPEN, Boolean.valueOf(_open))); // 需要更新客户端
++            level.setBlockAndUpdate(pos, state.setValue(OPEN, _open)); // 需要更新客户端
 +            level.gameEvent(entity, _open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 +        }
 +    }
@@ -63,8 +63,8 @@
      @Override
      protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
          // CraftBukkit start
-@@ -253,6 +_,31 @@
-             level.setBlock(pos, state.setValue(POWERED, Boolean.valueOf(flag)).setValue(OPEN, Boolean.valueOf(flag)), 2);
+@@ -246,6 +_,31 @@
+             level.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
          }
      }
 +

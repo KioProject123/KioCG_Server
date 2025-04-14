@@ -1,14 +1,14 @@
---- a/net/minecraft/world/entity/animal/Sheep.java
-+++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -57,6 +_,7 @@
-     );
+--- a/net/minecraft/world/entity/animal/sheep/Sheep.java
++++ b/net/minecraft/world/entity/animal/sheep/Sheep.java
+@@ -60,6 +_,7 @@
+     private static final boolean DEFAULT_SHEARED = false;
      private int eatAnimationTick;
      private EatBlockGoal eatBlockGoal;
 +    public int woolTime = this.random.nextInt(200); // KioCG - breeding animals
  
-     private static int createSheepColor(DyeColor dyeColor) {
-         if (dyeColor == DyeColor.WHITE) {
-@@ -112,6 +_,14 @@
+     private static int createSheepColor(DyeColor color) {
+         if (color == DyeColor.WHITE) {
+@@ -115,6 +_,14 @@
              this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
          }
  
@@ -23,7 +23,7 @@
          super.aiStep();
      }
  
-@@ -219,6 +_,7 @@
+@@ -222,6 +_,7 @@
                  }
              }
          );
@@ -31,7 +31,7 @@
          this.setSheared(true);
      }
  
-@@ -317,7 +_,7 @@
+@@ -332,7 +_,7 @@
          super.ate();
          this.setSheared(false);
          if (this.isBaby()) {

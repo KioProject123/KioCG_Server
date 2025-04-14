@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
-@@ -224,6 +_,9 @@
-                 this.checkBurnOut(level, pos.north(), 300 + i, random, ageValue, pos);
-                 this.checkBurnOut(level, pos.south(), 300 + i, random, ageValue, pos);
-                 // CraftBukkit end
+@@ -204,6 +_,9 @@
+                     this.checkBurnOut(level, pos.north(), 300 + i, random, ageValue, pos);
+                     this.checkBurnOut(level, pos.south(), 300 + i, random, ageValue, pos);
+                     // CraftBukkit end
 +
-+                if (true) return; // KioCG - prevent fire spreading
++                    if (true) return; // KioCG - prevent fire spreading
 +
-                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+                     BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
  
-                 for (int i1 = -1; i1 <= 1; i1++) {
+                     for (int i1 = -1; i1 <= 1; i1++) {

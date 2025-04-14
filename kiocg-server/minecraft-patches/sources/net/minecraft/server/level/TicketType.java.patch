@@ -1,15 +1,11 @@
 --- a/net/minecraft/server/level/TicketType.java
 +++ b/net/minecraft/server/level/TicketType.java
-@@ -17,10 +_,12 @@
-     public static final TicketType<ChunkPos> FORCED = create("forced", Comparator.comparingLong(ChunkPos::toLong));
-     public static final TicketType<BlockPos> PORTAL = create("portal", Vec3i::compareTo, 300);
-     public static final TicketType<ChunkPos> ENDER_PEARL = create("ender_pearl", Comparator.comparingLong(ChunkPos::toLong), 40);
-+    public static final TicketType<ChunkPos> TRIDENT = create("trident", Comparator.comparingLong(ChunkPos::toLong), 40); // KioCG - adjust enchantment
-     public static final TicketType<ChunkPos> UNKNOWN = create("unknown", Comparator.comparingLong(ChunkPos::toLong), 1);
-     public static final TicketType<Unit> PLUGIN = TicketType.create("plugin", (a, b) -> 0); // CraftBukkit
-     public static final TicketType<org.bukkit.plugin.Plugin> PLUGIN_TICKET = TicketType.create("plugin_ticket", (plugin1, plugin2) -> plugin1.getClass().getName().compareTo(plugin2.getClass().getName())); // CraftBukkit
-     public static final TicketType<Integer> POST_TELEPORT = TicketType.create("post_teleport", Integer::compare, 5); // Paper - post teleport ticket type
-+    public static final TicketType<Integer> PET_FOLLOW = TicketType.create("pet_follow", Integer::compare, 40); // KioCG - dont kill my pet
- 
-     public static <T> TicketType<T> create(String name, Comparator<T> comparator) {
-         return new TicketType<>(name, comparator, 0L);
+@@ -45,6 +_,8 @@
+     public static final TicketType FORCED = register("forced", 0L, true, TicketType.TicketUse.LOADING_AND_SIMULATION);
+     public static final TicketType PORTAL = register("portal", 300L, true, TicketType.TicketUse.LOADING_AND_SIMULATION);
+     public static final TicketType ENDER_PEARL = register("ender_pearl", 40L, false, TicketType.TicketUse.LOADING_AND_SIMULATION);
++    public static final TicketType TRIDENT = register("trident", 40L, false, TicketType.TicketUse.LOADING_AND_SIMULATION); // KioCG - adjust enchantment
++    public static final TicketType PET_FOLLOW = register("pet_follow", 40L, false, TicketType.TicketUse.LOADING_AND_SIMULATION); // KioCG - dont kill my pet
+     public static final TicketType UNKNOWN = register("unknown", 1L, false, TicketType.TicketUse.LOADING);
+     public static final TicketType PLUGIN = register("plugin", 0L, false, TicketType.TicketUse.LOADING_AND_SIMULATION); // CraftBukkit
+     public static final TicketType POST_TELEPORT = register("post_teleport", 5L, false, TicketType.TicketUse.LOADING_AND_SIMULATION); // Paper

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Turtle.java
 +++ b/net/minecraft/world/entity/animal/Turtle.java
-@@ -338,6 +_,36 @@
+@@ -294,6 +_,36 @@
          return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(pose);
      }
  
@@ -37,7 +37,7 @@
      static class TurtleBreedGoal extends BreedGoal {
          private final Turtle turtle;
  
-@@ -368,8 +_,10 @@
+@@ -324,8 +_,10 @@
              }
  
              this.turtle.setHasEgg(true);

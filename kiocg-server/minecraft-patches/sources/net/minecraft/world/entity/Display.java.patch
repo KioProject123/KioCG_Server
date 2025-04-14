@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -280,6 +_,77 @@
+@@ -233,6 +_,77 @@
          this.entityData.set(DATA_RIGHT_ROTATION_ID, transformation.getRightRotation());
      }
  
@@ -77,4 +77,4 @@
 +
      @Override
      protected void addAdditionalSaveData(CompoundTag tag) {
-         Transformation.EXTENDED_CODEC.encodeStart(NbtOps.INSTANCE, createTransformation(this.entityData)).ifSuccess(tag1 -> tag.put("transformation", tag1));
+         tag.store("transformation", Transformation.EXTENDED_CODEC, createTransformation(this.entityData));

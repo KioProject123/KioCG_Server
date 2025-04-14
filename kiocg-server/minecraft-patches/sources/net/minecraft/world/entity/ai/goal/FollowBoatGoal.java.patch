@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/goal/FollowBoatGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/FollowBoatGoal.java
-@@ -40,6 +_,13 @@
+@@ -39,6 +_,13 @@
          return this.following != null && (Mth.abs(this.following.xxa) > 0.0F || Mth.abs(this.following.zza) > 0.0F) || flag;
      }
  

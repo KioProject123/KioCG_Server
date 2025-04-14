@@ -64,7 +64,7 @@
              if (blockState1.is(blockState.getBlock()) && random.nextInt(10) == 0) {
                  BonemealableBlock bonemealableBlock = (BonemealableBlock)blockState.getBlock();
                  if (bonemealableBlock.isValidBonemealTarget(level, blockPos1, blockState1)) {
-@@ -92,4 +_,47 @@
+@@ -93,4 +_,47 @@
      public BonemealableBlock.Type getType() {
          return BonemealableBlock.Type.NEIGHBOR_SPREADER;
      }

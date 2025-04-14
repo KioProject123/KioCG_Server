@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -344,6 +_,13 @@
+@@ -349,6 +_,13 @@
          );
          if (randomItemWith.isPresent()) {
              ItemStack itemStack = randomItemWith.get().itemStack();

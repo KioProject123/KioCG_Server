@@ -13,8 +13,8 @@
  
      @Override
      public BlockState getStateForPlacement(RandomSource random) {
--        return this.defaultBlockState().setValue(AGE, Integer.valueOf(random.nextInt(25)));
-+        return this.defaultBlockState().setValue(AGE, Integer.valueOf(random.nextInt(MAX_AGE))); // KioCG - crops grow every day
+-        return this.defaultBlockState().setValue(AGE, random.nextInt(25));
++        return this.defaultBlockState().setValue(AGE, random.nextInt(MAX_AGE)); // KioCG - crops grow every day
      }
  
      @Override
@@ -36,7 +36,7 @@
              modifier = level.spigotConfig.caveVinesModifier;
          }
 -        if (state.getValue(AGE) < 25 && random.nextDouble() < ((modifier / 100.0D) * this.growPerTickProbability)) { // Spigot - SPIGOT-7159: Better modifier resolution
-+        if (state.getValue(AGE) < MAX_AGE && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
++        if (state.getValue(AGE) < MAX_AGE && random.nextFloat() < (modifier / 100.0F)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
              // Spigot end
              BlockPos blockPos = pos.relative(this.growthDirection);
              if (this.canGrowInto(level.getBlockState(blockPos))) {
@@ -44,8 +44,8 @@
      }
  
      public BlockState getMaxAgeState(BlockState state) {
--        return state.setValue(AGE, Integer.valueOf(25));
-+        return state.setValue(AGE, Integer.valueOf(MAX_AGE)); // KioCG - crops grow every day
+-        return state.setValue(AGE, 25);
++        return state.setValue(AGE, MAX_AGE); // KioCG - crops grow every day
      }
  
      public boolean isMaxAge(BlockState state) {
@@ -54,7 +54,7 @@
      }
  
      protected BlockState updateBodyAfterConvertedFromHead(BlockState head, BlockState body) {
-@@ -130,13 +_,13 @@
+@@ -137,13 +_,13 @@
      @Override
      public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
          BlockPos blockPos = pos.relative(this.growthDirection);
@@ -63,7 +63,7 @@
          int blocksToGrowWhenBonemealed = this.getBlocksToGrowWhenBonemealed(random);
  
          for (int i = 0; i < blocksToGrowWhenBonemealed && this.canGrowInto(level.getBlockState(blockPos)); i++) {
-             level.setBlockAndUpdate(blockPos, state.setValue(AGE, Integer.valueOf(min)));
+             level.setBlockAndUpdate(blockPos, state.setValue(AGE, min));
              blockPos = blockPos.relative(this.growthDirection);
 -            min = Math.min(min + 1, 25);
 +            min = Math.min(min + 1, MAX_AGE); // KioCG - crops grow every day

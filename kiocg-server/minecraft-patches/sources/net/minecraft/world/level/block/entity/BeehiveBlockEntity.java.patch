@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
-@@ -84,6 +_,7 @@
+@@ -80,6 +_,7 @@
      @Nullable
      public BlockPos savedFlowerPos;
      public int maxBees = MAX_OCCUPANTS; // CraftBukkit - allow setting max amount of bees a hive can hold
@@ -8,7 +8,7 @@
  
      public BeehiveBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.BEEHIVE, pos, blockState);
-@@ -271,7 +_,7 @@
+@@ -264,7 +_,7 @@
                              bee.dropOffNectar();
                              if (state.is(BlockTags.BEEHIVES, blockStateBase -> blockStateBase.hasProperty(BeehiveBlock.HONEY_LEVEL))) {
                                  int honeyLevel = getHoneyLevel(state);
@@ -17,13 +17,13 @@
                                      int i = level.random.nextInt(100) == 0 ? 2 : 1;
                                      if (honeyLevel + i > 5) {
                                          i--;
-@@ -352,6 +_,21 @@
+@@ -345,6 +_,21 @@
              level.playSound(null, d, d1, d2, SoundEvents.BEEHIVE_WORK, SoundSource.BLOCKS, 1.0F, 1.0F);
          }
  
 +        // KioCG start - beehive refill every night
 +        if (state.is(BlockTags.BEEHIVES, blockStateBase -> blockStateBase.hasProperty(BeehiveBlock.HONEY_LEVEL))) {
-+            if (level.isNight()) {
++            if (level.isDarkOutside()) {
 +                int days = level.getDays();
 +                if (days != beehive.honeyDays) {
 +                    beehive.honeyDays = days;
@@ -39,18 +39,18 @@
          DebugPackets.sendHiveInfo(level, pos, state, beehive);
      }
  
-@@ -372,6 +_,7 @@
-             this.maxBees = tag.getInt("Bukkit.MaxEntities");
-         }
-         // CraftBukkit end
-+        this.honeyDays = tag.getInt("KioCG.HoneyDays"); // KioCG - beehive refill every night
+@@ -355,6 +_,7 @@
+         tag.read("bees", BeehiveBlockEntity.Occupant.LIST_CODEC).orElse(List.of()).forEach(this::storeBee);
+         this.savedFlowerPos = tag.read("flower_pos", BlockPos.CODEC).orElse(null);
+         this.maxBees = tag.getIntOr("Bukkit.MaxEntities", MAX_OCCUPANTS); // Paper - persist max bukkit occupants
++        this.honeyDays = tag.getIntOr("KioCG.HoneyDays", 0); // KioCG - beehive refill every night
      }
  
      @Override
-@@ -382,6 +_,7 @@
-             tag.put("flower_pos", NbtUtils.writeBlockPos(this.savedFlowerPos));
-         }
-         tag.putInt("Bukkit.MaxEntities", this.maxBees); // CraftBukkit
+@@ -363,6 +_,7 @@
+         tag.store("bees", BeehiveBlockEntity.Occupant.LIST_CODEC, this.getBees());
+         tag.storeNullable("flower_pos", BlockPos.CODEC, this.savedFlowerPos);
+         tag.putInt("Bukkit.MaxEntities", this.maxBees); // Paper - persist max bukkit occupants
 +        tag.putInt("KioCG.HoneyDays", this.honeyDays); // KioCG - beehive refill every night
      }
  

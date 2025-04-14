@@ -18,7 +18,7 @@
          this.patternSlot = this.addSlot(new Slot(this.inputContainer, 2, 23, 45) {
              @Override
              public boolean mayPlace(ItemStack stack) {
--                return stack.getItem() instanceof BannerPatternItem;
+-                return stack.has(DataComponents.PROVIDES_BANNER_PATTERNS);
 +                return isBannerPatternItem(stack); // KioCG - vanilla recipe excludes model items: 提取方法
              }
          });
@@ -37,14 +37,14 @@
 +    }
 +
 +    boolean isBannerPatternItem(ItemStack stack) {
-+        return stack.getItem() instanceof BannerPatternItem && this.allowModelItem(stack);
++        return stack.has(DataComponents.PROVIDES_BANNER_PATTERNS) && this.allowModelItem(stack);
 +    }
 +    // KioCG end - vanilla recipe excludes model items
 +
      @Override
      public boolean stillValid(Player player) {
          if (!this.checkReachable) return true; // CraftBukkit
-@@ -265,15 +_,15 @@
+@@ -266,15 +_,15 @@
  
                  slot.onQuickCraft(item, itemStack);
              } else if (index != this.dyeSlot.index && index != this.bannerSlot.index && index != this.patternSlot.index) {
@@ -58,7 +58,7 @@
                      if (!this.moveItemStackTo(item, this.dyeSlot.index, this.dyeSlot.index + 1, false)) {
                          return ItemStack.EMPTY;
                      }
--                } else if (item.getItem() instanceof BannerPatternItem) {
+-                } else if (item.has(DataComponents.PROVIDES_BANNER_PATTERNS)) {
 +                } else if (isBannerPatternItem(item)) { // KioCG - vanilla recipe excludes model items: 提取方法
                      if (!this.moveItemStackTo(item, this.patternSlot.index, this.patternSlot.index + 1, false)) {
                          return ItemStack.EMPTY;

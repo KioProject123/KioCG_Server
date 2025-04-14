@@ -8,15 +8,15 @@
      ChunkStatus chunkStatus,
      @Nullable BlendingData.Packed blendingData,
      @Nullable BelowZeroRetrogen belowZeroRetrogen,
-@@ -280,6 +_,7 @@
+@@ -254,6 +_,7 @@
                  levelHeightAccessor.getMinSectionY(),
-                 _long,
-                 _long1,
-+                tag.getInt("ChunkDays"), // KioCG - crops grow every day
+                 longOr,
+                 longOr1,
++                tag.getIntOr("ChunkDays", serverLevel.getDays()), // KioCG - crops grow every day
                  chunkStatus,
                  packed,
                  belowZeroRetrogen,
-@@ -424,6 +_,7 @@
+@@ -398,6 +_,7 @@
              }
          }
  
@@ -24,7 +24,7 @@
          // CraftBukkit start - load chunk persistent data from nbt - SPIGOT-6814: Already load PDC here to account for 1.17 to 1.18 chunk upgrading.
          if (this.persistentDataContainer instanceof CompoundTag compoundTag) {
              chunkAccess.persistentDataContainer.putAll(compoundTag);
-@@ -593,6 +_,7 @@
+@@ -560,6 +_,7 @@
                  chunk.getMinSectionY(),
                  level.getGameTime(),
                  chunk.getInhabitedTime(),
@@ -32,11 +32,11 @@
                  chunk.getPersistedStatus(),
                  Optionull.map(chunk.getBlendingData(), BlendingData::pack),
                  chunk.getBelowZeroRetrogen(),
-@@ -618,6 +_,7 @@
+@@ -585,6 +_,7 @@
          compoundTag.putInt("zPos", this.chunkPos.z);
          compoundTag.putLong("LastUpdate", this.lastUpdateTime); // Paper - Diff on change
          compoundTag.putLong("InhabitedTime", this.inhabitedTime);
 +        compoundTag.putInt("ChunkDays", this.chunkDays); // KioCG - crops grow every day
          compoundTag.putString("Status", BuiltInRegistries.CHUNK_STATUS.getKey(this.chunkStatus).toString());
-         if (this.blendingData != null) {
-             BlendingData.Packed.CODEC
+         compoundTag.storeNullable("blending_data", BlendingData.Packed.CODEC, this.blendingData);
+         compoundTag.storeNullable("below_zero_retrogen", BelowZeroRetrogen.CODEC, this.belowZeroRetrogen);

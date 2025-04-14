@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -109,6 +_,16 @@
+@@ -113,6 +_,16 @@
      }
  
      protected void addBehaviourGoals() {
@@ -17,7 +17,7 @@
          this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0, false));
          this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::canBreakDoors));
          this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
-@@ -116,7 +_,7 @@
+@@ -120,7 +_,7 @@
          this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
          if (this.level().spigotConfig.zombieAggressiveTowardsVillager) this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false)); // Spigot
          this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
@@ -26,7 +26,7 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
-@@ -181,7 +_,10 @@
+@@ -185,7 +_,10 @@
      }
  
      @Override
@@ -38,7 +38,7 @@
          this.getEntityData().set(DATA_BABY_ID, childZombie);
          if (this.level() != null && !this.level().isClientSide) {
              AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
-@@ -376,6 +_,33 @@
+@@ -381,6 +_,33 @@
          }
      }
  
@@ -51,14 +51,14 @@
 +                        this.level().levelEvent(null, net.minecraft.world.level.block.LevelEvent.SOUND_SKELETON_TO_STRAY, this.blockPosition(), 0);
 +                    }
 +
-+                    skeleton.setTarget(this.getTarget(), null, false);
++                    skeleton.setTarget(this.getTarget(), null);
 +                    skeleton.getNavigation().moveTo(this.getNavigation().getPath(), 1.2D);
 +                    skeleton.setAggressive(true); // 僵尸始终抬起手
 +                    skeleton.setRemainingFireTicks(this.getRemainingFireTicks());
 +                }, org.bukkit.event.entity.EntityTransformEvent.TransformReason.PEELING, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PEELING);
 +                if (converted != null) {
 +                    this.forceDrops = true;
-+                    this.dropFromLootTable(this.serverLevel(), damageSource, this.lastHurtByPlayerTime > 0);
++                    this.dropFromLootTable(this.serverLevel(), damageSource, this.lastHurtByPlayerMemoryTime > 0);
 +                    this.forceDrops = false;
 +                    return;
 +                }
@@ -72,7 +72,7 @@
      @Override
      public boolean doHurtTarget(ServerLevel level, Entity source) {
          boolean flag = super.doHurtTarget(level, source);
-@@ -609,7 +_,7 @@
+@@ -611,7 +_,7 @@
      @Override
      protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
          super.dropCustomDeathLoot(level, damageSource, recentlyHit);

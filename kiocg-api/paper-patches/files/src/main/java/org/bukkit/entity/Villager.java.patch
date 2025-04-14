@@ -1,9 +1,9 @@
 --- a/src/main/java/org/bukkit/entity/Villager.java
 +++ b/src/main/java/org/bukkit/entity/Villager.java
-@@ -367,4 +_,6 @@
+@@ -391,4 +_,6 @@
+      * reputation regardless of its impact and the player associated.
       */
      public void clearReputations();
-     // Paper end
 +
 +    public boolean isLobotomized(); // KioCG - lobotomized villager
  }

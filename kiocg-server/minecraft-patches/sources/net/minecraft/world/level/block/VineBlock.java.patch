@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/VineBlock.java
 +++ b/net/minecraft/world/level/block/VineBlock.java
-@@ -188,10 +_,22 @@
+@@ -163,10 +_,22 @@
          }
      }
  
@@ -19,8 +19,8 @@
      @Override
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
          if (level.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
--            if (random.nextFloat() < (level.spigotConfig.vineModifier / (100.0f * 4))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+            if (random.nextFloat() < (level.spigotConfig.vineModifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+-            if (random.nextFloat() < (level.spigotConfig.vineModifier / (100.0F * 4))) { // Spigot - SPIGOT-7159: Better modifier resolution
++            if (random.nextFloat() < (level.spigotConfig.vineModifier / 100.0F)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
                  Direction random1 = Direction.getRandom(random);
                  BlockPos blockPos = pos.above();
                  if (random1.getAxis().isHorizontal() && !state.getValue(getPropertyForFace(random1))) {

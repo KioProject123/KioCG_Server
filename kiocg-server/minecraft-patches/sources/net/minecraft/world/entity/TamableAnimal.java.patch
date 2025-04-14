@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
-@@ -38,6 +_,8 @@
-         TamableAnimal.class, EntityDataSerializers.OPTIONAL_UUID
+@@ -37,6 +_,8 @@
+         TamableAnimal.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE
      );
-     private boolean orderedToSit;
+     private boolean orderedToSit = false;
 +    private int ticketTicks; // KioCG - dont kill my pet
 +    private boolean followOwner = true; // KioCG - pet follow owner api
  
@@ -17,15 +17,15 @@
      }
  
      @Override
-@@ -85,6 +_,7 @@
+@@ -78,6 +_,7 @@
  
-         this.orderedToSit = compound.getBoolean("Sitting");
+         this.orderedToSit = compound.getBooleanOr("Sitting", false);
          this.setInSittingPose(this.orderedToSit, false); // Paper - Add EntityToggleSitEvent
-+        this.followOwner = compound.getBoolean("KioCG.FollowOwner"); // KioCG - pet follow owner api
++        this.followOwner = compound.getBooleanOr("KioCG.FollowOwner", true); // KioCG - pet follow owner api
      }
  
      @Override
-@@ -153,6 +_,7 @@
+@@ -146,6 +_,7 @@
          if (applyTamingSideEffects) {
              this.applyTamingSideEffects();
          }
@@ -33,7 +33,7 @@
      }
  
      protected void applyTamingSideEffects() {
-@@ -252,13 +_,86 @@
+@@ -256,13 +_,86 @@
          super.die(cause);
      }
  
@@ -91,7 +91,7 @@
 +        if (this.isTame() && !this.unableToMoveToOwner()) {
 +            if (this.tickCount >= ticketTicks) {
 +                ticketTicks = this.tickCount + (int) net.minecraft.server.level.TicketType.PET_FOLLOW.timeout() - 1;
-+                this.serverLevel().getChunkSource().addRegionTicket(net.minecraft.server.level.TicketType.PET_FOLLOW, this.chunkPosition(), 2, this.getId());
++                this.serverLevel().getChunkSource().addTicketWithRadius(net.minecraft.server.level.TicketType.PET_FOLLOW, this.chunkPosition(), 2);
 +            }
 +        }
 +    }
@@ -121,7 +121,7 @@
  
      public void tryToTeleportToOwner() {
          LivingEntity owner = this.getOwner();
-@@ -269,15 +_,18 @@
+@@ -273,15 +_,18 @@
  
      public boolean shouldTryTeleportToOwner() {
          LivingEntity owner = this.getOwner();
@@ -145,7 +145,7 @@
                  if (this.maybeTeleportTo(pos.getX() + randomInt, pos.getY() + randomInt2, pos.getZ() + randomInt1)) {
                      return;
                  }
-@@ -318,6 +_,7 @@
+@@ -322,6 +_,7 @@
      }
  
      public final boolean unableToMoveToOwner() {
@@ -153,7 +153,7 @@
          return this.isOrderedToSit() || this.isPassenger() || this.mayBeLeashed() || this.getOwner() != null && this.getOwner().isSpectator();
      }
  
-@@ -333,6 +_,13 @@
+@@ -337,6 +_,13 @@
          public TamableAnimalPanicGoal(final double speedModifier) {
              super(TamableAnimal.this, speedModifier);
          }

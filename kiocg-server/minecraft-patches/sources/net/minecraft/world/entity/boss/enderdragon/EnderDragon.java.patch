@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -464,7 +_,7 @@
+@@ -460,7 +_,7 @@
                      BlockPos blockPos = new BlockPos(i, i1, i2);
                      BlockState blockState = level.getBlockState(blockPos);
                      if (!blockState.isAir() && !blockState.is(BlockTags.DRAGON_TRANSPARENT)) {

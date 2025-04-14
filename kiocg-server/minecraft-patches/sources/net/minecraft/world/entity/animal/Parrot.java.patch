@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -153,11 +_,18 @@
+@@ -158,11 +_,18 @@
          this.goalSelector.addGoal(0, new TamableAnimal.TamableAnimalPanicGoal(1.25));
          this.goalSelector.addGoal(0, new FloatGoal(this));
          this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -24,7 +24,7 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
-@@ -266,7 +_,7 @@
+@@ -271,7 +_,7 @@
              }
  
              return InteractionResult.SUCCESS;

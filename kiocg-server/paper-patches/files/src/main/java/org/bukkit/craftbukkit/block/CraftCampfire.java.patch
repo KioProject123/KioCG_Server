@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftCampfire.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftCampfire.java
-@@ -31,6 +_,7 @@
+@@ -32,6 +_,7 @@
      @Override
      public void setItem(int index, ItemStack item) {
          this.getSnapshot().getItems().set(index, CraftItemStack.asNMSCopy(item));

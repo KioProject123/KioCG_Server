@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -175,7 +_,7 @@
+@@ -171,7 +_,7 @@
      protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
          super.dropCustomDeathLoot(level, damageSource, recentlyHit);
          Entity entity = damageSource.getEntity();
@@ -9,8 +9,8 @@
              creeper.increaseDroppedSkulls();
              this.spawnAtLocation(level, Items.CREEPER_HEAD);
          }
-@@ -301,8 +_,14 @@
-         setIgnited(true); // Paper - CreeperIgniteEvent
+@@ -298,8 +_,14 @@
+         setIgnited(true); // Paper - Call CreeperIgniteEvent
      }
  
 -    public boolean canDropMobsSkull() {

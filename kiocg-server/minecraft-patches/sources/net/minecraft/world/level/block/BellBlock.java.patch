@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BellBlock.java
 +++ b/net/minecraft/world/level/block/BellBlock.java
-@@ -83,6 +_,15 @@
+@@ -79,6 +_,15 @@
          }
      }
  
@@ -15,8 +15,8 @@
 +
      @Override
      protected void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
-         Entity owner = projectile.getOwner();
-@@ -224,7 +_,7 @@
+         Player player1 = projectile.getOwner() instanceof Player player ? player : null;
+@@ -212,7 +_,7 @@
  
      @Override
      protected void onExplosionHit(BlockState state, ServerLevel level, BlockPos pos, Explosion explosion, BiConsumer<ItemStack, BlockPos> dropConsumer) {

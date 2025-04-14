@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Panda.java
 +++ b/net/minecraft/world/entity/animal/Panda.java
-@@ -626,8 +_,9 @@
+@@ -627,8 +_,9 @@
              }
  
              if (this.isBaby()) {
@@ -11,7 +11,7 @@
              } else if (!this.level().isClientSide && this.getAge() == 0 && this.canFallInLove()) {
                  final ItemStack breedCopy = itemInHand.copy(); // Paper - Fix EntityBreedEvent copying
                  this.usePlayerItem(player, hand, itemInHand);
-@@ -1064,6 +_,13 @@
+@@ -1061,6 +_,13 @@
                              .isEmpty()
                  );
          }

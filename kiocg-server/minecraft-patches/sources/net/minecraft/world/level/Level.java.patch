@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1885,6 +_,12 @@
+@@ -1879,6 +_,12 @@
          return this.levelData.getDayTime();
      }
  
@@ -10,6 +10,6 @@
 +    }
 +    // KioCG end - world data synchronization
 +
-     public boolean mayInteract(Player player, BlockPos pos) {
+     public boolean mayInteract(Entity entity, BlockPos pos) {
          return true;
      }

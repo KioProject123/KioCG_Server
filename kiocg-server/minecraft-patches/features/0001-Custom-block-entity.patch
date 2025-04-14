@@ -297,19 +297,19 @@ index 0000000000000000000000000000000000000000..b1a48f4050dc3235306e9012b4b74b67
 +}
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java b/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
-index 9e321ef1c3d5803519b243685f4ee598dc0cf640..69e31349cd1f12bf83dd39e4adb84154e9dbae44 100644
+index 526c117e0d53ad527eb610c79cdc46ec16b18c0c..cece43cd0c92eb473350d98c01a9200e72d3e83e 100644
 --- a/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
 +++ b/net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.java
-@@ -61,6 +61,7 @@ public class ClientboundLevelChunkPacketData {
+@@ -62,6 +62,7 @@ public class ClientboundLevelChunkPacketData {
          int totalTileEntities = 0; // Paper - Handle oversized block entities in chunks
  
-         for (Entry<BlockPos, BlockEntity> entryx : levelChunk.getBlockEntities().entrySet()) {
-+            if (BlockEntityType.UNABLE_SEND_TO_CLIENT.contains(entryx.getValue().getType())) continue; // KioCG - custom block entity
+         for (Entry<BlockPos, BlockEntity> entry : levelChunk.getBlockEntities().entrySet()) {
++            if (BlockEntityType.UNABLE_SEND_TO_CLIENT.contains(entry.getValue().getType())) continue; // KioCG - custom block entity
              // Paper start - Handle oversized block entities in chunks
              if (++totalTileEntities > BLOCK_ENTITY_LIMIT) {
-                 net.minecraft.network.protocol.Packet<ClientGamePacketListener> packet = entryx.getValue().getUpdatePacket();
+                 net.minecraft.network.protocol.Packet<ClientGamePacketListener> packet = entry.getValue().getUpdatePacket();
 diff --git a/net/minecraft/server/Bootstrap.java b/net/minecraft/server/Bootstrap.java
-index 35b91f4daba4ac9751fa388d9da7d127db1356b0..21a5dbf16390f3b0c671f7c51abc979fd874a70b 100644
+index 83bc2f6b7774c8753a15dbeb00f0c9103713fd1b..f371683beb6c797deca109e86986dc6241ed5a64 100644
 --- a/net/minecraft/server/Bootstrap.java
 +++ b/net/minecraft/server/Bootstrap.java
 @@ -55,6 +55,7 @@ public class Bootstrap {
@@ -321,10 +321,10 @@ index 35b91f4daba4ac9751fa388d9da7d127db1356b0..21a5dbf16390f3b0c671f7c51abc979f
                      BuiltInRegistries.bootStrap(() -> {
                          io.papermc.paper.world.worldgen.OptionallyFlatBedrockConditionSource.bootstrap(); // Paper - Flat bedrock generator settings
 diff --git a/net/minecraft/world/entity/Display.java b/net/minecraft/world/entity/Display.java
-index f695c9d2ffedc887ec13f6e47eeecfa23aaddad9..8752f6f20b58fcd39d3cf7a46268c49f15f4ffee 100644
+index c53f68b9659bd450ba5c71d5c1198072549f1035..6f79b05265c9532f8edca3cc278aebc209d1eb19 100644
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -674,6 +674,35 @@ public abstract class Display extends Entity {
+@@ -590,6 +590,35 @@ public abstract class Display extends Entity {
  
          public record BlockRenderState(BlockState blockState) {
          }
@@ -342,7 +342,7 @@ index f695c9d2ffedc887ec13f6e47eeecfa23aaddad9..8752f6f20b58fcd39d3cf7a46268c49f
 +        public static void createDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos, java.util.function.Consumer<BlockDisplay> consumer) {
 +            Display.BlockDisplay display = EntityType.BLOCK_DISPLAY.create(level, EntitySpawnReason.COMMAND);
 +            if (display != null) {
-+                display.moveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
++                display.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
 +                display.setTranslation(new Vector3f(-0.5F, -0.5F, -0.5F));
 +                display.persist = false;
 +                consumer.accept(display);
@@ -361,19 +361,19 @@ index f695c9d2ffedc887ec13f6e47eeecfa23aaddad9..8752f6f20b58fcd39d3cf7a46268c49f
  
      record ColorInterpolator(int previous, int current) implements Display.IntInterpolator {
 diff --git a/net/minecraft/world/level/block/AbstractCauldronBlock.java b/net/minecraft/world/level/block/AbstractCauldronBlock.java
-index 648d22cdfcf261494038d589f5a5e32704083076..fb36d8e903b565b330790097a58c99d0aebd240b 100644
+index ad3f32888afd8b5f0038445a1b0fcc8cacec9fe2..c6936fb2cdc4be2579b20309ea047c524313865c 100644
 --- a/net/minecraft/world/level/block/AbstractCauldronBlock.java
 +++ b/net/minecraft/world/level/block/AbstractCauldronBlock.java
-@@ -23,7 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
+@@ -24,7 +24,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public abstract class AbstractCauldronBlock extends Block {
 +public abstract class AbstractCauldronBlock extends BaseEntityBlock { // KioCG - custom block entity
-     private static final int SIDE_THICKNESS = 2;
-     private static final int LEG_WIDTH = 4;
-     private static final int LEG_HEIGHT = 3;
-@@ -100,4 +100,17 @@ public abstract class AbstractCauldronBlock extends Block {
+     protected static final int FLOOR_LEVEL = 4;
+     private static final VoxelShape SHAPE_INSIDE = Block.column(12.0, 4.0, 16.0);
+     private static final VoxelShape SHAPE = Util.make(
+@@ -104,4 +104,17 @@ public abstract class AbstractCauldronBlock extends Block {
  
      protected void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
      }
@@ -392,7 +392,7 @@ index 648d22cdfcf261494038d589f5a5e32704083076..fb36d8e903b565b330790097a58c99d0
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/FlowerPotBlock.java b/net/minecraft/world/level/block/FlowerPotBlock.java
-index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20bce51ce7 100644
+index dccae78867d738c1711699761f97cc7cd356e5a8..3ce9751acf7fb31b61f32e3d6add0b6e2be912d0 100644
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
 @@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
@@ -404,7 +404,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20
      public static final MapCodec<FlowerPotBlock> CODEC = RecordCodecBuilder.mapCodec(
          instance -> instance.group(
                  BuiltInRegistries.BLOCK.byNameCodec().fieldOf("potted").forGetter(flowerPotBlock -> flowerPotBlock.potted), propertiesCodec()
-@@ -60,13 +60,75 @@ public class FlowerPotBlock extends Block {
+@@ -59,13 +59,75 @@ public class FlowerPotBlock extends Block {
      protected InteractionResult useItemOn(
          ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult
      ) {
@@ -482,7 +482,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20
              // Paper start - Add PlayerFlowerPotManipulateEvent
              org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos);
              org.bukkit.inventory.ItemStack placedStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(stack);
-@@ -79,7 +141,7 @@ public class FlowerPotBlock extends Block {
+@@ -78,7 +140,7 @@ public class FlowerPotBlock extends Block {
                  return InteractionResult.CONSUME;
              }
              // Paper end - Add PlayerFlowerPotManipulateEvent
@@ -491,7 +491,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20
              level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
              player.awardStat(Stats.POT_FLOWER);
              stack.consume(1, player);
-@@ -90,12 +152,44 @@ public class FlowerPotBlock extends Block {
+@@ -89,12 +151,44 @@ public class FlowerPotBlock extends Block {
      @Override
      protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
          if (this.isEmpty()) {
@@ -538,7 +538,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20
  
              io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent event = new io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent((org.bukkit.entity.Player) player.getBukkitEntity(), block, pottedStack, false);
              if (!event.callEvent()) {
-@@ -109,12 +203,25 @@ public class FlowerPotBlock extends Block {
+@@ -108,12 +202,25 @@ public class FlowerPotBlock extends Block {
                  player.drop(itemStack, false);
              }
  
@@ -565,22 +565,12 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20
      @Override
      protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
          return this.isEmpty() ? super.getCloneItemStack(level, pos, state, includeData) : new ItemStack(this.potted);
-@@ -177,4 +284,30 @@ public class FlowerPotBlock extends Block {
+@@ -176,4 +283,20 @@ public class FlowerPotBlock extends Block {
              return state.is(Blocks.POTTED_CLOSED_EYEBLOSSOM) ? Blocks.POTTED_OPEN_EYEBLOSSOM.defaultBlockState() : state;
          }
      }
 +
 +    // KioCG start - custom block entity
-+    @Override
-+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-+        if (!state.is(newState.getBlock())) {
-+            if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.FlowerPotBlockEntity flowerPotBlockEntity && !flowerPotBlockEntity.isEmpty()) {
-+                net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(flowerPotBlockEntity.getPottedAndRemove()));
-+            }
-+        }
-+        super.onRemove(state, level, pos, newState, isMoving);
-+    }
-+
 +    @Override
 +    public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 +        if (!state.is(Blocks.FLOWER_POT)) return null;
@@ -597,7 +587,7 @@ index b1264a255b2c8fe5a7b447924d48cf6fdce80d24..1351fb7a0fb8bdeaf13b2659c4ebde20
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/LayeredCauldronBlock.java b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 23b3a58462f0a381202249dd560a79a621aeb908..3f9ee62bca464f99e32b0553c6b5e85b201932ed 100644
+index d14c3fc61a4f79d3e0de6217fb28859846cdc27c..dc666f50d993b76c10497272d5e1a66d32cee190 100644
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
 @@ -114,6 +114,17 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
@@ -615,7 +605,7 @@ index 23b3a58462f0a381202249dd560a79a621aeb908..3f9ee62bca464f99e32b0553c6b5e85b
 +        }
 +        // KioCG end - custom block entity: campfire boiling water
 +
-         newState.update(true);
+         newState.place(3);
          if (sendGameEvent) level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
          return true;
 @@ -150,4 +161,13 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
@@ -633,10 +623,10 @@ index 23b3a58462f0a381202249dd560a79a621aeb908..3f9ee62bca464f99e32b0553c6b5e85b
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/entity/BlockEntityType.java b/net/minecraft/world/level/block/entity/BlockEntityType.java
-index a2a674f18d7f2c2e50a6b25f9ac3bf4534275976..9d5087d67514faa519cf3eb180f5afb82dfb9a1d 100644
+index 386e6a48701b4c9256e33174123381a93d61e292..cd186c9d962fa19400e30fbd6a051327d9bcaa97 100644
 --- a/net/minecraft/world/level/block/entity/BlockEntityType.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
-@@ -282,4 +282,22 @@ public class BlockEntityType<T extends BlockEntity> {
+@@ -285,4 +285,22 @@ public class BlockEntityType<T extends BlockEntity> {
      interface BlockEntitySupplier<T extends BlockEntity> {
          T create(BlockPos pos, BlockState state);
      }
@@ -661,7 +651,7 @@ index a2a674f18d7f2c2e50a6b25f9ac3bf4534275976..9d5087d67514faa519cf3eb180f5afb8
  }
 diff --git a/net/minecraft/world/level/block/entity/CauldronBlockEntity.java b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4f44d4f85e85f99815f513fc6261f9bb97bde9ef
+index 0000000000000000000000000000000000000000..6c966d0f8bb7ffc99d2491c9d1ff1bea89afda43
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
 @@ -0,0 +1,89 @@
@@ -745,7 +735,7 @@ index 0000000000000000000000000000000000000000..4f44d4f85e85f99815f513fc6261f9bb
 +
 +    @Override
 +    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-+        this.temperature = tag.getInt("KioCG.Temperature");
++        this.temperature = tag.getIntOr("KioCG.Temperature", 0);
 +    }
 +
 +    @Override
@@ -756,27 +746,26 @@ index 0000000000000000000000000000000000000000..4f44d4f85e85f99815f513fc6261f9bb
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..534574defcb08da283310db982d0a3cbcc4b03b3
+index 0000000000000000000000000000000000000000..fafe3ddbdc2acebdc81e0e7c48aae9008c9d5b76
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 @@ -0,0 +1,198 @@
 +package net.minecraft.world.level.block.entity;
 +
++import java.util.Optional;
++import java.util.function.Consumer;
 +import net.minecraft.core.BlockPos;
 +import net.minecraft.core.Direction;
-+import net.minecraft.core.HolderGetter;
 +import net.minecraft.core.HolderLookup;
 +import net.minecraft.core.flowerpot.FlowerPotInteraction;
 +import net.minecraft.core.particles.DustParticleOptions;
 +import net.minecraft.core.particles.ParticleTypes;
 +import net.minecraft.core.particles.SimpleParticleType;
 +import net.minecraft.core.registries.BuiltInRegistries;
-+import net.minecraft.core.registries.Registries;
 +import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.nbt.NbtUtils;
-+import net.minecraft.resources.ResourceLocation;
 +import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.tags.BlockTags;
++import net.minecraft.world.Containers;
 +import net.minecraft.world.entity.Display;
 +import net.minecraft.world.level.block.AbstractCandleBlock;
 +import net.minecraft.world.level.block.Block;
@@ -784,10 +773,6 @@ index 0000000000000000000000000000000000000000..534574defcb08da283310db982d0a3cb
 +import net.minecraft.world.level.block.RedstoneTorchBlock;
 +import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.phys.Vec3;
-+
-+import java.util.Objects;
-+import java.util.Optional;
-+import java.util.function.Consumer;
 +
 +// KioCG start - custom block entity: all class
 +public class FlowerPotBlockEntity extends BlockEntity {
@@ -868,23 +853,28 @@ index 0000000000000000000000000000000000000000..534574defcb08da283310db982d0a3cb
 +    }
 +
 +    @Override
-+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-+        if (tag.contains("KioCG.Potted")) {
-+            ResourceLocation resourceLocation = ResourceLocation.tryParse(tag.getString("KioCG.Potted"));
-+            Block potted = BuiltInRegistries.BLOCK.getValue(resourceLocation);
-+            HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
-+            BlockState pottedState = NbtUtils.readBlockState(holderGetter, tag.getCompound("KioCG.PottedState"));
-+            Direction facing = Direction.byName(tag.getString("KioCG.Facing"));
-+            this.setPotted(potted, pottedState, Objects.requireNonNullElse(facing, Direction.SOUTH));
++    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
++        if (this.level != null && !this.isEmpty()) {
++            Containers.dropItemStack(this.level, pos.getX(), pos.getY(), pos.getZ(), new net.minecraft.world.item.ItemStack(this.getPottedAndRemove()));
 +        }
++    }
++
++    @Override
++    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
++        net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> registryOps = registries.createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
++        Block potted = tag.read("KioCG.Potted", BuiltInRegistries.BLOCK.byNameCodec(), registryOps).orElse(Blocks.AIR);
++        BlockState pottedState = tag.read("KioCG.PottedState", BlockState.CODEC, registryOps).orElse(Blocks.AIR.defaultBlockState());
++        Direction facing = tag.read("KioCG.Facing", Direction.CODEC, registryOps).orElse(net.minecraft.core.Direction.SOUTH);
++        this.setPotted(potted, pottedState, facing);
 +    }
 +
 +    @Override
 +    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 +        if (!this.isEmpty()) {
-+            tag.putString("KioCG.Potted", BuiltInRegistries.BLOCK.getKey(this.getPotted()).toString());
-+            tag.put("KioCG.PottedState", NbtUtils.writeBlockState(this.getPottedState()));
-+            tag.putString("KioCG.Facing", this.facing.getName());
++            net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> registryOps = registries.createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
++            tag.store("KioCG.Potted", BuiltInRegistries.BLOCK.byNameCodec(), registryOps, this.getPotted());
++            tag.store("KioCG.PottedState", BlockState.CODEC, registryOps, this.getPottedState());
++            tag.store("KioCG.Facing", Direction.CODEC, registryOps, this.facing);
 +        }
 +    }
 +

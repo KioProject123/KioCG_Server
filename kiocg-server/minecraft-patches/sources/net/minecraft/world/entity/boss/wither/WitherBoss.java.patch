@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -346,7 +_,7 @@
+@@ -347,7 +_,7 @@
  
              if (this.destroyBlocksTick > 0) {
                  this.destroyBlocksTick--;

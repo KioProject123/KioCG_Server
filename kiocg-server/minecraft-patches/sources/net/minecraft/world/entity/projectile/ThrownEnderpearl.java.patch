@@ -17,7 +17,7 @@
      }
  
      @Override
-@@ -207,7 +_,12 @@
+@@ -203,7 +_,12 @@
                          || sectionPosZ != SectionPos.blockToSectionCoord(blockPos.getZ())
                  )
                  && owner instanceof ServerPlayer serverPlayer1) {

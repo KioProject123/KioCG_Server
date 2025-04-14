@@ -24,7 +24,7 @@
              }
          }
  
-@@ -191,6 +_,7 @@
+@@ -187,6 +_,7 @@
                  }
  
                  if (flag) {
@@ -32,7 +32,7 @@
                      this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                      this.currentState = FishingHook.FishHookState.BOBBING;
                      return;
-@@ -222,19 +_,21 @@
+@@ -218,19 +_,21 @@
                      if (this.nibble <= 0 && this.timeUntilHooked <= 0) {
                          this.openWater = true;
                      } else {
@@ -55,7 +55,7 @@
                          }
                      } else {
                          this.outOfWaterTime = Math.min(10, this.outOfWaterTime + 1);
-@@ -313,12 +_,33 @@
+@@ -309,12 +_,33 @@
              i--;
          }
  
@@ -89,8 +89,8 @@
 +                // KioCG end - more realistic fishing
                  // CraftBukkit start
                  org.bukkit.event.player.PlayerFishEvent playerFishEvent = new org.bukkit.event.player.PlayerFishEvent((org.bukkit.entity.Player) this.getPlayerOwner().getBukkitEntity(), null, (org.bukkit.entity.FishHook) this.getBukkitEntity(), org.bukkit.event.player.PlayerFishEvent.State.FAILED_ATTEMPT);
-                 this.level().getCraftServer().getPluginManager().callEvent(playerFishEvent);
-@@ -378,7 +_,12 @@
+                 playerFishEvent.callEvent();
+@@ -373,7 +_,12 @@
                      0.2F
                  );
                  this.nibble = Mth.nextInt(this.random, 20, 40);
@@ -104,7 +104,7 @@
              }
          } else if (this.timeUntilLured > 0) {
              this.timeUntilLured -= i;
-@@ -429,10 +_,39 @@
+@@ -422,10 +_,39 @@
      public void resetTimeUntilLured() {
          this.timeUntilLured = Mth.nextInt(this.random, this.minWaitTime, this.maxWaitTime);
          this.timeUntilLured -= (this.applyLure) ? (this.lureSpeed >= this.maxWaitTime ? this.timeUntilLured - 1 : this.lureSpeed ) : 0; // Paper - Fix Lure infinite loop
@@ -144,7 +144,7 @@
          FishingHook.OpenWaterType openWaterType = FishingHook.OpenWaterType.INVALID;
  
          for (int i = -1; i <= 2; i++) {
-@@ -518,6 +_,15 @@
+@@ -508,6 +_,15 @@
                  i = this.hookedIn instanceof ItemEntity ? 3 : 5;
                  } // Paper - re-check to see if there is a hooked entity
              } else if (this.nibble > 0) {

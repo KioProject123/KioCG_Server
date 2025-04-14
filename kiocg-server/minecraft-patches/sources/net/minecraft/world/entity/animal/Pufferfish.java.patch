@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Pufferfish.java
 +++ b/net/minecraft/world/entity/animal/Pufferfish.java
-@@ -222,6 +_,13 @@
+@@ -223,6 +_,13 @@
              return !entitiesOfClass.isEmpty();
          }
  

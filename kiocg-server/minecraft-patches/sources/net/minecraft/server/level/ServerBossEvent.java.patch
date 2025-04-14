@@ -1,33 +1,35 @@
 --- a/net/minecraft/server/level/ServerBossEvent.java
 +++ b/net/minecraft/server/level/ServerBossEvent.java
-@@ -131,4 +_,31 @@
+@@ -131,4 +_,33 @@
      public Collection<ServerPlayer> getPlayers() {
          return this.unmodifiablePlayers;
      }
 +
 +    // KioCG start - entity bossbar api
 +    public net.minecraft.nbt.CompoundTag save(net.minecraft.core.HolderLookup.Provider levelRegistry) {
-+        net.minecraft.nbt.CompoundTag compoundTag = new net.minecraft.nbt.CompoundTag();
-+        compoundTag.putString("Name", Component.Serializer.toJson(this.name, levelRegistry));
-+        compoundTag.putBoolean("Visible", this.isVisible());
-+        compoundTag.putString("Color", this.getColor().getName());
-+        compoundTag.putString("Overlay", this.getOverlay().getName());
-+        compoundTag.putBoolean("DarkenScreen", this.shouldDarkenScreen());
-+        compoundTag.putBoolean("PlayBossMusic", this.shouldPlayBossMusic());
-+        compoundTag.putBoolean("CreateWorldFog", this.shouldCreateWorldFog());
-+        return compoundTag;
++        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
++        net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> registryOps = levelRegistry.createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
++        tag.store("Name", net.minecraft.network.chat.ComponentSerialization.CODEC, registryOps, this.name);
++        tag.putBoolean("Visible", this.isVisible());
++        tag.store("Color", BossBarColor.CODEC, registryOps, this.getColor());
++        tag.store("Overlay", BossBarOverlay.CODEC, registryOps, this.getOverlay());
++        tag.putBoolean("DarkenScreen", this.shouldDarkenScreen());
++        tag.putBoolean("PlayBossMusic", this.shouldPlayBossMusic());
++        tag.putBoolean("CreateWorldFog", this.shouldCreateWorldFog());
++        return tag;
 +    }
 +
 +    public static ServerBossEvent load(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider levelRegistry) {
-+        Component name = Component.Serializer.fromJson(tag.getString("Name"), levelRegistry);
-+        BossBarColor color = BossBarColor.byName(tag.getString("Color"));
-+        BossBarOverlay overlay = BossBarOverlay.byName(tag.getString("Overlay"));
++        net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> registryOps = levelRegistry.createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
++        Component name = tag.read("Name", net.minecraft.network.chat.ComponentSerialization.CODEC, registryOps).orElse(Component.empty());
++        BossBarColor color = tag.read("Color", BossBarColor.CODEC, registryOps).orElse(BossBarColor.WHITE);
++        BossBarOverlay overlay = tag.read("Overlay", BossBarOverlay.CODEC, registryOps).orElse(BossBarOverlay.PROGRESS);
 +        ServerBossEvent serverBossEvent = new ServerBossEvent(name, color, overlay);
 +
-+        serverBossEvent.setVisible(tag.getBoolean("Visible"));
-+        serverBossEvent.setDarkenScreen(tag.getBoolean("DarkenScreen"));
-+        serverBossEvent.setPlayBossMusic(tag.getBoolean("PlayBossMusic"));
-+        serverBossEvent.setCreateWorldFog(tag.getBoolean("CreateWorldFog"));
++        serverBossEvent.setVisible(tag.getBooleanOr("Visible", false));
++        serverBossEvent.setDarkenScreen(tag.getBooleanOr("DarkenScreen", false));
++        serverBossEvent.setPlayBossMusic(tag.getBooleanOr("PlayBossMusic", false));
++        serverBossEvent.setCreateWorldFog(tag.getBooleanOr("CreateWorldFog", false));
 +        return serverBossEvent;
 +    }
 +    // KioCG end - entity bossbar api

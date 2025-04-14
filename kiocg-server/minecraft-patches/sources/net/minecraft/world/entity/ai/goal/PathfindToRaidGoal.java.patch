@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/ai/goal/PathfindToRaidGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/PathfindToRaidGoal.java
 @@ -31,6 +_,13 @@
-             && !((ServerLevel)this.mob.level()).isVillage(this.mob.blockPosition());
+             && !getServerLevel(this.mob.level()).isVillage(this.mob.blockPosition());
      }
  
 +    // KioCG start - optimize entity behavior
@@ -13,4 +13,4 @@
 +
      @Override
      public boolean canContinueToUse() {
-         return this.mob.hasActiveRaid()
+         return this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && !getServerLevel(this.mob.level()).isVillage(this.mob.blockPosition());

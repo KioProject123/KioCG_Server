@@ -1,17 +1,11 @@
 --- a/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/net/minecraft/world/level/block/PowderSnowBlock.java
-@@ -79,12 +_,13 @@
-         }
- 
-         entity.setIsInPowderSnow(true);
-+        if (entity.isOnFire()) entity.setSharedFlagOnFire(false); // KioCG - better mob griefing setting: 始终允许熄灭火焰
-         if (level instanceof ServerLevel serverLevel) {
-             if (entity.isOnFire()
-                 // CraftBukkit - move down
-                 && entity.mayInteract(serverLevel, pos)) {
-                 // CraftBukkit start
--                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !(serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || entity instanceof Player))) {
-+                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !(serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) || false))) { // KioCG - better mob griefing setting
-                     return;
-                 }
-                 // CraftBukkit end
+@@ -89,7 +_,7 @@
+                         // CraftBukkit - move down
+                     && entity1.mayInteract(serverLevel, blockPos)) {
+                     // CraftBukkit start
+-                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity1, pos, Blocks.AIR.defaultBlockState(), !(serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || entity1 instanceof Player))) {
++                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity1, pos, Blocks.AIR.defaultBlockState(), !(serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) || false))) { // KioCG - better mob griefing setting
+                         return;
+                     }
+                     // CraftBukkit end

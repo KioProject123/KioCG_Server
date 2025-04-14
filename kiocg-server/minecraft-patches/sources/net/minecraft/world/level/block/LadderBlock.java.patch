@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/LadderBlock.java
 +++ b/net/minecraft/world/level/block/LadderBlock.java
-@@ -61,11 +_,29 @@
+@@ -49,11 +_,29 @@
      }
  
      @Override
@@ -31,7 +31,7 @@
      @Override
      protected BlockState updateShape(
          BlockState state,
-@@ -77,8 +_,11 @@
+@@ -65,8 +_,11 @@
          BlockState neighborState,
          RandomSource random
      ) {
@@ -45,7 +45,7 @@
          } else {
              if (state.getValue(WATERLOGGED)) {
                  scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
-@@ -106,7 +_,13 @@
+@@ -94,7 +_,13 @@
          for (Direction direction : context.getNearestLookingDirections()) {
              if (direction.getAxis().isHorizontal()) {
                  blockState = blockState.setValue(FACING, direction.getOpposite());
@@ -57,6 +57,6 @@
 +                        this.playPlaceSound(blockState, (net.minecraft.world.level.Level) level, clickedPos, context.getPlayer(), context.getHand());
 +                    }
 +                // KioCG end - ladder survive dangling
-                     return blockState.setValue(WATERLOGGED, Boolean.valueOf(fluidState.getType() == Fluids.WATER));
+                     return blockState.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
                  }
              }

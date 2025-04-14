@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -558,7 +_,7 @@
+@@ -449,7 +_,7 @@
              f = 4.0F;
              i = 60;
              i1 = 5;
@@ -9,7 +9,7 @@
                  flag = true;
                  this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
              }
-@@ -566,7 +_,7 @@
+@@ -457,7 +_,7 @@
              f = 10.0F;
              i = 240;
              i1 = 10;
@@ -18,7 +18,7 @@
                  flag = true;
                  this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
              }
-@@ -578,9 +_,11 @@
+@@ -469,9 +_,11 @@
          }
  
          if (this.isBaby() && i > 0) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -73,14 +_,56 @@
+@@ -63,14 +_,56 @@
  
      @Override
      protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
@@ -50,15 +50,15 @@
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
          if (level.getRawBrightness(pos, 0) >= 9) {
              float growthSpeed = CropBlock.getGrowthSpeed(this, level, pos);
--            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? level.spigotConfig.pumpkinModifier : level.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / growthSpeed) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
+-            if (random.nextFloat() < ((this == Blocks.PUMPKIN_STEM ? level.spigotConfig.pumpkinModifier : level.spigotConfig.melonModifier) / (100.0F * (Math.floor((25.0F / growthSpeed) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +            // KioCG start - crops grow every day
 +            int modifier = this == Blocks.PUMPKIN_STEM ? level.spigotConfig.pumpkinModifier : level.spigotConfig.melonModifier;
-+            if (modifier > 0 && FarmBlock.isMoisture(level, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution
++            if (modifier > 0 && FarmBlock.isMoisture(level, pos.below(), random) && random.nextFloat() < (modifier / 100.0F)) { // Spigot - SPIGOT-7159: Better modifier resolution
 +            // KioCG end - crops grow every day
                  int ageValue = state.getValue(AGE);
                  if (ageValue < 7) {
-                     state = state.setValue(AGE, Integer.valueOf(ageValue + 1));
-@@ -125,6 +_,11 @@
+                     state = state.setValue(AGE, ageValue + 1);
+@@ -115,6 +_,11 @@
      @Override
      public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
          int min = Math.min(7, state.getValue(AGE) + Mth.nextInt(level.random, 2, 5));
@@ -67,6 +67,6 @@
 +            min = Math.min(MAX_AGE, state.getValue(AGE) + 1);
 +        }
 +        // KioCG end - extended block placement
-         BlockState blockState = state.setValue(AGE, Integer.valueOf(min));
+         BlockState blockState = state.setValue(AGE, min);
          org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(level, pos, blockState, 2); // CraftBukkit
          if (min == 7) {

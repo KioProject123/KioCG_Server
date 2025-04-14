@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/net/minecraft/world/level/block/TurtleEggBlock.java
-@@ -195,6 +_,6 @@
+@@ -192,6 +_,6 @@
          return !(entity instanceof Turtle)
              && !(entity instanceof Bat)
              && entity instanceof LivingEntity

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CrafterBlockEntity.java
-@@ -97,6 +_,14 @@
+@@ -99,6 +_,14 @@
      }
      // CraftBukkit end
  

@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/item/trading/ItemCost.java
 +++ b/net/minecraft/world/item/trading/ItemCost.java
-@@ -57,6 +_,7 @@
+@@ -56,6 +_,7 @@
      }
  
      public boolean test(ItemStack stack) {
 +        if (this.itemStack.has(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA) != stack.has(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA)) return false; // KioCG - vanilla recipe excludes model items
-         return stack.is(this.item) && this.components.test((DataComponentHolder)stack);
+         return stack.is(this.item) && this.components.test((DataComponentGetter)stack);
      }
  }

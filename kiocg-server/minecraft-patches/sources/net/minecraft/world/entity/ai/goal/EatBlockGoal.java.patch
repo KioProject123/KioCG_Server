@@ -8,7 +8,7 @@
          if (this.eatAnimationTick == this.adjustedTickDelay(4)) {
              BlockPos blockPos = this.mob.blockPosition();
              final BlockState blockState = this.level.getBlockState(blockPos); // Paper - fix wrong block state
-             if (IS_TALL_GRASS.test(blockState)) { // Paper - fix wrong block state
+             if (IS_EDIBLE.test(blockState)) { // Paper - fix wrong block state
 -                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockPos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit // Paper - fix wrong block state
 +                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockPos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1))) { // CraftBukkit // Paper - fix wrong block state // KioCG - better mob griefing setting
                      this.level.destroyBlock(blockPos, false);

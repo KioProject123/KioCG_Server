@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -387,6 +_,7 @@
+@@ -380,6 +_,7 @@
              && this.server.getPlayerIdleTimeout() > 0
              && Util.getMillis() - this.player.getLastActionTime() > this.server.getPlayerIdleTimeout() * 1000L * 60L && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits
              this.player.resetLastActionTime(); // CraftBukkit - SPIGOT-854
@@ -8,7 +8,7 @@
              this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
          }
          // Paper start - Prevent causing expired keys from impacting new joins
-@@ -1759,6 +_,7 @@
+@@ -1819,6 +_,7 @@
          }
  
          this.player.teleportSetPosition(posMoveRotation, relatives);
@@ -16,8 +16,8 @@
          this.awaitingPositionFromClient = this.player.position();
          // CraftBukkit start - update last location
          this.lastPosX = this.awaitingPositionFromClient.x;
-@@ -2009,31 +_,37 @@
-                 BlockHitResult hitResult = this.player.level().clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.player));
+@@ -2069,31 +_,37 @@
+                 BlockHitResult hitResult = this.player.level().clip(new net.minecraft.world.level.ClipContext(from, to, net.minecraft.world.level.ClipContext.Block.OUTLINE, net.minecraft.world.level.ClipContext.Fluid.NONE, this.player));
  
                  boolean cancelled;
 +                org.bukkit.event.player.PlayerInteractEvent interactEvent; // KioCG - PlayerItemUseEvent

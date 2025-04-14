@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BeetrootBlock.java
 +++ b/net/minecraft/world/level/block/BeetrootBlock.java
-@@ -51,12 +_,16 @@
+@@ -46,12 +_,16 @@
          return Items.BEETROOT_SEEDS;
      }
  

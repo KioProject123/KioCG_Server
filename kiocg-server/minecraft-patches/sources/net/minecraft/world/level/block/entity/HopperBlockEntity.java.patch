@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -36,6 +_,7 @@
+@@ -37,6 +_,7 @@
      public int cooldownTime = -1;
      private long tickedGameTime;
      private Direction facing;
@@ -8,15 +8,15 @@
  
      // CraftBukkit start - add fields and methods
      public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
-@@ -82,6 +_,7 @@
+@@ -86,6 +_,7 @@
          }
  
-         this.cooldownTime = tag.getInt("TransferCooldown");
+         this.cooldownTime = tag.getIntOr("TransferCooldown", -1);
 +        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null; // KioCG - hopper filter
      }
  
      @Override
-@@ -223,6 +_,8 @@
+@@ -227,6 +_,8 @@
          for (int i = 0; i < hopper.getContainerSize(); ++i) {
              final ItemStack item = hopper.getItem(i);
              if (!item.isEmpty()) {
@@ -25,7 +25,7 @@
                  foundItem = true;
                  ItemStack origItemStack = item;
                  ItemStack movedItem = origItemStack;
-@@ -263,6 +_,8 @@
+@@ -267,6 +_,8 @@
      }
  
      private static boolean hopperPull(final Level level, final Hopper hopper, final Container container, ItemStack origItemStack, final int i) {
@@ -34,14 +34,14 @@
          ItemStack movedItem = origItemStack;
          final int originalItemCount = origItemStack.getCount();
          final int movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
-@@ -523,6 +_,64 @@
+@@ -527,6 +_,64 @@
          return true;
      }
  
 +    // KioCG start - hopper filter
 +    @Override
-+    protected void applyImplicitComponents(BlockEntity.DataComponentInput componentInput) {
-+        super.applyImplicitComponents(componentInput);
++    protected void applyImplicitComponents(net.minecraft.core.component.DataComponentGetter componentGetter) {
++        super.applyImplicitComponents(componentGetter);
 +        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null;
 +    }
 +
@@ -99,7 +99,7 @@
      public static boolean suckInItems(Level level, Hopper hopper) {
          BlockPos blockPos = BlockPos.containing(hopper.getLevelX(), hopper.getLevelY() + 1.0, hopper.getLevelZ());
          BlockState blockState = level.getBlockState(blockPos);
-@@ -540,6 +_,7 @@
+@@ -544,6 +_,7 @@
              return false;
          } else {
              boolean flag = hopper.isGridAligned() && blockState.isCollisionShapeFullBlock(level, blockPos) && !blockState.is(BlockTags.DOES_NOT_BLOCK_HOPPERS);
@@ -107,7 +107,7 @@
              if (!flag) {
                  for (ItemEntity itemEntity : getItemsAtAndAbove(level, hopper)) {
                      if (addItem(hopper, itemEntity)) {
-@@ -613,6 +_,10 @@
+@@ -617,6 +_,10 @@
      }
  
      public static boolean addItem(Container container, ItemEntity item) {
@@ -118,7 +118,7 @@
          boolean flag = false;
          // CraftBukkit start
          if (org.bukkit.event.inventory.InventoryPickupItemEvent.getHandlerList().getRegisteredListeners().length > 0) { // Paper - optimize hoppers
-@@ -638,6 +_,13 @@
+@@ -642,6 +_,13 @@
      }
  
      public static ItemStack addItem(@Nullable Container source, Container destination, ItemStack stack, @Nullable Direction direction) {
@@ -132,7 +132,7 @@
          if (destination instanceof WorldlyContainer worldlyContainer && direction != null) {
              int[] slotsForFace = worldlyContainer.getSlotsForFace(direction);
  
-@@ -781,6 +_,7 @@
+@@ -785,6 +_,7 @@
          // Paper end - Perf: Optimize Hoppers
          Container blockContainer = getBlockContainer(level, pos, state);
          if (blockContainer == null && (!optimizeEntities || !level.paperConfig().hopper.ignoreOccludingBlocks || !state.getBukkitMaterial().isOccluding())) { // Paper - Perf: Optimize Hoppers
@@ -140,7 +140,7 @@
              blockContainer = getEntityContainer(level, x, y, z);
          }
  
-@@ -862,6 +_,7 @@
+@@ -866,6 +_,7 @@
          if (entity instanceof ItemEntity itemEntity
              && !itemEntity.getItem().isEmpty()
              && entity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(blockEntity.getSuckAabb())) {

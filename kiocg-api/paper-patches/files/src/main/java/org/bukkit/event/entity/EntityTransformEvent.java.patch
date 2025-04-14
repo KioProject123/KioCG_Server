@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/event/entity/EntityTransformEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/EntityTransformEvent.java
-@@ -116,6 +_,12 @@
+@@ -120,6 +_,12 @@
           * When a tadpole converts to a frog
           */
          METAMORPHOSIS,

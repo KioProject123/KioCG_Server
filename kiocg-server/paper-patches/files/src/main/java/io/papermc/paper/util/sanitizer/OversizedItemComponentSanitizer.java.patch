@@ -1,6 +1,6 @@
---- a/src/main/java/io/papermc/paper/util/OversizedItemComponentSanitizer.java
-+++ b/src/main/java/io/papermc/paper/util/OversizedItemComponentSanitizer.java
-@@ -18,6 +_,7 @@
+--- a/src/main/java/io/papermc/paper/util/sanitizer/OversizedItemComponentSanitizer.java
++++ b/src/main/java/io/papermc/paper/util/sanitizer/OversizedItemComponentSanitizer.java
+@@ -19,6 +_,7 @@
      /*
      These represent codecs that are meant to help get rid of possibly big items by ALWAYS hiding this data.
       */

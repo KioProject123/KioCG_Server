@@ -1,9 +1,9 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMob.java
-@@ -192,4 +_,16 @@
+@@ -184,4 +_,16 @@
+     public boolean setLeashHolder(final org.bukkit.entity.Entity holder) {
          return io.papermc.paper.entity.PaperLeashable.super.setLeashHolder(holder);
      }
-     // Paper end - Leashable API
 +
 +    // KioCG start - entity bossbar api
 +    @Override

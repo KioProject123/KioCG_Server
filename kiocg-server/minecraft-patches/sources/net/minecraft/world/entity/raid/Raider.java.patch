@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
-@@ -389,6 +_,13 @@
+@@ -390,6 +_,13 @@
              }
          }
  
@@ -14,7 +14,7 @@
          @Override
          public boolean canContinueToUse() {
              return this.pursuedBannerItemEntity != null
-@@ -399,7 +_,7 @@
+@@ -400,7 +_,7 @@
          }
  
          private boolean cannotPickUpBanner() {

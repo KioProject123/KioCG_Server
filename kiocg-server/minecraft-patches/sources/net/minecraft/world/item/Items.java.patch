@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -1481,7 +_,7 @@
+@@ -1505,7 +_,7 @@
          "potion",
          PotionItem::new,
          new Item.Properties()
@@ -9,7 +9,7 @@
              .component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
              .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
              .usingConvertsTo(GLASS_BOTTLE)
-@@ -1823,14 +_,14 @@
+@@ -1832,7 +_,7 @@
      public static final Item BEETROOT_SOUP = registerItem("beetroot_soup", new Item.Properties().stacksTo(1).food(Foods.BEETROOT_SOUP).usingConvertsTo(BOWL));
      public static final Item DRAGON_BREATH = registerItem("dragon_breath", new Item.Properties().craftRemainder(GLASS_BOTTLE).rarity(Rarity.UNCOMMON));
      public static final Item SPLASH_POTION = registerItem(
@@ -18,11 +18,12 @@
      );
      public static final Item SPECTRAL_ARROW = registerItem("spectral_arrow", SpectralArrowItem::new);
      public static final Item TIPPED_ARROW = registerItem(
-         "tipped_arrow", TippedArrowItem::new, new Item.Properties().component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+@@ -1844,7 +_,7 @@
+         "lingering_potion",
+         LingeringPotionItem::new,
+         new Item.Properties()
+-            .stacksTo(1)
++            .stacksTo(16) // KioCG - default max stack size
+             .component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+             .component(DataComponents.POTION_DURATION_SCALE, 0.25F)
      );
-     public static final Item LINGERING_POTION = registerItem(
--        "lingering_potion", LingeringPotionItem::new, new Item.Properties().stacksTo(1).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-+        "lingering_potion", LingeringPotionItem::new, new Item.Properties().stacksTo(16).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY) // KioCG - default max stack size
-     );
-     public static final Item SHIELD = registerItem(
-         "shield",

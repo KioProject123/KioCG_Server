@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
-@@ -79,6 +_,13 @@
+@@ -71,6 +_,13 @@
  
      @Override
      protected boolean isRandomlyTicking(BlockState state) {
@@ -14,16 +14,16 @@
          return !this.isMaxAge(state);
      }
  
-@@ -104,7 +_,7 @@
+@@ -96,7 +_,7 @@
                      modifier = level.spigotConfig.wheatModifier;
                  }
  
--                if (random.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / growthSpeed) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+                if (modifier > 0 && FarmBlock.isMoisture(level, pos.below(), random) && random.nextFloat() < (modifier / 100.0f)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
+-                if (random.nextFloat() < (modifier / (100.0F * (Math.floor((25.0F / growthSpeed) + 1))))) { // Spigot - SPIGOT-7159: Better modifier resolution
++                if (modifier > 0 && FarmBlock.isMoisture(level, pos.below(), random) && random.nextFloat() < (modifier / 100.0F)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
                      // Spigot end
                      org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(level, pos, this.getStateForAge(age + 1), 2); // CraftBukkit
                  }
-@@ -127,6 +_,7 @@
+@@ -114,6 +_,7 @@
      }
  
      protected static float getGrowthSpeed(Block block, BlockGetter level, BlockPos pos) {
@@ -31,9 +31,9 @@
          float f = 1.0F;
          BlockPos blockPos = pos.below();
  
-@@ -182,7 +_,7 @@
+@@ -169,7 +_,7 @@
      @Override
-     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
          if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
 -        if (level instanceof ServerLevel serverLevel && entity instanceof Ravager && org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
 +        if (level instanceof ServerLevel serverLevel && entity instanceof Ravager && org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.AIR.defaultBlockState(), !serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1))) { // CraftBukkit // KioCG - better mob griefing setting

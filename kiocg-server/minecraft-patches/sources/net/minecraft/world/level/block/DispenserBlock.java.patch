@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DispenserBlock.java
 +++ b/net/minecraft/world/level/block/DispenserBlock.java
-@@ -123,7 +_,7 @@
+@@ -122,7 +_,7 @@
  
      @Override
      protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
@@ -9,7 +9,7 @@
          boolean triggeredValue = state.getValue(TRIGGERED);
          if (flag && !triggeredValue) {
              level.scheduleTick(pos, this, 4);
-@@ -145,7 +_,7 @@
+@@ -144,7 +_,7 @@
  
      @Override
      public BlockState getStateForPlacement(BlockPlaceContext context) {

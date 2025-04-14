@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -183,7 +_,7 @@
+@@ -142,7 +_,7 @@
          }
  
          // Paper start - detect running as root
@@ -9,7 +9,7 @@
              LOGGER.warn("****************************");
              LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
              LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
-@@ -283,7 +_,7 @@
+@@ -241,7 +_,7 @@
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support
@@ -18,7 +18,7 @@
              LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
-@@ -350,6 +_,7 @@
+@@ -308,6 +_,7 @@
                  LOGGER.info("JMX monitoring enabled");
              }
  
@@ -26,7 +26,7 @@
              return true;
          }
      }
-@@ -737,6 +_,7 @@
+@@ -695,6 +_,7 @@
          this.executeBlocking(() -> {
              CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
              org.bukkit.event.server.RemoteServerCommandEvent event = new org.bukkit.event.server.RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), s);

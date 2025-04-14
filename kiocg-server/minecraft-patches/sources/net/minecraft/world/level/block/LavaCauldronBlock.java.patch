@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/level/block/LavaCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LavaCauldronBlock.java
-@@ -35,6 +_,7 @@
-         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
+@@ -37,6 +_,7 @@
          if (this.isEntityInsideContent(state, pos, entity)) {
-             entity.lavaHurt();
+             entity.lavaIgnite(pos); // Paper - track lava contact
+             entity.lavaHurt(pos); // Paper - track lava contact
 +            if (entity instanceof net.minecraft.world.entity.player.Player player) player.coldData.isInLava = true; // KioCG - the long dark
          }
      }

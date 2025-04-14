@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 @@ -26,6 +_,38 @@
-     private static final EntityDataAccessor<Boolean> DATA_SHOW_BOTTOM = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.BOOLEAN);
+     private static final boolean DEFAULT_SHOW_BOTTOM = true;
      public int time;
      public boolean generatedByDragonFight = false; // Paper - Fix invulnerable end crystals
 +    // KioCG start - end crystal turret
@@ -39,7 +39,7 @@
  
      public EndCrystal(EntityType<? extends EndCrystal> entityType, Level level) {
          super(entityType, level);
-@@ -74,7 +_,56 @@
+@@ -74,13 +_,74 @@
              }
          }
          // Paper end - Fix invulnerable end crystals
@@ -97,10 +97,9 @@
  
      @Override
      protected void addAdditionalSaveData(CompoundTag compound) {
-@@ -84,6 +_,18 @@
- 
+         compound.storeNullable("beam_target", BlockPos.CODEC, this.getBeamTarget());
          compound.putBoolean("ShowBottom", this.showsBottom());
-         if (this.generatedByDragonFight) compound.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
+         compound.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
 +
 +        // KioCG start - end crystal turret
 +        if (this.turretCooldown != null) {
@@ -116,21 +115,15 @@
      }
  
      @Override
-@@ -93,6 +_,18 @@
-             this.setShowBottom(compound.getBoolean("ShowBottom"));
-         }
-         if (compound.contains("Paper.GeneratedByDragonFight", 1)) this.generatedByDragonFight = compound.getBoolean("Paper.GeneratedByDragonFight"); // Paper - Fix invulnerable end crystals
+@@ -88,6 +_,12 @@
+         this.setBeamTarget(compound.read("beam_target", BlockPos.CODEC).orElse(null));
+         this.setShowBottom(compound.getBooleanOr("ShowBottom", true));
+         this.generatedByDragonFight = compound.getBooleanOr("Paper.GeneratedByDragonFight", false); // Paper - Fix invulnerable end crystals
 +
 +        // KioCG start - end crystal turret
-+        if (compound.contains("KioCG.TurretCooldown")) {
-+            this.turretCooldown = compound.getInt("KioCG.TurretCooldown");
-+        }
-+        if (compound.contains("KioCG.TurretRange")) {
-+            this.turretRange = compound.getDouble("KioCG.TurretRange");
-+        }
-+        if (compound.contains("KioCG.TurretDamage")) {
-+            this.turretDamage = compound.getDouble("KioCG.TurretDamage");
-+        }
++        compound.getInt("KioCG.TurretCooldown").ifPresent(cooldown -> this.turretCooldown = cooldown);
++        compound.getDouble("KioCG.TurretRange").ifPresent(range -> this.turretRange = range);
++        compound.getDouble("KioCG.TurretDamage").ifPresent(damage -> this.turretDamage = damage);
 +        // KioCG end - end crystal turret
      }
  

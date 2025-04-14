@@ -5,13 +5,13 @@ Subject: [PATCH] Custom block entity
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
-index 56453454cbd4b9e9270fc833f8ab38d5fa7a3763..58c2efbd21ee39e770fff8e1bf9ed9c1eb62afae 100644
+index 2338e7c115037430cefae26a571ded71f77983c4..1bad4bf8622674f355619cb854a4f50db402b9fc 100644
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
-@@ -180,6 +180,10 @@ public final class CraftBlockStates {
+@@ -134,6 +134,10 @@ public final class CraftBlockStates {
          register(BlockEntityType.TRIAL_SPAWNER, CraftTrialSpawner.class, CraftTrialSpawner::new);
          register(BlockEntityType.VAULT, CraftVault.class, CraftVault::new);
-         // Paper end
+         // End generate - CraftBlockEntityStates
 +        // KioCG start - custom block entity: 确保最后一个注册
 +        register(BlockEntityType.CAULDRON, CraftCauldron.class, CraftCauldron::new);
 +        register(BlockEntityType.FLOWER_POT, CraftFlowerPot.class, CraftFlowerPot::new);

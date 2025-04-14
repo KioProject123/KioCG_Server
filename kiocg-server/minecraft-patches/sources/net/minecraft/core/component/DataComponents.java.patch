@@ -1,18 +1,18 @@
 --- a/net/minecraft/core/component/DataComponents.java
 +++ b/net/minecraft/core/component/DataComponents.java
-@@ -205,13 +_,13 @@
+@@ -231,13 +_,13 @@
          "debug_stick_state", builder -> builder.persistent(DebugStickState.CODEC).cacheEncoding()
      );
      public static final DataComponentType<CustomData> ENTITY_DATA = register(
 -        "entity_data", builder -> builder.persistent(CustomData.CODEC_WITH_ID).networkSynchronized(CustomData.STREAM_CODEC)
-+        "entity_data", builder -> builder.persistent(CustomData.CODEC_WITH_ID).networkSynchronized(io.papermc.paper.util.OversizedItemComponentSanitizer.CUSTOM_DATA) // KioCG - sanitize custom data
++        "entity_data", builder -> builder.persistent(CustomData.CODEC_WITH_ID).networkSynchronized(io.papermc.paper.util.sanitizer.OversizedItemComponentSanitizer.CUSTOM_DATA) // KioCG - sanitize custom data
      );
      public static final DataComponentType<CustomData> BUCKET_ENTITY_DATA = register(
          "bucket_entity_data", builder -> builder.persistent(CustomData.CODEC).networkSynchronized(CustomData.STREAM_CODEC)
      );
      public static final DataComponentType<CustomData> BLOCK_ENTITY_DATA = register(
 -        "block_entity_data", builder -> builder.persistent(CustomData.CODEC_WITH_ID).networkSynchronized(CustomData.STREAM_CODEC)
-+        "block_entity_data", builder -> builder.persistent(CustomData.CODEC_WITH_ID).networkSynchronized(io.papermc.paper.util.OversizedItemComponentSanitizer.CUSTOM_DATA) // KioCG - sanitize custom data
++        "block_entity_data", builder -> builder.persistent(CustomData.CODEC_WITH_ID).networkSynchronized(io.papermc.paper.util.sanitizer.OversizedItemComponentSanitizer.CUSTOM_DATA) // KioCG - sanitize custom data
      );
-     public static final DataComponentType<Holder<Instrument>> INSTRUMENT = register(
-         "instrument", builder -> builder.persistent(Instrument.CODEC).networkSynchronized(Instrument.STREAM_CODEC).cacheEncoding()
+     public static final DataComponentType<InstrumentComponent> INSTRUMENT = register(
+         "instrument", builder -> builder.persistent(InstrumentComponent.CODEC).networkSynchronized(InstrumentComponent.STREAM_CODEC).cacheEncoding()

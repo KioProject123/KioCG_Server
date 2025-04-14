@@ -4,8 +4,8 @@
      private static final TargetingConditions RAM_TARGET_CONDITIONS = TargetingConditions.forCombat()
          .selector(
              (entity, level) -> !entity.getType().equals(EntityType.GOAT)
--                && (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || !entity.getType().equals(EntityType.ARMOR_STAND))
-+                && (false || !entity.getType().equals(EntityType.ARMOR_STAND)) // KioCG - better mob griefing setting: 原版逻辑有BUG需反转
+-                && (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || !entity.getType().equals(EntityType.ARMOR_STAND))
++                && (false || !entity.getType().equals(EntityType.ARMOR_STAND)) // KioCG - better mob griefing setting
                  && level.getWorldBorder().isWithinBounds(entity.getBoundingBox())
          );
      private static final float SPEED_MULTIPLIER_WHEN_RAMMING = 3.0F;

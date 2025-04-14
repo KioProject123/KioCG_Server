@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftTameableAnimal.java
-@@ -81,6 +_,16 @@
+@@ -80,6 +_,16 @@
          this.getHandle().setOrderedToSit(sitting);
      }
  

@@ -21,10 +21,10 @@
              .add(Items.LAVA_BUCKET, smeltingTime * 100)
              .add(Blocks.COAL_BLOCK, smeltingTime * 8 * 10)
              .add(Items.BLAZE_ROD, smeltingTime * 12)
-@@ -100,6 +_,10 @@
-             .add(Blocks.AZALEA, smeltingTime / 2)
+@@ -103,6 +_,10 @@
              .add(Blocks.FLOWERING_AZALEA, smeltingTime / 2)
              .add(Blocks.MANGROVE_ROOTS, smeltingTime * 3 / 2)
+             .add(Blocks.LEAF_LITTER, smeltingTime / 2)
 +             */
 +            .add(Items.COAL, smeltingTime * 8)
 +            .add(Items.CHARCOAL, smeltingTime * 8)

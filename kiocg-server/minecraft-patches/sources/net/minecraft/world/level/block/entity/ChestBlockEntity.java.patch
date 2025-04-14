@@ -9,7 +9,7 @@
      public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
          @Override
          protected void onOpen(Level level, BlockPos pos, BlockState state) {
-@@ -88,6 +_,7 @@
+@@ -92,6 +_,7 @@
  
      protected ChestBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
          super(type, pos, blockState);

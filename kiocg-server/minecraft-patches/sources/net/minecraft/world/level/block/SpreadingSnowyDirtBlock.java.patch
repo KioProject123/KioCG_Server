@@ -12,7 +12,7 @@
 -                    }
 +                    final net.minecraft.world.level.chunk.ChunkAccess access = getCachedBlockChunk(cachedBlockChunk, level, blockPos); // KioCG - Perf: optimize flowers and Grasses spreading: 提取方法
                      if (access.getBlockState(blockPos).is(Blocks.DIRT) && SpreadingSnowyDirtBlock.canPropagate(access, blockState, level, blockPos)) {
-                         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(level, pos, blockPos, (BlockState) blockState.setValue(SpreadingSnowyDirtBlock.SNOWY, isSnowySetting(access.getBlockState(blockPos.above())))); // CraftBukkit
+                         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(level, pos, blockPos, blockState.setValue(SNOWY, isSnowySetting(access.getBlockState(blockPos.above()))), 3); // CraftBukkit
                          // Paper end - Perf: optimize dirt and snow spreading
 @@ -90,4 +_,16 @@
              }

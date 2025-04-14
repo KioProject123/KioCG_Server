@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/StructureManager.java
 +++ b/net/minecraft/world/level/StructureManager.java
-@@ -172,6 +_,41 @@
+@@ -177,6 +_,41 @@
          return this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).hasAnyStructureReferences();
      }
  

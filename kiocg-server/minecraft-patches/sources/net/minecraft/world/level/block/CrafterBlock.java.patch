@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CrafterBlock.java
 +++ b/net/minecraft/world/level/block/CrafterBlock.java
-@@ -200,6 +_,8 @@
+@@ -192,6 +_,8 @@
          Direction direction = state.getValue(ORIENTATION).front();
          Container containerAt = HopperBlockEntity.getContainerAt(level, pos.relative(direction));
          ItemStack itemStack = stack.copy();
@@ -9,7 +9,7 @@
          if (containerAt != null && (containerAt instanceof CrafterBlockEntity || stack.getCount() > containerAt.getMaxStackSize(stack))) {
              // CraftBukkit start - InventoryMoveItemEvent
              org.bukkit.craftbukkit.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemStack);
-@@ -255,6 +_,7 @@
+@@ -247,6 +_,7 @@
                  }
              }
          }

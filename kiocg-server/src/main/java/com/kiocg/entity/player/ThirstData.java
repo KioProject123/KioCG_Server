@@ -90,10 +90,8 @@ public class ThirstData {
     }
 
     public void readAdditionalSaveData(CompoundTag nbt) {
-        if (nbt.contains("KioCG.ThirstValue")) {
-            thirstValue = nbt.getInt("KioCG.ThirstValue");
-            thirstRegain = nbt.getFloat("KioCG.ThirstRegain");
-        }
+        thirstValue = nbt.getIntOr("KioCG.ThirstValue", MAX_VALUE);
+        thirstRegain = nbt.getFloatOr("KioCG.ThirstRegain", 0.0F);
     }
 
     public void addAdditionalSaveData(CompoundTag nbt) {

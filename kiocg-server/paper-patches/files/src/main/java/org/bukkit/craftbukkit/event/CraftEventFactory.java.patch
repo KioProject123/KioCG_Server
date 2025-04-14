@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -605,6 +_,41 @@
+@@ -517,6 +_,41 @@
          return event;
      }
  
@@ -39,10 +39,10 @@
 +    }
 +    // KioCG end - PlayerItemUseEvent
 +
-     /**
-      * EntityTransformEvent
-      */
-@@ -1019,10 +_,16 @@
+     public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, net.minecraft.world.entity.LivingEntity coverted, EntityTransformEvent.TransformReason transformReason) {
+         return CraftEventFactory.callEntityTransformEvent(original, Collections.singletonList(coverted), transformReason);
+     }
+@@ -879,10 +_,16 @@
      }
  
      public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean keepInventory) { // Paper - Adventure & Restore vanilla drops behavior

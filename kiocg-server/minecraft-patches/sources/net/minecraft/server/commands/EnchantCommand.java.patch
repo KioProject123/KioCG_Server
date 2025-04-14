@@ -9,8 +9,8 @@
              throw ERROR_LEVEL_TOO_HIGH.create(level, enchantment1.getMaxLevel());
          } else {
              int i = 0;
-@@ -80,9 +_,9 @@
-                     LivingEntity livingEntity = (LivingEntity)entity;
+@@ -79,9 +_,9 @@
+                 if (entity instanceof LivingEntity livingEntity) {
                      ItemStack mainHandItem = livingEntity.getMainHandItem();
                      if (!mainHandItem.isEmpty()) {
 -                        if (enchantment1.canEnchant(mainHandItem)

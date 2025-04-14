@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -773,7 +_,7 @@
+@@ -617,7 +_,7 @@
              protected ItemStack execute(BlockSource blockSource, ItemStack item) {
                  ServerLevel serverLevel = blockSource.level();
                  BlockPos blockPos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
@@ -9,14 +9,14 @@
                  if (entitiesOfClass.isEmpty()) {
                      this.setSuccess(false);
                      return item;
-@@ -801,8 +_,12 @@
+@@ -644,8 +_,12 @@
                          }
                      }
                      // CraftBukkit end
 -                    for (Armadillo armadillo : entitiesOfClass) {
 -                        if (armadillo.brushOffScute()) {
 +                    // KioCG start - breeding animals
-+                    for (LivingEntity entity : entitiesOfClass) {
++                    for (net.minecraft.world.entity.animal.Animal entity : entitiesOfClass) {
 +                        boolean isArmadillo = entity instanceof Armadillo;
 +                        boolean isTurtle = !isArmadillo && entity instanceof net.minecraft.world.entity.animal.Turtle;
 +                        if (isArmadillo && ((Armadillo) entity).brushOffScute() || isTurtle && ((net.minecraft.world.entity.animal.Turtle) entity).brushOffScute()) {
