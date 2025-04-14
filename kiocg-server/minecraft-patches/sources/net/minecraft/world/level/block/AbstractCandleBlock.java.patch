@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/AbstractCandleBlock.java
 +++ b/net/minecraft/world/level/block/AbstractCandleBlock.java
-@@ -68,21 +_,24 @@
+@@ -67,22 +_,23 @@
+     public static void addParticlesAndSound(Level level, Vec3 offset, RandomSource random) {
          float randomFloat = random.nextFloat();
          if (randomFloat < 0.3F) {
-             level.addParticle(ParticleTypes.SMOKE, offset.x, offset.y, offset.z, 0.0, 0.0, 0.0);
+-            level.addParticle(ParticleTypes.SMOKE, offset.x, offset.y, offset.z, 0.0, 0.0, 0.0);
 +            ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE, offset.x, offset.y, offset.z, 1, 0.0, 0.0, 0.0, 0.0); // KioCG - server animate tick
              if (randomFloat < 0.17F) {
 -                level.playLocalSound(
@@ -15,18 +16,18 @@
 +                    offset.x,
 +                    offset.y,
 +                    offset.z,
-+                // KioCG end - server animate tick
                      SoundEvents.CANDLE_AMBIENT,
                      SoundSource.BLOCKS,
                      1.0F + random.nextFloat(),
 -                    random.nextFloat() * 0.7F + 0.3F,
 -                    false
-+                    random.nextFloat() * 0.7F + 0.3F // KioCG - server animate tick
++                    random.nextFloat() * 0.7F + 0.3F
                  );
++                // KioCG end - server animate tick
              }
          }
  
-         level.addParticle(ParticleTypes.SMALL_FLAME, offset.x, offset.y, offset.z, 0.0, 0.0, 0.0);
+-        level.addParticle(ParticleTypes.SMALL_FLAME, offset.x, offset.y, offset.z, 0.0, 0.0, 0.0);
 +        ((ServerLevel) level).sendParticles(ParticleTypes.SMALL_FLAME, offset.x, offset.y, offset.z, 1, 0.0, 0.0, 0.0, 0.0); // KioCG - server animate tick
      }
  

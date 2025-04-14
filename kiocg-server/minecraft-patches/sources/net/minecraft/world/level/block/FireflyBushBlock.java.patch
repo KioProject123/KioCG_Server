@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/block/FireflyBushBlock.java
++++ b/net/minecraft/world/level/block/FireflyBushBlock.java
+@@ -33,14 +_,17 @@
+     @Override
+     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+         if (random.nextInt(30) == 0 && level.isMoonVisible() && level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos) <= pos.getY()) {
+-            level.playLocalSound(pos, SoundEvents.FIREFLY_BUSH_IDLE, SoundSource.AMBIENT, 1.0F, 1.0F, false);
++            level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.FIREFLY_BUSH_IDLE, SoundSource.AMBIENT, 1.0F, 1.0F); // KioCG - server animate tick
+         }
+ 
+         if (level.getMaxLocalRawBrightness(pos) <= 13 && random.nextDouble() <= 0.7) {
+-            double d = pos.getX() + random.nextDouble() * 10.0 - 5.0;
+-            double d1 = pos.getY() + random.nextDouble() * 5.0;
+-            double d2 = pos.getZ() + random.nextDouble() * 10.0 - 5.0;
+-            level.addParticle(ParticleTypes.FIREFLY, d, d1, d2, 0.0, 0.0, 0.0);
++            // KioCG start - server animate tick
++            // double d = pos.getX() + random.nextDouble() * 10.0 - 5.0;
++            // double d1 = pos.getY() + random.nextDouble() * 5.0;
++            // double d2 = pos.getZ() + random.nextDouble() * 10.0 - 5.0;
++            // level.addParticle(ParticleTypes.FIREFLY, d, d1, d2, 0.0, 0.0, 0.0);
++            ((ServerLevel) level).sendParticles(ParticleTypes.FIREFLY, pos.getX() + 0.5, pos.getY() + 2.5, pos.getZ() + 0.5, 1, 5.0, 2.5, 5.0, 0.0); // KioCG - server animate tick
++            // KioCG end - server animate tick
+         }
+     }
+ 
