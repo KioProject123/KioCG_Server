@@ -16,6 +16,14 @@
      }
  
      @Override
+@@ -193,6 +_,7 @@
+ 
+                 if (fullState != HOPPER_IS_FULL || flag) { // Paper - Perf: Optimize Hoppers
+                     flag |= validator.getAsBoolean(); // Paper - note: this is not a validator, it's what adds/sucks in items
++                } else { blockEntity.setCooldown(level.spigotConfig.hopperTransfer); // KioCG - optimize block entity
+                 }
+ 
+                 if (flag) {
 @@ -227,6 +_,8 @@
          for (int i = 0; i < hopper.getContainerSize(); ++i) {
              final ItemStack item = hopper.getItem(i);
@@ -34,6 +42,18 @@
          ItemStack movedItem = origItemStack;
          final int originalItemCount = origItemStack.getCount();
          final int movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
+@@ -423,6 +_,11 @@
+         } else {
+             Direction opposite = blockEntity.facing.getOpposite();
+             if (isFullContainer(attachedContainer, opposite)) {
++                // KioCG start - optimize block entity
++                if (level.paperConfig().hopper.cooldownWhenFull) { // Inventory was full - cooldown
++                    blockEntity.setCooldown(level.spigotConfig.hopperTransfer);
++                }
++                // KioCG end - optimize block entity
+                 return false;
+             } else {
+                 // Paper start - Perf: Optimize Hoppers
 @@ -527,6 +_,64 @@
          return true;
      }

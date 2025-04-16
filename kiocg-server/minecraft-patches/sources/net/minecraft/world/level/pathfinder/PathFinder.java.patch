@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/pathfinder/PathFinder.java
++++ b/net/minecraft/world/level/pathfinder/PathFinder.java
+@@ -94,7 +_,7 @@
+                 break;
+             }
+ 
+-            if (!(node1.distanceTo(node) >= maxRange)) {
++            if (!((node1 == node ? 0 : node1.distanceTo(node)) >= maxRange)) { // KioCG - optimize distanceTo
+                 int neighbors = this.nodeEvaluator.getNeighbors(this.neighbors, node1);
+ 
+                 for (int i2 = 0; i2 < neighbors; i2++) {
