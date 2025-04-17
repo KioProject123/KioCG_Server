@@ -27,7 +27,7 @@
 +            net.minecraft.world.phys.AABB boundingBox = player.getBoundingBox();
 +            boundingBox = new net.minecraft.world.phys.AABB(
 +                    boundingBox.minX,
-+                    boundingBox.minY - 1.0E-5F,
++                    boundingBox.minY - 1.0E-5,
 +                    boundingBox.minZ,
 +                    boundingBox.maxX,
 +                    boundingBox.minY,

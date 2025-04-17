@@ -137,8 +137,8 @@
 +            int channeling = this.getWeaponItem().getEnchantmentLevel(this.registryAccess(), net.minecraft.world.item.enchantment.Enchantments.CHANNELING);
 +            if (channeling > 1) {
 +                java.util.List<net.minecraft.world.entity.LightningBolt> list = com.google.common.collect.Lists.newArrayList();
-+                this.level().getEntities(EntityType.LIGHTNING_BOLT, new net.minecraft.world.phys.AABB(x, y, z, x, y, z).inflate(1.0E-5F), entityLightningBolt -> {
-+                    return entityLightningBolt.tickCount == 0 && entityLightningBolt.times == 1;
++                this.level().getEntities(EntityType.LIGHTNING_BOLT, new net.minecraft.world.phys.AABB(x, y, z, x, y, z).inflate(1.0E-5), lightningBolt -> {
++                    return lightningBolt.tickCount == 0 && lightningBolt.times == 1;
 +                }, list, 1);
 +                if (!list.isEmpty()) {
 +                    list.getFirst().times = channeling;

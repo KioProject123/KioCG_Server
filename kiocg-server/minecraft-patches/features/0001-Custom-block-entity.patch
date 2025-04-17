@@ -331,45 +331,49 @@ index 83bc2f6b7774c8753a15dbeb00f0c9103713fd1b..f371683beb6c797deca109e86986dc62
                      BuiltInRegistries.bootStrap(() -> {
                          io.papermc.paper.world.worldgen.OptionallyFlatBedrockConditionSource.bootstrap(); // Paper - Flat bedrock generator settings
 diff --git a/net/minecraft/world/entity/Display.java b/net/minecraft/world/entity/Display.java
-index c53f68b9659bd450ba5c71d5c1198072549f1035..6f79b05265c9532f8edca3cc278aebc209d1eb19 100644
+index c53f68b9659bd450ba5c71d5c1198072549f1035..ac5b5b5f0b82ca50ada00865d4d7b41904bae22e 100644
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -590,6 +590,35 @@ public abstract class Display extends Entity {
- 
-         public record BlockRenderState(BlockState blockState) {
+@@ -183,6 +183,39 @@ public abstract class Display extends Entity {
          }
-+
-+        // KioCG start - custom block entity
-+        @Nullable
-+        public static Display.BlockDisplay getDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos) {
-+            double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
-+            List<Display.BlockDisplay> entitiesOfClass = level.getEntitiesOfClass(Display.BlockDisplay.class, new AABB(x, y, z, x, y, z).inflate(1.0E-5), display -> {
-+                return !display.persist;
-+            });
-+            return !entitiesOfClass.isEmpty() ? entitiesOfClass.getFirst() : null;
-+        }
-+
-+        public static void createDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos, java.util.function.Consumer<BlockDisplay> consumer) {
-+            Display.BlockDisplay display = EntityType.BLOCK_DISPLAY.create(level, EntitySpawnReason.COMMAND);
-+            if (display != null) {
-+                display.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
-+                display.setTranslation(new Vector3f(-0.5F, -0.5F, -0.5F));
-+                display.persist = false;
-+                consumer.accept(display);
-+                level.addFreshEntity(display, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM);
-+            }
-+        }
-+
-+        public static void discardDisplayBlock(ServerLevel level, net.minecraft.core.BlockPos pos) {
-+            Display.BlockDisplay displayBlock = getDisplayBlock(level, pos);
-+            if (displayBlock != null) {
-+                displayBlock.discard();
-+            }
-+        }
-+        // KioCG end - custom block entity
      }
  
-     record ColorInterpolator(int previous, int current) implements Display.IntInterpolator {
++    // KioCG start - custom block entity
++    @Nullable
++    public static <T extends Display> T getCustomDisplay(EntityType<T> entityType, ServerLevel level, net.minecraft.core.BlockPos pos) {
++        List<T> list = com.google.common.collect.Lists.newArrayList();
++        double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
++        level.getEntities(entityType, new AABB(x, y, z, x, y, z).inflate(1.0E-5), display -> {
++            return !display.persist;
++        }, list, 1);
++        return !list.isEmpty() ? list.getFirst() : null;
++    }
++
++    public static <T extends Display> void createCustomDisplay(EntityType<T> entityType, ServerLevel level, net.minecraft.core.BlockPos pos, java.util.function.Consumer<T> consumer) {
++        T display = entityType.create(level, EntitySpawnReason.COMMAND);
++        if (display != null) {
++            display.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0F, 0.0F);
++            // 将方块展示实体居中
++            if (display instanceof BlockDisplay) {
++                display.setTranslation(new Vector3f(-0.5F, -0.5F, -0.5F));
++            }
++            display.persist = false;
++            consumer.accept(display);
++            level.addFreshEntity(display, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM);
++        }
++    }
++
++    public static <T extends Display> void discardCustomDisplay(EntityType<T> entityType, ServerLevel level, net.minecraft.core.BlockPos pos) {
++        T customDisplay = getCustomDisplay(entityType, level, pos);
++        if (customDisplay != null) {
++            customDisplay.discard();
++        }
++    }
++    // KioCG end - custom block entity
++
+     @Override
+     public InterpolationHandler getInterpolation() {
+         return this.interpolation;
 diff --git a/net/minecraft/world/level/block/AbstractCauldronBlock.java b/net/minecraft/world/level/block/AbstractCauldronBlock.java
 index ad3f32888afd8b5f0038445a1b0fcc8cacec9fe2..c6936fb2cdc4be2579b20309ea047c524313865c 100644
 --- a/net/minecraft/world/level/block/AbstractCauldronBlock.java
@@ -756,10 +760,10 @@ index 0000000000000000000000000000000000000000..6c966d0f8bb7ffc99d2491c9d1ff1bea
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0c08a673835042a265a73753a8f557a8ce3b4c07
+index 0000000000000000000000000000000000000000..4c4194b46db9d262847f81d23aadee533865950d
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
-@@ -0,0 +1,207 @@
+@@ -0,0 +1,208 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
@@ -775,6 +779,7 @@ index 0000000000000000000000000000000000000000..0c08a673835042a265a73753a8f557a8
 +import net.minecraft.tags.BlockTags;
 +import net.minecraft.world.Containers;
 +import net.minecraft.world.entity.Display;
++import net.minecraft.world.entity.EntityType;
 +import net.minecraft.world.level.block.AbstractCandleBlock;
 +import net.minecraft.world.level.block.Block;
 +import net.minecraft.world.level.block.Blocks;
@@ -847,18 +852,18 @@ index 0000000000000000000000000000000000000000..0c08a673835042a265a73753a8f557a8
 +
 +    private void refreshDisplayBlock(ServerLevel level, BlockPos pos) {
 +        if (this.isEmpty()) {
-+            Display.BlockDisplay.discardDisplayBlock(level, pos);
++            Display.BlockDisplay.discardCustomDisplay(EntityType.BLOCK_DISPLAY, level, pos);
 +            return;
 +        }
 +
 +        Optional<Consumer<Display.BlockDisplay>> optional = FlowerPotInteraction.getInteract(level, pos, this.getPotted(), this.getPottedState());
 +        optional.ifPresent(consumer -> {
 +            consumer = consumer.andThen(display -> display.setYRot(facing.toYRot()));
-+            Display.BlockDisplay displayBlock = Display.BlockDisplay.getDisplayBlock(level, pos);
++            Display.BlockDisplay displayBlock = Display.BlockDisplay.getCustomDisplay(EntityType.BLOCK_DISPLAY, level, pos);
 +            if (displayBlock != null) {
 +                consumer.accept(displayBlock);
 +            } else {
-+                Display.BlockDisplay.createDisplayBlock(level, pos, consumer);
++                Display.BlockDisplay.createCustomDisplay(EntityType.BLOCK_DISPLAY, level, pos, consumer);
 +            }
 +        });
 +    }
