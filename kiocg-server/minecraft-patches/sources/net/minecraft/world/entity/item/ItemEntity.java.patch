@@ -76,3 +76,30 @@
          return !explosion.shouldAffectBlocklikeEntities() || super.ignoreExplosion(explosion);
      }
  
+@@ -485,7 +_,17 @@
+             }
+             // CraftBukkit end
+             // Paper end - PlayerAttemptPickupItemEvent
+-            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID())) && entity.getInventory().add(item)) {
++            // KioCG start - allow overstacked items: fix pickup animation
++            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID()))) {
++                if (!entity.getInventory().add(item) && flyAtPlayer) {
++                    org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.position(), this.level().getWorld(), this.getYRot(), this.getXRot());
++                    org.bukkit.entity.Item fakeItem = this.level().getWorld().createEntity(location, org.bukkit.entity.Item.class);
++                    fakeItem.setItemStack(item.asBukkitMirror());
++                    fakeItem.getItemStack().setAmount(canHold);
++                    fakeItem.sendSpawn(new java.util.ArrayList<>(this.getBukkitEntity().getTrackedBy()), location);
++                    entity.take(((org.bukkit.craftbukkit.entity.CraftItem) fakeItem).getHandle(), count);
++                } else {
++            // KioCG end - allow overstacked items: fix pickup animation
+                 if (flyAtPlayer) // Paper - PlayerPickupItemEvent
+                 entity.take(this, count);
+                 if (item.isEmpty()) {
+@@ -496,6 +_,7 @@
+                 entity.awardStat(Stats.ITEM_PICKED_UP.get(item1), count);
+                 entity.onItemPickup(this);
+             }
++            } // KioCG - allow overstacked items: fix pickup animation
+         }
+     }
+ 
