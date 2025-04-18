@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
+@@ -107,6 +_,34 @@
+         }
+     }
+ 
++    // KioCG start - infinite decorated pot
++    public static void suckInItems(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, DecoratedPotBlockEntity decoratedPot) {
++        for (net.minecraft.world.entity.item.ItemEntity itemEntity : getItemsAtAndAbove(level, pos)) {
++            if (!level.paperConfig().kiocgConfig.hopperPullsEntityOwnedItem && itemEntity.target != null) continue; // KioCG - hopper filter
++            if (!level.paperConfig().kiocgConfig.hopperPullsInfinitePickupItem && itemEntity.pickupDelay == Short.MAX_VALUE) continue; // KioCG - hopper filter
++            if (itemEntity.pickupDelay != 0 && net.minecraft.world.level.block.DecoratedPotBlock.putItem(itemEntity.getItem(), level, pos, null, decoratedPot).consumesAction()) {
++                itemEntity.pickupDelay++;
++                decoratedPot.setSuckInMovement(itemEntity);
++                return;
++            }
++        }
++    }
++
++    private void setSuckInMovement(net.minecraft.world.entity.item.ItemEntity itemEntity) {
++        net.minecraft.world.phys.Vec3 deltaMovement = itemEntity.getDeltaMovement();
++        if (deltaMovement.horizontalDistanceSqr() > 1.0E-5F) {
++            itemEntity.setDeltaMovement(deltaMovement.x * 0.5F, deltaMovement.y, deltaMovement.z * 0.5F);
++            itemEntity.hurtMarked = true;
++        }
++    }
++
++    private static final net.minecraft.world.phys.AABB SUCK_AABB = net.minecraft.world.level.block.Block.column(8.0, 16.0, 24.0).toAabbs().get(0);
++    public static List<net.minecraft.world.entity.item.ItemEntity> getItemsAtAndAbove(net.minecraft.world.level.Level level, BlockPos pos) {
++        net.minecraft.world.phys.AABB aabb = SUCK_AABB.move(pos.getX(), pos.getY(), pos.getZ());
++        return level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, aabb, net.minecraft.world.entity.EntitySelector.ENTITY_STILL_ALIVE);
++    }
++    // KioCG end - infinite decorated pot
++
+     @Override
+     public ClientboundBlockEntityDataPacket getUpdatePacket() {
+         return ClientboundBlockEntityDataPacket.create(this);

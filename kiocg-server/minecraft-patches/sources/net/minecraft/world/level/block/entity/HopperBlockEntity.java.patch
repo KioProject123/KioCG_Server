@@ -138,7 +138,28 @@
          boolean flag = false;
          // CraftBukkit start
          if (org.bukkit.event.inventory.InventoryPickupItemEvent.getHandlerList().getRegisteredListeners().length > 0) { // Paper - optimize hoppers
-@@ -642,6 +_,13 @@
+@@ -628,20 +_,32 @@
+         }
+         // CraftBukkit end
+         } // Paper - Perf: Optimize Hoppers
+-        ItemStack itemStack = item.getItem().copy();
++        // KioCG start - allow overstacked items: fix hopper
++        final ItemStack origItemStack = item.getItem();
++        ItemStack itemStack = origItemStack.split(origItemStack.getMaxStackSize());
++        // KioCG end - allow overstacked items: fix hopper
+         ItemStack itemStack1 = addItem(null, container, itemStack, null);
+         if (itemStack1.isEmpty()) {
+             flag = true;
++            if (origItemStack.isEmpty()) { // KioCG - allow overstacked items: fix hopper
+             item.setItem(ItemStack.EMPTY);
+             item.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.PICKUP); // CraftBukkit - add Bukkit remove cause
++            } // KioCG - allow overstacked items: fix hopper
+         } else {
+-            item.setItem(itemStack1);
++            origItemStack.grow(itemStack1.getCount()); // KioCG - allow overstacked items: fix hopper
+         }
+ 
+         return flag;
      }
  
      public static ItemStack addItem(@Nullable Container source, Container destination, ItemStack stack, @Nullable Direction direction) {

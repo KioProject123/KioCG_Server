@@ -1,0 +1,106 @@
+--- a/net/minecraft/world/level/block/DecoratedPotBlock.java
++++ b/net/minecraft/world/level/block/DecoratedPotBlock.java
+@@ -100,37 +_,43 @@
+             if (level.isClientSide) {
+                 return InteractionResult.SUCCESS;
+             } else {
+-                ItemStack theItem = decoratedPotBlockEntity.getTheItem();
+-                if (!stack.isEmpty()
+-                    && (theItem.isEmpty() || ItemStack.isSameItemSameComponents(theItem, stack) && theItem.getCount() < theItem.getMaxStackSize())) {
+-                    decoratedPotBlockEntity.wobble(DecoratedPotBlockEntity.WobbleStyle.POSITIVE);
+-                    player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+-                    ItemStack itemStack = stack.consumeAndReturn(1, player);
+-                    float f;
+-                    if (decoratedPotBlockEntity.isEmpty()) {
+-                        decoratedPotBlockEntity.setTheItem(itemStack);
+-                        f = (float)itemStack.getCount() / itemStack.getMaxStackSize();
+-                    } else {
+-                        theItem.grow(1);
+-                        f = (float)theItem.getCount() / theItem.getMaxStackSize();
+-                    }
+-
+-                    level.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT, SoundSource.BLOCKS, 1.0F, 0.7F + 0.5F * f);
+-                    if (level instanceof ServerLevel serverLevel) {
+-                        serverLevel.sendParticles(ParticleTypes.DUST_PLUME, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 7, 0.0, 0.0, 0.0, 0.0);
+-                    }
+-
+-                    decoratedPotBlockEntity.setChanged();
+-                    level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+-                    return InteractionResult.SUCCESS;
+-                } else {
+-                    return InteractionResult.TRY_WITH_EMPTY_HAND;
+-                }
++                return putItem(stack, level, pos, player, decoratedPotBlockEntity); // KioCG - infinite decorated pot: 提取方法
+             }
+         } else {
+             return InteractionResult.PASS;
+         }
+     }
++
++    // KioCG start - infinite decorated pot
++    public static InteractionResult putItem(ItemStack stack, Level level, BlockPos pos, @Nullable Player player, DecoratedPotBlockEntity decoratedPotBlockEntity) {
++        ItemStack theItem = decoratedPotBlockEntity.getTheItem();
++        if (!stack.isEmpty()
++            && (theItem.isEmpty() || ItemStack.isSameItemSameComponents(theItem, stack) && theItem.getCount() < theItem.getMaxStackSize() * 1000)) {
++            decoratedPotBlockEntity.wobble(DecoratedPotBlockEntity.WobbleStyle.POSITIVE);
++            if (player != null) player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
++            ItemStack itemStack = stack.consumeAndReturn(1, player);
++            float f;
++            if (decoratedPotBlockEntity.isEmpty()) {
++                decoratedPotBlockEntity.setTheItem(itemStack);
++                f = (float)itemStack.getCount() / itemStack.getMaxStackSize();
++            } else {
++                theItem.grow(1);
++                f = (float)theItem.getCount() / theItem.getMaxStackSize();
++            }
++
++            level.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT, SoundSource.BLOCKS, 1.0F, 0.7F + 0.5F * f);
++            if (level instanceof ServerLevel serverLevel) {
++                serverLevel.sendParticles(ParticleTypes.DUST_PLUME, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 7, 0.0, 0.0, 0.0, 0.0);
++            }
++
++            decoratedPotBlockEntity.setChanged();
++            level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
++            return InteractionResult.SUCCESS;
++        } else {
++            return InteractionResult.TRY_WITH_EMPTY_HAND;
++        }
++    }
++    // KioCG end - infinite decorated pot
+ 
+     @Override
+     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+@@ -138,6 +_,18 @@
+             level.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT_FAIL, SoundSource.BLOCKS, 1.0F, 1.0F);
+             decoratedPotBlockEntity.wobble(DecoratedPotBlockEntity.WobbleStyle.NEGATIVE);
+             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
++            // KioCG start - infinite decorated pot
++            if (!decoratedPotBlockEntity.isEmpty()) {
++                ItemStack dropItem = decoratedPotBlockEntity.getTheItem().consumeAndReturn(1, null);
++                net.minecraft.world.entity.item.ItemEntity itemEntity = new net.minecraft.world.entity.item.ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, dropItem);
++                itemEntity.setDeltaMovement(
++                        level.random.triangle(0.0, 0.11485000171139836),
++                        level.random.triangle(0.2, 0.11485000171139836),
++                        level.random.triangle(0.0, 0.11485000171139836));
++                itemEntity.pickupDelay = 0;
++                level.addFreshEntity(itemEntity);
++            }
++            // KioCG end - infinite decorated pot
+             return InteractionResult.SUCCESS;
+         } else {
+             return InteractionResult.PASS;
+@@ -164,6 +_,14 @@
+     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+         return new DecoratedPotBlockEntity(pos, state);
+     }
++
++    // KioCG start - infinite decorated pot
++    @Nullable
++    @Override
++    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
++        return createTickerHelper(blockEntityType, net.minecraft.world.level.block.entity.BlockEntityType.DECORATED_POT, DecoratedPotBlockEntity::suckInItems);
++    }
++    // KioCG end - infinite decorated pot
+ 
+     @Override
+     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
