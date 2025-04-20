@@ -12,16 +12,17 @@
      public Item(Item.Properties properties) {
          this.descriptionId = properties.effectiveDescriptionId();
          this.components = properties.buildAndValidateComponents(Component.translatable(this.descriptionId), properties.effectiveModel());
-+        this.componentsPatchKioCG = properties.buildComponentsPatchKioCG(); // KioCG - customize default components
++        this.componentsPatchKioCG = properties.afterBuildComponentsPatchKioCG(); // KioCG - customize default components
          this.craftingRemainingItem = properties.craftingRemainingItem;
          this.requiredFeatures = properties.requiredFeatures;
          if (SharedConstants.IS_RUNNING_IN_IDE) {
-@@ -140,6 +_,12 @@
+@@ -140,6 +_,13 @@
          return this.components;
      }
  
 +    // KioCG start - customize default components
-+    public net.minecraft.core.component.DataComponentPatch componentsPatchKioCG() {
++    // 只有需要发给客户端的DataComponentPatch
++    public net.minecraft.core.component.DataComponentPatch componentsPatchRemote() {
 +        return this.componentsPatchKioCG;
 +    }
 +    // KioCG end - customize default components
@@ -29,40 +30,92 @@
      public int getDefaultMaxStackSize() {
          return this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
      }
-@@ -356,6 +_,7 @@
+@@ -356,6 +_,13 @@
          private static final DependantName<Item, String> BLOCK_DESCRIPTION_ID = key -> Util.makeDescriptionId("block", key.location());
          private static final DependantName<Item, String> ITEM_DESCRIPTION_ID = key -> Util.makeDescriptionId("item", key.location());
          private final DataComponentMap.Builder components = DataComponentMap.builder().addAll(DataComponents.COMMON_ITEM_COMPONENTS);
-+        private final net.minecraft.core.component.DataComponentPatch.Builder componentsPatchKioCG = net.minecraft.core.component.DataComponentPatch.builder(); // KioCG - customize default components
++        // KioCG start - customize default components
++        private boolean initCustomize = false;
++        private final net.minecraft.core.component.DataComponentPatch.Builder componentsPatchKioCG = net.minecraft.core.component.DataComponentPatch.builder();
++        private final java.util.List<Component> beforeLores = new java.util.ArrayList<>();
++        private final java.util.List<Component> afterLores = new java.util.ArrayList<>();
++        private final net.minecraft.nbt.CompoundTag customDataTag = new net.minecraft.nbt.CompoundTag();
++        // KioCG end - customize default components
          @Nullable
          Item craftingRemainingItem;
          FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
-@@ -536,6 +_,18 @@
-             return this;
+@@ -531,16 +_,60 @@
+             return this.model.get(Objects.requireNonNull(this.id, "Item id not set"));
          }
  
+-        public <T> Item.Properties component(DataComponentType<T> component, T value) {
+-            this.components.set(component, value);
+-            return this;
+-        }
 +        // KioCG start - customize default components
++        public <T> Item.Properties component(DataComponentType<T> component, @Nullable T value) {
++            if (this.initCustomize) return this.componentKioCG(component, value);
++            // KioCG end - customize default components
++            this.components.set(component, value);
++            return this;
++        }
++
++        // KioCG start - customize default components
++        public Item.Properties initCustomize() {
++            this.initCustomize = true;
++            return this;
++        }
++
 +        public <T> Item.Properties componentKioCG(DataComponentType<T> component, @Nullable T value) {
 +            this.components.set(component, value);
-+            if (value != null) {
-+                this.componentsPatchKioCG.set(component, value);
-+            } else {
-+                this.componentsPatchKioCG.remove(component);
++            if (!DataComponents.UNABLE_SEND_TO_CLIENT.contains(component)) {
++                if (value != null) {
++                    this.componentsPatchKioCG.set(component, value);
++                } else {
++                    this.componentsPatchKioCG.remove(component);
++                }
 +            }
 +            return this;
 +        }
-+        // KioCG end - customize default components
 +
++        public Item.Properties loreBefore(net.kyori.adventure.text.Component component) {
++            this.beforeLores.add(io.papermc.paper.adventure.PaperAdventure.asVanilla(component.decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false)));
++            return this;
++        }
++
++        public Item.Properties loreAfter(net.kyori.adventure.text.Component component) {
++            this.afterLores.add(io.papermc.paper.adventure.PaperAdventure.asVanilla(component.decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false)));
++            return this;
++        }
++        // KioCG end - customize default components
+ 
          public Item.Properties attributes(ItemAttributeModifiers attributes) {
              return this.component(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
          }
+ 
+         DataComponentMap buildAndValidateComponents(Component itemName, ResourceLocation itemModel) {
++            // KioCG start - customize default components
++            if (!this.beforeLores.isEmpty()) {
++                this.componentKioCG(DataComponents.EXTENDED_BEFORE_LORE, new net.minecraft.world.item.component.ItemLore(this.beforeLores));
++            }
++            if (!this.afterLores.isEmpty()) {
++                this.componentKioCG(DataComponents.EXTENDED_AFTER_LORE, new net.minecraft.world.item.component.ItemLore(this.afterLores));
++            }
++            if (!this.customDataTag.isEmpty()) {
++                this.componentKioCG(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(this.customDataTag));
++            }
++            // KioCG end - customize default components
++
+             DataComponentMap dataComponentMap = this.components.set(DataComponents.ITEM_NAME, itemName).set(DataComponents.ITEM_MODEL, itemModel).build();
+             if (dataComponentMap.has(DataComponents.DAMAGE) && dataComponentMap.getOrDefault(DataComponents.MAX_STACK_SIZE, 1) > 1) {
+                 throw new IllegalStateException("Item cannot have both durability and be stackable");
 @@ -548,6 +_,12 @@
                  return dataComponentMap;
              }
          }
 +
 +        // KioCG start - customize default components
-+        net.minecraft.core.component.DataComponentPatch buildComponentsPatchKioCG() {
++        net.minecraft.core.component.DataComponentPatch afterBuildComponentsPatchKioCG() {
 +            return this.componentsPatchKioCG.build();
 +        }
 +        // KioCG end - customize default components

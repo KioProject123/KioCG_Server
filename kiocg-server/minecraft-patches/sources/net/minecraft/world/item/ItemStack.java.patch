@@ -9,6 +9,25 @@
                      DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
                  )
                  .apply(instance, ItemStack::new)
+@@ -192,6 +_,18 @@
+                 } else {
+                     Holder<Item> holder = Item.STREAM_CODEC.decode(buffer);
+                     DataComponentPatch dataComponentPatch = codec.decode(buffer);
++                    // KioCG start - customize default components: 修复创造模式物品
++                    @Nullable Optional<? extends CustomData> optional = dataComponentPatch.get(DataComponents.CUSTOM_DATA);
++                    if (optional != null && optional.isPresent()) {
++                        Optional<DataComponentPatch> originalComponents = optional.flatMap(customData -> {
++                            RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
++                            return customData.getUnsafe().read("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps);
++                        });
++                        if (originalComponents.isPresent()) {
++                            dataComponentPatch = originalComponents.get();
++                        }
++                    }
++                    // KioCG end - customize default components: 修复创造模式物品
+                     return new ItemStack(holder, varInt, dataComponentPatch);
+                 }
+             }
 @@ -207,7 +_,7 @@
                      boolean prev = net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.get();
                      try (final io.papermc.paper.util.SafeAutoClosable ignored = io.papermc.paper.util.sanitizer.ItemObfuscationSession.withContext(c -> c.itemStack(value))) { // pass the itemstack as context to the obfuscation session
@@ -18,7 +37,7 @@
                      } finally {
                          net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(prev);
                      }
-@@ -254,6 +_,18 @@
+@@ -254,6 +_,55 @@
          return !this.isEmpty() ? this.components.asPatch() : DataComponentPatch.EMPTY;
      }
  
@@ -26,17 +45,69 @@
 +    public DataComponentPatch getRemoteComponentsPatch() {
 +        if (!this.isEmpty()) {
 +            DataComponentPatch.Builder builder = DataComponentPatch.builder();
-+            builder.copy(this.getItem().componentsPatchKioCG());
-+            builder.copy(this.components.asPatch());
++            builder.copy(this.getItem().componentsPatchRemote());
++
++            boolean changed = false;
++            DataComponentPatch patch = this.components.asPatch();
++            for (java.util.Map.Entry<DataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
++                if (!DataComponents.UNABLE_SEND_TO_CLIENT.contains(entry.getKey())) {
++                    entry.getValue().ifPresentOrElse(value -> builder.set((DataComponentType) entry.getKey(), value), () -> builder.remove(entry.getKey()));
++                } else {
++                    changed = true;
++                }
++            }
++
++            if (saveAdditional(builder) || changed) {
++                CustomData customData = this.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
++                customData = customData.update(tag -> {
++                    RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
++                    tag.store("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps, patch);
++                });
++                builder.set(DataComponents.CUSTOM_DATA, customData);
++            }
++
 +            return builder.build();
 +        }
 +        return DataComponentPatch.EMPTY;
++    }
++
++    private boolean saveAdditional(DataComponentPatch.Builder builder) {
++        boolean changed = false;
++
++        net.minecraft.world.item.component.ItemLore extendedBeforeLore = this.getOrDefault(DataComponents.EXTENDED_BEFORE_LORE, net.minecraft.world.item.component.ItemLore.EMPTY);
++        net.minecraft.world.item.component.ItemLore extendedAfterLore = this.getOrDefault(DataComponents.EXTENDED_AFTER_LORE, net.minecraft.world.item.component.ItemLore.EMPTY);
++        if (!extendedBeforeLore.lines().isEmpty() || !extendedAfterLore.lines().isEmpty()) {
++            net.minecraft.world.item.component.ItemLore lore = this.getOrDefault(DataComponents.LORE, net.minecraft.world.item.component.ItemLore.EMPTY);
++            List<Component> lores = new java.util.ArrayList<>();
++            lores.addAll(extendedBeforeLore.lines());
++            lores.addAll(lore.lines());
++            lores.addAll(extendedAfterLore.lines());
++            builder.set(DataComponents.LORE, new net.minecraft.world.item.component.ItemLore(lores));
++            changed = true;
++        }
++
++        return changed;
 +    }
 +    // KioCG end - customize default components
 +
      public DataComponentMap immutableComponents() {
          return !this.isEmpty() ? this.components.toImmutableMap() : DataComponentMap.EMPTY;
      }
+@@ -893,7 +_,13 @@
+     }
+ 
+     public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
+-        return stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || Objects.equals(stack.components, other.components));
++        // KioCG start - customize default components
++        CustomData prevStackableData = stack.get(DataComponents.STACKABLE_CUSTOM_DATA);
++        stack.set(DataComponents.STACKABLE_CUSTOM_DATA, other.get(DataComponents.STACKABLE_CUSTOM_DATA));
++        boolean sameItemSameComponents = stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || Objects.equals(stack.components, other.components));
++        stack.set(DataComponents.STACKABLE_CUSTOM_DATA, prevStackableData);
++        return sameItemSameComponents;
++        // KioCG end - customize default components
+     }
+ 
+     public static MapCodec<ItemStack> lenientOptionalFieldOf(String fieldName) {
 @@ -1277,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
      }
