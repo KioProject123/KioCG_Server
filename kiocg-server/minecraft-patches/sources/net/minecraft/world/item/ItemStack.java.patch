@@ -9,6 +9,34 @@
                      DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
                  )
                  .apply(instance, ItemStack::new)
+@@ -207,7 +_,7 @@
+                     boolean prev = net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.get();
+                     try (final io.papermc.paper.util.SafeAutoClosable ignored = io.papermc.paper.util.sanitizer.ItemObfuscationSession.withContext(c -> c.itemStack(value))) { // pass the itemstack as context to the obfuscation session
+                         net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(true);
+-                    codec.encode(buffer, value.components.asPatch());
++                    codec.encode(buffer, value.getRemoteComponentsPatch()); // KioCG - customize default components
+                     } finally {
+                         net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(prev);
+                     }
+@@ -254,6 +_,18 @@
+         return !this.isEmpty() ? this.components.asPatch() : DataComponentPatch.EMPTY;
+     }
+ 
++    // KioCG start - customize default components
++    public DataComponentPatch getRemoteComponentsPatch() {
++        if (!this.isEmpty()) {
++            DataComponentPatch.Builder builder = DataComponentPatch.builder();
++            builder.copy(this.getItem().componentsPatchKioCG());
++            builder.copy(this.components.asPatch());
++            return builder.build();
++        }
++        return DataComponentPatch.EMPTY;
++    }
++    // KioCG end - customize default components
++
+     public DataComponentMap immutableComponents() {
+         return !this.isEmpty() ? this.components.toImmutableMap() : DataComponentMap.EMPTY;
+     }
 @@ -1277,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
      }
