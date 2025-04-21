@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/item/EnderEyeItem.java
++++ b/net/minecraft/world/item/EnderEyeItem.java
+@@ -53,8 +_,11 @@
+             context.getItemInHand().shrink(1);
+             level.levelEvent(1503, clickedPos, 0);
+             BlockPattern.BlockPatternMatch blockPatternMatch = EndPortalFrameBlock.getOrCreatePortalShape().find(level, clickedPos);
+-            if (blockPatternMatch != null) {
+-                BlockPos blockPos = blockPatternMatch.getFrontTopLeft().offset(-3, 0, -3);
++            // KioCG start - fix end portal
++            if (blockPatternMatch != null && blockPatternMatch.getForwards().getStepY() != 0) {
++                BlockPos center = blockPatternMatch.getBlock(2, 2, 0).getPos();
++                BlockPos blockPos = center.offset(-1, 0, -1);
++            // KioCG end - fix end portal
+ 
+                 for (int i = 0; i < 3; i++) {
+                     for (int i1 = 0; i1 < 3; i1++) {
