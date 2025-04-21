@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/food/FoodProperties.java
++++ b/net/minecraft/world/food/FoodProperties.java
+@@ -52,6 +_,10 @@
+         private int nutrition;
+         private float saturationModifier;
+         private boolean canAlwaysEat;
++        // KioCG start - more food
++        private int moisture;
++        private int freshness;
++        // KioCG end - more food
+ 
+         public FoodProperties.Builder nutrition(int nutrition) {
+             this.nutrition = nutrition;
+@@ -68,9 +_,23 @@
+             return this;
+         }
+ 
+-        public FoodProperties build() {
++        // KioCG start - more food
++        public FoodProperties.Builder moisture(int moisture) {
++            this.moisture = moisture;
++            return this;
++        }
++
++        public FoodProperties.Builder freshness(int freshness) {
++            this.freshness = freshness;
++            return this;
++        }
++        // KioCG end - more food
++
++        public WrappedFoodProperties build() { // KioCG - more food
+             float f = FoodConstants.saturationByModifier(this.nutrition, this.saturationModifier);
+-            return new FoodProperties(this.nutrition, f, this.canAlwaysEat);
++            return new WrappedFoodProperties(new FoodProperties(this.nutrition, f, this.canAlwaysEat), this.moisture, this.freshness); // KioCG - more food
+         }
+     }
++
++    public record WrappedFoodProperties(FoodProperties foodProperties, int moisture, int freshness) {} // KioCG - more food
+ }
