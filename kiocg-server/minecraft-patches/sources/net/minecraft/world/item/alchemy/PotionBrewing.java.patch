@@ -97,7 +97,7 @@
 +                    for (PotionBrewing.Mix<Potion> mixx : this.baseMixes) {
 +                        if (mixx.ingredient.test(potion)) {
 +                            if (!net.minecraft.world.inventory.AbstractContainerMenu.allowModelItem(net.minecraft.world.inventory.MenuType.BREWING_STAND, potionItem)) return potionItem; // KioCG - vanilla recipe excludes model items
-+                            return setCustomEffects(PotionContents.createItemStack(potionItem.getItem(), mixx.to), potionItem.get(DataComponents.POTION_CONTENTS).getAllEffects());
++                            return setCustomEffects(PotionContents.createItemStack(potionItem.getItem(), mixx.to), com.google.common.collect.Iterables.transform(potionItem.get(DataComponents.POTION_CONTENTS).getAllEffects(), net.minecraft.world.effect.MobEffectInstance::new));
 +                        }
 +                    }
 +                }

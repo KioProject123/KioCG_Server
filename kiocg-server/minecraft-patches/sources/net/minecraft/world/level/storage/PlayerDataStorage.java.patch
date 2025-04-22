@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/storage/PlayerDataStorage.java
++++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
+@@ -33,6 +_,7 @@
+     public void save(Player player) {
+         if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
+         try {
++            player.getEnderChestInventory().getItems().forEach(item -> item.tickFood(player.level().getGameTime())); // KioCG - food freshness
+             CompoundTag compoundTag = player.saveWithoutId(new CompoundTag());
+             Path path = this.playerDir.toPath();
+             Path path1 = Files.createTempFile(path, player.getStringUUID() + "-", ".dat");
+@@ -100,6 +_,11 @@
+             }
+ 
+             player.load(tag); // From below
++            // KioCG start - food freshness
++            java.util.function.Consumer<net.minecraft.world.item.ItemStack> tickFood = item -> item.tickFood(player.level().getGameTime(), false);
++            player.getInventory().getNonEquipmentItems().forEach(tickFood);
++            player.getEnderChestInventory().getItems().forEach(tickFood);
++            // KioCG end - food freshness
+             return tag;
+         });
+     }

@@ -76,13 +76,14 @@
          return !explosion.shouldAffectBlocklikeEntities() || super.ignoreExplosion(explosion);
      }
  
-@@ -485,7 +_,17 @@
+@@ -485,7 +_,18 @@
              }
              // CraftBukkit end
              // Paper end - PlayerAttemptPickupItemEvent
 -            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID())) && entity.getInventory().add(item)) {
 +            // KioCG start - allow overstacked items: fix pickup animation
 +            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID()))) {
++                item.tickFood(this.level().getGameTime()); // KioCG - food freshness
 +                if (!entity.getInventory().add(item) && flyAtPlayer) {
 +                    org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.position(), this.level().getWorld(), this.getYRot(), this.getXRot());
 +                    org.bukkit.entity.Item fakeItem = this.level().getWorld().createEntity(location, org.bukkit.entity.Item.class);

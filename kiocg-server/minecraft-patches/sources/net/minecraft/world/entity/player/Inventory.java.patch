@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/player/Inventory.java
++++ b/net/minecraft/world/entity/player/Inventory.java
+@@ -325,11 +_,12 @@
+         }
+     }
+ 
+-    public void tick() {
++    public void tick(boolean tickFood) { // KioCG - food freshness
+         for (int i = 0; i < this.items.size(); i++) {
+             ItemStack item = this.getItem(i);
+             if (!item.isEmpty()) {
+                 item.inventoryTick(this.player.level(), this.player, i == this.selected ? EquipmentSlot.MAINHAND : null);
++                if (tickFood) item.tickFood(this.player.level().getGameTime()); // KioCG - food freshness
+             }
+         }
+     }

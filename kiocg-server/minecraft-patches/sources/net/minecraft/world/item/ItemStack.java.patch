@@ -93,21 +93,189 @@
      public DataComponentMap immutableComponents() {
          return !this.isEmpty() ? this.components.toImmutableMap() : DataComponentMap.EMPTY;
      }
-@@ -893,7 +_,13 @@
+@@ -295,7 +_,7 @@
+     }
+ 
+     public static DataResult<Unit> validateComponents(DataComponentMap components) {
+-        if (components.has(DataComponents.MAX_DAMAGE) && components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1) > 1) {
++        if (false && components.has(DataComponents.MAX_DAMAGE) && components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1) > 1) { // KioCG - food freshness
+             return DataResult.error(() -> "Item cannot be both damageable and stackable");
+         } else {
+             ItemContainerContents itemContainerContents = components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+@@ -607,7 +_,7 @@
+     }
+ 
+     public boolean isStackable() {
+-        return this.getMaxStackSize() > 1 && (!this.isDamageableItem() || !this.isDamaged());
++        return this.getMaxStackSize() > 1 && (true || (!this.isDamageableItem() || !this.isDamaged())); // KioCG - food freshness
+     }
+ 
+     public boolean isDamageableItem() {
+@@ -893,8 +_,162 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
 -        return stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || Objects.equals(stack.components, other.components));
-+        // KioCG start - customize default components
+-    }
++        return stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || isSameComponents(stack.components, other.components)); // KioCG - customize default components
++    }
++
++    // KioCG start - customize default components
++    private static boolean isSameComponents(PatchedDataComponentMap stack, PatchedDataComponentMap other) {
++        if (stack == other) return true;
++
 +        CustomData prevStackableData = stack.get(DataComponents.STACKABLE_CUSTOM_DATA);
 +        stack.set(DataComponents.STACKABLE_CUSTOM_DATA, other.get(DataComponents.STACKABLE_CUSTOM_DATA));
-+        boolean sameItemSameComponents = stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || Objects.equals(stack.components, other.components));
++        boolean sameComponents = stack.equals(other);
 +        stack.set(DataComponents.STACKABLE_CUSTOM_DATA, prevStackableData);
-+        return sameItemSameComponents;
-+        // KioCG end - customize default components
-     }
++        return sameComponents;
++    }
++    // KioCG end - customize default components
++
++    // KioCG start - food freshness
++    public static boolean isSameItemSameComponentsForFoodFreshness(ItemStack stack, ItemStack other) {
++        if (!isSameItem(stack, other)) return false;
++        if (stack.isEmpty() && other.isEmpty()) return true;
++
++        if (stack.hasFreshness()) {
++            Integer prevDamage = stack.get(DataComponents.DAMAGE);
++            stack.set(DataComponents.DAMAGE, other.get(DataComponents.DAMAGE));
++            boolean sameComponents = isSameComponents(stack.components, other.components);
++            stack.set(DataComponents.DAMAGE, prevDamage);
++            return sameComponents;
++        } else {
++            return isSameComponents(stack.components, other.components);
++        }
++    }
++
++    private boolean hasFreshness() {
++        return this.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe()
++                   .getCompound("KioCG.FoodExtended")
++                   .map(tag -> tag.getBooleanOr("freshness", false))
++                   .orElse(false);
++    }
++
++    public boolean deepTick(java.util.function.Supplier<Boolean> supplier) {
++        return deepTick(supplier, 0);
++    }
++
++    private boolean deepTick(java.util.function.Supplier<Boolean> supplier, int deep) {
++        if (!this.isEmpty() && deep <= 1) {
++            boolean changed = false;
++
++            net.minecraft.world.item.component.BundleContents bundleContents = this.get(DataComponents.BUNDLE_CONTENTS);
++            if (bundleContents != null) {
++                boolean changed1 = false;
++                for (ItemStack itemStack : bundleContents.items()) {
++                    if (itemStack.deepTick(supplier, deep + 1)) {
++                        changed1 = true;
++                    }
++                }
++                // 创建一个新的对象, 避免编码缓存导致的问题
++                if (changed1) {
++                    this.set(DataComponents.BUNDLE_CONTENTS, new net.minecraft.world.item.component.BundleContents((List<ItemStack>) bundleContents.items()));
++                    changed = true;
++                }
++            }
++
++            ItemContainerContents container = this.get(DataComponents.CONTAINER);
++            if (container != null) {
++                boolean changed1 = false;
++                for (ItemStack itemStack : container.nonEmptyItems()) {
++                    if (itemStack.deepTick(supplier, deep + 1)) {
++                        changed1 = true;
++                    }
++                }
++                // 创建一个新的对象, 避免编码缓存导致的问题
++                if (changed1) {
++                    this.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(container.items));
++                    changed = true;
++                }
++            }
++
++            return supplier.get() || changed;
++        }
++        return false;
++    }
++
++    public boolean tickFood(long tickTime) {
++        return this.tickFood(tickTime, true);
++    }
++
++    public boolean tickFood(long tickTime, boolean applyDamage) {
++        return deepTick(() -> enableFreshness(tickTime, applyDamage));
++    }
++
++    public boolean tickFoodFreeze(long tickTime) {
++        return this.tickFoodFreeze(tickTime, true);
++    }
++
++    public boolean tickFoodFreeze(long tickTime, boolean applyDamage) {
++        return deepTick(() -> disableFreshness(tickTime, applyDamage));
++    }
++
++    private boolean enableFreshness(long tickTime, boolean applyDamage) {
++        if (hasFreshness() && !this.isBroken()) {
++            CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
++            Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
++            if (foodTickTime.isEmpty() || foodTickTime.get() != tickTime) {
++                if (applyDamage) {
++                    tickFreshness(tickTime, foodTickTime.orElse(tickTime - 1));
++                }
++
++                stackableCustomData = stackableCustomData.update(tag -> tag.putLong("FoodTickTime", tickTime));
++                this.set(DataComponents.STACKABLE_CUSTOM_DATA, stackableCustomData);
++                return true;
++            }
++        }
++        return false;
++    }
++
++    public boolean hopperEnableFreshness(long tickTime) {
++        if (hasFreshness() && !this.isBroken()) {
++            CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
++            if (!stackableCustomData.getUnsafe().contains("FoodTickTime")) {
++                stackableCustomData = stackableCustomData.update(tag -> tag.putLong("FoodTickTime", tickTime));
++                this.set(DataComponents.STACKABLE_CUSTOM_DATA, stackableCustomData);
++                return true;
++            }
++        }
++        return false;
++    }
++
++    private boolean disableFreshness(long tickTime, boolean applyDamage) {
++        CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
++        Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
++        if (foodTickTime.isPresent()) {
++            if (applyDamage && hasFreshness() && !this.isBroken()) {
++                tickFreshness(tickTime, foodTickTime.orElse(tickTime - 1));
++            }
++
++            stackableCustomData = stackableCustomData.update(tag -> tag.remove("FoodTickTime"));
++            this.set(DataComponents.STACKABLE_CUSTOM_DATA, stackableCustomData);
++            return true;
++        }
++        return false;
++    }
++
++    private void tickFreshness(long tickTime, long prevTickTime) {
++        if (prevTickTime < tickTime) {
++            int spend = spendFreshness(prevTickTime + 1, tickTime, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshness.timeInterval);
++            if (spend != 0) {
++                this.setDamageValue(this.getDamageValue() + spend);
++            }
++        }
++    }
++
++    private static int spendFreshness(long start, long end, int interval) {
++        int startPoint = (int) Math.ceilDiv(start, interval);
++        int endPoint = (int) Math.floorDiv(end, interval);
++        return endPoint - startPoint + 1;
++    }
++    // KioCG end - food freshness
  
      public static MapCodec<ItemStack> lenientOptionalFieldOf(String fieldName) {
+         return CODEC.lenientOptionalFieldOf(fieldName)
 @@ -1277,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
      }

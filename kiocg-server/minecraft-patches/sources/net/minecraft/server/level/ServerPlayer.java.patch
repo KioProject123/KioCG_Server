@@ -9,6 +9,14 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+@@ -712,6 +_,7 @@
+     }
+ 
+     public void initMenu(AbstractContainerMenu menu) {
++        this.tickMenuFoodFreshness(menu); // KioCG - food freshness
+         menu.addSlotListener(this.containerListener);
+         menu.setSynchronizer(this.containerSynchronizer);
+     }
 @@ -734,6 +_,7 @@
  
      @Override

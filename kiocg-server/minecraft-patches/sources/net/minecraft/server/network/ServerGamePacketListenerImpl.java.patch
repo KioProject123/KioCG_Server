@@ -60,3 +60,21 @@
                      && success.swingSource() == InteractionResult.SwingSource.SERVER) {
                      this.player.swing(hand, true);
                  }
+@@ -2977,7 +_,7 @@
+                                                     action = packet.buttonNum() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
+                                                 }
+                                             } else if (slot.mayPlace(cursor)) {
+-                                                if (ItemStack.isSameItemSameComponents(clickedItem, cursor)) {
++                                                if (ItemStack.isSameItemSameComponentsForFoodFreshness(clickedItem, cursor)) { // KioCG - food freshness
+                                                     int toPlace = packet.buttonNum() == 0 ? cursor.getCount() : 1;
+                                                     toPlace = Math.min(toPlace, clickedItem.getMaxStackSize() - clickedItem.getCount());
+                                                     toPlace = Math.min(toPlace, slot.container.getMaxStackSize() - clickedItem.getCount());
+@@ -3013,7 +_,7 @@
+                                                         action = InventoryAction.SWAP_WITH_CURSOR;
+                                                     }
+                                                 }
+-                                            } else if (ItemStack.isSameItemSameComponents(cursor, clickedItem)) {
++                                            } else if (ItemStack.isSameItemSameComponentsForFoodFreshness(cursor, clickedItem)) { // KioCG - food freshness
+                                                 if (clickedItem.getCount() >= 0) {
+                                                     if (clickedItem.getCount() + cursor.getCount() <= cursor.getMaxStackSize()) {
+                                                         // As of 1.5, this is result slots only

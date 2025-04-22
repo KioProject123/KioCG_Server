@@ -79,6 +79,46 @@
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
+@@ -590,7 +_,13 @@
+         }
+ 
+         this.tickRegeneration();
+-        this.inventory.tick();
++        // KioCG start - food freshness
++        boolean tickFood = this.level().getGameTime() % io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshness.timeInterval == 0;
++        if (tickFood) {
++            this.tickMenuFoodFreshness(this.containerMenu);
++        }
++        this.inventory.tick(tickFood);
++        // KioCG end - food freshness
+         this.oBob = this.bob;
+         if (this.abilities.flying && !this.isPassenger()) {
+             this.resetFallDistance();
+@@ -640,6 +_,24 @@
+         }
+     }
+ 
++    // KioCG start - food freshness
++    protected void tickMenuFoodFreshness(AbstractContainerMenu menu) {
++        if (menu != this.inventoryMenu) {
++            org.bukkit.inventory.Inventory topInventory = menu.getBukkitView().getTopInventory();
++            if (!(((org.bukkit.craftbukkit.inventory.CraftInventory) topInventory).getInventory() instanceof net.minecraft.world.entity.player.Inventory) && topInventory.getLocation() != null) {
++                long gameTime = this.level().getGameTime();
++                menu.getCarried().tickFood(gameTime);
++                menu.slots.forEach(slot -> {
++                    ItemStack item = slot.getItem();
++                    if (slot.mayPlace(item)) {
++                        item.tickFood(gameTime);
++                    }
++                });
++            }
++        }
++    }
++    // KioCG end - food freshness
++
+     protected void tickRegeneration() {
+     }
+ 
 @@ -813,6 +_,10 @@
  
          this.setScore(compound.getIntOr("Score", 0));

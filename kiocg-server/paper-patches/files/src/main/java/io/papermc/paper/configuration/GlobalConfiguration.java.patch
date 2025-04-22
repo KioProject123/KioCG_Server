@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -403,4 +_,118 @@
+@@ -403,4 +_,123 @@
              }
          }
      }
@@ -116,6 +116,11 @@
 +        public int commandTpsBarTickInterval = 20;
 +
 +        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap", "challenges");
++
++        public FoodFreshness foodFreshness;
++        public class FoodFreshness extends ConfigurationPart {
++            public int timeInterval = 1800;
++        }
 +    }
 +    // KioCG end
  }
