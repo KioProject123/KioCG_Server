@@ -21,10 +21,10 @@ index 2338e7c115037430cefae26a571ded71f77983c4..1bad4bf8622674f355619cb854a4f50d
      private static void register(Material blockType, BlockStateFactory<?> factory) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java b/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..cf7e0de37b3cd24f0fe42c1fea7250dad29630a9
+index 0000000000000000000000000000000000000000..e5f7eaefb7f9de34d0b72699ea822111cf7829e7
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,39 @@
 +package org.bukkit.craftbukkit.block;
 +
 +import net.minecraft.world.level.block.entity.CauldronBlockEntity;
@@ -46,6 +46,11 @@ index 0000000000000000000000000000000000000000..cf7e0de37b3cd24f0fe42c1fea7250da
 +    @Override
 +    public boolean isBoiling() {
 +        return getSnapshot().isBoiling();
++    }
++
++    @Override
++    public boolean isCleanWater() {
++        return getSnapshot().cleanWater;
 +    }
 +
 +    @Override
