@@ -2,6 +2,7 @@ package com.kiocg.entity.player;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -25,6 +26,10 @@ public class ThirstData {
 
     public int getThirstValue() {
         return thirstValue;
+    }
+
+    public boolean needsWater() {
+        return this.thirstValue < MAX_VALUE;
     }
 
     public void setThirstValue(int value) {
@@ -76,7 +81,9 @@ public class ThirstData {
         if (!player.getAbilities().invulnerable) {
             if (thirstRegain > 20.0F) {
                 thirstRegain -= 20.0F;
-                addThirstValue(-1);
+                if (player.level().getDifficulty() != Difficulty.PEACEFUL) {
+                    addThirstValue(-1);
+                }
             }
 
             if (thirstValue <= 6 && player.tickCount % 20 == 0) {

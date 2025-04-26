@@ -108,6 +108,19 @@
              }
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
+@@ -928,6 +_,12 @@
+             if (this.tickCount % 10 == 0 && this.foodData.needsFood()) {
+                 this.foodData.setFoodLevel(this.foodData.getFoodLevel() + 1);
+             }
++
++            // kioCG start - the long dark
++            if (this.tickCount % 10 == 0 && this.thirstData.needsWater()) {
++                this.thirstData.setThirstValue(this.thirstData.getThirstValue() + 1);
++            }
++            // kioCG end - the long dark
+         }
+     }
+ 
 @@ -1001,11 +_,31 @@
              return;
          }
