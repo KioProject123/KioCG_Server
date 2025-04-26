@@ -769,10 +769,10 @@ index 0000000000000000000000000000000000000000..506c78fd41dffa5ef944be556173600b
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7395fbd755802112cdfd608d009333ad8a870b10
+index 0000000000000000000000000000000000000000..2a12c1717bb4f91a81083a12b302d4cbaec4297e
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
-@@ -0,0 +1,209 @@
+@@ -0,0 +1,208 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
@@ -786,7 +786,6 @@ index 0000000000000000000000000000000000000000..7395fbd755802112cdfd608d009333ad
 +import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.tags.BlockTags;
-+import net.minecraft.world.Containers;
 +import net.minecraft.world.entity.Display;
 +import net.minecraft.world.entity.EntityType;
 +import net.minecraft.world.level.block.AbstractCandleBlock;
@@ -881,7 +880,7 @@ index 0000000000000000000000000000000000000000..7395fbd755802112cdfd608d009333ad
 +    @Override
 +    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
 +        if (this.level != null && !this.isEmpty()) {
-+            Containers.dropItemStack(this.level, pos.getX(), pos.getY(), pos.getZ(), new net.minecraft.world.item.ItemStack(this.getPottedAndRemove()));
++            Block.popResource(this.level, pos, new net.minecraft.world.item.ItemStack(this.getPottedAndRemove()));
 +        }
 +    }
 +

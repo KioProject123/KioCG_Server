@@ -96,7 +96,7 @@
                      items.set(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(brewResults.get(i)));
 +                    // KioCG start - change container behavior
 +                    if (!autoBrewing) {
-+                        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), items.set(i, ItemStack.EMPTY));
++                        net.minecraft.world.level.block.Block.popResource(level, pos, items.set(i, ItemStack.EMPTY));
 +                    }
 +                    // KioCG end - change container behavior
                  } else {

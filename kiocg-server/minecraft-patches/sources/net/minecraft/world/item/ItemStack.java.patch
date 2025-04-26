@@ -155,11 +155,11 @@
 +                   .orElse(false);
 +    }
 +
-+    public boolean deepTick(java.util.function.Supplier<Boolean> supplier) {
++    public boolean deepTick(java.util.function.BooleanSupplier supplier) {
 +        return deepTick(supplier, 0);
 +    }
 +
-+    private boolean deepTick(java.util.function.Supplier<Boolean> supplier, int deep) {
++    private boolean deepTick(java.util.function.BooleanSupplier supplier, int deep) {
 +        if (!this.isEmpty() && deep <= 1) {
 +            boolean changed = false;
 +
@@ -193,7 +193,7 @@
 +                }
 +            }
 +
-+            return supplier.get() || changed;
++            return supplier.getAsBoolean() || changed;
 +        }
 +        return false;
 +    }

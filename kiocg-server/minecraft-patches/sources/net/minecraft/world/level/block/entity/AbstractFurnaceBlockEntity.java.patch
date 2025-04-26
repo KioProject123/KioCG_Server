@@ -63,7 +63,7 @@
 +
 +                            ItemStack craftingRemainder = item.getCraftingRemainder();
 +                            if (!craftingRemainder.isEmpty()) {
-+                                net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
++                                net.minecraft.world.level.block.Block.popResource(level, pos, craftingRemainder);
 +                            }
 +                        }
 +                    }
@@ -99,7 +99,7 @@
  
              if (!result.isEmpty()) {
 +                // KioCG start - change container behavior
-+                net.minecraft.world.Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), result.copy());
++                net.minecraft.world.level.block.Block.popResource(level, blockPos, result.copy());
 +            } else if (false) {
 +                // KioCG end - change container behavior
                  if (existingResults.isEmpty()) {
@@ -112,7 +112,7 @@
 -                items.set(1, new ItemStack(Items.WATER_BUCKET));
 +                // KioCG start - change container behavior
 +                items.set(1, ItemStack.EMPTY);
-+                net.minecraft.world.Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), new ItemStack(Items.WATER_BUCKET));
++                net.minecraft.world.level.block.Block.popResource(level, blockPos, new ItemStack(Items.WATER_BUCKET));
 +                // KioCG end - change container behavior
              }
  
