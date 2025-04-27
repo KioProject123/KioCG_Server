@@ -10,7 +10,7 @@
 +            .build();
 +    public static final Consumable SLIME_BALL = defaultFood()
 +            .consumeSeconds(3.2F)
-+            .sound(net.minecraft.core.Holder.direct(SoundEvents.HONEY_BLOCK_SLIDE))
++            .sound(net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.HONEY_BLOCK_SLIDE))
 +            .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 1)))
 +            .build();
 +    // KioCG end - more food
