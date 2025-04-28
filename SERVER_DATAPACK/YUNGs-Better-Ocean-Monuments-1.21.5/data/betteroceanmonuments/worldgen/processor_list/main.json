@@ -1,0 +1,34 @@
+{
+  "processors": [
+    {
+      "processor_type": "betteroceanmonuments:random_prismarine_slab_decoration_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:random_dark_prismarine_slab_decoration_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:sand_gravel_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:random_oxidization_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:structure_void_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:air_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:waterlog_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:seagrass_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:random_sponge_processor"
+    },
+    {
+      "processor_type": "betteroceanmonuments:leg_processor"
+    }
+  ]
+}

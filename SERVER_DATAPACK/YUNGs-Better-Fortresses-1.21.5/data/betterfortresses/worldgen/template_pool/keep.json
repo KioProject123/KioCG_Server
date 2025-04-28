@@ -1,0 +1,39 @@
+{
+  "name": "betterfortresses:keep",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/keep_well",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "ignore_bounds": true,
+        "enhanced_terrain_adaptation": {
+          "type": "yungsapi:none"
+        },
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/keep_left_side",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "ignore_bounds": false,
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/keep_right_side",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "ignore_bounds": false,
+        "element_type": "yungsapi:yung_single_element"
+      }
+    }
+  ]
+}

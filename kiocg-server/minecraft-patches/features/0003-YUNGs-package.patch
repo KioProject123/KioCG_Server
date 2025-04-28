@@ -124,40 +124,6 @@ index e2abd838252a50618789123477a96545454621b4..9501ab81873eb16e515d1bd098ecdf54
          Optional<Holder<JukeboxSong>> optional = JukeboxSong.fromStack(this.level.registryAccess(), this.item);
          this.notifyItemChangedInJukebox(flag);
          if (flag && optional.isPresent()) {
-diff --git a/net/minecraft/world/level/chunk/ChunkGenerator.java b/net/minecraft/world/level/chunk/ChunkGenerator.java
-index 857aa6e29b57a0a8eea4d7c14971b9dde59bb0d0..3cb6fcf1295b265aed0a9f7405417008b4c03a6c 100644
---- a/net/minecraft/world/level/chunk/ChunkGenerator.java
-+++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -609,6 +609,29 @@ public abstract class ChunkGenerator {
-         SectionPos sectionPos,
-         ResourceKey<Level> level
-     ) {
-+        // KioCG start
-+        if (com.yungnickyoung.minecraft.betterdeserttemples.BetterDesertTemplesCommon.CONFIG.general.disableVanillaPyramids && structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.DESERT_PYRAMID) {
-+            return true;
-+        }
-+        if (com.yungnickyoung.minecraft.betterfortresses.BetterFortressesCommon.CONFIG.general.disableVanillaFortresses && structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.FORTRESS) {
-+            return true;
-+        }
-+        if (com.yungnickyoung.minecraft.betterjungletemples.BetterJungleTemplesCommon.CONFIG.general.disableVanillaJungleTemples && structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.JUNGLE_TEMPLE) {
-+            return true;
-+        }
-+        if (com.yungnickyoung.minecraft.bettermineshafts.BetterMineshaftsCommon.CONFIG.disableVanillaMineshafts && structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.MINESHAFT) {
-+            return true;
-+        }
-+        if (com.yungnickyoung.minecraft.betteroceanmonuments.BetterOceanMonumentsCommon.CONFIG.general.disableVanillaMonuments && structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.OCEAN_MONUMENT) {
-+            return true;
-+        }
-+        if (structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.STRONGHOLD) {
-+            return true;
-+        }
-+        if (com.yungnickyoung.minecraft.betterwitchhuts.BetterWitchHutsCommon.CONFIG.general.disableVanillaWitchHuts && structureSelectionEntry.structure().value().type() == net.minecraft.world.level.levelgen.structure.StructureType.SWAMP_HUT) {
-+            return true;
-+        }
-+        // KioCG end
-         Structure structure = structureSelectionEntry.structure().value();
-         int i = fetchReferences(structureManager, chunk, sectionPos, structure);
-         HolderSet<Biome> holderSet = structure.biomes();
 diff --git a/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java b/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
 index 619b98e42e254c0c260c171a26a2472ddf59b885..c8dceaa0fd8e3e31d40d71268c745744db511d88 100644
 --- a/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java

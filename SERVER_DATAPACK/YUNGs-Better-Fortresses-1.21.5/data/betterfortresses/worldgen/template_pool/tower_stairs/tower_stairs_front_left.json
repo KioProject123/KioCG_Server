@@ -1,0 +1,83 @@
+{
+  "name": "betterfortresses:tower_stairs/tower_stairs_front_left",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/tower/keep_tower_front_left",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/tower/tower_stairs_top_front_left",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "name": "tower_stairs",
+        "is_priority": true,
+        "max_count": 1,
+        "enhanced_terrain_adaptation": {
+          "type": "yungsapi:none"
+        },
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/tower/tower_stairs_mid_front_left",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "enhanced_terrain_adaptation": {
+          "type": "yungsapi:none"
+        },
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/tower/tower_stairs_chainable_front_left",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "is_priority": true,
+        "condition": {
+          "type": "yungsapi:altitude",
+          "bottom_cutoff_y": 30
+        },
+        "enhanced_terrain_adaptation": {
+          "type": "yungsapi:none"
+        },
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/tower/tower_stairs_bottom_front_left",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "enhanced_terrain_adaptation": {
+          "type": "yungsapi:none"
+        },
+        "element_type": "yungsapi:yung_single_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "betterfortresses:keep/tower/tower_bottom_front_left",
+        "processors": "betterfortresses:main",
+        "projection": "rigid",
+        "enhanced_terrain_adaptation": {
+          "type": "yungsapi:none"
+        },
+        "element_type": "yungsapi:yung_single_element"
+      }
+    }
+  ]
+}
