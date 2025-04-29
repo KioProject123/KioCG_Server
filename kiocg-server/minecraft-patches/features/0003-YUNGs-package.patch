@@ -4,6 +4,19 @@ Date: Sun, 27 Apr 2025 19:44:51 +0800
 Subject: [PATCH] YUNGs package
 
 
+diff --git a/net/minecraft/server/Main.java b/net/minecraft/server/Main.java
+index 9c9b601a3f903bebb0dd1bda0e24745587229727..b0d70914386226c852c75a211fa6b5ae04944f7a 100644
+--- a/net/minecraft/server/Main.java
++++ b/net/minecraft/server/Main.java
+@@ -314,6 +314,8 @@ public class Main {
+                 return;
+             }
+ 
++            com.yungnickyoung.minecraft.yungsextras.module.BiomeModificationModuleFabric.init(worldStem.registries().compositeAccess()); // KioCG
++
+             /*
+             RegistryAccess.Frozen frozen = worldStem.registries().compositeAccess();
+             WorldData worldData = worldStem.worldData();
 diff --git a/net/minecraft/world/entity/monster/ElderGuardian.java b/net/minecraft/world/entity/monster/ElderGuardian.java
 index fd33a8b59f40299ab644a4c52921b66a9b6552ca..8ea80e1cbe252509815328d246f81134024bdc93 100644
 --- a/net/minecraft/world/entity/monster/ElderGuardian.java
@@ -111,6 +124,19 @@ index afa8ce32b3d950f30dd1f60933a7119645e70198..5721d7c8e827e2d32bbd1322622e38bd
      @Override
      protected float getWaterInertia() {
          return 0.99F;
+diff --git a/net/minecraft/world/level/biome/Biome.java b/net/minecraft/world/level/biome/Biome.java
+index bad1a03167f7586e5279592adcb43350c9b528cd..9759922b95d7885f65b1ec41a7c0617ac5632e84 100644
+--- a/net/minecraft/world/level/biome/Biome.java
++++ b/net/minecraft/world/level/biome/Biome.java
+@@ -65,7 +65,7 @@ public final class Biome {
+     public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
+     private static final int TEMPERATURE_CACHE_SIZE = 1024;
+     public final Biome.ClimateSettings climateSettings;
+-    private final BiomeGenerationSettings generationSettings;
++    public BiomeGenerationSettings generationSettings; // KioCG
+     private final MobSpawnSettings mobSettings;
+     private final BiomeSpecialEffects specialEffects;
+     private final ThreadLocal<Long2FloatLinkedOpenHashMap> temperatureCache = ThreadLocal.withInitial(() -> Util.make(() -> {
 diff --git a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 index e2abd838252a50618789123477a96545454621b4..9501ab81873eb16e515d1bd098ecdf54a3845bf0 100644
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
