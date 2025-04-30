@@ -1,0 +1,13 @@
+{
+    "name": "kattersstructures:trader_outposts/start",
+    "fallback": "minecraft:empty",
+    "elements": [{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:trader_outposts/villager_outpost_campsite",
+            "processors": "minecraft:empty",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    }]
+}

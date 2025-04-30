@@ -1,0 +1,40 @@
+{
+    "name": "kattersstructures:village_mesa/house_a",
+    "fallback": "minecraft:empty",
+    "elements": [
+    {
+        "weight": 3,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/house_1",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/house_2",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 3,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/house_3",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/house_4",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    }
+
+]
+}

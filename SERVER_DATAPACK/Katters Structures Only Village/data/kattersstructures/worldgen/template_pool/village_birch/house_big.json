@@ -1,0 +1,111 @@
+{
+    "name": "kattersstructures:village_birch/house_big",
+    "fallback": "minecraft:empty",
+    "elements": [
+    {
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_1"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_2"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_3"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_4"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_8"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_9"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_cartographer"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_fisherman"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_librarian"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_shepherd"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_leatherworker"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_smith"
+        }
+    },{
+        "weight": 2,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_beekeeper"
+        }
+    }
+]
+}

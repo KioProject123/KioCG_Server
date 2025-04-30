@@ -1,0 +1,10 @@
+{
+    "values": [
+        { "id": "minecraft:jungle","required": false},
+        { "id": "minecraft:sparse_jungle","required": false},
+        { "id": "minecraft:bamboo_jungle","required": false},
+        
+        { "id": "terralith:tropical_jungle","required": false}
+        
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "values": [
+        { "id": "minecraft:desert","required": false},
+        { "id": "minecraft:badlands","required": false},
+
+        { "id": "biomesoplenty:cherry_blossom_grove","required": false},
+        
+        { "id": "terralith:ancient_sands","required": false},
+        { "id": "terralith:lush_desert","required": false}
+    ]
+}

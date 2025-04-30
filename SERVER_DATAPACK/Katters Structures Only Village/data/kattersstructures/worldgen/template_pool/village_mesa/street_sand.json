@@ -1,0 +1,13 @@
+{
+    "name": "kattersstructures:village_mesa/street_sand",
+    "fallback": "minecraft:empty",
+    "elements": [{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/streets/street_under",
+            "processors": "kattersstructures:sand_mesa_2",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    }]
+}

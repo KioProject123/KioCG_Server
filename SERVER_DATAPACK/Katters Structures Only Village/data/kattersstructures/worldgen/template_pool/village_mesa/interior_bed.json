@@ -1,0 +1,40 @@
+{
+    "name": "kattersstructures:village_mesa/interior_bed",
+    "fallback": "minecraft:empty",
+    "elements": [
+    {
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/interior/house_interior_bed_01",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/interior/house_interior_bed_02",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/interior/house_interior_bed_03",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/interior/house_interior_bed_04",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    }
+
+]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "kattersstructures:village_mesa/smith",
+    "fallback": "minecraft:empty",
+    "elements": [{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/armorer",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/toolsmith",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/house/weaponsmith",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    }]
+}

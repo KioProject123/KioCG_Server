@@ -1,0 +1,17 @@
+{
+    "values": [
+        { "id": "minecraft:meadow","required": false},
+        { "id": "minecraft:plains","required": false},
+        { "id": "minecraft:sunflower_plains","required": false},
+        { "id": "minecraft:savanna","required": false}, 
+
+        { "id": "biomesoplenty:grassland","required": false},
+        { "id": "biomesoplenty:clover_patch","required": false},
+        { "id": "biomesoplenty:field","required": false},
+        { "id": "biomesoplenty:lush_savanna","required": false},
+        
+        { "id": "terralith:brushland","required": false},
+        { "id": "terralith:steppe","required": false}
+
+    ]
+}

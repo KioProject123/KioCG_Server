@@ -1,0 +1,131 @@
+{
+  "processors": [
+    {
+      "processor_type": "minecraft:rule",
+      "rules": [
+        {
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:water"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:jungle_planks"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:red_sand"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:red_sand"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:random_block_match",
+            "block": "minecraft:sand",
+            "probability": 0.3
+          },
+          "output_state": {
+            "Name": "minecraft:red_sand",
+            "Properties": {}
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:white_terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:white_terracotta"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:terracotta"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:yellow_terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:yellow_terracotta"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:brown_terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:brown_terracotta"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:orange_terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:orange_terracotta"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:light_gray_terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:light_gray_terracotta"
+          }
+        },{
+          "location_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:red_terracotta"
+          },
+          "input_predicate": {
+            "predicate_type": "minecraft:block_match",
+            "block": "minecraft:sand" 
+          },
+          "output_state": {
+            "Name": "minecraft:red_terracotta"
+          }
+        }
+      ]
+    }
+  ]
+}

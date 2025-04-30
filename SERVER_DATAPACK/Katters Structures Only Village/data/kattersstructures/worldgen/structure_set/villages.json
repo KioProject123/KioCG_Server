@@ -1,0 +1,31 @@
+{
+    "placement": {
+        "type": "minecraft:random_spread",
+        "spacing": 24,
+        "separation": 8,
+        "salt": 576783494,
+        "spread_type": "triangular",
+        "exclusion_zone": {
+            "other_set": "minecraft:pillager_outposts",
+            "chunk_count": 10
+        }
+    },
+    "structures": [
+    {
+        "structure": "kattersstructures:village_cherry",
+        "weight": 1
+    },{
+        "structure": "kattersstructures:village_jungle",
+        "weight": 1
+    },{
+        "structure": "kattersstructures:village_swamp",
+        "weight": 1
+    },{
+        "structure": "kattersstructures:village_mesa",
+        "weight": 1
+    },{
+        "structure": "kattersstructures:village_birch",
+        "weight": 1
+    }
+    ]
+}

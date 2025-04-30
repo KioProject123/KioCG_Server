@@ -1,0 +1,113 @@
+{
+    "type": "minecraft:chest",
+    "pools": [
+      {
+        "rolls": 1,
+        "entries": [
+          {
+            "type": "minecraft:item",
+            "name": "minecraft:potion",
+            "functions": [
+              {
+                "function": "minecraft:set_components",
+                "components": {
+                  "minecraft:item_name": {color:"gold",fallback:"啤酒",translate:"item.kattersstructures.beer"},
+                  "minecraft:potion_contents": {
+                    "potion": "minecraft:thick",
+                    "custom_color": 13218594,
+                    "custom_effects": [
+                      {
+                        "id": "minecraft:strength",
+                        "amplifier": 0,
+                        "duration": 2000,
+                        "ambient": true,
+                        "show_particles": false
+                      },
+                      {
+                        "id": "minecraft:speed",
+                        "amplifier": 0,
+                        "duration": 2000,
+                        "ambient": true,
+                        "show_particles": false
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "minecraft:item",
+            "name": "minecraft:potion",
+            "functions": [
+              {
+                "function": "minecraft:set_components",
+                "components": {
+                  "minecraft:item_name": {color:"dark_aqua",fallback:"杜松子酒",translate:"item.kattersstructures.gin"},
+                  "minecraft:potion_contents": {
+                    "potion": "minecraft:thick",
+                    "custom_color": 15921407,
+                    "custom_effects": [
+                      {
+                        "id": "minecraft:haste",
+                        "amplifier": 3,
+                        "duration": 6000,
+                        "ambient": true,
+                        "show_particles": false
+                      },
+                      {
+                        "id": "minecraft:health_boost",
+                        "amplifier": 2,
+                        "duration": 300,
+                        "ambient": true,
+                        "show_particles": false
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "minecraft:item",
+            "name": "minecraft:potion",
+            "functions": [
+              {
+                "function": "minecraft:set_components",
+                "components": {
+                  "minecraft:item_name": {color:"red",fallback:"葡萄酒",translate:"item.kattersstructures.wine"},
+                  "minecraft:potion_contents": {
+                    "potion": "minecraft:thick",
+                    "custom_color": 7866119,
+                    "custom_effects": [
+                      {
+                        "id": "minecraft:health_boost",
+                        "amplifier": 1,
+                        "duration": 6000,
+                        "ambient": true,
+                        "show_particles": false
+                      },
+                      {
+                        "id": "minecraft:resistance",
+                        "amplifier": 1,
+                        "duration": 6000,
+                        "ambient": true,
+                        "show_particles": false
+                      },
+                      {
+                        "id": "minecraft:regeneration",
+                        "amplifier": 0,
+                        "duration": 6000,
+                        "ambient": true,
+                        "show_particles": false
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,44 @@
+{
+    "name": "kattersstructures:village_birch/house_small",
+    "fallback": "minecraft:empty",
+    "elements": [
+    {
+            "weight": 1,
+            "element": {
+                "element_type": "minecraft:empty_pool_element"
+            }
+    },{
+        "weight": 4,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_5"
+        }
+    },{
+        "weight": 4,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_6"
+        }
+    },{
+        "weight": 3,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_7"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "rigid",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/house/house_special_farmer"
+        }
+    }
+]
+}

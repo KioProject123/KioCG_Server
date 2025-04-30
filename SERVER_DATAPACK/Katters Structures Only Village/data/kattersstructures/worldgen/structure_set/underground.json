@@ -1,0 +1,19 @@
+{
+    "placement": {
+        "type": "minecraft:random_spread",
+        "spacing": 34,
+        "separation": 8,
+        "salt": 1061854139,
+        "spread_type": "triangular",
+        "exclusion_zone": {
+            "other_set": "minecraft:strongholds",
+            "chunk_count": 5
+        }
+    },
+    "structures": [
+    {
+        "structure": "kattersstructures:village_underground",
+        "weight": 5
+    }
+    ]
+}

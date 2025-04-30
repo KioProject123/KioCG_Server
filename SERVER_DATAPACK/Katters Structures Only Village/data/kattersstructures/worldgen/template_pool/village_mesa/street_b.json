@@ -1,0 +1,29 @@
+{
+    "name": "kattersstructures:village_mesa/street_b",
+    "fallback": "minecraft:empty",
+    "elements": [{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/streets/street_normal",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/streets/street_special",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 5,
+        "element": {
+            "location": "kattersstructures:village_mesa/streets/end",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    }]
+}

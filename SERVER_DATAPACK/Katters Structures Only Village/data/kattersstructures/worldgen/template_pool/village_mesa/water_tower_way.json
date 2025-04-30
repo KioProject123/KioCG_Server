@@ -1,0 +1,18 @@
+{
+    "name": "kattersstructures:village_mesa/water_tower_way",
+    "fallback": "minecraft:empty",
+    "elements": [{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/decor/water_tower_way",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "terrain_matching",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 10,
+        "element": {
+            "element_type": "minecraft:empty_pool_element"
+        }
+    }]
+}

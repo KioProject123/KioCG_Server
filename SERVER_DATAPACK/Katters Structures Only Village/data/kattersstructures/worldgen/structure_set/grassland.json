@@ -1,0 +1,19 @@
+{
+    "placement": {
+        "type": "minecraft:random_spread",
+        "spacing": 40,
+        "separation": 16,
+        "salt": 107557358,
+        "spread_type": "triangular",
+        "exclusion_zone": {
+            "other_set": "minecraft:villages",
+            "chunk_count": 10
+        }
+    },
+    "structures": [
+    {
+        "structure": "kattersstructures:trader_outposts",
+        "weight": 10
+    }
+    ]
+}

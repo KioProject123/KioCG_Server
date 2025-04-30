@@ -1,0 +1,60 @@
+{
+    "name": "kattersstructures:village_birch/streets",
+    "fallback": "minecraft:empty",
+    "elements": [
+    {
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:empty_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "terrain_matching",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/street/street_cross"
+        }
+    },{
+        "weight": 2,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "terrain_matching",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/street/street_curve"
+        }
+    },{
+        "weight": 2,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "terrain_matching",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/street/street_t"
+        }
+    },{
+        "weight": 4,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "terrain_matching",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/street/street_straight"
+        }
+    },{
+        "weight": 4,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "terrain_matching",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/street/street_straight_2"
+        }
+    },{
+        "weight": 4,
+        "element": {
+            "element_type": "minecraft:single_pool_element",
+            "projection": "terrain_matching",
+            "processors": "kattersstructures:ground_birch",
+            "location": "kattersstructures:village_birch/street/street_straight_3"
+        }
+    }
+]
+}

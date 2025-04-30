@@ -1,0 +1,16 @@
+{
+    "values": [
+        { "id": "minecraft:meadow","required": false},
+
+        { "id": "biomesoplenty:highland","required": false},
+        { "id": "biomesoplenty:crag","required": false},
+        { "id": "biomesoplenty:highland_moor","required": false},
+        { "id": "biomesoplenty:highland","required": false},
+        
+        { "id": "terralith:alpine_highlands","required": false},
+        { "id": "terralith:arid_highlands","required": false},
+        { "id": "terralith:forested_highlands","required": false},
+        { "id": "terralith:highlands","required": false},
+        { "id": "terralith:temperate_highlands","required": false}
+    ]
+}

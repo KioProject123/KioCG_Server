@@ -1,0 +1,10 @@
+{
+    "values": [
+        { "id": "minecraft:birch_forest","required": false},
+        { "id": "minecraft:old_growth_birch_forest","required": false},
+
+        { "id": "biomesoplenty:aspen_glade","required": false},
+        
+        { "id": "terralith:birch_taiga","required": false}
+    ]
+}

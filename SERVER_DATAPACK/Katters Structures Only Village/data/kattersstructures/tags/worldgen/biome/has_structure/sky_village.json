@@ -1,0 +1,10 @@
+{
+    "values": [
+        { "id": "minecraft:stony_peaks","required": false},
+        { "id": "minecraft:frozen_peaks","required": false},
+        { "id": "minecraft:jagged_peaks","required": false},
+        
+        { "id": "terralith:emerald_peaks","required": false},
+        { "id": "terralith:volcanic_peaks","required": false}
+    ]
+}

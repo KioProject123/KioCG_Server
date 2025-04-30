@@ -1,0 +1,47 @@
+{
+    "name": "kattersstructures:village_mesa/decor",
+    "fallback": "minecraft:empty",
+    "elements": [
+        
+    {
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/decor/decor_fisherman",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/decor/wagon_cartographer",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/decor/wagon_farmer",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },{
+        "weight": 1,
+        "element": {
+            "location": "kattersstructures:village_mesa/decor/wagon_librarian",
+            "processors": "kattersstructures:sand_mesa",
+            "projection": "rigid",
+            "element_type": "minecraft:single_pool_element"
+        }
+    },
+    
+    {
+        "weight": 5,
+        "element": {
+            "element_type": "minecraft:empty_pool_element"
+        }
+    }
+]
+}
