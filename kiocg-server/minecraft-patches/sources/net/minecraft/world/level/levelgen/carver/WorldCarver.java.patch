@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/carver/WorldCarver.java
++++ b/net/minecraft/world/level/levelgen/carver/WorldCarver.java
+@@ -174,7 +_,7 @@
+             if (blockState == null) {
+                 return isDebugEnabled(config) ? config.debugSettings.getBarrierState() : null;
+             } else {
+-                return isDebugEnabled(config) ? getDebugState(config, blockState) : blockState;
++                return isDebugEnabled(config) ? getDebugState(config, blockState) : blockState.is(Blocks.AIR) ? CAVE_AIR : blockState; // KioCG - cave_air
+             }
+         }
+     }
