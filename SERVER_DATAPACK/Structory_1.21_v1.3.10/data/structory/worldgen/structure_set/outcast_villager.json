@@ -20,10 +20,10 @@
       "structure": "structory:ruin_grassy",
       "weight": 8
     },
-    {
-      "structure": "structory:firetower",
-      "weight": 4
-    },
+//    {
+//      "structure": "structory:firetower",
+//      "weight": 4
+//    },
     {
       "structure": "structory:outcast_villager_desert",
       "weight": 4
