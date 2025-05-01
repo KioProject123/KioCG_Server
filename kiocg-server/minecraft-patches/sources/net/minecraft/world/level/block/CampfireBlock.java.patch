@@ -21,8 +21,8 @@
          }
  
 +        // KioCG start - optimize block entity
-+        if (level.getBlockEntity(pos) instanceof CampfireBlockEntity campfireBlockEntity) {
-+            CampfireBlockEntity.cooldownTick((net.minecraft.world.level.Level) level, pos, state, campfireBlockEntity);
++        if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof CampfireBlockEntity campfireBlockEntity) {
++            CampfireBlockEntity.cooldownTick(serverLevel, pos, state, campfireBlockEntity);
 +        }
 +        // KioCG end - optimize block entity
          level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);

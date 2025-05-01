@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 
 public class ThirstData {
     public static final int MAX_VALUE = 20;
+    public static final float MAX_REGAIN = 20.0F;
     public static final int AIR_OFFSET_TICK = 5;
 
     private final Player player;
@@ -37,7 +38,12 @@ public class ThirstData {
     }
 
     public void addThirstValue(int add) {
-        thirstValue = Mth.clamp(thirstValue + add, 0, MAX_VALUE);
+        int value = thirstValue + add;
+        if (value > MAX_VALUE) {
+            value = MAX_VALUE;
+            thirstRegain = 0;
+        }
+        thirstValue = Math.max(value, 0);
     }
 
     public float getThirstRegain() {
@@ -79,8 +85,8 @@ public class ThirstData {
 
     public void tick() {
         if (!player.getAbilities().invulnerable) {
-            if (thirstRegain > 20.0F) {
-                thirstRegain -= 20.0F;
+            if (thirstRegain > MAX_REGAIN) {
+                thirstRegain -= MAX_REGAIN;
                 if (player.level().getDifficulty() != Difficulty.PEACEFUL) {
                     addThirstValue(-1);
                 }

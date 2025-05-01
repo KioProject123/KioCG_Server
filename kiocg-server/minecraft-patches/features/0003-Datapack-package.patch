@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: KioProject <1105919949@qq.com>
 Date: Sun, 27 Apr 2025 19:44:51 +0800
-Subject: [PATCH] YUNGs package
+Subject: [PATCH] Datapack package
 
 
 diff --git a/net/minecraft/server/Main.java b/net/minecraft/server/Main.java
@@ -315,7 +315,7 @@ index e5eb87a49042ac4ea960d86eea1b3f5a962dbc44..b8534f5d8fd5a45c628e13e206d98773
              return false;
          } else {
 diff --git a/net/minecraft/world/level/levelgen/feature/DeltaFeature.java b/net/minecraft/world/level/levelgen/feature/DeltaFeature.java
-index b57460d2eb3e8cb312d0c24a23bd5c2a6baf18f5..d9b94378f63398c5acaf588f44f2b1c84851a657 100644
+index b57460d2eb3e8cb312d0c24a23bd5c2a6baf18f5..0f785f4bfdc69ccfce77aada1ad66616c47a5346 100644
 --- a/net/minecraft/world/level/levelgen/feature/DeltaFeature.java
 +++ b/net/minecraft/world/level/levelgen/feature/DeltaFeature.java
 @@ -25,6 +25,14 @@ public class DeltaFeature extends Feature<DeltaFeatureConfiguration> {
@@ -333,6 +333,18 @@ index b57460d2eb3e8cb312d0c24a23bd5c2a6baf18f5..d9b94378f63398c5acaf588f44f2b1c8
          boolean flag = false;
          RandomSource randomSource = context.random();
          WorldGenLevel worldGenLevel = context.level();
+@@ -68,7 +76,10 @@ public class DeltaFeature extends Feature<DeltaFeatureConfiguration> {
+             return false;
+         } else {
+             for (Direction direction : DIRECTIONS) {
+-                boolean isAir = level.getBlockState(pos.relative(direction)).isAir();
++                // KioCG start - 落叶会导致流体错误生成
++                BlockState blockState1 = level.getBlockState(pos.relative(direction));
++                boolean isAir = !blockState1.getBlock().hasCollision && !blockState1.is(config.contents().getBlock());
++                // KioCG end - 落叶会导致流体错误生成
+                 if (isAir && direction != Direction.UP || !isAir && direction == Direction.UP) {
+                     return false;
+                 }
 diff --git a/net/minecraft/world/level/levelgen/feature/Feature.java b/net/minecraft/world/level/levelgen/feature/Feature.java
 index c5d3d476ef3704061681337475d6e000bb1ee66e..406a2312782dffa21095be0d02881cf6361842cb 100644
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
@@ -361,6 +373,29 @@ index c5d3d476ef3704061681337475d6e000bb1ee66e..406a2312782dffa21095be0d02881cf6
      private final MapCodec<ConfiguredFeature<FC, Feature<FC>>> configuredCodec;
  
      private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
+diff --git a/net/minecraft/world/level/levelgen/feature/TreeFeature.java b/net/minecraft/world/level/levelgen/feature/TreeFeature.java
+index ef444a4975cb7b24b6dc3b0e6b8d727265bf6011..b0d70cefd16c7a0f7576f73fb043819fc3093106 100644
+--- a/net/minecraft/world/level/levelgen/feature/TreeFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/TreeFeature.java
+@@ -40,6 +40,18 @@ public class TreeFeature extends Feature<TreeConfiguration> {
+         return level.isStateAtPosition(pos, state -> state.is(Blocks.VINE));
+     }
+ 
++    // KioCG start - 修复悬空的藤蔓
++    public static void tryCleanHangingVine(LevelSimulatedReader level, BlockPos pos) {
++        if (level instanceof LevelWriter && TreeFeature.isVine(level, pos)) {
++            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
++            mutablePos.set(pos);
++            while (TreeFeature.isVine(level, mutablePos.move(Direction.DOWN))) {
++                ((LevelWriter) level).setBlock(mutablePos, Blocks.AIR.defaultBlockState(), 2);
++            }
++        }
++    }
++    // KioCG end - 修复悬空的藤蔓
++
+     public static boolean isAirOrLeaves(LevelSimulatedReader level, BlockPos pos) {
+         return level.isStateAtPosition(pos, state -> state.isAir() || state.is(BlockTags.LEAVES));
+     }
 diff --git a/net/minecraft/world/level/levelgen/feature/UnderwaterMagmaFeature.java b/net/minecraft/world/level/levelgen/feature/UnderwaterMagmaFeature.java
 index 5934fb6a6d4ddb7d8bd5d697ce63d655bc07aed6..d65600f362b01c24749b53cc76f9b6e10ba9999d 100644
 --- a/net/minecraft/world/level/levelgen/feature/UnderwaterMagmaFeature.java
@@ -403,6 +438,30 @@ index 231f91a96cb2ab2e9d246bb57704d6364979e2aa..237d5300c6340eb23df7fc491a22be55
          WorldGenLevel worldGenLevel = context.level();
          BlockPos blockPos = context.origin();
          context.config();
+diff --git a/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java b/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java
+index 8c6791796c18bc5906c6d72a07c13d2326476c74..4acbb6222c411c9657389cc9868bb06e9acb1ce5 100644
+--- a/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java
++++ b/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java
+@@ -171,6 +171,7 @@ public abstract class FoliagePlacer {
+                 state = state.setValue(BlockStateProperties.WATERLOGGED, level.isFluidAtPosition(pos, fluidState -> fluidState.isSourceOfType(Fluids.WATER)));
+             }
+ 
++            TreeFeature.tryCleanHangingVine(level, pos); // KioCG
+             foliageSetter.set(pos, state);
+             return true;
+         } else {
+diff --git a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
+index f441eff2bb16bf1b83188430e58a14d37c467c88..23be3e374c839890f8d843c6092b3d9caff47995 100644
+--- a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
++++ b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
+@@ -84,6 +84,7 @@ public abstract class TrunkPlacer {
+         Function<BlockState, BlockState> propertySetter
+     ) {
+         if (this.validTreePos(level, pos)) {
++            TreeFeature.tryCleanHangingVine(level, pos); // KioCG
+             blockSetter.accept(pos, propertySetter.apply(config.trunkProvider.getState(random, pos)));
+             return true;
+         } else {
 diff --git a/net/minecraft/world/level/levelgen/placement/PlacementModifierType.java b/net/minecraft/world/level/levelgen/placement/PlacementModifierType.java
 index bc2076ddc8ad65d414cfd1b6733a1a94c5f2d6b6..92027062a627f124a88f54d066f7a63d144431b7 100644
 --- a/net/minecraft/world/level/levelgen/placement/PlacementModifierType.java
