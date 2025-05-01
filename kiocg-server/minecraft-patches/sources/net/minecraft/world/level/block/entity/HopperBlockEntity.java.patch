@@ -16,6 +16,26 @@
      }
  
      @Override
+@@ -143,6 +_,19 @@
+         }
+     }
+ 
++    // KioCG start - optimize block entity
++    @Override
++    public boolean shouldTick() {
++        return this.getLootTable() == null;
++    }
++
++    @Override
++    public void setLootTable(@Nullable net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable> lootTable) {
++        super.setLootTable(lootTable);
++        if (this.hasLevel()) this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
++    }
++    // KioCG end - optimize block entity
++
+     // Paper start - Perf: Optimize Hoppers
+     private static final int HOPPER_EMPTY = 0;
+     private static final int HOPPER_HAS_ITEMS = 1;
 @@ -193,6 +_,7 @@
  
                  if (fullState != HOPPER_IS_FULL || flag) { // Paper - Perf: Optimize Hoppers

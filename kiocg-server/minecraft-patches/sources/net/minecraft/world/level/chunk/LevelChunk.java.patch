@@ -16,6 +16,15 @@
          // CraftBukkit start
          this.persistentDataContainer = chunk.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
          // CraftBukkit end
+@@ -869,7 +_,7 @@
+ 
+     public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
+         BlockState blockState = blockEntity.getBlockState();
+-        BlockEntityTicker<T> ticker = blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType());
++        BlockEntityTicker<T> ticker = !blockEntity.shouldTick() ? null : blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType()); // KioCG - optimize block entity
+         if (ticker == null) {
+             this.removeBlockEntityTicker(blockEntity.getBlockPos());
+         } else {
 @@ -917,6 +_,7 @@
                      try {
                          ProfilerFiller profilerFiller = Profiler.get();

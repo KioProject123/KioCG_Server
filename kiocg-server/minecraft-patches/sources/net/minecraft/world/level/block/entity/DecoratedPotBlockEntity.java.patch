@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
-@@ -107,6 +_,34 @@
+@@ -107,6 +_,39 @@
          }
      }
  
@@ -15,6 +15,11 @@
 +                return;
 +            }
 +        }
++    }
++
++    @Override
++    public boolean shouldTick() {
++        return this.getLootTable() == null;
 +    }
 +
 +    private void setSuckInMovement(net.minecraft.world.entity.item.ItemEntity itemEntity) {
@@ -35,6 +40,14 @@
      @Override
      public ClientboundBlockEntityDataPacket getUpdatePacket() {
          return ClientboundBlockEntityDataPacket.create(this);
+@@ -147,6 +_,7 @@
+     @Override
+     public void setLootTable(@Nullable ResourceKey<LootTable> lootTable) {
+         this.lootTable = lootTable;
++        if (this.hasLevel()) this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this); // KioCG - optimize block entity
+     }
+ 
+     @Override
 @@ -200,6 +_,7 @@
      @Override
      public void setTheItem(ItemStack item) {
