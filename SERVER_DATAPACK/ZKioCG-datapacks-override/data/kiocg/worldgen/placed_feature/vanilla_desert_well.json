@@ -1,22 +1,19 @@
 {
-  "feature": "yungsextras:desert/wells/desert_dry_well_md",
+  "feature": "minecraft:desert_well",
   "placement": [
 //    {
 //      "type": "minecraft:rarity_filter",
-//      "chance": 1200
+//      "chance": 1000
 //    },
 //    {
 //      "type": "minecraft:in_square"
 //    },
 //    {
 //      "type": "minecraft:heightmap",
-//      "heightmap": "WORLD_SURFACE_WG"
+//      "heightmap": "MOTION_BLOCKING"
 //    },
 //    {
 //      "type": "minecraft:biome"
-//    },
-    {
-      "type": "yungsextras:rng_initializer"
-    }
+//    }
   ]
 }

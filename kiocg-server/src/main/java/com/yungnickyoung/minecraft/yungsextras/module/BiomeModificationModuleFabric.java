@@ -34,15 +34,16 @@ public class BiomeModificationModuleFabric {
 
     private void addFeaturesToBiomes(RegistryAccess registries) {
         // Wells
-        addToDesertBiome("desert/wells/desert_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_well_md", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_well_lg", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_dry_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_dry_well_md", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_dry_well_lg", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_wishing_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_wishing_well_md", GenerationStep.Decoration.SURFACE_STRUCTURES);
-        addToDesertBiome("desert/wells/desert_wishing_well_lg", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // 使用原版沙漠水井进行生成
+        // addToDesertBiome("desert/wells/desert_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_well_md", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_well_lg", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_dry_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_dry_well_md", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_dry_well_lg", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_wishing_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_wishing_well_md", GenerationStep.Decoration.SURFACE_STRUCTURES);
+        // addToDesertBiome("desert/wells/desert_wishing_well_lg", GenerationStep.Decoration.SURFACE_STRUCTURES);
 
         // Obelisks
         addToDesertBiome("desert/obelisks/desert_obelisk", GenerationStep.Decoration.SURFACE_STRUCTURES);

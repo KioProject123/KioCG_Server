@@ -16,7 +16,7 @@
     "type": "betterdeserttemples:desert_temple",
     "enhanced_exclusion_zone": {
       "other_set": "#betterdeserttemples:desert_temple_avoid",
-      "chunk_count": 4
+      "chunk_count": 6
     }
   }
 }

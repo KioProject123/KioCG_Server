@@ -89,7 +89,7 @@
             },
             {
               "function": "minecraft:exploration_map",
-              "destination": "kattersstructures:village",
+              "destination": "minecraft:village",
               "decoration": "village_plains",
               "zoom": 1,
               "skip_existing_chunks": false

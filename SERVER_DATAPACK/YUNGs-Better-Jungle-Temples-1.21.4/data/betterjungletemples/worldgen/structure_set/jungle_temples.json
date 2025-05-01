@@ -12,7 +12,7 @@
     "separation": 8,
     "enhanced_exclusion_zone": {
       "other_set": "#betterjungletemples:jungle_temple_avoid",
-      "chunk_count": 4
+      "chunk_count": 6
     }
   }
 }

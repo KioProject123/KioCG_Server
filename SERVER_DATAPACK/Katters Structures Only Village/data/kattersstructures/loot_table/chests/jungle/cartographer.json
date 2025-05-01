@@ -112,7 +112,7 @@
               "function": "minecraft:set_name",
               "entity": "this",
               "target": "item_name",
-              "name": "村庄地图"
+              "name": "丛林村庄地图"
             }
           ]
         }
