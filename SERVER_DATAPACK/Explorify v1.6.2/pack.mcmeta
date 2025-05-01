@@ -1,0 +1,29 @@
+{
+	"pack": {
+		"description": "\u00A77\u00A7lExplorify\u00A7r\nA collection of structures",
+		"version": "1.6.2",
+		"pack_format": 10,
+		"supported_formats": [
+			10,
+			48
+		]
+	},
+	"overlays": {
+		"entries": [
+			{
+				"formats": [
+					15,
+					48
+				],
+				"directory": "f15"
+			},
+						{
+				"formats": [
+					41,
+					48
+				],
+				"directory": "f41"
+			}
+		]
+	}
+}

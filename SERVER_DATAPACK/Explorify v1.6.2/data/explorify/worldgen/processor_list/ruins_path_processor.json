@@ -1,0 +1,123 @@
+{
+	"processors": [
+		{
+			"processor_type": "minecraft:rule",
+			"rules": [
+				{
+					"location_predicate": {
+						"predicate_type": "minecraft:block_match",
+						"block": "minecraft:water"
+					},
+					"input_predicate": {
+						"predicate_type": "minecraft:block_match",
+						"block": "minecraft:cobblestone"
+					},
+					"output_state": {
+						"Name": "minecraft:water",
+						"Properties": {
+							"level": "0"
+						}
+					}
+				},
+				{
+					"location_predicate": {
+						"predicate_type": "minecraft:always_true"
+					},
+					"input_predicate": {
+						"predicate_type": "minecraft:random_block_match",
+						"block": "minecraft:cobblestone",
+						"probability": 0.5
+					},
+					"output_state": {
+						"Name": "minecraft:grass_block",
+						"Properties": {
+							"snowy": "false"
+						}
+					}
+				},
+				{
+					"location_predicate": {
+						"predicate_type": "minecraft:always_true"
+					},
+					"input_predicate": {
+						"predicate_type": "minecraft:random_block_match",
+						"block": "minecraft:cobblestone",
+						"probability": 0.2
+					},
+					"output_state": {
+						"Name": "minecraft:gravel"
+					}
+				},
+				{
+					"location_predicate": {
+						"predicate_type": "minecraft:always_true"
+					},
+					"input_predicate": {
+						"predicate_type": "minecraft:random_block_match",
+						"block": "minecraft:cobblestone",
+						"probability": 0.5
+					},
+					"output_state": {
+						"Name": "minecraft:mossy_cobblestone"
+					}
+				}
+			]
+		},
+		{
+			"processor_type": "minecraft:capped",
+			"limit": 5,
+			"delegate": {
+				"processor_type": "minecraft:rule",
+				"rules": [
+					{
+						"location_predicate": {
+							"predicate_type": "minecraft:always_true"
+						},
+						"input_predicate": {
+							"predicate_type": "minecraft:tag_match",
+							"tag": "minecraft:trail_ruins_replaceable"
+						},
+						"output_state": {
+							"Name": "minecraft:suspicious_gravel",
+							"Properties": {
+								"dusted": "0"
+							}
+						},
+						"block_entity_modifier": {
+							"type": "minecraft:append_loot",
+							"loot_table": "minecraft:archaeology/trail_ruins_common"
+						}
+					}
+				]
+			}
+		},
+		{
+			"processor_type": "minecraft:capped",
+			"limit": 2,
+			"delegate": {
+				"processor_type": "minecraft:rule",
+				"rules": [
+					{
+						"location_predicate": {
+							"predicate_type": "minecraft:always_true"
+						},
+						"input_predicate": {
+							"predicate_type": "minecraft:tag_match",
+							"tag": "minecraft:trail_ruins_replaceable"
+						},
+						"output_state": {
+							"Name": "minecraft:suspicious_gravel",
+							"Properties": {
+								"dusted": "0"
+							}
+						},
+						"block_entity_modifier": {
+							"type": "minecraft:append_loot",
+							"loot_table": "minecraft:archaeology/trail_ruins_rare"
+						}
+					}
+				]
+			}
+		}
+	]
+}
