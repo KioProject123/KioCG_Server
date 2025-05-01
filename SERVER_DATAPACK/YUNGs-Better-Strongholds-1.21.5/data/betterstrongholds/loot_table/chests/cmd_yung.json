@@ -19,7 +19,7 @@
             },
             {
               "function": "minecraft:set_name",
-              "name": "YUNG's Better Sword",
+              "name": "YUNG的剑",
               "target": "item_name"
             }
           ],
