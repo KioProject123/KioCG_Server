@@ -8,14 +8,7 @@
  
      public MinecartHopper(EntityType<? extends MinecartHopper> entityType, Level level) {
          super(entityType, level);
-@@ -94,13 +_,23 @@
-     }
- 
-     private void tryConsumeItems() {
-+        if (this.getContainerLootTable() != null) return; // KioCG - optimize block entity
-         if (!this.level().isClientSide && this.isAlive() && this.isEnabled() && !this.consumedItemThisFrame && this.suckInItems()) {
-             this.consumedItemThisFrame = true;
-             this.setChanged();
+@@ -100,7 +_,16 @@
          }
      }
  
