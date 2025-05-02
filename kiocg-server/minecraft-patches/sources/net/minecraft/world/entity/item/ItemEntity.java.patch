@@ -1,10 +1,27 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -185,7 +_,10 @@
+@@ -59,6 +_,10 @@
+     public boolean canMobPickup = true; // Paper - Item#canEntityPickup
+     private int despawnRate = -1; // Paper - Alternative item-despawn-rate
+     public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
++    // KioCG start - optimize block entity: item search hopper
++    public boolean searchingHopper = false;
++    public boolean canDecoratedPotSuck = true;
++    // KioCG end - optimize block entity: item search hopper
+ 
+     public ItemEntity(EntityType<? extends ItemEntity> entityType, Level level) {
+         super(entityType, level);
+@@ -185,16 +_,30 @@
                  }
              }
  
 -            if (!this.onGround() || this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F || (this.tickCount + this.getId()) % 4 == 0) { // Paper - Diff on change; ActivationRange immunity
++            // KioCG start - optimize block entity: item search hopper // 提取变量
++            Level level = this.level();
++            BlockPos blockPosBelowThatAffectsMyMovement = null;
++            net.minecraft.world.level.block.state.BlockState belowState = null;
++            // KioCG end - optimize block entity: item search hopper // 提取变量
++
 +            // KioCG start - item entity collision
 +            boolean checkPush = true;
 +            if (!this.onGround() || (checkPush = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F) || (this.tickCount + this.getId()) % 4 == 0) { // Paper - Diff on change; ActivationRange immunity
@@ -12,15 +29,48 @@
                  this.move(MoverType.SELF, this.getDeltaMovement());
                  this.applyEffectsFromBlocks();
                  float f = 0.98F;
-@@ -204,6 +_,8 @@
++                // KioCG start - optimize block entity: item search hopper // 提取变量
++                blockPosBelowThatAffectsMyMovement = this.getBlockPosBelowThatAffectsMyMovement();
++                belowState = level.getBlockState(blockPosBelowThatAffectsMyMovement);
++                this.searchingHopper = true;
++                // KioCG end - optimize block entity: item search hopper // 提取变量
+                 // Paper start - Friction API
+                 if (this.frictionState == net.kyori.adventure.util.TriState.FALSE) {
+                     f = 1F;
+                 } else if (this.onGround()) {
+                     // Paper end - Friction API
+-                    f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
++                    f = belowState.getBlock().getFriction() * 0.98F; // KioCG - optimize block entity: item search hopper // 提取变量
+                 }
+ 
+                 this.setDeltaMovement(this.getDeltaMovement().multiply(f, 0.98, f));
+@@ -204,7 +_,25 @@
                          this.setDeltaMovement(deltaMovement1.multiply(1.0, -0.5, 1.0));
                      }
                  }
+-            }
 +
 +                if (checkPush) this.pushEntities(); // KioCG - item entity collision
-             }
++            }
++
++            // KioCG start - optimize block entity: item search hopper
++            if (this.searchingHopper) {
++                this.searchingHopper = false;
++
++                if (blockPosBelowThatAffectsMyMovement == null) {
++                    blockPosBelowThatAffectsMyMovement = this.getBlockPosBelowThatAffectsMyMovement();
++                    belowState = level.getBlockState(blockPosBelowThatAffectsMyMovement);
++                }
++                if (level.paperConfig().kiocgConfig.hopperPullsEntityOwnedItem || this.target == null) { // KioCG - hopper filter
++                    if (level.paperConfig().kiocgConfig.hopperPullsInfinitePickupItem || this.pickupDelay != Short.MAX_VALUE) { // KioCG - hopper filter
++                        belowState.itemSearchHopper(level, blockPosBelowThatAffectsMyMovement, this, net.minecraft.world.entity.InsideBlockEffectApplier.NOOP);
++                    }
++                }
++            }
++            // KioCG end - optimize block entity: item search hopper
  
              boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX())
+                 || Mth.floor(this.yo) != Mth.floor(this.getY())
 @@ -238,6 +_,37 @@
          }
      }

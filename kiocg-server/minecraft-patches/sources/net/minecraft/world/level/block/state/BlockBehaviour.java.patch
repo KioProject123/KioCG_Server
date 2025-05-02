@@ -39,6 +39,18 @@
      protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
      }
  
+@@ -370,6 +_,11 @@
+     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+     }
+ 
++    // KioCG start - optimize block entity: item search hopper
++    protected void itemSearchHopper(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
++    }
++    // KioCG end - optimize block entity: item search hopper
++
+     protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+         return 0;
+     }
 @@ -393,6 +_,12 @@
          return this.isRandomlyTicking;
      }
@@ -68,7 +80,7 @@
              if (!this.getBlock().hasDynamicShape()) {
                  this.cache = new BlockBehaviour.BlockStateBase.Cache(this.asState());
              }
-@@ -883,6 +_,12 @@
+@@ -883,10 +_,22 @@
              this.getBlock().randomTick(this.asState(), level, pos, random);
          }
  
@@ -81,6 +93,16 @@
          public void entityInside(Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
              this.getBlock().entityInside(this.asState(), level, pos, entity, effectApplier);
          }
+ 
++        // KioCG start - optimize block entity: item search hopper
++        public void itemSearchHopper(Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
++            this.getBlock().itemSearchHopper(this.asState(), level, pos, itemEntity, effectApplier);
++        }
++        // KioCG end - optimize block entity: item search hopper
++
+         public void spawnAfterBreak(ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
+             this.getBlock().spawnAfterBreak(this.asState(), level, pos, stack, dropExperience);
+             if (dropExperience) {this.getBlock().popExperience(level, pos, this.getBlock().getExpDrop(this.asState(), level, pos, stack, true));} // Paper - Properly handle xp dropping
 @@ -1001,6 +_,12 @@
          public final boolean isRandomlyTicking() { // Paper - Perf: Final for inlining
              return this.isRandomlyTicking;

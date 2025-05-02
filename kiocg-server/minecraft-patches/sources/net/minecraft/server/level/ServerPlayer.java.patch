@@ -21,7 +21,7 @@
  
      @Override
      public void onInsideBlock(BlockState state) {
-+        if (!state.isAir()) // KioCG - optimize trigger advancements
++        // if (!state.isAir()) // KioCG - optimize trigger advancements // 不再需要
          CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
      }
  

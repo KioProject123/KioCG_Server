@@ -1,18 +1,31 @@
 --- a/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
-@@ -107,6 +_,34 @@
+@@ -107,6 +_,47 @@
          }
      }
  
 +    // KioCG start - infinite decorated pot
-+    public static void suckInItems(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, DecoratedPotBlockEntity decoratedPot) {
-+        for (net.minecraft.world.entity.item.ItemEntity itemEntity : getItemsAtAndAbove(level, pos)) {
-+            if (!level.paperConfig().kiocgConfig.hopperPullsEntityOwnedItem && itemEntity.target != null) continue; // KioCG - hopper filter
-+            if (!level.paperConfig().kiocgConfig.hopperPullsInfinitePickupItem && itemEntity.pickupDelay == Short.MAX_VALUE) continue; // KioCG - hopper filter
-+            if (itemEntity.pickupDelay != 0 && net.minecraft.world.level.block.DecoratedPotBlock.putItem(itemEntity.getItem(), level, pos, null, decoratedPot).consumesAction()) {
++    // public static void suckInItems(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, DecoratedPotBlockEntity decoratedPot) {
++    //     for (net.minecraft.world.entity.item.ItemEntity itemEntity : getItemsAtAndAbove(level, pos)) {
++    //         if (!level.paperConfig().kiocgConfig.hopperPullsEntityOwnedItem && itemEntity.target != null) continue; // KioCG - hopper filter
++    //         if (!level.paperConfig().kiocgConfig.hopperPullsInfinitePickupItem && itemEntity.pickupDelay == Short.MAX_VALUE) continue; // KioCG - hopper filter
++    //         if (itemEntity.canDecoratedPotSuck && net.minecraft.world.level.block.DecoratedPotBlock.putItem(itemEntity.getItem(), level, pos, null, decoratedPot).consumesAction()) {
++    //             itemEntity.pickupDelay++;
++    //             decoratedPot.setSuckInMovement(itemEntity);
++    //             return;
++    //         }
++    //     }
++    // }
++
++    private int suckInTime = 0;
++    public static void itemSearchHopper(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.item.ItemEntity itemEntity, DecoratedPotBlockEntity blockEntity) {
++        if (blockEntity.suckInTime != net.minecraft.server.MinecraftServer.currentTick && !itemEntity.getItem().isEmpty()
++            && itemEntity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(SUCK_AABB)) {
++            if (itemEntity.canDecoratedPotSuck && net.minecraft.world.level.block.DecoratedPotBlock.putItem(itemEntity.getItem(), level, pos, null, blockEntity).consumesAction()) {
 +                itemEntity.pickupDelay++;
-+                decoratedPot.setSuckInMovement(itemEntity);
-+                return;
++                itemEntity.searchingHopper = true;
++                blockEntity.setSuckInMovement(itemEntity);
++                blockEntity.suckInTime = net.minecraft.server.MinecraftServer.currentTick;
 +            }
 +        }
 +    }

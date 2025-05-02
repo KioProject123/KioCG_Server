@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/block/HopperBlock.java
++++ b/net/minecraft/world/level/block/HopperBlock.java
+@@ -115,6 +_,7 @@
+ 
+     @Override
+     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
++        if (level.getBlockEntity(pos) instanceof HopperBlockEntity hopper) hopper.updateBlockEntityTicker(); // KioCG - optimize block entity
+         this.checkPoweredState(level, pos, state);
+     }
+ 
+@@ -163,6 +_,16 @@
+             HopperBlockEntity.entityInside(level, pos, state, entity, (HopperBlockEntity)blockEntity);
+         }
+     }
++
++    // KioCG start - optimize block entity: item search hopper
++    @Override
++    protected void itemSearchHopper(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
++        BlockEntity blockEntity = level.getBlockEntity(pos);
++        if (blockEntity instanceof HopperBlockEntity) {
++            HopperBlockEntity.entityInside(level, pos, state, itemEntity, (HopperBlockEntity) blockEntity);
++        }
++    }
++    // KioCG end - optimize block entity: item search hopper
+ 
+     @Override
+     protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {

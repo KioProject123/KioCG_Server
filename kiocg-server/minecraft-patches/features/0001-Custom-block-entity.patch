@@ -769,7 +769,7 @@ index 0000000000000000000000000000000000000000..506c78fd41dffa5ef944be556173600b
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2a12c1717bb4f91a81083a12b302d4cbaec4297e
+index 0000000000000000000000000000000000000000..560e5849813f619d075ba75f9fdf6e46bacad77f
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 @@ -0,0 +1,208 @@
@@ -788,6 +788,7 @@ index 0000000000000000000000000000000000000000..2a12c1717bb4f91a81083a12b302d4cb
 +import net.minecraft.tags.BlockTags;
 +import net.minecraft.world.entity.Display;
 +import net.minecraft.world.entity.EntityType;
++import net.minecraft.world.level.Level;
 +import net.minecraft.world.level.block.AbstractCandleBlock;
 +import net.minecraft.world.level.block.Block;
 +import net.minecraft.world.level.block.Blocks;
@@ -804,23 +805,18 @@ index 0000000000000000000000000000000000000000..2a12c1717bb4f91a81083a12b302d4cb
 +    private BlockState pottedState = potted.defaultBlockState();
 +    private PottedTick pottedTick = PottedTick.NONE;
 +    private Direction facing = Direction.SOUTH;
-+    private boolean firstTick;
 +
 +    public FlowerPotBlockEntity(BlockPos pos, BlockState blockState) {
 +        super(BlockEntityType.FLOWER_POT, pos, blockState);
 +    }
 +
 +    public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, FlowerPotBlockEntity flowerPot) {
-+        if (!flowerPot.firstTick) {
-+            flowerPot.firstTick = true;
-+            flowerPot.refreshDisplayBlock(level, pos);
-+        }
++        flowerPot.pottedTick.tick(level, pos, flowerPot.pottedState);
++    }
 +
-+        if (flowerPot.pottedTick != PottedTick.NONE) {
-+            flowerPot.pottedTick.tick(level, pos, flowerPot.pottedState);
-+        } else {
-+            level.getChunkAt(pos).removeBlockEntityTicker(pos);
-+        }
++    @Override
++    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
++        return this.pottedTick != PottedTick.NONE;
 +    }
 +
 +    public Block getPotted() {
@@ -852,9 +848,7 @@ index 0000000000000000000000000000000000000000..2a12c1717bb4f91a81083a12b302d4cb
 +        this.facing = facing;
 +        if (this.hasLevel()) {
 +            this.refreshDisplayBlock((ServerLevel) this.getLevel(), this.getBlockPos());
-+            if (this.pottedTick != PottedTick.NONE) {
-+                this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
-+            }
++            this.updateBlockEntityTicker();
 +        }
 +        this.setChanged();
 +    }
@@ -901,6 +895,12 @@ index 0000000000000000000000000000000000000000..2a12c1717bb4f91a81083a12b302d4cb
 +            tag.store("KioCG.PottedState", BlockState.CODEC, registryOps, this.getPottedState());
 +            tag.store("KioCG.Facing", Direction.CODEC, registryOps, this.facing);
 +        }
++    }
++
++    @Override
++    public void setLevel(Level level) {
++        super.setLevel(level);
++        this.refreshDisplayBlock((ServerLevel) level, this.getBlockPos());
 +    }
 +
 +    private interface PottedTick {

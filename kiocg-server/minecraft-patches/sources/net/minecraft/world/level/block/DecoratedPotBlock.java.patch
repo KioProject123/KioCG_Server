@@ -70,7 +70,7 @@
  
      @Override
      protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-@@ -138,6 +_,18 @@
+@@ -138,6 +_,19 @@
              level.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT_FAIL, SoundSource.BLOCKS, 1.0F, 1.0F);
              decoratedPotBlockEntity.wobble(DecoratedPotBlockEntity.WobbleStyle.NEGATIVE);
              level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
@@ -83,22 +83,31 @@
 +                        level.random.triangle(0.2, 0.11485000171139836),
 +                        level.random.triangle(0.0, 0.11485000171139836));
 +                itemEntity.pickupDelay = 0;
++                itemEntity.canDecoratedPotSuck = false;
 +                level.addFreshEntity(itemEntity);
 +            }
 +            // KioCG end - infinite decorated pot
              return InteractionResult.SUCCESS;
          } else {
              return InteractionResult.PASS;
-@@ -164,6 +_,14 @@
+@@ -164,6 +_,22 @@
      public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
          return new DecoratedPotBlockEntity(pos, state);
      }
 +
 +    // KioCG start - infinite decorated pot
-+    @Nullable
++    // @Nullable
++    // @Override
++    // public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
++    //     return createTickerHelper(blockEntityType, net.minecraft.world.level.block.entity.BlockEntityType.DECORATED_POT, DecoratedPotBlockEntity::suckInItems);
++    // }
++
 +    @Override
-+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
-+        return createTickerHelper(blockEntityType, net.minecraft.world.level.block.entity.BlockEntityType.DECORATED_POT, DecoratedPotBlockEntity::suckInItems);
++    protected void itemSearchHopper(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, net.minecraft.world.entity.InsideBlockEffectApplier effectApplier) {
++        BlockEntity blockEntity = level.getBlockEntity(pos);
++        if (blockEntity instanceof DecoratedPotBlockEntity) {
++            DecoratedPotBlockEntity.itemSearchHopper(level, pos, state, itemEntity, (DecoratedPotBlockEntity) blockEntity);
++        }
 +    }
 +    // KioCG end - infinite decorated pot
  

@@ -1,0 +1,22 @@
+--- a/ca/spottedleaf/moonrise/patches/chunk_system/scheduling/task/ChunkFullTask.java
++++ b/ca/spottedleaf/moonrise/patches/chunk_system/scheduling/task/ChunkFullTask.java
+@@ -83,7 +_,7 @@
+                 // Since we load the NBT in the empty status, this will never block for I/O
+                 ((ChunkSystemServerLevel)this.world).moonrise$getChunkTaskScheduler().chunkHolderManager.getOrCreateEntityChunk(this.chunkX, this.chunkZ, false);
+                 chunk.setLoaded(true);
+-                chunk.registerAllBlockEntitiesAfterLevelLoad();
++                // chunk.registerAllBlockEntitiesAfterLevelLoad(); // KioCG - optimize block entity: 下移
+                 chunk.registerTickContainerInLevel(this.world);
+                 chunk.setUnsavedListener(this.world.getChunkSource().chunkMap.worldGenContext.unsavedListener());
+                 platformHooks.chunkFullStatusComplete(chunk, (ProtoChunk)this.fromChunk);
+@@ -95,6 +_,10 @@
+             return;
+         }
+         this.complete(chunk, null);
++        // 在区块加载完成后注册方块实体.
++        // 由于某些方块(如漏斗)注册时需要获取周围方块状态,
++        // 如果区块未加载完成, 会陷入加载和获取的死循环.
++        chunk.registerAllBlockEntitiesAfterLevelLoad(); // KioCG - optimize block entity
+     }
+ 
+     protected volatile boolean scheduled;
