@@ -14,3 +14,12 @@
              }
          }
      }
+@@ -343,7 +_,7 @@
+             return false;
+         } else {
+             try {
+-                if (stack.isDamaged()) {
++                if (!stack.isStackable()) { // KioCG - food freshness
+                     if (slot == -1) {
+                         slot = this.getFreeSlot();
+                     }
