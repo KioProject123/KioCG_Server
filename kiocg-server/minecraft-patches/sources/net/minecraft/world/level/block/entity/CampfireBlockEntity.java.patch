@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -40,10 +_,31 @@
+@@ -40,6 +_,26 @@
      public final int[] cookingTime = new int[4];
      public final boolean[] stopCooking = new boolean[4]; // Paper - Add more Campfire API
  
@@ -27,31 +27,22 @@
      public CampfireBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.CAMPFIRE, pos, blockState);
      }
- 
-+    public boolean[] shouldTick = {true, true, true, true}; // KioCG - optimize block entity
-     public static void cookTick(
-         ServerLevel level,
-         BlockPos pos,
-@@ -54,16 +_,26 @@
-         boolean flag = false;
- 
+@@ -56,14 +_,20 @@
          for (int i = 0; i < campfire.items.size(); i++) {
-+            // KioCG start - optimize block entity
-+            if (!campfire.shouldTick[i]) {
-+                continue;
-+            }
-+            campfire.shouldTick[i] = false;
-+            // KioCG end - optimize block entity
-+
              ItemStack itemStack = campfire.items.get(i);
              if (!itemStack.isEmpty()) {
-                 flag = true;
+-                flag = true;
++                // flag = true; // KioCG start - optimize block entity
                  if (!campfire.stopCooking[i]) { // Paper - Add more Campfire API
-                 campfire.cookingProgress[i]++;
-+                campfire.shouldTick[i] = true; // KioCG - optimize block entity
+-                campfire.cookingProgress[i]++;
++                    // KioCG start - optimize block entity
++                    if (campfire.cookingProgress[i] < campfire.cookingTime[i]) {
++                        campfire.cookingProgress[i]++;
++                        flag = true;
++                    }
++                    // KioCG end - optimize block entity
                  } // Paper - Add more Campfire API
                  if (campfire.cookingProgress[i] >= campfire.cookingTime[i]) {
-+                    campfire.shouldTick[i] = false; // KioCG - optimize block entity
                      SingleRecipeInput singleRecipeInput = new SingleRecipeInput(itemStack);
                      // Paper start - add recipe to cook events
                      final var optionalCookingRecipe = check.getRecipeFor(singleRecipeInput, level);
@@ -103,7 +94,7 @@
                          level.sendBlockUpdated(pos, state, state, 3);
                          level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
-@@ -103,10 +_,53 @@
+@@ -103,10 +_,81 @@
              }
          }
  
@@ -129,7 +120,35 @@
          if (flag) {
              setChanged(level, pos, state);
          }
-     }
+-    }
++        else campfire.updateBlockEntityTicker(); // KioCG - optimize block entity
++    }
++
++    // KioCG start - optimize block entity
++    @Override
++    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
++        if (state.getValue(CampfireBlock.LIT)) {
++            if (this.healingTime > 0) return true; // KioCG - campfire healing
++            for (int i = 0; i < this.items.size(); i++) {
++                ItemStack itemStack = this.items.get(i);
++                if (!itemStack.isEmpty()) {
++                    if (!this.stopCooking[i]) {
++                        if (this.cookingProgress[i] < this.cookingTime[i]) {
++                            return true;
++                        }
++                    }
++                }
++            }
++        } else {
++            for (int progress : this.cookingProgress) {
++                if (progress > 0) {
++                    return true;
++                }
++            }
++        }
++        return false;
++    }
++    // KioCG end - optimize block entity
 +
 +    // KioCG start - campfire healing
 +    private static void healingNearbyPlayers(Level level, BlockPos pos) {
@@ -146,6 +165,7 @@
 +            int burnDuration = CampfireBlockEntity.fuelValues.burnDuration(item);
 +            if (burnDuration > 0) {
 +                blockEntity.healingTime = Math.min(blockEntity.healingTime + burnDuration * item.getCount(), 20 * 60);
++                blockEntity.updateBlockEntityTicker(); // KioCG - optimize block entity
 +                itemEntity.discard();
 +
 +                RandomSource random = level.getRandom();
@@ -157,23 +177,19 @@
  
      public static void cooldownTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
          boolean flag = false;
-@@ -114,7 +_,7 @@
-         for (int i = 0; i < blockEntity.items.size(); i++) {
-             if (blockEntity.cookingProgress[i] > 0) {
-                 flag = true;
--                blockEntity.cookingProgress[i] = Mth.clamp(blockEntity.cookingProgress[i] - 2, 0, blockEntity.cookingTime[i]);
-+                blockEntity.cookingProgress[i] = 0; // KioCG - optimize block entity
+@@ -117,10 +_,12 @@
+                 blockEntity.cookingProgress[i] = Mth.clamp(blockEntity.cookingProgress[i] - 2, 0, blockEntity.cookingTime[i]);
              }
          }
++        blockEntity.healingTime = 0; // KioCG - campfire healing
  
-@@ -156,6 +_,7 @@
-     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-         super.loadAdditional(tag, registries);
-         this.items.clear();
-+        this.shouldTick = new boolean[]{true, true, true, true}; // KioCG - optimize block entity
-         ContainerHelper.loadAllItems(tag, this.items, registries);
-         tag.getIntArray("CookingTimes")
-             .ifPresentOrElse(
+         if (flag) {
+             setChanged(level, pos, state);
+         }
++        else blockEntity.updateBlockEntityTicker(); // KioCG - optimize block entity
+     }
+ 
+     public static void particleTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
 @@ -205,8 +_,13 @@
          return compoundTag;
      }
@@ -208,7 +224,7 @@
                  // CraftBukkit end
                  this.cookingProgress[i] = 0;
                  this.items.set(i, stack.consumeAndReturn(1, entity));
-+                this.shouldTick[i] = true; // KioCG - optimize block entity
++                this.updateBlockEntityTicker(); // KioCG - optimize block entity
                  level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
                  this.markUpdated();
                  return true;

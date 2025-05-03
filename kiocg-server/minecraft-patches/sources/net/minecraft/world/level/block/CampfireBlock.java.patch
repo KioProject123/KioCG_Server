@@ -16,23 +16,3 @@
          super.entityInside(state, level, pos, entity, effectApplier);
      }
  
-@@ -190,6 +_,11 @@
-             }
-         }
- 
-+        // KioCG start - optimize block entity
-+        if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof CampfireBlockEntity campfireBlockEntity) {
-+            CampfireBlockEntity.cooldownTick(serverLevel, pos, state, campfireBlockEntity);
-+        }
-+        // KioCG end - optimize block entity
-         level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
-     }
- 
-@@ -315,6 +_,7 @@
-                     (level1, pos, state1, blockEntity) -> CampfireBlockEntity.cookTick(serverLevel, pos, state1, blockEntity, cachedCheck)
-                 );
-             } else {
-+                if (true) return null; // KioCG - optimize block entity
-                 return createTickerHelper(blockEntityType, BlockEntityType.CAMPFIRE, CampfireBlockEntity::cooldownTick);
-             }
-         } else {
