@@ -405,8 +405,25 @@ index ad3f32888afd8b5f0038445a1b0fcc8cacec9fe2..c6936fb2cdc4be2579b20309ea047c52
 +    }
 +    // KioCG end - custom block entity
  }
+diff --git a/net/minecraft/world/level/block/Block.java b/net/minecraft/world/level/block/Block.java
+index ae3e6e31171b1bcfba1ae51a0941b52dda270acd..97403ed6c4e10975abb9f8dad17ed1065ac8e5f4 100644
+--- a/net/minecraft/world/level/block/Block.java
++++ b/net/minecraft/world/level/block/Block.java
+@@ -595,6 +595,12 @@ public class Block extends BlockBehaviour implements ItemLike {
+         return this.builtInRegistryHolder;
+     }
+ 
++    // KioCG start - custom block entity
++    public boolean hasBlockEntity(BlockState blockState) {
++        return this instanceof EntityBlock;
++    }
++    // KioCG end - custom block entity
++
+     protected int tryDropExperience(ServerLevel level, BlockPos pos, ItemStack heldItem, IntProvider amount) { // CraftBukkit
+         int i = EnchantmentHelper.processBlockExperience(level, heldItem, amount.sample(level.getRandom()));
+         if (i > 0) {
 diff --git a/net/minecraft/world/level/block/FlowerPotBlock.java b/net/minecraft/world/level/block/FlowerPotBlock.java
-index dccae78867d738c1711699761f97cc7cd356e5a8..3ce9751acf7fb31b61f32e3d6add0b6e2be912d0 100644
+index dccae78867d738c1711699761f97cc7cd356e5a8..d6702e415eecd669f4e43d2851fc5c8ea7440f16 100644
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
 @@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
@@ -579,22 +596,25 @@ index dccae78867d738c1711699761f97cc7cd356e5a8..3ce9751acf7fb31b61f32e3d6add0b6e
      @Override
      protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
          return this.isEmpty() ? super.getCloneItemStack(level, pos, state, includeData) : new ItemStack(this.potted);
-@@ -176,4 +283,20 @@ public class FlowerPotBlock extends Block {
+@@ -176,4 +283,23 @@ public class FlowerPotBlock extends Block {
              return state.is(Blocks.POTTED_CLOSED_EYEBLOSSOM) ? Blocks.POTTED_OPEN_EYEBLOSSOM.defaultBlockState() : state;
          }
      }
 +
 +    // KioCG start - custom block entity
 +    @Override
++    public boolean hasBlockEntity(BlockState state) {
++        return state.is(Blocks.FLOWER_POT);
++    }
++
++    @Override
 +    public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-+        if (!state.is(Blocks.FLOWER_POT)) return null;
 +        return new net.minecraft.world.level.block.entity.FlowerPotBlockEntity(pos, state);
 +    }
 +
 +    @javax.annotation.Nullable
 +    @Override
 +    public <T extends net.minecraft.world.level.block.entity.BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
-+        if (!state.is(Blocks.FLOWER_POT)) return null;
 +        return createTickerHelper(blockEntityType, net.minecraft.world.level.block.entity.BlockEntityType.FLOWER_POT,
 +                                  (level1, pos, state1, blockEntity) -> net.minecraft.world.level.block.entity.FlowerPotBlockEntity.serverTick((ServerLevel) level1, pos, state1, blockEntity));
 +    }
@@ -981,3 +1001,22 @@ index 0000000000000000000000000000000000000000..560e5849813f619d075ba75f9fdf6e46
 +    }
 +}
 +// KioCG end - custom block entity: all class
+diff --git a/net/minecraft/world/level/block/state/BlockBehaviour.java b/net/minecraft/world/level/block/state/BlockBehaviour.java
+index 0f1269a1b00a3f37ff80b168aea2aaa67e23b541..90e926a9f4e492234b2f607f9b26989a363fc240 100644
+--- a/net/minecraft/world/level/block/state/BlockBehaviour.java
++++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
+@@ -1028,12 +1028,12 @@ public abstract class BlockBehaviour implements FeatureElement {
+         }
+ 
+         public boolean hasBlockEntity() {
+-            return this.getBlock() instanceof EntityBlock;
++            return this.getBlock().hasBlockEntity(this.asState()); // KioCG - custom block entity
+         }
+ 
+         @Nullable
+         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockEntityType<T> blockEntityType) {
+-            return this.getBlock() instanceof EntityBlock ? ((EntityBlock)this.getBlock()).getTicker(level, this.asState(), blockEntityType) : null;
++            return hasBlockEntity() ? ((EntityBlock)this.getBlock()).getTicker(level, this.asState(), blockEntityType) : null; // KioCG - custom block entity
+         }
+ 
+         public boolean is(Block block) {
