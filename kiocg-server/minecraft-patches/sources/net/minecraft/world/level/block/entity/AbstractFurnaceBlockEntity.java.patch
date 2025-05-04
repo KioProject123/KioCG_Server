@@ -1,33 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -156,6 +_,7 @@
-     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-         super.loadAdditional(tag, registries);
-         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-+        this.shouldTick = true; // KioCG - optimize block entity
-         ContainerHelper.loadAllItems(tag, this.items, registries);
-         this.cookingTimer = tag.getShortOr("cooking_time_spent", (short)0);
-         this.cookingTotalTime = tag.getShortOr("cooking_total_time", (short)0);
-@@ -178,11 +_,19 @@
-         tag.store("RecipesUsed", RECIPES_USED_CODEC, this.recipesUsed);
-     }
- 
-+    private boolean shouldTick = true; // KioCG - optimize block entity
-     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity furnace) {
-+        // KioCG start - optimize block entity
-+        if (!furnace.shouldTick && !furnace.isLit()) {
-+            return;
-+        }
-+        furnace.shouldTick = false;
-+        // KioCG end - optimize block entity
-         boolean isLit = furnace.isLit();
-         boolean flag = false;
-         if (furnace.isLit()) {
-             furnace.litTimeRemaining--;
-+            furnace.shouldTick = true; // KioCG - optimize block entity
-         }
- 
-         ItemStack itemStack = furnace.items.get(1);
 @@ -213,7 +_,7 @@
  
                  furnace.litTimeRemaining = furnaceBurnEvent.getBurnTime(); // CraftBukkit - respect event output
@@ -72,14 +44,39 @@
                      flag = true;
                  }
              } else {
-@@ -258,6 +_,7 @@
-             }
-         } else if (!furnace.isLit() && furnace.cookingTimer > 0) {
-             furnace.cookingTimer = Mth.clamp(furnace.cookingTimer - 2, 0, furnace.cookingTotalTime);
-+            furnace.shouldTick = true; // KioCG - optimize block entity: 燃烧冷却中
+@@ -269,7 +_,31 @@
+         if (flag) {
+             setChanged(level, pos, state);
          }
+-    }
++        else if (!furnace.isLit() && furnace.cookingTimer <= 0) furnace.updateBlockEntityTicker(); // KioCG - optimize block entity
++    }
++
++    // KioCG start - optimize block entity
++    @Override
++    public boolean needTicking(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
++        if (this.isLit() || this.cookingTimer > 0) {
++            return true;
++        } else {
++            ItemStack itemStack = this.items.get(1);
++            ItemStack itemStack1 = this.items.get(0);
++            boolean flag1 = !itemStack1.isEmpty();
++            boolean flag2 = !itemStack.isEmpty();
++            if (flag2 && flag1) {
++                SingleRecipeInput singleRecipeInput = new SingleRecipeInput(itemStack1);
++                RecipeHolder<? extends AbstractCookingRecipe> recipeHolder = this.quickCheck.getRecipeFor(singleRecipeInput, (ServerLevel) level).orElse(null);
++                int maxStackSize = this.getMaxStackSize();
++                if (canBurn(level.registryAccess(), recipeHolder, singleRecipeInput, this.items, maxStackSize)) {
++                    return true;
++                }
++            }
++        }
++        return false;
++    }
++    // KioCG end - optimize block entity
  
-         if (isLit != furnace.isLit()) {
+     private static boolean canBurn(
+         RegistryAccess registryAccess,
 @@ -283,6 +_,13 @@
              if (itemStack.isEmpty()) {
                  return false;
@@ -136,7 +133,7 @@
              this.cookingTimer = 0;
              this.setChanged();
          }
-+        this.shouldTick = true; // KioCG - optimize block entity
++        this.updateBlockEntityTicker(); // KioCG - optimize block entity
      }
  
      @Override

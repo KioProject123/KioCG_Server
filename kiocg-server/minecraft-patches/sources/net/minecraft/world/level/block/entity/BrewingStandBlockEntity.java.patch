@@ -17,26 +17,11 @@
      public int brewTime;
      public int recipeBrewTime = 400; // Paper - Add recipeBrewTime
      private boolean[] lastPotionCount;
-@@ -134,9 +_,25 @@
-         this.items = items;
+@@ -135,8 +_,10 @@
      }
  
-+    // KioCG start - optimize block entity
-+    @Override
-+    public void setItem(int slot, ItemStack stack) {
-+        super.setItem(slot, stack);
-+        this.shouldTick = true;
-+    }
-+
-+    private boolean shouldTick = true;
-+    // KioCG end - optimize block entity
      public static void serverTick(Level level, BlockPos pos, BlockState state, BrewingStandBlockEntity blockEntity) {
-+        // KioCG start - optimize block entity
-+        if (!blockEntity.shouldTick && blockEntity.brewTime <= 0) {
-+            return;
-+        }
-+        blockEntity.shouldTick = false;
-+        // KioCG end - optimize block entity
++        boolean changed = false; // KioCG - optimize block entity
          ItemStack itemStack = blockEntity.items.get(4);
 -        if (blockEntity.fuel <= 0 && itemStack.is(ItemTags.BREWING_FUEL)) {
 +        blockEntity.fuel = 20; // KioCG - change container behavior: 总是最大燃料值
@@ -44,15 +29,15 @@
              // CraftBukkit start
              org.bukkit.event.inventory.BrewingStandFuelEvent event = new org.bukkit.event.inventory.BrewingStandFuelEvent(
                  org.bukkit.craftbukkit.block.CraftBlock.at(level, pos),
-@@ -160,6 +_,7 @@
-         ItemStack itemStack1 = blockEntity.items.get(3);
-         if (flag) {
-             blockEntity.brewTime--;
-+            blockEntity.shouldTick = true; // KioCG - optimize block entity
-             boolean flag1 = blockEntity.brewTime == 0;
-             if (flag1 && isBrewable) {
-                 doBrew(level, pos, blockEntity.items, blockEntity); // CraftBukkit
-@@ -167,6 +_,20 @@
+@@ -153,6 +_,7 @@
+             }
+             // CraftBukkit end
+             setChanged(level, pos, state);
++            changed = true; // KioCG - optimize block entity
+         }
+ 
+         boolean isBrewable = isBrewable(level.potionBrewing(), blockEntity.items);
+@@ -167,7 +_,22 @@
                  blockEntity.brewTime = 0;
              }
  
@@ -71,8 +56,70 @@
 +            // KioCG end - change container behavior: 效果动画
 +
              setChanged(level, pos, state);
++            changed = true; // KioCG - optimize block entity
          } else if (isBrewable && blockEntity.fuel > 0) {
              blockEntity.fuel--;
+             // CraftBukkit start
+@@ -180,8 +_,15 @@
+             // CraftBukkit end
+             blockEntity.ingredient = itemStack1.getItem();
+             setChanged(level, pos, state);
++            changed = true; // KioCG - optimize block entity
+         }
+ 
++        // KioCG start - optimize block entity
++        if (!changed) blockEntity.updateBlockEntityTicker();
++        BrewingStandBlockEntity.refreshBottleDisplay(level, pos, state, blockEntity);
++    }
++    public static void refreshBottleDisplay(Level level, BlockPos pos, BlockState state, BrewingStandBlockEntity blockEntity) {
++        // KioCG end - optimize block entity
+         boolean[] potionBits = blockEntity.getPotionBits();
+         if (!Arrays.equals(potionBits, blockEntity.lastPotionCount)) {
+             blockEntity.lastPotionCount = potionBits;
+@@ -198,12 +_,42 @@
+         }
+     }
+ 
++    // KioCG start - optimize block entity
++    @Override
++    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
++        BrewingStandBlockEntity.refreshBottleDisplay(level, pos, state, this); // 没有很好的地方放置这个...
++
++        this.fuel = 20; // KioCG - change container behavior: 总是最大燃料值
++        if (this.brewTime > 0) {
++            return true;
++        } else if (this.fuel <= 0 && PotionBrewing.isFuel(this.items.get(FUEL_SLOT))) {
++            return true;
++        } else if (isBrewable(level.potionBrewing(), this.items) && this.fuel > 0) {
++            return true;
++        }
++        return false;
++    }
++
++    @Override
++    public void setItem(int slot, ItemStack stack) {
++        super.setItem(slot, stack);
++        this.updateBlockEntityTicker();
++    }
++    // KioCG end - optimize block entity
++
+     private boolean[] getPotionBits() {
+         boolean[] flags = new boolean[3];
+ 
+         for (int i = 0; i < 3; i++) {
+             if (!this.items.get(i).isEmpty()) {
+-                flags[i] = true;
++                // KioCG start - fix client display
++                flags[switch (i) {
++                    case 0 -> 2;
++                    case 1 -> 0;
++                    case 2 -> 1;
++                    default -> throw new IllegalStateException("Unexpected value: " + i);
++                }] = true;
++                // KioCG end - fix client display
+             }
+         }
+ 
 @@ -239,6 +_,8 @@
              brewResults.add(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(potionBrewing.mix(itemStack, items.get(i))));
          }
@@ -102,7 +149,7 @@
                  } else {
                      items.set(i, ItemStack.EMPTY);
                  }
-@@ -260,10 +_,10 @@
+@@ -260,20 +_,37 @@
          }
          // CraftBukkit end
  
@@ -116,7 +163,11 @@
                  itemStack = craftingRemainder;
              } else {
                  Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
-@@ -274,10 +_,28 @@
+             }
+         }
+ 
+-        items.set(3, itemStack);
++        // items.set(3, itemStack); // KioCG - change container behavior
          level.levelEvent(1035, pos, 0);
      }
  
@@ -140,11 +191,6 @@
      @Override
      protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
          super.loadAdditional(tag, registries);
-         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-+        this.shouldTick = true; // KioCG - optimize block entity
-         ContainerHelper.loadAllItems(tag, this.items, registries);
-         this.brewTime = tag.getShortOr("BrewTime", (short)0);
-         if (this.brewTime > 0) {
 @@ -302,14 +_,15 @@
              return potionBrewing.isIngredient(stack);
          } else {

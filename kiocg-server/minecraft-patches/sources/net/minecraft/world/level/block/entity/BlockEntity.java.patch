@@ -8,20 +8,30 @@
      // CraftBukkit end
      private static final Codec<BlockEntityType<?>> TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
      private static final Logger LOGGER = LogUtils.getLogger();
-@@ -65,6 +_,16 @@
-     public boolean isValidBlockState(BlockState state) {
+@@ -66,6 +_,18 @@
          return this.type.isValid(state);
      }
-+
+ 
 +    // KioCG start - optimize block entity
 +    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
 +        return true;
 +    }
 +
 +    public void updateBlockEntityTicker() {
-+        this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
++        if (this.hasLevel()) {
++            this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
++        }
 +    }
 +    // KioCG end - optimize block entity
- 
++
      public static BlockPos getPosFromTag(ChunkPos chunkPos, CompoundTag tag) {
          int intOr = tag.getIntOr("x", 0);
+         int intOr1 = tag.getIntOr("y", 0);
+@@ -311,6 +_,7 @@
+                 return dataComponentMap.getOrDefault(component, defaultValue);
+             }
+         });
++        this.updateBlockEntityTicker(); // KioCG - optimize block entity
+         DataComponentPatch dataComponentPatch = patch.forget(set::contains);
+         this.components = dataComponentPatch.split().added();
+         // CraftBukkit start
