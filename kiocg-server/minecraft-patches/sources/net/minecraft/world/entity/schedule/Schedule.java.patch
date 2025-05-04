@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/schedule/Schedule.java
++++ b/net/minecraft/world/entity/schedule/Schedule.java
+@@ -23,7 +_,7 @@
+         .build();
+     public static final Schedule VILLAGER_DEFAULT = register("villager_default")
+         .changeActivityAt(10, Activity.IDLE)
+-        .changeActivityAt(2000, Activity.WORK)
++        // .changeActivityAt(2000, Activity.WORK) // KioCG - optimize villager
+         .changeActivityAt(9000, Activity.MEET)
+         .changeActivityAt(11000, Activity.IDLE)
+         .changeActivityAt(12000, Activity.REST)

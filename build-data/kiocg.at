@@ -4,6 +4,8 @@ protected net.minecraft.world.entity.ai.goal.FollowMobGoal mob
 public net.minecraft.server.rcon.thread.RconClient sendCmdResponse(ILjava/lang/String;)V
 public net.minecraft.world.entity.Entity DATA_AIR_SUPPLY_ID
 public net.minecraft.world.entity.Entity numCollisions
+public net.minecraft.world.entity.ai.navigation.PathNavigation createPath(Ljava/util/Set;Lnet/minecraft/world/entity/Entity;IZIF)Lnet/minecraft/world/level/pathfinder/Path;
+public net.minecraft.world.entity.ai.sensing.NearestBedSensor doTick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Mob;)V
 public net.minecraft.world.entity.player.Player sendSoundEffect(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V
 public net.minecraft.world.entity.projectile.FishingHook biting
 public net.minecraft.world.level.block.AbstractCandleBlock addParticlesAndSound(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/util/RandomSource;)V

@@ -1,0 +1,74 @@
+--- a/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
++++ b/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
+@@ -22,9 +_,11 @@
+ import org.apache.commons.lang3.mutable.MutableLong;
+ 
+ public class SetClosestHomeAsWalkTarget {
+-    private static final int CACHE_TIMEOUT = 40;
+-    private static final int BATCH_SIZE = 5;
+-    private static final int RATE = 20;
++    // KioCG start - optimize villager
++    private static final int CACHE_TIMEOUT = 200;
++    private static final int BATCH_SIZE = 1;
++    private static final int RATE = 200;
++    // KioCG end - optimize villager
+     private static final int OK_DISTANCE_SQR = 4;
+ 
+     public static BehaviorControl<PathfinderMob> create(float speedModifier) {
+@@ -35,32 +_,33 @@
+                 .apply(
+                     instance,
+                     (walkTarget, home) -> (level, mob, gameTime) -> {
+-                        if (level.getGameTime() - mutableLong.getValue() < 20L) {
++                        if (level.getGameTime() - mutableLong.getValue() < RATE) { // KioCG - optimize villager
+                             return false;
+                         } else {
+                             PoiManager poiManager = level.getPoiManager();
+-                            Optional<BlockPos> optional = poiManager.findClosest(
+-                                poi -> poi.is(PoiTypes.HOME), mob.blockPosition(), 48, PoiManager.Occupancy.ANY
+-                            );
+-                            if (!optional.isEmpty() && !(optional.get().distSqr(mob.blockPosition()) <= 4.0)) {
+-                                MutableInt mutableInt = new MutableInt(0);
+-                                mutableLong.setValue(level.getGameTime() + level.getRandom().nextInt(20));
++                            // KioCG start - optimize villager
++                            BlockPos closestPos = io.papermc.paper.util.PoiAccess.findClosestPoiDataPosition(poiManager, poi -> poi.is(PoiTypes.HOME), null, mob.blockPosition(), 2, 5, PoiManager.Occupancy.ANY, false);
++                            if (closestPos == null) {
++                            // KioCG end - optimize villager
++                                MutableInt mutableInt = new MutableInt(-1); // KioCG - optimize villager: 正确计数
++                                mutableLong.setValue(level.getGameTime() + level.getRandom().nextInt(RATE)); // KioCG - optimize villager
+                                 Predicate<BlockPos> predicate = pos -> {
+                                     long packedBlockPos = pos.asLong();
+                                     if (map.containsKey(packedBlockPos)) {
+                                         return false;
+-                                    } else if (mutableInt.incrementAndGet() >= 5) {
++                                    } else if (mutableInt.incrementAndGet() >= BATCH_SIZE) { // KioCG - optimize villager
+                                         return false;
+                                     } else {
+-                                        map.put(packedBlockPos, mutableLong.getValue() + 40L);
++                                        map.put(packedBlockPos, mutableLong.getValue() + CACHE_TIMEOUT); // KioCG - optimize villager
+                                         return true;
+                                     }
+                                 };
+-                                Set<Pair<Holder<PoiType>, BlockPos>> set = poiManager.findAllWithType(
+-                                        poi -> poi.is(PoiTypes.HOME), predicate, mob.blockPosition(), 48, PoiManager.Occupancy.ANY
+-                                    )
+-                                    .collect(Collectors.toSet());
+-                                Path path = AcquirePoi.findPathToPois(mob, set);
++                                // KioCG start - optimize villager: copy paper - optimise POI access
++                                java.util.List<Pair<Holder<PoiType>, BlockPos>> poiposes = new java.util.ArrayList<>();
++                                // don't ask me why it's unbounded. ask mojang.
++                                io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, type -> type.is(PoiTypes.HOME), predicate, mob.blockPosition(), 48, 48 * 48, PoiManager.Occupancy.ANY, false, Integer.MAX_VALUE, poiposes);
++                                Path path = AcquirePoi.findPathToPois(mob, new java.util.HashSet<>(poiposes)); // KioCG - optimize villager
++                                // KioCG end - optimize villager: copy paper - optimise POI access
+                                 if (path != null && path.canReach()) {
+                                     BlockPos target = path.getTarget();
+                                     Optional<Holder<PoiType>> type = poiManager.getType(target);
+@@ -68,7 +_,7 @@
+                                         walkTarget.set(new WalkTarget(target, speedModifier, 1));
+                                         DebugPackets.sendPoiTicketCountPacket(level, target);
+                                     }
+-                                } else if (mutableInt.getValue() < 5) {
++                                } else if (mutableInt.getValue() < BATCH_SIZE) { // KioCG - optimize villager
+                                     map.long2LongEntrySet().removeIf(entry -> entry.getLongValue() < mutableLong.getValue());
+                                 }
+ 

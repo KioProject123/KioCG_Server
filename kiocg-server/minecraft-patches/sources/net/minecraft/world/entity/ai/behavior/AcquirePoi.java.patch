@@ -1,0 +1,62 @@
+--- a/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
++++ b/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
+@@ -64,12 +_,12 @@
+                         if (onlyIfAdult && mob.isBaby()) {
+                             return false;
+                         } else if (mutableLong.getValue() == 0L) {
+-                            mutableLong.setValue(level.getGameTime() + level.random.nextInt(20));
++                            mutableLong.setValue(level.getGameTime() + level.random.nextInt(200)); // KioCG - optimize villager
+                             return false;
+                         } else if (level.getGameTime() < mutableLong.getValue()) {
+                             return false;
+                         } else {
+-                            mutableLong.setValue(time + 20L + level.getRandom().nextInt(20));
++                            mutableLong.setValue(time + 200L + level.getRandom().nextInt(200)); // KioCG - optimize villager
+                             if (mob.getNavigation().isStuck()) mutableLong.add(200); // Paper - Perf: Wait an additional 10s to check again if they're stuck // TODO Modifies Vanilla behavior, add config option
+                             PoiManager poiManager = level.getPoiManager();
+                             map.long2ObjectEntrySet().removeIf(entry -> !entry.getValue().isStillValid(time));
+@@ -86,15 +_,18 @@
+                             };
+                             // Paper start - optimise POI access
+                             final java.util.List<Pair<Holder<PoiType>, BlockPos>> poiposes = new java.util.ArrayList<>();
+-                            io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, acquirablePois, predicate1, mob.blockPosition(), 48, 48*48, PoiManager.Occupancy.HAS_SPACE, false, 5, poiposes);
+-                            final Set<Pair<Holder<PoiType>, BlockPos>> set = new java.util.HashSet<>(poiposes.size());
+-                            for (final Pair<Holder<PoiType>, BlockPos> poiPose : poiposes) {
+-                                if (predicate.test(level, poiPose.getSecond())) {
+-                                    set.add(poiPose);
+-                                }
+-                            }
++                            // KioCG start - optimize villager
++                            Predicate<BlockPos> predicate2 = pos -> predicate.test(level, pos);
++                            io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, acquirablePois, predicate2.and(predicate1), mob.blockPosition(), 48, 48*48, PoiManager.Occupancy.HAS_SPACE, false, 1, poiposes);
++                            // final Set<Pair<Holder<PoiType>, BlockPos>> set = new java.util.HashSet<>(poiposes.size());
++                            // for (final Pair<Holder<PoiType>, BlockPos> poiPose : poiposes) {
++                            //     if (predicate.test(level, poiPose.getSecond())) {
++                            //         set.add(poiPose);
++                            //     }
++                            // }
++                            // KioCG end - optimize villager
+                             // Paper end - optimise POI access
+-                            Path path = findPathToPois(mob, set);
++                            Path path = findPathToPois(mob, new java.util.HashSet<>(poiposes)); // KioCG - optimize villager
+                             if (path != null && path.canReach()) {
+                                 BlockPos target = path.getTarget();
+                                 poiManager.getType(target).ifPresent(holder -> {
+@@ -105,7 +_,7 @@
+                                     DebugPackets.sendPoiTicketCountPacket(level, target);
+                                 });
+                             } else {
+-                                for (Pair<Holder<PoiType>, BlockPos> pair : set) {
++                                for (Pair<Holder<PoiType>, BlockPos> pair : poiposes) { // KioCG - optimize villager
+                                     map.computeIfAbsent(pair.getSecond().asLong(), l -> new AcquirePoi.JitteredLinearRetry(level.random, time));
+                                 }
+                             }
+@@ -153,7 +_,7 @@
+ 
+         public void markAttempt(long timestamp) {
+             this.previousAttemptTimestamp = timestamp;
+-            int i = this.currentDelay + this.random.nextInt(40) + 40;
++            int i = this.currentDelay + this.random.nextInt(200) + 200; // KioCG - optimize villager
+             this.currentDelay = Math.min(i, 400);
+             this.nextScheduledAttemptTimestamp = timestamp + this.currentDelay;
+         }

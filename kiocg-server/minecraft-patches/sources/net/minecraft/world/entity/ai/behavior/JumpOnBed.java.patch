@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/ai/behavior/JumpOnBed.java
++++ b/net/minecraft/world/entity/ai/behavior/JumpOnBed.java
+@@ -22,15 +_,24 @@
+     private int remainingTimeToReachBed;
+     private int remainingJumps;
+     private int remainingCooldownUntilNextJump;
++    private final net.minecraft.world.entity.ai.sensing.NearestBedSensor nearestBedSensor = net.minecraft.world.entity.ai.sensing.SensorType.NEAREST_BED.create(); // KioCG - optimize villager
+ 
+     public JumpOnBed(float speedModifier) {
+-        super(ImmutableMap.of(MemoryModuleType.NEAREST_BED, MemoryStatus.VALUE_PRESENT, MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT));
++        super(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT)); // KioCG - optimize villager
+         this.speedModifier = speedModifier;
+     }
+ 
+     @Override
+     protected boolean checkExtraStartConditions(ServerLevel level, Mob owner) {
+-        return owner.isBaby() && this.nearBed(level, owner);
++        // KioCG start - optimize villager
++        if (owner.isBaby()) {
++            if (this.nearBed(level, owner)) {
++                return true;
++            }
++            this.nearestBedSensor.doTick(level, owner);
++        }
++        return false;
++        // KioCG end - optimize villager
+     }
+ 
+     @Override

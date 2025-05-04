@@ -69,7 +69,7 @@ public class BetterMineshaftStructure extends Structure {
                 startingPos,
                 direction,
                 this.config,
-                context.heightAccessor().getMaxY()
+                startingPos.getY() // 不要生成到世界顶端的无效结构区域
         );
 
         structurePiecesBuilder.addPiece(entryPoint);

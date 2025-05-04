@@ -69,7 +69,7 @@
  
 +        // KioCG start - optimize block entity
 +        if (!changed) blockEntity.updateBlockEntityTicker();
-+        BrewingStandBlockEntity.refreshBottleDisplay(level, pos, state, blockEntity);
++        else BrewingStandBlockEntity.refreshBottleDisplay(level, pos, state, blockEntity);
 +    }
 +    public static void refreshBottleDisplay(Level level, BlockPos pos, BlockState state, BrewingStandBlockEntity blockEntity) {
 +        // KioCG end - optimize block entity

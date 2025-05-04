@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/entity/ai/sensing/NearestBedSensor.java
++++ b/net/minecraft/world/entity/ai/sensing/NearestBedSensor.java
+@@ -20,15 +_,17 @@
+ import net.minecraft.world.level.pathfinder.Path;
+ 
+ public class NearestBedSensor extends Sensor<Mob> {
+-    private static final int CACHE_TIMEOUT = 40;
+-    private static final int BATCH_SIZE = 5;
+-    private static final int RATE = 20;
++    // KioCG start - optimize villager
++    private static final int CACHE_TIMEOUT = 200;
++    private static final int BATCH_SIZE = 1;
++    private static final int RATE = 200;
++    // KioCG end - optimize villager
+     private final Long2LongMap batchCache = new Long2LongOpenHashMap();
+     private int triedCount;
+     private long lastUpdate;
+ 
+     public NearestBedSensor() {
+-        super(20);
++        super(RATE); // KioCG - optimize villager
+     }
+ 
+     @Override
+@@ -38,25 +_,25 @@
+ 
+     @Override
+     public void doTick(ServerLevel level, Mob entity) {
+-        if (entity.isBaby()) {
+-            this.triedCount = 0;
+-            this.lastUpdate = level.getGameTime() + level.getRandom().nextInt(20);
++        if (level.getGameTime() - lastUpdate >= RATE) { // KioCG - optimize villager: 方法移至JumpOnBed中
++            this.triedCount = -1; // KioCG - optimize villager: 正确计数
++            this.lastUpdate = level.getGameTime() + level.getRandom().nextInt(RATE); // KioCG - optimize villager
+             PoiManager poiManager = level.getPoiManager();
+             Predicate<BlockPos> predicate = pos -> {
+                 long packedBlockPos = pos.asLong();
+                 if (this.batchCache.containsKey(packedBlockPos)) {
+                     return false;
+-                } else if (++this.triedCount >= 5) {
++                } else if (++this.triedCount >= BATCH_SIZE) { // KioCG - optimize villager
+                     return false;
+                 } else {
+-                    this.batchCache.put(packedBlockPos, this.lastUpdate + 40L);
++                    this.batchCache.put(packedBlockPos, this.lastUpdate + CACHE_TIMEOUT); // KioCG - optimize villager
+                     return true;
+                 }
+             };
+             // Paper start - optimise POI access
+             java.util.List<Pair<Holder<PoiType>, BlockPos>> poiposes = new java.util.ArrayList<>();
+             // don't ask me why it's unbounded. ask mojang.
+-            io.papermc.paper.util.PoiAccess.findAnyPoiPositions(poiManager, type -> type.is(PoiTypes.HOME), predicate, entity.blockPosition(), 48, PoiManager.Occupancy.ANY, false, Integer.MAX_VALUE, poiposes);
++            io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, type -> type.is(PoiTypes.HOME), predicate, entity.blockPosition(), 16, 16 * 16, PoiManager.Occupancy.ANY, false, Integer.MAX_VALUE, poiposes); // KioCG - optimize villager
+             Path path = AcquirePoi.findPathToPois(entity, new java.util.HashSet<>(poiposes));
+             // Paper end - optimise POI access
+             if (path != null && path.canReach()) {
+@@ -65,7 +_,7 @@
+                 if (type.isPresent()) {
+                     entity.getBrain().setMemory(MemoryModuleType.NEAREST_BED, target);
+                 }
+-            } else if (this.triedCount < 5) {
++            } else if (this.triedCount < BATCH_SIZE) { // KioCG - optimize villager
+                 this.batchCache.long2LongEntrySet().removeIf(entry -> entry.getLongValue() < this.lastUpdate);
+             }
+         }

@@ -33,7 +33,7 @@
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -789,7 +_,55 @@
+@@ -789,7 +_,58 @@
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this, true);
@@ -44,15 +44,18 @@
 +            this.wasTooHot = false;
 +            this.nearbyChunkHot = this.refreshNearbyChunkHot();
 +            if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseGood) {
-+                if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseMedium) {
-+                    this.wasTooHot = true;
-+                    if (!this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
-+                        this.hurtServer(serverLevel(), this.damageSources().generic(), 2.0F);
-+                    }
-+                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.lowMessage)), true);
-+                } else if (!com.kiocg.task.TPSBarTask.instance().hasPlayer(this.uuid)) {
++                if (!com.kiocg.task.TPSBarTask.instance().hasPlayer(this.uuid)) {
 +                    com.kiocg.task.TPSBarTask.instance().addPlayer(this.getBukkitEntity());
 +                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.mediumMessage)), true);
++                }
++                if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseMedium) {
++                    this.wasTooHot = !this.getAbilities().invulnerable;
++                    if (this.wasTooHot) {
++                        if (!this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
++                            this.hurtServer(serverLevel(), this.damageSources().generic(), 2.0F);
++                        }
++                        this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.lowMessage)), true);
++                    }
 +                }
 +            }
 +        }

@@ -8,6 +8,41 @@
      private static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(
          MemoryModuleType.HOME,
          MemoryModuleType.JOB_SITE,
+@@ -160,12 +_,12 @@
+     private static final ImmutableList<SensorType<? extends Sensor<? super Villager>>> SENSOR_TYPES = ImmutableList.of(
+         SensorType.NEAREST_LIVING_ENTITIES,
+         SensorType.NEAREST_PLAYERS,
+-        SensorType.NEAREST_ITEMS,
+-        SensorType.NEAREST_BED,
++        // SensorType.NEAREST_ITEMS, // KioCG - optimize villager
++        // SensorType.NEAREST_BED, // KioCG - optimize villager
+         SensorType.HURT_BY,
+         SensorType.VILLAGER_HOSTILES,
+         SensorType.VILLAGER_BABIES,
+-        SensorType.SECONDARY_POIS,
++        // SensorType.SECONDARY_POIS, // KioCG - optimize villager
+         SensorType.GOLEM_DETECTED
+     );
+     public static final Map<MemoryModuleType<GlobalPos>, BiPredicate<Villager, Holder<PoiType>>> POI_MEMORIES = ImmutableMap.of(
+@@ -227,11 +_,13 @@
+             villagerBrain.addActivity(Activity.PLAY, VillagerGoalPackages.getPlayPackage(0.5F));
+         } else {
+             villagerBrain.setSchedule(Schedule.VILLAGER_DEFAULT);
+-            villagerBrain.addActivityWithConditions(
+-                Activity.WORK,
+-                VillagerGoalPackages.getWorkPackage(holder, 0.5F),
+-                ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))
+-            );
++            // KioCG start - optimize villager
++            // villagerBrain.addActivityWithConditions(
++            //     Activity.WORK,
++            //     VillagerGoalPackages.getWorkPackage(holder, 0.5F),
++            //     ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))
++            // );
++            // KioCG end - optimize villager
+         }
+ 
+         villagerBrain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(holder, 0.5F));
 @@ -292,10 +_,18 @@
          // Paper start - EAR 2
          this.customServerAiStep(level, false);
@@ -18,11 +53,11 @@
          ProfilerFiller profilerFiller = Profiler.get();
          profilerFiller.push("villagerBrain");
 +        // KioCG start - lobotomized villager
++        if (this.level().isBrightOutside() && (this.tickCount + this.getId()) % 100 == 0 && this.shouldRestock()) {
++            this.restock();
++        }
 +        if (this.lobotomized.checkLobotomized(this)) {
 +            inactive = true; // treat as inactive if lobotomized
-+            if (this.shouldRestock()) {
-+                this.restock();
-+            }
 +        }
 +        // KioCG end - lobotomized villager
          if (!inactive) this.getBrain().tick(level, this); // Paper - EAR 2
@@ -36,6 +71,14 @@
          this.updateSpecialPrices(player);
          this.setTradingPlayer(player);
          this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().level());
+@@ -431,6 +_,7 @@
+         this.resendOffersToTradingPlayer();
+         this.lastRestockGameTime = this.level().getGameTime();
+         this.numberOfRestocksToday++;
++        this.playWorkSound(); // KioCG - lobotomized villager
+     }
+ 
+     private void resendOffersToTradingPlayer() {
 @@ -465,21 +_,22 @@
      public boolean shouldRestock() {
          long l = this.lastRestockGameTime + 12000L;
