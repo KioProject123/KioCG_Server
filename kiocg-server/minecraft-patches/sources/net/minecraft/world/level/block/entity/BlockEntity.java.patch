@@ -8,30 +8,28 @@
      // CraftBukkit end
      private static final Codec<BlockEntityType<?>> TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
      private static final Logger LOGGER = LogUtils.getLogger();
-@@ -66,6 +_,18 @@
+@@ -47,6 +_,7 @@
+     protected boolean remove;
+     private BlockState blockState;
+     private DataComponentMap components = DataComponentMap.EMPTY;
++    public boolean preFirstTick = true; // KioCG - optimize block entity
+ 
+     public BlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+         this.type = type;
+@@ -65,6 +_,16 @@
+     public boolean isValidBlockState(BlockState state) {
          return this.type.isValid(state);
      }
- 
++
 +    // KioCG start - optimize block entity
 +    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
 +        return true;
 +    }
 +
-+    public void updateBlockEntityTicker() {
-+        if (this.hasLevel()) {
-+            this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
-+        }
++    public boolean updateBlockEntityTicker() {
++        return this.hasLevel() && this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
 +    }
 +    // KioCG end - optimize block entity
-+
+ 
      public static BlockPos getPosFromTag(ChunkPos chunkPos, CompoundTag tag) {
          int intOr = tag.getIntOr("x", 0);
-         int intOr1 = tag.getIntOr("y", 0);
-@@ -311,6 +_,7 @@
-                 return dataComponentMap.getOrDefault(component, defaultValue);
-             }
-         });
-+        this.updateBlockEntityTicker(); // KioCG - optimize block entity
-         DataComponentPatch dataComponentPatch = patch.forget(set::contains);
-         this.components = dataComponentPatch.split().added();
-         // CraftBukkit start

@@ -16,23 +16,43 @@
          // CraftBukkit start
          this.persistentDataContainer = chunk.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
          // CraftBukkit end
-@@ -869,7 +_,7 @@
+@@ -867,11 +_,15 @@
+         }
+     }
  
-     public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
+-    public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
++    public <T extends BlockEntity> boolean updateBlockEntityTicker(T blockEntity) { // KioCG - optimize block entity
          BlockState blockState = blockEntity.getBlockState();
 -        BlockEntityTicker<T> ticker = blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType());
-+        BlockEntityTicker<T> ticker = !blockEntity.needTicking(this.level, blockEntity.getBlockPos(), blockState) ? null : blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType()); // KioCG - optimize block entity
++        // KioCG start - optimize block entity
++        boolean needTicking = blockEntity.preFirstTick || blockEntity.needTicking(this.level, blockEntity.getBlockPos(), blockState);
++        BlockEntityTicker<T> ticker = !needTicking ? null : blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType());
++        // KioCG end - optimize block entity
          if (ticker == null) {
              this.removeBlockEntityTicker(blockEntity.getBlockPos());
++            return false; // KioCG - optimize block entity
          } else {
-@@ -917,6 +_,7 @@
+             this.tickersInLevel
+                 .compute(
+@@ -892,6 +_,7 @@
+                         }
+                     }
+                 );
++            return true; // KioCG - optimize block entity
+         }
+     }
+ 
+@@ -917,8 +_,10 @@
                      try {
                          ProfilerFiller profilerFiller = Profiler.get();
                          profilerFiller.push(this::getType);
 +                        LevelChunk.this.chunkHot.startTicking(); try { // KioCG - chunk hot
                          BlockState blockState = LevelChunk.this.getBlockState(blockPos);
                          if (this.blockEntity.getType().isValid(blockState)) {
++                            if (!this.blockEntity.preFirstTick || !(this.blockEntity.preFirstTick = false) && this.blockEntity.updateBlockEntityTicker()) // KioCG - optimize block entity
                              this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
+                             this.loggedInvalidBlockState = false;
+                         // Paper start - Remove the Block Entity if it's invalid
 @@ -931,6 +_,7 @@
                              // Paper end - Remove the Block Entity if it's invalid
                          }
