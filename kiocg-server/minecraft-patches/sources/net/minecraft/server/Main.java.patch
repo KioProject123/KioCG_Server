@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/Main.java
++++ b/net/minecraft/server/Main.java
+@@ -314,6 +_,12 @@
+                 return;
+             }
+ 
++            // KioCG start - biome modification
++            final com.kiocg.world.BiomeModification biomeModification = new com.kiocg.world.BiomeModification(worldStem.registries().compositeAccess());
++            biomeModification.addCustom();
++            biomeModification.applyModification();
++            // KioCG end - biome modification
++
+             /*
+             RegistryAccess.Frozen frozen = worldStem.registries().compositeAccess();
+             WorldData worldData = worldStem.worldData();

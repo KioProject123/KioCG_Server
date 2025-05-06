@@ -3,17 +3,13 @@ package com.yungnickyoung.minecraft.yungsextras.module;
 import com.yungnickyoung.minecraft.yungsextras.YungsExtrasCommon;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import java.util.ArrayList;
@@ -25,14 +21,14 @@ public class BiomeModificationModuleFabric {
     private static final int NUM_SWAMP_ARCHES = 11;
     private static final int NUM_SWAMP_DOUBLE_ARCHES = 22;
 
-    public static void init(RegistryAccess registries) {
-        new BiomeModificationModuleFabric().addFeaturesToBiomes(registries);
+    public static void init(com.kiocg.world.BiomeModification biomeModification) {
+        new BiomeModificationModuleFabric().addFeaturesToBiomes(biomeModification);
     }
 
     final List<Pair<String, GenerationStep.Decoration>> desert = new ArrayList<>();
     final List<Pair<String, GenerationStep.Decoration>> swamp = new ArrayList<>();
 
-    private void addFeaturesToBiomes(RegistryAccess registries) {
+    private void addFeaturesToBiomes(com.kiocg.world.BiomeModification biomeModification) {
         // Wells
         // 使用原版沙漠水井进行生成
         // addToDesertBiome("desert/wells/desert_well_sm", GenerationStep.Decoration.SURFACE_STRUCTURES);
@@ -81,8 +77,8 @@ public class BiomeModificationModuleFabric {
         addToSwampBiome("swamp/misc/swamp_church", GenerationStep.Decoration.SURFACE_STRUCTURES);
         addToSwampBiome("swamp/misc/swamp_ogre", GenerationStep.Decoration.SURFACE_STRUCTURES);
 
-        this.build(registries, "has_structure/desert_decorations", this.desert);
-        this.build(registries, "has_structure/swamp_structures", this.swamp);
+        this.build(biomeModification, "has_structure/desert_decorations", this.desert);
+        this.build(biomeModification, "has_structure/swamp_structures", this.swamp);
     }
 
     private void addToDesertBiome(String featurePath, GenerationStep.Decoration step) {
@@ -101,32 +97,13 @@ public class BiomeModificationModuleFabric {
         this.swamp.add(Pair.of(featurePath, step));
     }
 
-    private void build(RegistryAccess registries, String biomesPath, List<Pair<String, GenerationStep.Decoration>> addFeatures) {
-        final Registry<Biome> biomeRegistry = registries.lookupOrThrow(Registries.BIOME);
+    private void build(com.kiocg.world.BiomeModification biomeModification, String biomesPath, List<Pair<String, GenerationStep.Decoration>> features) {
+        final Registry<Biome> biomeRegistry = biomeModification.getRegistry().lookupOrThrow(Registries.BIOME);
+        final Registry<PlacedFeature> placedFeatureRegistry = biomeModification.getRegistry().lookupOrThrow(Registries.PLACED_FEATURE);
         final Iterable<Holder<Biome>> biomes = biomeRegistry.getTagOrEmpty(TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(YungsExtrasCommon.MOD_ID, biomesPath)));
-        biomes.forEach(biomeHolder -> {
-            final BiomeGenerationSettings generationSettings = biomeHolder.value().getGenerationSettings();
-            final List<HolderSet<PlacedFeature>> features = generationSettings.features();
-            final Iterable<Holder<ConfiguredWorldCarver<?>>> carvers = generationSettings.getCarvers();
-
-            final BiomeGenerationSettings.PlainBuilder builder = new BiomeGenerationSettings.PlainBuilder();
-            for (int i = 0; i < features.size(); i++) {
-                for (Holder<PlacedFeature> placedFeature : features.get(i)) {
-                    builder.addFeature(i, placedFeature);
-                }
-            }
-            for (Holder<ConfiguredWorldCarver<?>> carver : carvers) {
-                builder.addCarver(carver);
-            }
-
-            final Registry<PlacedFeature> placedFeatureRegistry = registries.lookupOrThrow(Registries.PLACED_FEATURE);
-            addFeatures.forEach(pair -> {
-                final ResourceLocation location = ResourceLocation.fromNamespaceAndPath(YungsExtrasCommon.MOD_ID, pair.left());
-                final Holder.Reference<PlacedFeature> orThrow = placedFeatureRegistry.getOrThrow(ResourceKey.create(Registries.PLACED_FEATURE, location));
-                builder.addFeature(pair.right(), orThrow);
-            });
-
-            biomeHolder.value().generationSettings = builder.build();
+        features.forEach(pair -> {
+            final Holder.Reference<PlacedFeature> orThrow = placedFeatureRegistry.getOrThrow(ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(YungsExtrasCommon.MOD_ID, pair.left())));
+            biomeModification.add(biomes, orThrow, pair.right());
         });
     }
 }

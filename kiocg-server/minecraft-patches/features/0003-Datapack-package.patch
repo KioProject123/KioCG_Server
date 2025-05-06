@@ -5,18 +5,17 @@ Subject: [PATCH] Datapack package
 
 
 diff --git a/net/minecraft/server/Main.java b/net/minecraft/server/Main.java
-index 9c9b601a3f903bebb0dd1bda0e24745587229727..b0d70914386226c852c75a211fa6b5ae04944f7a 100644
+index 3f33974b36fc667f7d3d67f8e01951334007577f..69d2fa7b5b82cc1a0999e1dcb4f5f7c48264077e 100644
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -314,6 +314,8 @@ public class Main {
-                 return;
-             }
+@@ -317,6 +317,7 @@ public class Main {
+             // KioCG start - biome modification
+             final com.kiocg.world.BiomeModification biomeModification = new com.kiocg.world.BiomeModification(worldStem.registries().compositeAccess());
+             biomeModification.addCustom();
++            com.yungnickyoung.minecraft.yungsextras.module.BiomeModificationModuleFabric.init(biomeModification);
+             biomeModification.applyModification();
+             // KioCG end - biome modification
  
-+            com.yungnickyoung.minecraft.yungsextras.module.BiomeModificationModuleFabric.init(worldStem.registries().compositeAccess()); // KioCG
-+
-             /*
-             RegistryAccess.Frozen frozen = worldStem.registries().compositeAccess();
-             WorldData worldData = worldStem.worldData();
 diff --git a/net/minecraft/world/entity/monster/ElderGuardian.java b/net/minecraft/world/entity/monster/ElderGuardian.java
 index fd33a8b59f40299ab644a4c52921b66a9b6552ca..8ea80e1cbe252509815328d246f81134024bdc93 100644
 --- a/net/minecraft/world/entity/monster/ElderGuardian.java
