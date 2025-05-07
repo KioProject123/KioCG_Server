@@ -1,5 +1,63 @@
 --- a/io/papermc/paper/entity/activation/ActivationRange.java
 +++ b/io/papermc/paper/entity/activation/ActivationRange.java
+@@ -142,14 +_,16 @@
+             }
+ 
+             final int worldHeight = world.getHeight();
+-            ActivationRange.maxBB = player.getBoundingBox().inflate(maxRange, worldHeight, maxRange);
+-            ActivationType.MISC.boundingBox = player.getBoundingBox().inflate(miscActivationRange, worldHeight, miscActivationRange);
+-            ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate(raiderActivationRange, worldHeight, raiderActivationRange);
+-            ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate(animalActivationRange, worldHeight, animalActivationRange);
+-            ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate(monsterActivationRange, worldHeight, monsterActivationRange);
+-            ActivationType.WATER.boundingBox = player.getBoundingBox().inflate(waterActivationRange, worldHeight, waterActivationRange);
+-            ActivationType.FLYING_MONSTER.boundingBox = player.getBoundingBox().inflate(flyingActivationRange, worldHeight, flyingActivationRange);
+-            ActivationType.VILLAGER.boundingBox = player.getBoundingBox().inflate(villagerActivationRange, worldHeight, villagerActivationRange);
++            // KioCG start - optimize entity activation range
++            ActivationRange.maxBB = getActivationRange(player, maxRange, flyingActivationRange);
++            ActivationType.MISC.boundingBox = getActivationRange(player, miscActivationRange, 0);
++            ActivationType.RAIDER.boundingBox = getActivationRange(player, raiderActivationRange, 0);
++            ActivationType.ANIMAL.boundingBox = getActivationRange(player, animalActivationRange, 0);
++            ActivationType.MONSTER.boundingBox = getActivationRange(player, monsterActivationRange, 0);
++            ActivationType.WATER.boundingBox = getActivationRange(player, waterActivationRange, 0);
++            ActivationType.FLYING_MONSTER.boundingBox = getActivationRange(player, flyingActivationRange, flyingActivationRange);
++            ActivationType.VILLAGER.boundingBox = getActivationRange(player, villagerActivationRange, 0);
++            // KioCG end - optimize entity activation range
+ 
+             final java.util.List<Entity> entities = world.getEntities((Entity) null, ActivationRange.maxBB, e -> true);
+             final boolean tickMarkers = world.paperConfig().entities.markers.tick;
+@@ -163,6 +_,32 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity activation range
++    public static AABB getActivationRange(Player player, double xzRange, int extendSky) {
++        Level world = player.level();
++        if (!world.dimensionType().hasCeiling()) {
++            int oceanFloor = world.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR, player.blockPosition());
++            if (player.getY() >= oceanFloor) {
++                return inflate(player.getBoundingBox(), xzRange, oceanFloor - 16, player.getY() + 16 + extendSky);
++            } else {
++                return inflate(player.getBoundingBox(), xzRange, player.getY() - 16, player.getY() + 16);
++            }
++        } else {
++            return player.getBoundingBox().inflate(xzRange, 48, xzRange);
++        }
++    }
++
++    public static AABB inflate(AABB aabb, double xz, double minY, double maxY) {
++        double d = aabb.minX - xz;
++        double d1 = minY;
++        double d2 = aabb.minZ - xz;
++        double d3 = aabb.maxX + xz;
++        double d4 = maxY;
++        double d5 = aabb.maxZ + xz;
++        return new AABB(d, d1, d2, d3, d4, d5);
++    }
++    // KioCG end - optimize entity activation range
++
+     /**
+      * Tries to activate an entity.
+      *
 @@ -203,11 +_,17 @@
          if ((entity.activationType != ActivationType.WATER && entity.isInWater() && entity.isPushedByFluid())) {
              return 100;
