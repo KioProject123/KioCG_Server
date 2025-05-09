@@ -1,0 +1,15 @@
+--- a/src/main/java/org/bukkit/block/data/BlockData.java
++++ b/src/main/java/org/bukkit/block/data/BlockData.java
+@@ -280,6 +_,12 @@
+     @ApiStatus.Experimental
+     BlockState createBlockState();
+ 
++    // KioCG start - more api
++    @NotNull
++    @ApiStatus.Experimental
++    BlockState createBlockState(Location location);
++    // KioCG end - more api
++
+     // Paper start - destroy speed API
+     /**
+      * Gets the speed at which this block will be destroyed by a given {@link ItemStack}
