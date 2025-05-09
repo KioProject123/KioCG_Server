@@ -9,6 +9,28 @@
              && this.isValidDifficulty(this.mob.level().getDifficulty())
              && !this.isOpen();
      }
+@@ -39,6 +_,12 @@
+     public void start() {
+         super.start();
+         this.breakTime = 0;
++        // KioCG start - keep block destruction
++        final int progress = this.mob.level().destroyingBlocks.get(this.doorPos).getProgress();
++        if (progress > 0) {
++            this.breakTime = (int) (progress / 10.0F * this.getDoorBreakTime());
++        }
++        // KioCG end - keep block destruction
+     }
+ 
+     @Override
+@@ -52,7 +_,7 @@
+     @Override
+     public void stop() {
+         super.stop();
+-        this.mob.level().destroyBlockProgress(this.mob.getId(), this.doorPos, -1);
++        this.mob.serverLevel().abortDestroyBlock(this.mob.getId(), this.doorPos, -1); // KioCG - keep block destruction
+     }
+ 
+     @Override
 @@ -80,7 +_,7 @@
              }
              // CraftBukkit end

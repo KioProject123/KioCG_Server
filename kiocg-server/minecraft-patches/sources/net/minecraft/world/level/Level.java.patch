@@ -1,15 +1,46 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1879,6 +_,12 @@
-         return this.levelData.getDayTime();
+@@ -164,6 +_,7 @@
+     private int tileTickPosition;
+     public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
+     public java.util.ArrayDeque<net.minecraft.world.level.block.RedstoneTorchBlock.Toggle> redstoneUpdateInfos; // Paper - Faster redstone torch rapid clock removal; Move from Map in BlockRedstoneTorch to here
++    public final it.unimi.dsi.fastutil.objects.Object2ObjectMap<BlockPos, net.minecraft.server.level.BlockDestructionProgress> destroyingBlocks = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(); // KioCG - keep block destruction
+ 
+     public CraftWorld getWorld() {
+         return this.world;
+@@ -915,6 +_,8 @@
+         // CraftBukkit end
+         this.chunkPacketBlockController = this.paperConfig().anticheat.antiXray.enabled ? new io.papermc.paper.antixray.ChunkPacketBlockControllerAntiXray(this, executor) : io.papermc.paper.antixray.ChunkPacketBlockController.NO_OPERATION_INSTANCE; // Paper - Anti-Xray
+         this.entityLookup = new ca.spottedleaf.moonrise.patches.chunk_system.level.entity.dfl.DefaultEntityLookup(this); // Paper - rewrite chunk system
++
++        this.destroyingBlocks.defaultReturnValue(new net.minecraft.server.level.BlockDestructionProgress(-1, BlockPos.ZERO)); // KioCG - keep block destruction
      }
  
+     // Paper start - Cancel hit for vanished players
+@@ -1083,6 +_,13 @@
+ 
+     @Override
+     public boolean setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft) {
++        // KioCG start - keep block destruction
++        if (this.destroyingBlocks.containsKey(pos)) {
++            this.destroyBlockProgress(-1, pos, -1);
++            this.destroyingBlocks.remove(pos);
++        }
++        // KioCG end - keep block destruction
++
+         // CraftBukkit start - tree generation
+         if (this.captureTreeGeneration) {
+             // Paper start - Protect Bedrock and End Portal/Frames from being destroyed
+@@ -1878,6 +_,12 @@
+     public long getDayTime() {
+         return this.levelData.getDayTime();
+     }
++
 +    // KioCG start - world data synchronization
 +    public int getDays() {
 +        return ((net.minecraft.world.level.storage.PrimaryLevelData) this.levelData).getDays();
 +    }
 +    // KioCG end - world data synchronization
-+
+ 
      public boolean mayInteract(Entity entity, BlockPos pos) {
          return true;
-     }

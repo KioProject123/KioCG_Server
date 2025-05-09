@@ -9,6 +9,28 @@
              // Paper start - create time skip event - move up calculations
              final long newDayTime = this.levelData.getDayTime() + 24000L;
              org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(
+@@ -745,6 +_,21 @@
+         this.updateSkyBrightness();
+         if (runsNormally) {
+             this.tickTime();
++
++            // KioCG start - keep block destruction
++            // 客户端会清理400刻之后的方块破坏纹理
++            if (this.lagCompensationTick % 20 == 0) {
++                java.util.Iterator<BlockDestructionProgress> iterator = this.destroyingBlocks.values().iterator();
++
++                while (iterator.hasNext()) {
++                    BlockDestructionProgress blockDestructionProgress = iterator.next();
++                    int i = blockDestructionProgress.getUpdatedRenderTick();
++                    if (this.lagCompensationTick - i > 400) {
++                        iterator.remove();
++                    }
++                }
++            }
++            // KioCG end - keep block destruction
+         }
+ 
+         profilerFiller.push("tickPending");
 @@ -853,7 +_,12 @@
  
      private void wakeUpAllPlayers() {
@@ -113,6 +135,54 @@
              profilerFiller.pop();
  
              for (Entity entity : passengerEntity.getPassengers()) {
+@@ -1587,8 +_,29 @@
+     }
+     // CraftBukkit end
+ 
++    // KioCG start - keep block destruction
++    public void abortDestroyBlock(int breakerId, BlockPos pos, int progress) {
++        progress = this.destroyingBlocks.get(pos).getProgress();
++        if (progress > -1 && progress < 3) {
++            this.destroyBlockProgress(breakerId, pos, -1);
++        }
++    }
++    // KioCG end - keep block destruction
++
+     @Override
+     public void destroyBlockProgress(int breakerId, BlockPos pos, int progress) {
++        // KioCG start - keep block destruction
++        BlockDestructionProgress blockDestructionProgress;
++        if (progress > -1) {
++            blockDestructionProgress = this.destroyingBlocks.computeIfAbsent(pos, k -> new BlockDestructionProgress(BlockDestructionProgress.getNextBlockDestroyId(), pos));
++            blockDestructionProgress.setProgress(progress);
++            blockDestructionProgress.updateTick((int) this.getLagCompensationTick());
++        } else {
++            blockDestructionProgress = this.destroyingBlocks.remove(pos);
++        }
++        int fakeBreakerId = blockDestructionProgress.getId();
++        // KioCG end - keep block destruction
++
+         // CraftBukkit start
+         Player breakerPlayer = null;
+         Entity entity = this.getEntity(breakerId);
+@@ -1606,7 +_,7 @@
+         }
+         // Paper end - Add BlockBreakProgressUpdateEvent
+         for (ServerPlayer serverPlayer : this.server.getPlayerList().getPlayers()) {
+-            if (serverPlayer != null && serverPlayer.level() == this && serverPlayer.getId() != breakerId) {
++            if (serverPlayer != null && serverPlayer.level() == this) { // KioCG - keep block destruction
+                 double d = pos.getX() - serverPlayer.getX();
+                 double d1 = pos.getY() - serverPlayer.getY();
+                 double d2 = pos.getZ() - serverPlayer.getZ();
+@@ -1616,7 +_,7 @@
+                 }
+                 // CraftBukkit end
+                 if (d * d + d1 * d1 + d2 * d2 < 1024.0) {
+-                    serverPlayer.connection.send(new ClientboundBlockDestructionPacket(breakerId, pos, progress));
++                    serverPlayer.connection.send(new ClientboundBlockDestructionPacket(fakeBreakerId, pos, Math.min(progress, 9))); // KioCG - keep block destruction: 破坏程度为10客户端不显示
+                 }
+             }
+         }
 @@ -1855,7 +_,7 @@
          Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
              case NONE -> Explosion.BlockInteraction.KEEP;
