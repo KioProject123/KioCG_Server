@@ -1,0 +1,16 @@
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -1307,6 +_,13 @@
+         return server.recipeIterator();
+     }
+ 
++    // KioCG start - extended recipe iterator
++    @NotNull
++    public static Iterator<Recipe> recipeIterator(org.bukkit.inventory.RecipeType recipeType) {
++        return server.recipeIterator(recipeType);
++    }
++    // KioCG end - extended recipe iterator
++
+     /**
+      * Clears the list of crafting recipes.
+      */
