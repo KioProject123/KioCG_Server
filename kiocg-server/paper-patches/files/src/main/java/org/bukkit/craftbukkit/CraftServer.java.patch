@@ -9,17 +9,31 @@
      private File container;
      private WarningState warningState = WarningState.DEFAULT;
      public ApiVersion minimumAPI;
-@@ -706,6 +_,13 @@
-         ServerPlayer player = this.playerList.getPlayerByName(name);
+@@ -707,6 +_,13 @@
          return (player != null) ? player.getBukkitEntity() : null;
      }
-+
+ 
 +    // KioCG start - more api
 +    @Override
 +    public boolean isValidPlayerName(String name) {
 +        return net.minecraft.util.StringUtil.isReasonablePlayerName(name);
 +    }
 +    // KioCG end - more api
- 
++
      @Override
      public Player getPlayer(UUID id) {
+         Preconditions.checkArgument(id != null, "UUID id cannot be null");
+@@ -1760,6 +_,13 @@
+     public Iterator<Recipe> recipeIterator() {
+         return new RecipeIterator();
+     }
++
++    // KioCG start - extended recipe iterator
++    @Override
++    public Iterator<Recipe> recipeIterator(org.bukkit.inventory.RecipeType recipeType) {
++        return new RecipeIterator(recipeType);
++    }
++    // KioCG end - extended recipe iterator
+ 
+     @Override
+     public void clearRecipes() {

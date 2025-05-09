@@ -9,3 +9,12 @@
      /**
       * Gets the player with the given UUID.
       *
+@@ -1161,6 +_,8 @@
+      */
+     @NotNull
+     public Iterator<Recipe> recipeIterator();
++
++    @NotNull Iterator<Recipe> recipeIterator(org.bukkit.inventory.RecipeType recipeType); // KioCG - extended recipe iterator
+ 
+     /**
+      * Clears the list of crafting recipes.
