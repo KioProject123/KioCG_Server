@@ -1,10 +1,12 @@
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
-@@ -8,12 +_,27 @@
+@@ -7,13 +_,37 @@
+ import net.minecraft.world.item.crafting.RecipeType;
  import org.bukkit.inventory.Recipe;
  
- public class RecipeIterator implements Iterator<Recipe> {
+-public class RecipeIterator implements Iterator<Recipe> {
 -    private final Iterator<Map.Entry<RecipeType<?>, RecipeHolder<?>>> recipes;
++public class RecipeIterator<T extends Recipe> implements Iterator<T> { // KioCG - extended recipe iterator
 +    private final Iterator<RecipeHolder<?>> recipes; // KioCG - extended recipe iterator
      private RecipeHolder<?> currentRecipe;
  
@@ -15,28 +17,44 @@
 +    }
 +
 +    // KioCG start - extended recipe iterator
-+    public RecipeIterator(org.bukkit.inventory.RecipeType recipeType) {
-+        RecipeType<?> vanilla = switch (recipeType) {
-+            case CRAFTING -> RecipeType.CRAFTING;
-+            case SMELTING -> RecipeType.SMELTING;
-+            case BLASTING -> RecipeType.BLASTING;
-+            case SMOKING -> RecipeType.SMOKING;
-+            case CAMPFIRE_COOKING -> RecipeType.CAMPFIRE_COOKING;
-+            case STONECUTTING -> RecipeType.STONECUTTING;
-+            case SMITHING -> RecipeType.SMITHING;
-+        };
++    public RecipeIterator(org.bukkit.inventory.RecipeType<T> recipeType) {
++        RecipeType<?> vanilla;
++        if (recipeType == org.bukkit.inventory.RecipeType.CRAFTING) {
++            vanilla = RecipeType.CRAFTING;
++        } else if (recipeType == org.bukkit.inventory.RecipeType.SMELTING) {
++            vanilla = RecipeType.SMELTING;
++        } else if (recipeType == org.bukkit.inventory.RecipeType.BLASTING) {
++            vanilla = RecipeType.BLASTING;
++        } else if (recipeType == org.bukkit.inventory.RecipeType.SMOKING) {
++            vanilla = RecipeType.SMOKING;
++        } else if (recipeType == org.bukkit.inventory.RecipeType.CAMPFIRE_COOKING) {
++            vanilla = RecipeType.CAMPFIRE_COOKING;
++        } else if (recipeType == org.bukkit.inventory.RecipeType.STONECUTTING) {
++            vanilla = RecipeType.STONECUTTING;
++        } else if (recipeType == org.bukkit.inventory.RecipeType.SMITHING) {
++            vanilla = RecipeType.SMITHING;
++        } else {
++            throw new IllegalStateException("unknown recipe type");
++        }
 +        this.recipes = MinecraftServer.getServer().getRecipeManager().recipes.byType.get(vanilla).iterator();
 +    }
 +    // KioCG end - extended recipe iterator
  
      @Override
      public boolean hasNext() {
-@@ -22,7 +_,7 @@
- 
-     @Override
-     public Recipe next() {
--        this.currentRecipe = this.recipes.next().getValue();
-+        this.currentRecipe = this.recipes.next(); // KioCG - extended recipe iterator
-         return this.currentRecipe.toBukkitRecipe();
+@@ -21,10 +_,12 @@
      }
  
+     @Override
+-    public Recipe next() {
+-        this.currentRecipe = this.recipes.next().getValue();
+-        return this.currentRecipe.toBukkitRecipe();
++    // KioCG start - extended recipe iterator
++    public T next() {
++        this.currentRecipe = this.recipes.next();
++        return (T) this.currentRecipe.toBukkitRecipe();
+     }
++    // KioCG end - extended recipe iterator
+ 
+     @Override
+     public void remove() {

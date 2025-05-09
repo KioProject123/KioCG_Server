@@ -14,7 +14,7 @@
      @NotNull
      public Iterator<Recipe> recipeIterator();
 +
-+    @NotNull Iterator<Recipe> recipeIterator(org.bukkit.inventory.RecipeType recipeType); // KioCG - extended recipe iterator
++    @NotNull <T extends Recipe> Iterator<T> recipeIterator(@NotNull org.bukkit.inventory.RecipeType<T> recipeType); // KioCG - extended recipe iterator
  
      /**
       * Clears the list of crafting recipes.

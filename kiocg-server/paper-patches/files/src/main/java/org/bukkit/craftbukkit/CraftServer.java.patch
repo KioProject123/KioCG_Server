@@ -30,8 +30,8 @@
 +
 +    // KioCG start - extended recipe iterator
 +    @Override
-+    public Iterator<Recipe> recipeIterator(org.bukkit.inventory.RecipeType recipeType) {
-+        return new RecipeIterator(recipeType);
++    public <T extends Recipe> Iterator<T> recipeIterator(org.bukkit.inventory.RecipeType<T> recipeType) {
++        return new RecipeIterator<>(recipeType);
 +    }
 +    // KioCG end - extended recipe iterator
  

@@ -1,16 +1,19 @@
 --- /dev/null
 +++ b/src/main/java/org/bukkit/inventory/RecipeType.java
-@@ -1,0 +_,13 @@
+@@ -1,0 +_,16 @@
 +package org.bukkit.inventory;
 +
 +// KioCG start - extended recipe iterator: all class
-+public enum RecipeType {
-+    CRAFTING,
-+    SMELTING,
-+    BLASTING,
-+    SMOKING,
-+    CAMPFIRE_COOKING,
-+    STONECUTTING,
-+    SMITHING
++public class RecipeType<T extends Recipe> {
++    public static final RecipeType<CraftingRecipe> CRAFTING = new RecipeType<>();
++    public static final RecipeType<FurnaceRecipe> SMELTING = new RecipeType<>();
++    public static final RecipeType<BlastingRecipe> BLASTING = new RecipeType<>();
++    public static final RecipeType<SmokingRecipe> SMOKING = new RecipeType<>();
++    public static final RecipeType<CampfireRecipe> CAMPFIRE_COOKING = new RecipeType<>();
++    public static final RecipeType<StonecuttingRecipe> STONECUTTING = new RecipeType<>();
++    public static final RecipeType<SmithingRecipe> SMITHING = new RecipeType<>();
++
++    private void recipeType() {
++    }
 +}
 +// KioCG end - extended recipe iterator: all class
