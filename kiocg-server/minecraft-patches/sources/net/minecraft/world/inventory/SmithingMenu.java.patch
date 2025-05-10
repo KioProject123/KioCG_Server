@@ -1,5 +1,25 @@
 --- a/net/minecraft/world/inventory/SmithingMenu.java
 +++ b/net/minecraft/world/inventory/SmithingMenu.java
+@@ -72,11 +_,19 @@
+ 
+     @Override
+     protected void onTake(Player player, ItemStack stack) {
++        // KioCG start - ResultTakenEvent
++        org.bukkit.inventory.ItemStack oldTemplateItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(TEMPLATE_SLOT));
++        org.bukkit.inventory.ItemStack oldBaseItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(BASE_SLOT));
++        org.bukkit.inventory.ItemStack oldAdditionalItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(ADDITIONAL_SLOT));
++        org.bukkit.inventory.ItemStack oldResult = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(stack);
++        // KioCG end - ResultTakenEvent
++
+         stack.onCraftedBy(player, stack.getCount());
+         this.resultSlots.awardUsedRecipes(player, this.getRelevantItems());
+         this.shrinkStackInSlot(0);
+         this.shrinkStackInSlot(1);
+         this.shrinkStackInSlot(2);
++        new com.kiocg.event.inventory.SmithingResultTakenEvent(player.getBukkitEntity(), getBukkitView(), oldResult, oldTemplateItem, oldBaseItem, oldAdditionalItem).callEvent(); // KioCG - ResultTakenEvent
+         this.access.execute((level, pos) -> level.levelEvent(1044, pos, 0));
+     }
+ 
 @@ -119,6 +_,13 @@
          recipeFor.ifPresentOrElse(recipe -> {
              ItemStack itemStack = recipe.value().assemble(smithingRecipeInput, this.level.registryAccess());

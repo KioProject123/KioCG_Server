@@ -5,7 +5,7 @@
              }
  
 -            slot.onTake(player, item);
-+            slot.onTake(player, index == this.getResultSlot() ? itemStack : item); // KioCG - AnvilResultTakenEvent: 传递正确的物品
++            slot.onTake(player, index == this.getResultSlot() ? itemStack : item); // KioCG - ResultTakenEvent: 传递正确的物品
          }
  
          return itemStack;

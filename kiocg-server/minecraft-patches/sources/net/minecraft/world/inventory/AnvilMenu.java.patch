@@ -4,11 +4,11 @@
  
      @Override
      protected void onTake(Player player, ItemStack stack) {
-+        // KioCG start - AnvilResultTakenEvent
-+        org.bukkit.inventory.ItemStack oldFirstItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(0));
-+        org.bukkit.inventory.ItemStack oldSecondItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(1));
++        // KioCG start - ResultTakenEvent
++        org.bukkit.inventory.ItemStack oldFirstItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(INPUT_SLOT));
++        org.bukkit.inventory.ItemStack oldSecondItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.inputSlots.getItem(ADDITIONAL_SLOT));
 +        org.bukkit.inventory.ItemStack oldResult = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(stack);
-+        // KioCG end - AnvilResultTakenEvent
++        // KioCG end - ResultTakenEvent
 +
          if (!player.hasInfiniteMaterials()) {
              player.giveExperienceLevels(-this.cost.get());
@@ -17,7 +17,7 @@
  
          this.cost.set(AnvilMenu.DEFAULT_DENIED_COST); // CraftBukkit - use a variable for set a cost for denied item
          this.inputSlots.setItem(0, ItemStack.EMPTY);
-+        new com.kiocg.event.inventory.AnvilResultTakenEvent(player.getBukkitEntity(), getBukkitView(), oldResult, oldFirstItem, oldSecondItem).callEvent(); // KioCG - AnvilResultTakenEvent
++        new com.kiocg.event.inventory.AnvilResultTakenEvent(player.getBukkitEntity(), getBukkitView(), oldResult, oldFirstItem, oldSecondItem).callEvent(); // KioCG - ResultTakenEvent
          this.access.execute((level, blockPos) -> {
              BlockState blockState = level.getBlockState(blockPos);
 -            if (!player.hasInfiniteMaterials() && blockState.is(BlockTags.ANVIL) && player.getRandom().nextFloat() < 0.12F) {
