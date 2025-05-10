@@ -1,5 +1,42 @@
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -461,6 +_,36 @@
+         return event;
+     }
+ 
++    // KioCG start - PlayerBottleEvent
++    public static com.kiocg.event.player.PlayerBottleEmptyEvent callPlayerBottleEmptyEvent(Level world, net.minecraft.world.entity.player.Player player, BlockPos clicked, ItemStack itemInHand, ItemStack result, InteractionHand hand) {
++        return (com.kiocg.event.player.PlayerBottleEmptyEvent) CraftEventFactory.getPlayerBottleEvent(false, world, player, clicked, itemInHand, result, hand);
++    }
++
++    public static com.kiocg.event.player.PlayerBottleFillEvent callPlayerBottleFillEvent(Level world, net.minecraft.world.entity.player.Player player, BlockPos clicked, ItemStack itemInHand, ItemStack result, InteractionHand hand) {
++        return (com.kiocg.event.player.PlayerBottleFillEvent) CraftEventFactory.getPlayerBottleEvent(true, world, player, clicked, itemInHand, result, hand);
++    }
++
++    private static PlayerEvent getPlayerBottleEvent(boolean isFilling, Level world, net.minecraft.world.entity.player.Player player, BlockPos clicked, ItemStack bottle, ItemStack result, InteractionHand hand) {
++        Player cplayer = (Player) player.getBukkitEntity();
++        org.bukkit.inventory.ItemStack bottleItem = CraftItemStack.asBukkitCopy(bottle);
++        CraftItemStack resultItem = CraftItemStack.asCraftMirror(result);
++
++        Block clickedBlock = CraftBlock.at(world, clicked);
++        EquipmentSlot handSlot = CraftEquipmentSlot.getHand(hand);
++
++        PlayerEvent event;
++        if (isFilling) {
++            event = new com.kiocg.event.player.PlayerBottleFillEvent(cplayer, clickedBlock, bottleItem, resultItem, handSlot);
++        } else {
++            event = new com.kiocg.event.player.PlayerBottleEmptyEvent(cplayer, clickedBlock, bottleItem, resultItem, handSlot);
++        }
++
++        event.callEvent();
++
++        return event;
++    }
++    // KioCG end - PlayerBottleEvent
++
+     public static PlayerInteractEvent callPlayerInteractEvent(net.minecraft.world.entity.player.Player player, Action action, ItemStack item, InteractionHand hand) {
+         if (action != Action.LEFT_CLICK_AIR && action != Action.RIGHT_CLICK_AIR) {
+             throw new AssertionError(String.format("%s performing %s with %s", player, action, item));
 @@ -517,6 +_,41 @@
          return event;
      }

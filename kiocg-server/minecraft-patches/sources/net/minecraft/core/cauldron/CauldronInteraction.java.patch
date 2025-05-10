@@ -1,0 +1,67 @@
+--- a/net/minecraft/core/cauldron/CauldronInteraction.java
++++ b/net/minecraft/core/cauldron/CauldronInteraction.java
+@@ -57,13 +_,20 @@
+             PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+             if (potionContents != null && potionContents.is(Potions.WATER)) {
+                 if (!level.isClientSide) {
++                    // KioCG start - PlayerBottleEvent
++                    com.kiocg.event.player.PlayerBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBottleEmptyEvent(level, player, pos, stack, new ItemStack(Items.GLASS_BOTTLE), hand);
++                    if (event.isCancelled()) {
++                        return InteractionResult.PASS;
++                    }
++                    // KioCG end - PlayerBottleEvent
++
+                     // CraftBukkit start
+                     if (!LayeredCauldronBlock.changeLevel(level, pos, Blocks.WATER_CAULDRON.defaultBlockState(), player, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.BOTTLE_EMPTY, false)) { // Paper - Call CauldronLevelChangeEvent
+                         return InteractionResult.SUCCESS;
+                     }
+                     // CraftBukkit end
+                     Item item = stack.getItem();
+-                    player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
++                    player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getResultItem()))); // KioCG - PlayerBottleEvent
+                     player.awardStat(Stats.USE_CAULDRON);
+                     player.awardStat(Stats.ITEM_USED.get(item));
+                     // level.setBlockAndUpdate(pos, Blocks.WATER_CAULDRON.defaultBlockState()); // CraftBukkit
+@@ -94,13 +_,20 @@
+         );
+         map1.put(Items.GLASS_BOTTLE, (state, level, pos, player, hand, stack, hitDirection) -> { // Paper - add hitDirection
+             if (!level.isClientSide) {
++                // KioCG start - PlayerBottleEvent
++                com.kiocg.event.player.PlayerBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBottleFillEvent(level, player, pos, stack, PotionContents.createItemStack(Items.POTION, Potions.WATER), hand);
++                if (event.isCancelled()) {
++                    return InteractionResult.PASS;
++                }
++                // KioCG end - PlayerBottleEvent
++
+                 // CraftBukkit start
+                 if (!LayeredCauldronBlock.lowerFillLevel(state, level, pos, player, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.BOTTLE_FILL)) {
+                     return InteractionResult.SUCCESS;
+                 }
+                 // CraftBukkit end
+                 Item item = stack.getItem();
+-                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, PotionContents.createItemStack(Items.POTION, Potions.WATER)));
++                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getResultItem()))); // KioCG - PlayerBottleEvent
+                 player.awardStat(Stats.USE_CAULDRON);
+                 player.awardStat(Stats.ITEM_USED.get(item));
+                 // LayeredCauldronBlock.lowerFillLevel(state, level, pos); // CraftBukkit
+@@ -117,12 +_,19 @@
+                 PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+                 if (potionContents != null && potionContents.is(Potions.WATER)) {
+                     if (!level.isClientSide) {
++                        // KioCG start - PlayerBottleEvent
++                        com.kiocg.event.player.PlayerBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBottleEmptyEvent(level, player, pos, stack, new ItemStack(Items.GLASS_BOTTLE), hand);
++                        if (event.isCancelled()) {
++                            return InteractionResult.PASS;
++                        }
++                        // KioCG end - PlayerBottleEvent
++
+                         // CraftBukkit start
+                         if (!LayeredCauldronBlock.changeLevel(level, pos, state.cycle(LayeredCauldronBlock.LEVEL), player, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.BOTTLE_EMPTY, false)) { // Paper - Call CauldronLevelChangeEvent
+                             return InteractionResult.SUCCESS;
+                         }
+                         // CraftBukkit end
+-                        player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
++                        player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getResultItem()))); // KioCG - PlayerBottleEvent
+                         player.awardStat(Stats.USE_CAULDRON);
+                         player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+                         // level.setBlockAndUpdate(pos, state.cycle(LayeredCauldronBlock.LEVEL)); // CraftBukkit

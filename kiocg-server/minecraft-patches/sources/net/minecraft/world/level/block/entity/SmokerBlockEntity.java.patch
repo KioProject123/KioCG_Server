@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SmokerBlockEntity.java
+@@ -21,7 +_,7 @@
+ 
+     @Override
+     protected int getBurnDuration(FuelValues fuelValues, ItemStack stack) {
+-        return super.getBurnDuration(fuelValues, stack) / 2;
++        return super.getBurnDuration(fuelValues, stack); // KioCG - change container behavior: 不要加速高炉和烟熏炉
+     }
+ 
+     @Override
