@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/item/crafting/RecipeManager.java
++++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -61,6 +_,7 @@
+     private SelectableRecipe.SingleInputSet<StonecutterRecipe> stonecutterRecipes = SelectableRecipe.SingleInputSet.empty();
+     private List<RecipeManager.ServerDisplayInfo> allDisplays = List.of();
+     private Map<ResourceKey<Recipe<?>>, List<RecipeManager.ServerDisplayInfo>> recipeToDisplay = Map.of();
++    public boolean updateRecipe = true; // KioCG - more api
+ 
+     public RecipeManager(HolderLookup.Provider registries) {
+         this.registries = registries;
+@@ -97,6 +_,7 @@
+     private FeatureFlagSet featureflagset;
+ 
+     public void finalizeRecipeLoading() {
++        if (!updateRecipe) return; // KioCG - more api
+         if (this.featureflagset != null) {
+             this.finalizeRecipeLoading(this.featureflagset);
+ 

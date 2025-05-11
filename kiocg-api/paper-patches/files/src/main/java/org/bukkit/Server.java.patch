@@ -9,12 +9,30 @@
      /**
       * Gets the player with the given UUID.
       *
-@@ -1161,6 +_,8 @@
-      */
+@@ -1003,6 +_,8 @@
+     @Contract("null -> false")
+     boolean addRecipe(@Nullable Recipe recipe);
+ 
++    boolean addRecipe(@NotNull List<Recipe> recipe); // KioCG - more api
++
+     // Paper start - method to send recipes immediately
+     /**
+      * Adds a recipe to the crafting manager.
+@@ -1162,6 +_,8 @@
      @NotNull
      public Iterator<Recipe> recipeIterator();
-+
-+    @NotNull <T extends Recipe> Iterator<T> recipeIterator(@NotNull org.bukkit.inventory.RecipeType<T> recipeType); // KioCG - extended recipe iterator
  
++    @NotNull <T extends Recipe> Iterator<T> recipeIterator(@NotNull org.bukkit.inventory.RecipeType<T> recipeType); // KioCG - extended recipe iterator
++
      /**
       * Clears the list of crafting recipes.
+      */
+@@ -1183,6 +_,8 @@
+      * @return True if recipe was removed
+      */
+     public boolean removeRecipe(@NotNull NamespacedKey key);
++
++    public boolean removeRecipe(@NotNull List<NamespacedKey> key); // KioCG - more api
+ 
+     // Paper start - method to resend recipes
+     /**

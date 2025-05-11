@@ -42,7 +42,7 @@
  
      @Override
      public boolean hasNext() {
-@@ -21,10 +_,12 @@
+@@ -21,16 +_,18 @@
      }
  
      @Override
@@ -58,3 +58,10 @@
  
      @Override
      public void remove() {
+         MinecraftServer.getServer().getRecipeManager().recipes.byKey.remove(this.currentRecipe.id());
+         this.recipes.remove();
+         MinecraftServer.getServer().getRecipeManager().finalizeRecipeLoading();
+-        MinecraftServer.getServer().getPlayerList().reloadRecipes();
++        // MinecraftServer.getServer().getPlayerList().reloadRecipes(); // KioCG - more api: 数据包已在内部重新发送
+     }
+ }

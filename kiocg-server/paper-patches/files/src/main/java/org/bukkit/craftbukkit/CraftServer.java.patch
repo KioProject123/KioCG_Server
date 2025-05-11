@@ -23,17 +23,79 @@
      @Override
      public Player getPlayer(UUID id) {
          Preconditions.checkArgument(id != null, "UUID id cannot be null");
-@@ -1760,6 +_,13 @@
-     public Iterator<Recipe> recipeIterator() {
+@@ -1547,6 +_,21 @@
+         this.playerList.saveAll();
+     }
+ 
++    // KioCG start - more api
++    @Override
++    public boolean addRecipe(List<Recipe> recipe) {
++        boolean success = false;
++        net.minecraft.world.item.crafting.RecipeManager recipeManager = MinecraftServer.getServer().getRecipeManager();
++        recipeManager.updateRecipe = false;
++        for (Recipe recipe1 : recipe) {
++            success |= addRecipe(recipe1);
++        }
++        recipeManager.updateRecipe = true;
++        recipeManager.finalizeRecipeLoading();
++        return success;
++    }
++    // KioCG end - more api
++
+     @Override
+     public boolean addRecipe(Recipe recipe) {
+         // Paper start - API for updating recipes on clients
+@@ -1589,7 +_,7 @@
+         toAdd.addToCraftingManager();
+         // Paper start - API for updating recipes on clients
+         if (true || resendRecipes) { // Always needs to be resent now... TODO
+-            this.playerList.reloadRecipes();
++            // this.playerList.reloadRecipes(); // KioCG - more api: 数据包已在内部重新发送
+         }
+         // Paper end - API for updating recipes on clients
+         return true;
+@@ -1761,6 +_,13 @@
          return new RecipeIterator();
      }
-+
+ 
 +    // KioCG start - extended recipe iterator
 +    @Override
 +    public <T extends Recipe> Iterator<T> recipeIterator(org.bukkit.inventory.RecipeType<T> recipeType) {
 +        return new RecipeIterator<>(recipeType);
 +    }
 +    // KioCG end - extended recipe iterator
- 
++
      @Override
      public void clearRecipes() {
+         this.console.getRecipeManager().clearRecipes();
+@@ -1771,6 +_,21 @@
+         this.reloadData(); // Not ideal but hard to reload a subset of a resource pack
+     }
+ 
++    // KioCG start - more api
++    @Override
++    public boolean removeRecipe(List<NamespacedKey> key) {
++        boolean success = false;
++        net.minecraft.world.item.crafting.RecipeManager recipeManager = MinecraftServer.getServer().getRecipeManager();
++        recipeManager.updateRecipe = false;
++        for (NamespacedKey key1 : key) {
++            success |= removeRecipe(key1);
++        }
++        recipeManager.updateRecipe = true;
++        recipeManager.finalizeRecipeLoading();
++        return success;
++    }
++    // KioCG end - more api
++
+     @Override
+     public boolean removeRecipe(NamespacedKey recipeKey) {
+         // Paper start - API for updating recipes on clients
+@@ -1786,7 +_,7 @@
+         final ResourceKey<net.minecraft.world.item.crafting.Recipe<?>> minecraftKey = CraftRecipe.toMinecraft(recipeKey);
+         final boolean removed = this.getServer().getRecipeManager().removeRecipe(minecraftKey);
+         if (removed/* && resendRecipes*/) { // TODO Always need to resend them rn - deprecate this method?
+-            this.playerList.reloadRecipes();
++            // this.playerList.reloadRecipes(); // KioCG - more api: 数据包已在内部重新发送
+         }
+         return removed;
+         // Paper end - resend recipes on successful removal
