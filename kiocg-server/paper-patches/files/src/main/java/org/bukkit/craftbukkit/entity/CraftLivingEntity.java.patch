@@ -1,10 +1,9 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -1167,4 +_,36 @@
-     public boolean canUseEquipmentSlot(org.bukkit.inventory.EquipmentSlot slot) {
+@@ -1166,6 +_,38 @@
          return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
      }
-+
+ 
 +    // KioCG start - entity baby api
 +    @Override
 +    public void setNormalSimulate() {
@@ -36,4 +35,7 @@
 +        return this.getHandle().isHugeSimulate();
 +    }
 +    // KioCG end - entity baby api
- }
++
+     @Override
+     public CombatTracker getCombatTracker() {
+         return this.combatTracker;

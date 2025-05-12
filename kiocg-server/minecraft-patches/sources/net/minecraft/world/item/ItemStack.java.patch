@@ -102,7 +102,7 @@
              return DataResult.error(() -> "Item cannot be both damageable and stackable");
          } else {
              ItemContainerContents itemContainerContents = components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-@@ -607,7 +_,7 @@
+@@ -606,7 +_,7 @@
      }
  
      public boolean isStackable() {
@@ -111,7 +111,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -893,8 +_,162 @@
+@@ -892,8 +_,162 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -276,7 +276,7 @@
  
      public static MapCodec<ItemStack> lenientOptionalFieldOf(String fieldName) {
          return CODEC.lenientOptionalFieldOf(fieldName)
-@@ -1277,6 +_,12 @@
+@@ -1276,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
      }
  
@@ -289,7 +289,7 @@
      public boolean isEnchanted() {
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
-@@ -1285,6 +_,14 @@
+@@ -1284,6 +_,14 @@
          return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
      }
  
@@ -304,7 +304,7 @@
      public boolean isFramed() {
          return this.entityRepresentation instanceof ItemFrame;
      }
-@@ -1416,6 +_,15 @@
+@@ -1415,6 +_,15 @@
  
      public boolean isValidRepairItem(ItemStack item) {
          Repairable repairable = this.get(DataComponents.REPAIRABLE);

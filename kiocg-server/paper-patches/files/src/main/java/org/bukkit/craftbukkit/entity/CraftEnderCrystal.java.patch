@@ -1,7 +1,7 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEnderCrystal.java
-@@ -39,6 +_,38 @@
-         }
+@@ -13,6 +_,38 @@
+         super(server, entity);
      }
  
 +    // KioCG start - end crystal turret

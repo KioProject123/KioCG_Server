@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -1131,6 +_,12 @@
+@@ -1132,6 +_,12 @@
          return server.addRecipe(recipe);
      }
  
@@ -13,7 +13,7 @@
      /**
       * Adds a recipe to the crafting manager.
       *
-@@ -1307,6 +_,13 @@
+@@ -1308,6 +_,13 @@
          return server.recipeIterator();
      }
  
@@ -27,7 +27,7 @@
      /**
       * Clears the list of crafting recipes.
       */
-@@ -1334,6 +_,12 @@
+@@ -1335,6 +_,12 @@
      public static boolean removeRecipe(@NotNull NamespacedKey key) {
          return server.removeRecipe(key);
      }

@@ -26,7 +26,7 @@
                          entity.push(d, 0.0, d1);
                      }
                  }
-@@ -3390,6 +_,7 @@
+@@ -3407,6 +_,7 @@
      }
  
      public int getAirSupply() {
@@ -34,7 +34,7 @@
          return this.entityData.get(DATA_AIR_SUPPLY_ID);
      }
  
-@@ -3404,6 +_,7 @@
+@@ -3421,6 +_,7 @@
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
@@ -42,7 +42,7 @@
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
-@@ -4943,6 +_,12 @@
+@@ -4960,6 +_,12 @@
          return this.level;
      }
  
@@ -55,7 +55,7 @@
      public void setLevel(Level level) {
          this.level = level;
      }
-@@ -5097,4 +_,10 @@
+@@ -5114,4 +_,10 @@
          return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
      }
      // Paper end - Expose entity id counter

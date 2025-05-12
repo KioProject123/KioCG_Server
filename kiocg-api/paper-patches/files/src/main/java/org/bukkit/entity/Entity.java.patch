@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/entity/Entity.java
 +++ b/src/main/java/org/bukkit/entity/Entity.java
-@@ -35,7 +_,7 @@
+@@ -36,7 +_,7 @@
   * Not all methods are guaranteed to work/may have side effects when
   * {@link #isInWorld()} is false.
   */
@@ -9,7 +9,7 @@
  
      /**
       * Gets the entity's current position
-@@ -1122,6 +_,23 @@
+@@ -1149,6 +_,23 @@
       * @since 1.17.1
       */
      boolean spawnAt(@NotNull Location location, @NotNull CreatureSpawnEvent.SpawnReason reason);

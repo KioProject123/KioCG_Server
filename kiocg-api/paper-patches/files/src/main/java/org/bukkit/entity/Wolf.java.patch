@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/entity/Wolf.java
 +++ b/src/main/java/org/bukkit/entity/Wolf.java
-@@ -105,6 +_,11 @@
+@@ -104,6 +_,11 @@
       */
      void setSoundVariant(@NotNull SoundVariant soundVariant);
  

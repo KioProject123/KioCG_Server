@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftFishHook.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftFishHook.java
-@@ -164,6 +_,7 @@
+@@ -166,6 +_,7 @@
  
      @Override
      public boolean isInOpenWater() {
@@ -8,7 +8,7 @@
          return this.getHandle().outOfWaterTime < 10 && this.getHandle().calculateOpenWater(this.getHandle().blockPosition()); // Paper - isOpenWaterFishing is only calculated when a "fish" is approaching the hook
      }
  
-@@ -233,4 +_,14 @@
+@@ -235,6 +_,16 @@
          hook.resetTimeUntilLured();
          hook.timeUntilHooked = 0; // Reset time until hooked, will be repopulated once lured time is ticked down.
      }
@@ -22,4 +22,6 @@
 +        return org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.getHandle().fishPosition, this.getWorld(), 0.0F, 0.0F);
 +    }
 +    // KioCG end - more realistic fishing
- }
+ 
+     @Override
+     public int retrieve(EquipmentSlot slot) {

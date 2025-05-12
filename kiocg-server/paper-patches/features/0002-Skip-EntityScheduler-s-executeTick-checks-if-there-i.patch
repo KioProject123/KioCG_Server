@@ -73,10 +73,10 @@ index c03608fec96b51e1867f43d8f42e5aefb1520e46..15b21fa3907db1b77ed5b5d1050a37f4
                  throw new IllegalStateException("Ticking retired scheduler");
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-index cdc52a20a26186fec2ce7b2d01607975f9d4d3b2..aa95ad42cbe2dac0b39f16950c81c8395d1e322e 100644
+index b6df7365f64295fb68c2f9988d149e121abfd9e7..d8b87f51fc4c142cf80068753d050fb0dfbcd427 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -84,7 +84,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+@@ -85,7 +85,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
      public final java.util.Map<String, Object> temporaryMeta = new java.util.HashMap<>(); // KioCG - temporary meta
      protected net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
      // Paper start - Folia shedulers
@@ -85,7 +85,7 @@ index cdc52a20a26186fec2ce7b2d01607975f9d4d3b2..aa95ad42cbe2dac0b39f16950c81c839
      private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
  
      // KioCG start - send virtual entity api
-@@ -116,6 +116,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+@@ -117,6 +117,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          this.server = server;
          this.entity = entity;
          this.entityType = CraftEntityType.minecraftToBukkit(entity.getType());

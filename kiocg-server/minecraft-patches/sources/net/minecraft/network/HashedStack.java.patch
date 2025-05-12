@@ -1,11 +1,11 @@
 --- a/net/minecraft/network/HashedStack.java
 +++ b/net/minecraft/network/HashedStack.java
 @@ -50,7 +_,7 @@
-         public boolean matches(ItemStack stack, HashedPatchMap.HashGenerator hashGenerator, final boolean simplifyMatching) { // Paper - add flag to simplify remote matching logic
+         public boolean matches(ItemStack stack, HashedPatchMap.HashGenerator hashGenerator) {
              return this.count == stack.getCount()
                  && this.item.equals(stack.getItemHolder())
--                && (simplifyMatching || this.components.matches(stack.getComponentsPatch(), hashGenerator)); // Paper - add flag to simplify remote matching logic
-+                && (simplifyMatching || this.components.matches(stack.getRemoteComponentsPatch(), hashGenerator)); // Paper - add flag to simplify remote matching logic // KioCG - customize default components
+-                && this.components.matches(stack.getComponentsPatch(), hashGenerator);
++                && this.components.matches(stack.getRemoteComponentsPatch(), hashGenerator); // KioCG - customize default components
          }
      }
  }

@@ -82,15 +82,15 @@
 @@ -879,10 +_,16 @@
      }
  
-     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean keepInventory) { // Paper - Adventure & Restore vanilla drops behavior
+     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
 +        // KioCG start - death drop protect
-+        return callPlayerDeathEvent(victim, damageSource, drops, List.of(), deathMessage, keepInventory);
++        return callPlayerDeathEvent(victim, damageSource, drops, List.of(), deathMessage, showDeathMessages, keepInventory);
 +    }
-+    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, List<org.bukkit.inventory.ItemStack> keeps, net.kyori.adventure.text.Component deathMessage, boolean keepInventory) { // Paper - Adventure & Restore vanilla drops behavior
++    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, List<org.bukkit.inventory.ItemStack> keeps, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
 +        // KioCG end - death drop protect
          CraftPlayer entity = victim.getBukkitEntity();
          CraftDamageSource bukkitDamageSource = new CraftDamageSource(damageSource);
-         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(victim.serverLevel(), damageSource.getEntity()), 0, deathMessage); // Paper - Restore vanilla drops behavior
+         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(victim.serverLevel(), damageSource.getEntity()), 0, deathMessage, showDeathMessages);
          event.setKeepInventory(keepInventory);
 +        event.getItemsToKeep().addAll(keeps); // KioCG - death drop protect
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
