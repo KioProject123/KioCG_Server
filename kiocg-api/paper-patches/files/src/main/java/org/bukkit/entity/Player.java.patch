@@ -23,3 +23,80 @@
      @Override
      Spigot spigot();
      // Spigot end
+@@ -3910,4 +_,76 @@
+      * @param score New death screen score of player
+      */
+     void setDeathScreenScore(int score);
++
++    // Purpur start
++    /**
++     * Creates debug block highlight on specified block location and show it to this player.
++     * <p>
++     * Clients may be inconsistent in displaying it.
++     * @param location Location to highlight
++     * @param duration Duration for highlight to show in milliseconds
++     */
++    void sendBlockHighlight(Location location, int duration);
++
++    /**
++     * Creates debug block highlight on specified block location and show it to this player.
++     * <p>
++     * Clients may be inconsistent in displaying it.
++     * @param location Location to highlight
++     * @param duration Duration for highlight to show in milliseconds
++     * @param argb Color of the highlight. ARGB int. Will be ignored on some versions of vanilla client
++     */
++    void sendBlockHighlight(Location location, int duration, int argb);
++
++    /**
++     * Creates debug block highlight on specified block location and show it to this player.
++     * <p>
++     * Clients may be inconsistent in displaying it.
++     * @param location Location to highlight
++     * @param duration Duration for highlight to show in milliseconds
++     * @param text Text to show above the highlight
++     */
++    void sendBlockHighlight(Location location, int duration, String text);
++
++    /**
++     * Creates debug block highlight on specified block location and show it to this player.
++     * <p>
++     * Clients may be inconsistent in displaying it.
++     * @param location Location to highlight
++     * @param duration Duration for highlight to show in milliseconds
++     * @param text Text to show above the highlight
++     * @param argb Color of the highlight. ARGB int. Will be ignored on some versions of vanilla client
++     */
++    void sendBlockHighlight(Location location, int duration, String text, int argb);
++
++    /**
++     * Creates debug block highlight on specified block location and show it to this player.
++     * <p>
++     * Clients may be inconsistent in displaying it.
++     * @param location Location to highlight
++     * @param duration Duration for highlight to show in milliseconds
++     * @param color Color of the highlight. Will be ignored on some versions of vanilla client
++     * @param transparency Transparency of the highlight
++     * @throws IllegalArgumentException If transparency is outside 0-255 range
++     */
++    void sendBlockHighlight(Location location, int duration, org.bukkit.Color color, int transparency);
++
++    /**
++     * Creates debug block highlight on specified block location and show it to this player.
++     * <p>
++     * Clients may be inconsistent in displaying it.
++     * @param location Location to highlight
++     * @param duration Duration for highlight to show in milliseconds
++     * @param text Text to show above the highlight
++     * @param color Color of the highlight. Will be ignored on some versions of vanilla client
++     * @param transparency Transparency of the highlight
++     * @throws IllegalArgumentException If transparency is outside 0-255 range
++     */
++    void sendBlockHighlight(Location location, int duration, String text, org.bukkit.Color color, int transparency);
++
++    /**
++     * Clears all debug block highlights
++     */
++    void clearBlockHighlights();
++    // Purpur end
+ }
