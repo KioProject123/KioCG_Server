@@ -1,0 +1,16 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -767,7 +_,12 @@
+                 CraftMetaItem.getOrEmpty(unhandledPatch, CraftMetaItem.CAN_BREAK).ifPresent(data -> {
+                     this.canBreakPredicates = List.copyOf(data.predicates);
+                 });
+-                this.unhandledTags.copy(unhandledPatch.forget(type -> type == CraftMetaItem.CAN_PLACE_ON.TYPE || type == CraftMetaItem.CAN_BREAK.TYPE));
++                // KioCG start - customize default components: 优化forget方法
++                java.util.Set<DataComponentType<?>> set = new java.util.HashSet<>();
++                set.add(CraftMetaItem.CAN_PLACE_ON.TYPE);
++                set.add(CraftMetaItem.CAN_BREAK.TYPE);
++                this.unhandledTags.copy(unhandledPatch.forget(set));
++                // KioCG end - customize default components: 优化forget方法
+ 
+                 for (Entry<DataComponentType<?>, Optional<?>> entry : unhandledPatch.entrySet()) {
+                     // Move removed unhandled tags to dedicated removedTags

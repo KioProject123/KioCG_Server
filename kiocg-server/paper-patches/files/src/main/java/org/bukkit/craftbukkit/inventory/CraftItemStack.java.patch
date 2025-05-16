@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+@@ -665,7 +_,7 @@
+         }
+ 
+         // Check the patch by first stripping excluded types and then compare the trimmed patches
+-        return left.getComponentsPatch().forget(skippingTypes::contains).equals(right.getComponentsPatch().forget(skippingTypes::contains));
++        return left.getComponentsPatch().forget(skippingTypes).equals(right.getComponentsPatch().forget(skippingTypes)); // KioCG - customize default components: 优化forget方法
+     }
+ 
+     // Paper end - data component API

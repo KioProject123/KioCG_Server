@@ -1,0 +1,17 @@
+--- a/net/minecraft/core/component/DataComponentPatch.java
++++ b/net/minecraft/core/component/DataComponentPatch.java
+@@ -183,12 +_,12 @@
+         return this.map.size();
+     }
+ 
+-    public DataComponentPatch forget(Predicate<DataComponentType<?>> predicate) {
++    public DataComponentPatch forget(Set<DataComponentType<?>> types) { // KioCG - customize default components: 优化forget方法
+         if (this.isEmpty()) {
+             return EMPTY;
+         } else {
+             Reference2ObjectMap<DataComponentType<?>, Optional<?>> map = new Reference2ObjectArrayMap<>(this.map);
+-            map.keySet().removeIf(predicate);
++            map.keySet().removeAll(types); // KioCG - customize default components: 优化forget方法
+             return map.isEmpty() ? EMPTY : new DataComponentPatch(map);
+         }
+     }

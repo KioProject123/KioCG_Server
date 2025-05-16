@@ -16,11 +16,10 @@
  
      public BlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
          this.type = type;
-@@ -65,6 +_,16 @@
-     public boolean isValidBlockState(BlockState state) {
+@@ -66,6 +_,16 @@
          return this.type.isValid(state);
      }
-+
+ 
 +    // KioCG start - optimize block entity
 +    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
 +        return true;
@@ -30,6 +29,16 @@
 +        return this.hasLevel() && this.getLevel().getChunkAt(this.getBlockPos()).updateBlockEntityTicker(this);
 +    }
 +    // KioCG end - optimize block entity
- 
++
      public static BlockPos getPosFromTag(ChunkPos chunkPos, CompoundTag tag) {
          int intOr = tag.getIntOr("x", 0);
+         int intOr1 = tag.getIntOr("y", 0);
+@@ -311,7 +_,7 @@
+                 return dataComponentMap.getOrDefault(component, defaultValue);
+             }
+         });
+-        DataComponentPatch dataComponentPatch = patch.forget(set::contains);
++        DataComponentPatch dataComponentPatch = patch.forget(set); // KioCG - customize default components: 优化forget方法
+         this.components = dataComponentPatch.split().added();
+         // CraftBukkit start
+         set.remove(DataComponents.BLOCK_ENTITY_DATA); // Remove as never actually added by applyImplicitComponents

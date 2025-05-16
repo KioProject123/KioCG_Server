@@ -111,24 +111,24 @@
      }
  
      public boolean isDamageableItem() {
-@@ -892,8 +_,162 @@
+@@ -892,8 +_,160 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
 -        return stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || Objects.equals(stack.components, other.components));
 -    }
-+        return stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || isSameComponents(stack.components, other.components)); // KioCG - customize default components
++        return stack.is(other.getItem()) && (stack.isEmpty() && other.isEmpty() || isSamePatchedComponents(stack.components, other.components)); // KioCG - customize default components
 +    }
 +
 +    // KioCG start - customize default components
-+    private static boolean isSameComponents(PatchedDataComponentMap stack, PatchedDataComponentMap other) {
++    private static boolean isSamePatchedComponents(PatchedDataComponentMap stack, PatchedDataComponentMap other) {
++        return isSamePatchedComponents(stack, other, new java.util.HashSet<>());
++    }
++    private static boolean isSamePatchedComponents(PatchedDataComponentMap stack, PatchedDataComponentMap other, java.util.Set<DataComponentType<?>> excludeTypes) {
 +        if (stack == other) return true;
 +
-+        CustomData prevStackableData = stack.get(DataComponents.STACKABLE_CUSTOM_DATA);
-+        stack.set(DataComponents.STACKABLE_CUSTOM_DATA, other.get(DataComponents.STACKABLE_CUSTOM_DATA));
-+        boolean sameComponents = stack.equals(other);
-+        stack.set(DataComponents.STACKABLE_CUSTOM_DATA, prevStackableData);
-+        return sameComponents;
++        excludeTypes.add(DataComponents.STACKABLE_CUSTOM_DATA);
++        return stack.asPatch().forget(excludeTypes).equals(other.asPatch().forget(excludeTypes));
 +    }
 +    // KioCG end - customize default components
 +
@@ -138,13 +138,11 @@
 +        if (stack.isEmpty() && other.isEmpty()) return true;
 +
 +        if (stack.hasFreshness()) {
-+            Integer prevDamage = stack.get(DataComponents.DAMAGE);
-+            stack.set(DataComponents.DAMAGE, other.get(DataComponents.DAMAGE));
-+            boolean sameComponents = isSameComponents(stack.components, other.components);
-+            stack.set(DataComponents.DAMAGE, prevDamage);
-+            return sameComponents;
++            java.util.Set<DataComponentType<?>> set = new java.util.HashSet<>();
++            set.add(DataComponents.DAMAGE);
++            return isSamePatchedComponents(stack.components, other.components, set);
 +        } else {
-+            return isSameComponents(stack.components, other.components);
++            return isSamePatchedComponents(stack.components, other.components);
 +        }
 +    }
 +
