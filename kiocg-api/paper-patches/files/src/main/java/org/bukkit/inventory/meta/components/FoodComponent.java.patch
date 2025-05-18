@@ -1,0 +1,15 @@
+--- a/src/main/java/org/bukkit/inventory/meta/components/FoodComponent.java
++++ b/src/main/java/org/bukkit/inventory/meta/components/FoodComponent.java
+@@ -50,4 +_,12 @@
+      * @param canAlwaysEat whether always edible
+      */
+     void setCanAlwaysEat(boolean canAlwaysEat);
++
++    // KioCG start - more food
++    int getMoisture();
++    void setMoisture(int moisture);
++
++    int getFreshness();
++    void setFreshness(int freshness);
++    // KioCG end - more food
+ }

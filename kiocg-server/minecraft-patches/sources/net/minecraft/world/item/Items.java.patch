@@ -28,7 +28,7 @@
      public static final Item MILK_BUCKET = registerItem(
          "milk_bucket",
          new Item.Properties().craftRemainder(BUCKET).component(DataComponents.CONSUMABLE, Consumables.MILK_BUCKET).usingConvertsTo(BUCKET).stacksTo(1)
-+        .initCustomize().food(Foods.MILK_BUCKET, Consumables.MILK_BUCKET) // KioCG - more food
++        .initCustomize().food(Foods.MILK_BUCKET, null) // KioCG - more food
      );
      public static final Item PUFFERFISH_BUCKET = registerItem(
          "pufferfish_bucket",
@@ -57,7 +57,7 @@
              .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
              .usingConvertsTo(GLASS_BOTTLE)
 +            .initCustomize().component(DataComponents.MAX_STACK_SIZE, 16) // KioCG - default max stack size
-+            .foodExtendedWithLore(0, 10, 0) // KioCG - more food
++            .food(Foods.POTION, null) // KioCG - more food
      );
      public static final Item SPIDER_EYE = registerItem("spider_eye", new Item.Properties().food(Foods.SPIDER_EYE, Consumables.SPIDER_EYE));
      public static final Item FERMENTED_SPIDER_EYE = registerItem("fermented_spider_eye");
@@ -81,7 +81,7 @@
              .rarity(Rarity.UNCOMMON)
              .component(DataComponents.CONSUMABLE, Consumables.OMINOUS_BOTTLE)
              .component(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifier(0))
-+            .initCustomize().foodExtendedWithLore(0, -5, 0) // KioCG - more food
++            .initCustomize().food(Foods.OMINOUS_BOTTLE, null) // KioCG - more food
      );
  
      private static Function<Item.Properties, Item> createBlockItemWithCustomItemName(Block block) {

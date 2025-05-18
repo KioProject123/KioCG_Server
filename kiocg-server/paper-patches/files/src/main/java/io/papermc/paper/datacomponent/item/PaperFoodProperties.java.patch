@@ -1,0 +1,47 @@
+--- a/src/main/java/io/papermc/paper/datacomponent/item/PaperFoodProperties.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/PaperFoodProperties.java
+@@ -40,6 +_,10 @@
+         private boolean canAlwaysEat = false;
+         private float saturation = 0;
+         private int nutrition = 0;
++        // KioCG start - more food
++        private int moisture = 0;
++        private int freshness = 0;
++        // KioCG end - more food
+ 
+         @Override
+         public FoodProperties.Builder canAlwaysEat(final boolean canAlwaysEat) {
+@@ -60,12 +_,32 @@
+             return this;
+         }
+ 
++        // KioCG start - more food
++        @Override
++        public FoodProperties.Builder moisture(final int moisture) {
++            Preconditions.checkArgument(moisture >= 0, "moisture must be non-negative, was %s", moisture);
++            this.moisture = moisture;
++            return this;
++        }
++
++        @Override
++        public FoodProperties.Builder freshness(final int freshness) {
++            Preconditions.checkArgument(freshness >= 0, "freshness must be non-negative, was %s", freshness);
++            this.freshness = freshness;
++            return this;
++        }
++        // KioCG end - more food
++
+         @Override
+         public FoodProperties build() {
+             return new PaperFoodProperties(new net.minecraft.world.food.FoodProperties(
+                 this.nutrition,
+                 this.saturation,
+-                this.canAlwaysEat
++                this.canAlwaysEat,
++                // KioCG start - more food
++                this.moisture,
++                this.freshness
++                // KioCG end - more food
+             ));
+         }
+     }

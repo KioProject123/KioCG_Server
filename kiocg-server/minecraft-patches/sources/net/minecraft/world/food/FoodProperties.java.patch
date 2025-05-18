@@ -1,5 +1,63 @@
 --- a/net/minecraft/world/food/FoodProperties.java
 +++ b/net/minecraft/world/food/FoodProperties.java
+@@ -17,24 +_,38 @@
+ import net.minecraft.world.item.component.ConsumableListener;
+ import net.minecraft.world.level.Level;
+ 
+-public record FoodProperties(int nutrition, float saturation, boolean canAlwaysEat) implements ConsumableListener {
++public record FoodProperties(int nutrition, float saturation, boolean canAlwaysEat, int moisture, int freshness) implements ConsumableListener { // KioCG - more food
+     public static final Codec<FoodProperties> DIRECT_CODEC = RecordCodecBuilder.create(
+         instance -> instance.group(
+                 ExtraCodecs.NON_NEGATIVE_INT.fieldOf("nutrition").forGetter(FoodProperties::nutrition),
+                 Codec.FLOAT.fieldOf("saturation").forGetter(FoodProperties::saturation),
+-                Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat)
++                Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat),
++                // KioCG start - more food
++                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("moisture").forGetter(FoodProperties::moisture),
++                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("freshness").forGetter(FoodProperties::freshness)
++                // KioCG end - more food
+             )
+             .apply(instance, FoodProperties::new)
+     );
+-    public static final StreamCodec<RegistryFriendlyByteBuf, FoodProperties> DIRECT_STREAM_CODEC = StreamCodec.composite(
+-        ByteBufCodecs.VAR_INT,
+-        FoodProperties::nutrition,
+-        ByteBufCodecs.FLOAT,
+-        FoodProperties::saturation,
+-        ByteBufCodecs.BOOL,
+-        FoodProperties::canAlwaysEat,
+-        FoodProperties::new
+-    );
++
++    // KioCG start - more food
++    public static final StreamCodec<RegistryFriendlyByteBuf, FoodProperties> DIRECT_STREAM_CODEC = new StreamCodec<>() {
++        @Override
++        public FoodProperties decode(final RegistryFriendlyByteBuf buffer) {
++            Integer object = ByteBufCodecs.VAR_INT.decode(buffer);
++            Float object1 = ByteBufCodecs.FLOAT.decode(buffer);
++            Boolean object2 = ByteBufCodecs.BOOL.decode(buffer);
++            return new FoodProperties(object, object1, object2, 0, 0);
++        }
++
++        @Override
++        public void encode(final RegistryFriendlyByteBuf buffer, final FoodProperties value) {
++            ByteBufCodecs.VAR_INT.encode(buffer, value.nutrition);
++            ByteBufCodecs.FLOAT.encode(buffer, value.saturation);
++            ByteBufCodecs.BOOL.encode(buffer, value.canAlwaysEat);
++        }
++    };
++    // KioCG end - more food
+ 
+     @Override
+     public void onConsume(Level level, LivingEntity entity, ItemStack stack, Consumable consumable) {
+@@ -42,6 +_,7 @@
+         level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), consumable.sound().value(), SoundSource.NEUTRAL, 1.0F, random.triangle(1.0F, 0.4F));
+         if (entity instanceof Player player) {
+             player.getFoodData().eat(this, stack, (net.minecraft.server.level.ServerPlayer) player); // CraftBukkit
++            player.thirstData.addThirstValue(moisture); // kioCG - the long dark
+             level.playSound(
+                 null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, Mth.randomBetween(random, 0.9F, 1.0F)
+             );
 @@ -52,6 +_,10 @@
          private int nutrition;
          private float saturationModifier;
@@ -11,11 +69,10 @@
  
          public FoodProperties.Builder nutrition(int nutrition) {
              this.nutrition = nutrition;
-@@ -68,9 +_,23 @@
+@@ -68,9 +_,21 @@
              return this;
          }
  
--        public FoodProperties build() {
 +        // KioCG start - more food
 +        public FoodProperties.Builder moisture(int moisture) {
 +            this.moisture = moisture;
@@ -28,12 +85,10 @@
 +        }
 +        // KioCG end - more food
 +
-+        public WrappedFoodProperties build() { // KioCG - more food
+         public FoodProperties build() {
              float f = FoodConstants.saturationByModifier(this.nutrition, this.saturationModifier);
 -            return new FoodProperties(this.nutrition, f, this.canAlwaysEat);
-+            return new WrappedFoodProperties(new FoodProperties(this.nutrition, f, this.canAlwaysEat), this.moisture, this.freshness); // KioCG - more food
++            return new FoodProperties(this.nutrition, f, this.canAlwaysEat, this.moisture, this.freshness); // KioCG - more food
          }
      }
-+
-+    public record WrappedFoodProperties(FoodProperties foodProperties, int moisture, int freshness) {} // KioCG - more food
  }

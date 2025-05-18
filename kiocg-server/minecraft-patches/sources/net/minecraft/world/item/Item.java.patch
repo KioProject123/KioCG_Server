@@ -44,12 +44,7 @@
          @Nullable
          Item craftingRemainingItem;
          FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
-@@ -364,13 +_,43 @@
-         private DependantName<Item, String> descriptionId = ITEM_DESCRIPTION_ID;
-         private DependantName<Item, ResourceLocation> model = ResourceKey::location;
- 
--        public Item.Properties food(FoodProperties food) {
-+        public Item.Properties food(FoodProperties.WrappedFoodProperties food) { // KioCG - more food
+@@ -368,9 +_,35 @@
              return this.food(food, Consumables.DEFAULT_FOOD);
          }
  
@@ -57,12 +52,20 @@
 -            return this.component(DataComponents.FOOD, food).component(DataComponents.CONSUMABLE, consumable);
 -        }
 +        // KioCG start - more food
-+        public Item.Properties food(FoodProperties.WrappedFoodProperties food, Consumable consumable) {
-+            this.foodExtendedWithLore(food.foodProperties().nutrition(), food.moisture(), food.freshness());
-+            return this.component(DataComponents.FOOD, food.foodProperties()).component(DataComponents.CONSUMABLE, consumable);
++        public Item.Properties food(FoodProperties food, @Nullable Consumable consumable) {
++            if (food.freshness() > 0) {
++                this.componentKioCG(DataComponents.MAX_DAMAGE, food.freshness());
++            }
++            this.foodLore(food.nutrition(), food.moisture());
++
++            if (consumable == null) {
++                return this.component(DataComponents.FOOD, food);
++            } else {
++                return this.component(DataComponents.FOOD, food).component(DataComponents.CONSUMABLE, consumable);
++            }
 +        }
 +
-+        public Item.Properties foodExtendedWithLore(int nutrition, int moisture, int freshness) {
++        public Item.Properties foodLore(int nutrition, int moisture) {
 +            StringBuilder builder = new StringBuilder();
 +            if (nutrition != 0) {
 +                builder.append("\uD83C\uDF57").append(nutrition);
@@ -73,18 +76,6 @@
 +            String string = builder.toString();
 +            if (!string.isEmpty()) {
 +                this.loreAfter(net.kyori.adventure.text.Component.text(string, net.kyori.adventure.text.format.NamedTextColor.GRAY));
-+            }
-+
-+            return this.foodExtended(moisture, freshness);
-+        }
-+
-+        private Item.Properties foodExtended(int moisture, int freshness) {
-+            net.minecraft.nbt.CompoundTag tag = this.customDataTag.getCompoundOrEmpty("KioCG.FoodExtended");
-+            tag.putInt("moisture", moisture);
-+            tag.putBoolean("freshness", freshness > 0);
-+            this.customDataTag.put("KioCG.FoodExtended", tag);
-+            if (freshness > 0) {
-+                this.componentKioCG(DataComponents.MAX_DAMAGE, freshness);
 +            }
 +            return this;
 +        }

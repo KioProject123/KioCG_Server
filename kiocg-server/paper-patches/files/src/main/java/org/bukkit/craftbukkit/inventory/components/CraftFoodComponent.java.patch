@@ -1,0 +1,67 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/components/CraftFoodComponent.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/components/CraftFoodComponent.java
+@@ -25,8 +_,12 @@
+         Integer nutrition = SerializableMeta.getObject(Integer.class, map, "nutrition", false);
+         Float saturationModifier = SerializableMeta.getObject(Float.class, map, "saturation", false);
+         Boolean canAlwaysEat = SerializableMeta.getBoolean(map, "can-always-eat");
++        // KioCG start - more food
++        Integer moisture = java.util.Objects.requireNonNullElse(SerializableMeta.getObject(Integer.class, map, "moisture", true), 0);
++        Integer freshness = java.util.Objects.requireNonNullElse(SerializableMeta.getObject(Integer.class, map, "freshness", true), 0);
++        // KioCG end - more food
+ 
+-        this.handle = new FoodProperties(nutrition, saturationModifier, canAlwaysEat);
++        this.handle = new FoodProperties(nutrition, saturationModifier, canAlwaysEat, moisture, freshness); // KioCG - more food
+     }
+ 
+     @Override
+@@ -51,7 +_,7 @@
+     @Override
+     public void setNutrition(int nutrition) {
+         Preconditions.checkArgument(nutrition >= 0, "Nutrition cannot be negative");
+-        this.handle = new FoodProperties(nutrition, this.handle.saturation(), this.handle.canAlwaysEat());
++        this.handle = new FoodProperties(nutrition, this.handle.saturation(), this.handle.canAlwaysEat(), this.handle.moisture(), this.handle.freshness()); // KioCG - more food
+     }
+ 
+     @Override
+@@ -61,7 +_,7 @@
+ 
+     @Override
+     public void setSaturation(float saturation) {
+-        this.handle = new FoodProperties(this.handle.nutrition(), saturation, this.handle.canAlwaysEat());
++        this.handle = new FoodProperties(this.handle.nutrition(), saturation, this.handle.canAlwaysEat(), this.handle.moisture(), this.handle.freshness()); // KioCG - more food
+     }
+ 
+     @Override
+@@ -71,8 +_,30 @@
+ 
+     @Override
+     public void setCanAlwaysEat(boolean canAlwaysEat) {
+-        this.handle = new FoodProperties(this.handle.nutrition(), this.handle.saturation(), canAlwaysEat);
+-    }
++        this.handle = new FoodProperties(this.handle.nutrition(), this.handle.saturation(), canAlwaysEat, this.handle.moisture(), this.handle.freshness()); // KioCG - more food
++    }
++
++    // KioCG start - more food
++    @Override
++    public int getMoisture() {
++        return this.handle.moisture();
++    }
++
++    @Override
++    public void setMoisture(int moisture) {
++        this.handle = new FoodProperties(this.handle.nutrition(), this.handle.saturation(), this.handle.canAlwaysEat(), moisture, this.handle.freshness());
++    }
++
++    @Override
++    public int getFreshness() {
++        return this.handle.freshness();
++    }
++
++    @Override
++    public void setFreshness(int freshness) {
++        this.handle = new FoodProperties(this.handle.nutrition(), this.handle.saturation(), this.handle.canAlwaysEat(), this.handle.moisture(), freshness);
++    }
++    // KioCG end - more food
+ 
+     @Override
+     public int hashCode() {

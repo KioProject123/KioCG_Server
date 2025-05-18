@@ -14,3 +14,12 @@
  
                  for (Entry<DataComponentType<?>, Optional<?>> entry : unhandledPatch.entrySet()) {
                      // Move removed unhandled tags to dedicated removedTags
+@@ -1635,7 +_,7 @@
+ 
+     @Override
+     public FoodComponent getFood() {
+-        return (this.hasFood()) ? new CraftFoodComponent(this.food) : new CraftFoodComponent(new FoodProperties(0, 0, false));
++        return (this.hasFood()) ? new CraftFoodComponent(this.food) : new CraftFoodComponent(new FoodProperties(0, 0, false, 0, 0)); // KioCG - more food
+     }
+ 
+     @Override

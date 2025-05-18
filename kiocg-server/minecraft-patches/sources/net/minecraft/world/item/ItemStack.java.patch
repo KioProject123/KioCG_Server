@@ -111,7 +111,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -892,8 +_,160 @@
+@@ -892,8 +_,158 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -147,10 +147,8 @@
 +    }
 +
 +    private boolean hasFreshness() {
-+        return this.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe()
-+                   .getCompound("KioCG.FoodExtended")
-+                   .map(tag -> tag.getBooleanOr("freshness", false))
-+                   .orElse(false);
++        net.minecraft.world.food.FoodProperties foodProperties = this.get(DataComponents.FOOD);
++        return foodProperties != null && foodProperties.freshness() > 0;
 +    }
 +
 +    public boolean deepTick(java.util.function.BooleanSupplier supplier) {

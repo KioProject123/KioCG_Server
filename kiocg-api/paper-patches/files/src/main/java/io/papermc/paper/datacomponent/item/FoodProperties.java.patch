@@ -1,0 +1,16 @@
+--- a/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
+@@ -82,5 +_,13 @@
+          */
+         @Contract(value = "_ -> this", mutates = "this")
+         Builder nutrition(@NonNegative int nutrition);
++
++        // KioCG start - more food
++        @Contract(value = "_ -> this", mutates = "this")
++        Builder moisture(@NonNegative int moisture);
++
++        @Contract(value = "_ -> this", mutates = "this")
++        Builder freshness(@NonNegative int freshness);
++        // KioCG end - more food
+     }
+ }
