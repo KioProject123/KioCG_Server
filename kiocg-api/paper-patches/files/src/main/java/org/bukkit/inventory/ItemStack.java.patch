@@ -1,0 +1,90 @@
+--- a/src/main/java/org/bukkit/inventory/ItemStack.java
++++ b/src/main/java/org/bukkit/inventory/ItemStack.java
+@@ -600,6 +_,7 @@
+      * @param consumer the meta consumer
+      * @return {@code true} if the edit was successful, {@code false} otherwise
+      */
++    @Deprecated // KioCG
+     public boolean editMeta(final @NotNull java.util.function.Consumer<? super ItemMeta> consumer) {
+         return editMeta(ItemMeta.class, consumer);
+     }
+@@ -619,6 +_,7 @@
+      * @param <M> the meta type
+      * @return {@code true} if the edit was successful, {@code false} otherwise
+      */
++    @Deprecated // KioCG
+     public <M extends ItemMeta> boolean editMeta(final @NotNull Class<M> metaClass, final @NotNull java.util.function.Consumer<@NotNull ? super M> consumer) {
+         final @Nullable ItemMeta meta = this.getItemMeta();
+         if (metaClass.isInstance(meta)) {
+@@ -636,6 +_,7 @@
+      * @return a copy of the current ItemStack's ItemData
+      */
+     @UndefinedNullability // Paper
++    @Deprecated // KioCG
+     public ItemMeta getItemMeta() {
+         return this.craftDelegate.getItemMeta(); // Paper - delegate
+     }
+@@ -645,6 +_,7 @@
+      *
+      * @return Returns true if some meta data has been set for this item
+      */
++    @Deprecated // KioCG
+     public boolean hasItemMeta() {
+         return this.craftDelegate.hasItemMeta(); // Paper - delegate
+     }
+@@ -658,6 +_,7 @@
+      * @throws IllegalArgumentException if the item meta was not created by
+      *     the {@link ItemFactory}
+      */
++    @Deprecated // KioCG
+     public boolean setItemMeta(@Nullable ItemMeta itemMeta) {
+         return this.craftDelegate.setItemMeta(itemMeta); // Paper - delegate
+     }
+@@ -975,6 +_,7 @@
+      * If the item has lore, returns it, else it will return null
+      * @return The lore, or null
+      */
++    @Deprecated // KioCG
+     public @Nullable java.util.List<net.kyori.adventure.text.Component> lore() {
+         if (!this.hasItemMeta()) {
+             return null;
+@@ -1009,6 +_,7 @@
+      *
+      * @param lore the lore that will be set
+      */
++    @Deprecated // KioCG
+     public void lore(@Nullable java.util.List<? extends net.kyori.adventure.text.Component> lore) {
+         ItemMeta itemMeta = getItemMeta();
+         if (itemMeta == null) {
+@@ -1023,6 +_,7 @@
+      *
+      * @param itemFlags The hideflags which shouldn't be rendered
+      */
++    @Deprecated // KioCG
+     public void addItemFlags(@NotNull ItemFlag... itemFlags) {
+         ItemMeta itemMeta = getItemMeta();
+         if (itemMeta == null) {
+@@ -1037,6 +_,7 @@
+      *
+      * @param itemFlags Hideflags which should be removed
+      */
++    @Deprecated // KioCG
+     public void removeItemFlags(@NotNull ItemFlag... itemFlags) {
+         ItemMeta itemMeta = getItemMeta();
+         if (itemMeta == null) {
+@@ -1052,6 +_,7 @@
+      * @return A set of all itemFlags set
+      */
+     @NotNull
++    @Deprecated // KioCG
+     public java.util.Set<ItemFlag> getItemFlags() {
+         ItemMeta itemMeta = getItemMeta();
+         if (itemMeta == null) {
+@@ -1066,6 +_,7 @@
+      * @param flag the flag to check
+      * @return if it is present
+      */
++    @Deprecated // KioCG
+     public boolean hasItemFlag(@NotNull ItemFlag flag) {
+         ItemMeta itemMeta = getItemMeta();
+         return itemMeta != null && itemMeta.hasItemFlag(flag);

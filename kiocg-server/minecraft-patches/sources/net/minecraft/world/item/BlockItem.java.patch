@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/item/BlockItem.java
++++ b/net/minecraft/world/item/BlockItem.java
+@@ -67,6 +_,13 @@
+ 
+                 if (placementState == null) {
+                     return InteractionResult.FAIL;
++                    // KioCG start - customize default components
++                } else if (context.getItemInHand().has(DataComponents.CANNOT_PLACE)) {
++                    if (context.getPlayer() != null) {
++                        context.getPlayer().containerMenu.sendAllDataToRemote();
++                    }
++                    return InteractionResult.FAIL;
++                    // KioCG end - customize default components
+                 } else if (!this.placeBlock(blockPlaceContext, placementState)) {
+                     return InteractionResult.FAIL;
+                 } else {

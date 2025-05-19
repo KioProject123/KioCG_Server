@@ -170,6 +170,20 @@
      @Override
      protected void blockUsingItem(ServerLevel level, LivingEntity entity) {
          super.blockUsingItem(level, entity);
+@@ -1800,6 +_,13 @@
+     }
+ 
+     public boolean mayUseItemAt(BlockPos pos, Direction facing, ItemStack stack) {
++        // KioCG start - customize default components
++        if (stack.has(DataComponents.CANNOT_PLACE)) {
++            this.containerMenu.sendAllDataToRemote();
++            return false;
++        }
++        // KioCG end - customize default components
++
+         if (this.abilities.mayBuild) {
+             return true;
+         } else {
 @@ -2305,6 +_,13 @@
      public boolean onClimbable() {
          return !this.abilities.flying && super.onClimbable();

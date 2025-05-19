@@ -60,6 +60,18 @@
                      && success.swingSource() == InteractionResult.SwingSource.SERVER) {
                      this.player.swing(hand, true);
                  }
+@@ -2747,6 +_,11 @@
+                                     boolean triggerLeashUpdate = itemInHand.is(net.minecraft.world.item.Items.LEAD) && target instanceof net.minecraft.world.entity.Leashable;
+                                     Item origItem = ServerGamePacketListenerImpl.this.player.getInventory().getSelectedItem().isEmpty() ? null : ServerGamePacketListenerImpl.this.player.getInventory().getSelectedItem().getItem();
+ 
++                                    // KioCG start - customize default components
++                                    if (itemInHand.has(DataComponents.CANNOT_USE)) {
++                                        event.setCancelled(true);
++                                    }
++                                    // KioCG end - customize default components
+                                     ServerGamePacketListenerImpl.this.cserver.getPluginManager().callEvent(event);
+ 
+                                     // Entity in bucket - SPIGOT-4048 and SPIGOT-6859a
 @@ -2972,7 +_,7 @@
                                                      action = packet.buttonNum() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
                                                  }

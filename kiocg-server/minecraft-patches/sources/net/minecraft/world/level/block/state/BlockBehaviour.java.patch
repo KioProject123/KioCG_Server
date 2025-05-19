@@ -123,6 +123,19 @@
          public void spawnAfterBreak(ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
              this.getBlock().spawnAfterBreak(this.asState(), level, pos, stack, dropExperience);
              if (dropExperience) {this.getBlock().popExperience(level, pos, this.getBlock().getExpDrop(this.asState(), level, pos, stack, true));} // Paper - Properly handle xp dropping
+@@ -897,6 +_,12 @@
+         }
+ 
+         public InteractionResult useItemOn(ItemStack stack, Level level, Player player, InteractionHand hand, BlockHitResult hitResult) {
++            // KioCG start - customize default components
++            if (stack.has(net.minecraft.core.component.DataComponents.CANNOT_USE)) {
++                return InteractionResult.TRY_WITH_EMPTY_HAND;
++            }
++            // KioCG end - customize default components
++
+             return this.getBlock().useItemOn(stack, this.asState(), level, hitResult.getBlockPos(), player, hand, hitResult);
+         }
+ 
 @@ -1001,6 +_,12 @@
          public final boolean isRandomlyTicking() { // Paper - Perf: Final for inlining
              return this.isRandomlyTicking;

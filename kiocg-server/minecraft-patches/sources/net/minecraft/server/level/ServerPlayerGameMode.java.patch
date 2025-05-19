@@ -95,7 +95,7 @@
                  this.debugLogging(pos, true, sequence, "aborted destroying");
  
                  org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageAbortEvent(this.player, pos, this.player.getInventory().getSelectedItem()); // CraftBukkit
-@@ -417,11 +_,42 @@
+@@ -417,11 +_,49 @@
      }
  
      public InteractionResult useItem(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand) {
@@ -135,6 +135,13 @@
 +            }
 +            // KioCG end - PlayerItemUseEvent: 复制PlayerInteractEvent的行为
 +
++            // KioCG start - customize default components
++            if (stack.has(net.minecraft.core.component.DataComponents.CANNOT_USE)) {
++                player.resyncUsingItem(player); // Paper - Properly cancel usable items
++                player.containerMenu.sendAllDataToRemote(); // SPIGOT-2524
++                return InteractionResult.FAIL;
++            }
++            // KioCG end - customize default components
              int count = stack.getCount();
              int damageValue = stack.getDamageValue();
              InteractionResult interactionResult = stack.use(level, player, hand);
@@ -174,7 +181,7 @@
              return (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider menuProvider = blockState.getMenuProvider(level, blockPos);
-@@ -518,6 +_,20 @@
+@@ -518,6 +_,25 @@
                      }
                  }
              }
@@ -188,6 +195,11 @@
 +                this.useItemHand = hand;
 +                this.useItemItemStack = this.interactItemStack; // 不要重复克隆物品
 +                if (event1.isCancelled()) {
++                    // Paper start - Properly cancel usable items; Cancel only if cancelled + if the interact result is different from default response
++                    if (!cancelledItem) {
++                        this.player.resyncUsingItem(this.player);
++                    }
++                    // Paper end - Properly cancel usable items
 +                    return InteractionResult.PASS;
 +                }
 +            }

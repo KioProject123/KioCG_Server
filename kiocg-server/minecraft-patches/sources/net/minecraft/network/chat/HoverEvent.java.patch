@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/chat/HoverEvent.java
++++ b/net/minecraft/network/chat/HoverEvent.java
+@@ -125,7 +_,7 @@
+     }
+ 
+     public record ShowItem(ItemStack item) implements HoverEvent {
+-        public static final MapCodec<HoverEvent.ShowItem> CODEC = ItemStack.MAP_CODEC.xmap(HoverEvent.ShowItem::new, HoverEvent.ShowItem::item);
++        public static final MapCodec<HoverEvent.ShowItem> CODEC = ItemStack.REMOTE_MAP_CODEC.xmap(HoverEvent.ShowItem::new, HoverEvent.ShowItem::item); // KioCG - customize default components
+ 
+         public ShowItem(ItemStack item) {
+             item = item.copy();

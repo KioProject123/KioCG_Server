@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -109,7 +_,7 @@
+@@ -109,12 +_,25 @@
          codec -> RecordCodecBuilder.mapCodec(
              instance -> instance.group(
                      Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
@@ -9,6 +9,24 @@
                      DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
                  )
                  .apply(instance, ItemStack::new)
+         )
+     );
++    // KioCG start - customize default components
++    public static final MapCodec<ItemStack> REMOTE_MAP_CODEC = MapCodec.recursive(
++        "ItemStack",
++        codec -> RecordCodecBuilder.mapCodec(
++            instance -> instance.group(
++                    Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
++                    ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(ItemStack::getCount), // KioCG - allow overstacked items
++                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.getRemoteComponentsPatch())
++                )
++                .apply(instance, ItemStack::new)
++        )
++    );
++    // KioCG end - customize default components
+     public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(MAP_CODEC::codec);
+     public static final Codec<ItemStack> SINGLE_ITEM_CODEC = Codec.lazyInitialized(
+         () -> RecordCodecBuilder.create(
 @@ -192,6 +_,18 @@
                  } else {
                      Holder<Item> holder = Item.STREAM_CODEC.decode(buffer);
@@ -102,6 +120,23 @@
              return DataResult.error(() -> "Item cannot be both damageable and stackable");
          } else {
              ItemContainerContents itemContainerContents = components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+@@ -380,6 +_,16 @@
+         if (player != null && !player.getAbilities().mayBuild && !this.canPlaceOnBlockInAdventureMode(new BlockInWorld(context.getLevel(), clickedPos, false))) {
+             return InteractionResult.PASS;
+         } else {
++            // KioCG start - customize default components
++            if (this.has(DataComponents.CANNOT_PLACE)) {
++                if (player != null) {
++                    player.containerMenu.sendAllDataToRemote();
++                    player.resyncUsingItem((ServerPlayer) player);
++                }
++                return InteractionResult.FAIL;
++            }
++            // KioCG end - customize default components
++
+             Item item = this.getItem();
+             // CraftBukkit start - handle all block place event logic here
+             DataComponentPatch previousPatch = this.components.asPatch();
 @@ -606,7 +_,7 @@
      }
  
