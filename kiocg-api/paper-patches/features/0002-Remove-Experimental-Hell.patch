@@ -387,7 +387,7 @@ index 72aa1b4bda2693e0cd78d93449dda23bd1b74062..890fc4489d6a64c0fb0da549e26a8181
      interface Builder extends DataComponentBuilder<Fireworks> {
  
 diff --git a/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java b/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
-index 78598187286d2774b041fe6b6c9ee80d3ef62455..d2e822ffaf1a0ca9a99ad95a8d8575a4044960e0 100644
+index cbf02ec748e62ce5799f2a8947ad2b44e07d5a57..bb49a60c116481c809614df3064da845d367caf8 100644
 --- a/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
 @@ -12,7 +12,7 @@ import org.jspecify.annotations.NullMarked;
@@ -399,7 +399,7 @@ index 78598187286d2774b041fe6b6c9ee80d3ef62455..d2e822ffaf1a0ca9a99ad95a8d8575a4
  @ApiStatus.NonExtendable
  public interface FoodProperties extends BuildableDataComponent<FoodProperties, FoodProperties.Builder> {
  
-@@ -48,7 +48,7 @@ public interface FoodProperties extends BuildableDataComponent<FoodProperties, F
+@@ -56,7 +56,7 @@ public interface FoodProperties extends BuildableDataComponent<FoodProperties, F
      /**
       * Builder for {@link FoodProperties}.
       */

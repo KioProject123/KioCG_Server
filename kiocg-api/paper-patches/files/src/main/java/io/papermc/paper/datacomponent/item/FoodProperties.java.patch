@@ -1,5 +1,20 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
+@@ -45,6 +_,14 @@
+     @Contract(pure = true)
+     boolean canAlwaysEat();
+ 
++    // KioCG start - more food
++    @Contract(pure = true)
++    @NonNegative int moisture();
++
++    @Contract(pure = true)
++    @NonNegative int freshness();
++    // KioCG end - more food
++
+     /**
+      * Builder for {@link FoodProperties}.
+      */
 @@ -82,5 +_,13 @@
           */
          @Contract(value = "_ -> this", mutates = "this")

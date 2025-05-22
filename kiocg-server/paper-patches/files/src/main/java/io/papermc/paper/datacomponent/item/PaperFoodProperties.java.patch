@@ -1,5 +1,24 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/item/PaperFoodProperties.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/item/PaperFoodProperties.java
+@@ -22,6 +_,18 @@
+         return this.impl.canAlwaysEat();
+     }
+ 
++    // KioCG start - more food
++    @Override
++    public int moisture() {
++        return this.impl.moisture();
++    }
++
++    @Override
++    public int freshness() {
++        return this.impl.freshness();
++    }
++    // KioCG end - more food
++
+     @Override
+     public FoodProperties.Builder toBuilder() {
+         return new BuilderImpl()
 @@ -40,6 +_,10 @@
          private boolean canAlwaysEat = false;
          private float saturation = 0;
