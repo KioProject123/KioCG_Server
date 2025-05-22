@@ -1,0 +1,1112 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: KioProject <1105919949@qq.com>
+Date: Thu, 22 May 2025 12:51:00 +0800
+Subject: [PATCH] Remove Experimental Hell
+
+
+diff --git a/src/main/java/io/papermc/paper/datacomponent/BuildableDataComponent.java b/src/main/java/io/papermc/paper/datacomponent/BuildableDataComponent.java
+index 4d2ee71b82ff4a66c7f84e73c028f146e0f851ad..23bde33f4377b4edb9a82531a8c2115f81044a7a 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/BuildableDataComponent.java
++++ b/src/main/java/io/papermc/paper/datacomponent/BuildableDataComponent.java
+@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Contract;
+ import org.jspecify.annotations.NullMarked;
+ 
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface BuildableDataComponent<C extends BuildableDataComponent<C, B>, B extends DataComponentBuilder<C>> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/DataComponentBuilder.java b/src/main/java/io/papermc/paper/datacomponent/DataComponentBuilder.java
+index 9365e57499c8e337a40835b2ec9a92ebe4391bfc..394d23f92d3a08c301784ef75f76d9135ac09c65 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/DataComponentBuilder.java
++++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentBuilder.java
+@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
+  * @param <C> built component type
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface DataComponentBuilder<C> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/DataComponentHolder.java b/src/main/java/io/papermc/paper/datacomponent/DataComponentHolder.java
+index 8bef6143e46be103328fb81d06a92c71680e30a4..ac3c0ea724efd1feeef39bd41a9d36a5e2b69f28 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/DataComponentHolder.java
++++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentHolder.java
+@@ -23,7 +23,7 @@ public interface DataComponentHolder extends DataComponentView {
+      * @param <T> value type
+      */
+     @Utility
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type, final @NotNull io.papermc.paper.datacomponent.DataComponentBuilder<T> valueBuilder);
+ 
+     /**
+@@ -33,7 +33,7 @@ public interface DataComponentHolder extends DataComponentView {
+      * @param value value to set
+      * @param <T> value type
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type, final @NotNull T value);
+ 
+     /**
+@@ -41,7 +41,7 @@ public interface DataComponentHolder extends DataComponentView {
+      *
+      * @param type the data component type
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull NonValued type);
+ 
+    // TODO: Do we even want to have the concept of overriding here? Not sure what is going on with entity components
+diff --git a/src/main/java/io/papermc/paper/datacomponent/DataComponentType.java b/src/main/java/io/papermc/paper/datacomponent/DataComponentType.java
+index e2266d86a4dd1bf20346e48c428f8baf8a84b76b..07573bac7edf566d511c2eced1313d56db6617d2 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/DataComponentType.java
++++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentType.java
+@@ -5,7 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
+ import org.jspecify.annotations.NullMarked;
+ 
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface DataComponentType extends Keyed {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
+index da93a59597e6212eee19464e6c64e3828a7a8fa0..18e5b67ebb4704841f0b96cdc7531eaa8d1a548e 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
++++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
+@@ -82,7 +82,7 @@ import static java.util.Objects.requireNonNull;
+  * and {@link org.bukkit.inventory.ItemType ItemTypes} can have.
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ public final class DataComponentTypes {
+ 
+     /**
+diff --git a/src/main/java/io/papermc/paper/datacomponent/DataComponentView.java b/src/main/java/io/papermc/paper/datacomponent/DataComponentView.java
+index f06829efccddb4e254de0111c7276542b5c3b76a..e9da93ec0cf920ae1a9f6d9831a1ed6eef59a25a 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/DataComponentView.java
++++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentView.java
+@@ -26,7 +26,7 @@ public interface DataComponentView {
+      * @see #hasData(io.papermc.paper.datacomponent.DataComponentType) for DataComponentType.NonValued
+      */
+     @Contract(pure = true)
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     public <T> @Nullable T getData(final DataComponentType.@NotNull Valued<T> type);
+ 
+     /**
+@@ -40,7 +40,7 @@ public interface DataComponentView {
+      */
+     @Utility
+     @Contract(value = "_, !null -> !null", pure = true)
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     public <T> @Nullable T getDataOrDefault(final DataComponentType.@NotNull Valued<? extends T> type, final @Nullable T fallback);
+ 
+     /**
+@@ -50,7 +50,7 @@ public interface DataComponentView {
+      * @return {@code true} if set, {@code false} otherwise
+      */
+     @Contract(pure = true)
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     boolean hasData(final io.papermc.paper.datacomponent.@NotNull DataComponentType type);
+ 
+     // Not applicable to entities
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/BannerPatternLayers.java b/src/main/java/io/papermc/paper/datacomponent/item/BannerPatternLayers.java
+index 785b5db96bb5a0584647f2ed41fcd882ab6b3250..da119df8283b335da1d3f45c4e423d9ba4753117 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/BannerPatternLayers.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/BannerPatternLayers.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#BANNER_PATTERNS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface BannerPatternLayers {
+ 
+@@ -38,7 +38,7 @@ public interface BannerPatternLayers {
+     /**
+      * Builder for {@link BannerPatternLayers}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<BannerPatternLayers> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/BlockItemDataProperties.java b/src/main/java/io/papermc/paper/datacomponent/item/BlockItemDataProperties.java
+index 65f1bc8d1bea0042dca9683c439561132dbeea5c..dc545ef06d2a215a640b1a351f8f0a05278e4ee0 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/BlockItemDataProperties.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/BlockItemDataProperties.java
+@@ -12,7 +12,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#BLOCK_DATA
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface BlockItemDataProperties {
+ 
+@@ -43,7 +43,7 @@ public interface BlockItemDataProperties {
+     /**
+      * Builder for {@link BlockItemDataProperties}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<BlockItemDataProperties> {
+         // building this requires BlockProperty API, so an empty builder for now (essentially read-only)
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java b/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java
+index bf53d0e0b008f5ab77d8a700d1cca319eba098b8..995a9f251900c47544137896ebc63dbdad32cccb 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
+ 
+ // TODO
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface BlocksAttacks {
+ 
+@@ -37,7 +37,7 @@ public interface BlocksAttacks {
+     /**
+      * Builder for {@link BlocksAttacks}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<BlocksAttacks> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/BundleContents.java b/src/main/java/io/papermc/paper/datacomponent/item/BundleContents.java
+index 696a4cebb902c4afd2d2f78bb8d9261bd09d7cb1..787a3eb656b1bc7c1d93fbb7cbe0bde344b7a224 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/BundleContents.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/BundleContents.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#BUNDLE_CONTENTS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface BundleContents {
+ 
+@@ -38,7 +38,7 @@ public interface BundleContents {
+     /**
+      * Builder for {@link BundleContents}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<BundleContents> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ChargedProjectiles.java b/src/main/java/io/papermc/paper/datacomponent/item/ChargedProjectiles.java
+index aac079e1d8056ec02741386a1bf2e7adf592e5bd..69ddaa46eafe8d6944f30da955a644685300b877 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ChargedProjectiles.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ChargedProjectiles.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#CHARGED_PROJECTILES
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ChargedProjectiles {
+ 
+@@ -38,7 +38,7 @@ public interface ChargedProjectiles {
+     /**
+      * Builder for {@link ChargedProjectiles}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ChargedProjectiles> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Consumable.java b/src/main/java/io/papermc/paper/datacomponent/item/Consumable.java
+index 8c88bbbeef179e6c6666d07c8b28157ee1e84a2b..5d6232afe6173c90486b62c13d458e8ba9070ee0 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Consumable.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Consumable.java
+@@ -17,7 +17,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#CONSUMABLE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Consumable extends BuildableDataComponent<Consumable, Consumable.Builder> {
+ 
+@@ -44,7 +44,7 @@ public interface Consumable extends BuildableDataComponent<Consumable, Consumabl
+     /**
+      * Builder for {@link Consumable}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<Consumable> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/CustomModelData.java b/src/main/java/io/papermc/paper/datacomponent/item/CustomModelData.java
+index 334a87c1984cbddd835f25bbe04e03579cefc88d..7743c2f823caa68b68bde306bb74e250264bafa7 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/CustomModelData.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/CustomModelData.java
+@@ -14,7 +14,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#CUSTOM_MODEL_DATA
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface CustomModelData {
+ 
+@@ -58,7 +58,7 @@ public interface CustomModelData {
+     /**
+      * Builder for {@link CustomModelData}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<CustomModelData> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/DamageResistant.java b/src/main/java/io/papermc/paper/datacomponent/item/DamageResistant.java
+index 384098ea55d7c3cc571bd5560be23a0c785b1dc4..bbfe2eb25fb8525469306d8afd0026d8ff57e348 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/DamageResistant.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/DamageResistant.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#DAMAGE_RESISTANT
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface DamageResistant {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/DeathProtection.java b/src/main/java/io/papermc/paper/datacomponent/item/DeathProtection.java
+index 8a42550bb52d00d9b5df1a64e997e0762bffde59..749ae95bd7e5ab6092621c6fcd8311df70b94c7e 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/DeathProtection.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/DeathProtection.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#DEATH_PROTECTION
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface DeathProtection {
+ 
+@@ -33,7 +33,7 @@ public interface DeathProtection {
+     /**
+      * Builder for {@link DeathProtection}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<DeathProtection> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/DyedItemColor.java b/src/main/java/io/papermc/paper/datacomponent/item/DyedItemColor.java
+index 73f4c73dabb5da18ae639bb3d10969812b80a62d..1a4e0b9859bd8e2afbe556acbc82a07cb548fe43 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/DyedItemColor.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/DyedItemColor.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#DYED_COLOR
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface DyedItemColor {
+ 
+@@ -36,7 +36,7 @@ public interface DyedItemColor {
+     /**
+      * Builder for {@link DyedItemColor}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<DyedItemColor> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Enchantable.java b/src/main/java/io/papermc/paper/datacomponent/item/Enchantable.java
+index a128348247d8845321d3fecebaa09a5175a923cc..687172f61f89f092e18654e3a8049b05ca4a612b 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Enchantable.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Enchantable.java
+@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#ENCHANTABLE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Enchantable {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Equippable.java b/src/main/java/io/papermc/paper/datacomponent/item/Equippable.java
+index 673d33f52409c5ef74392da2e85f88ec20fc3adc..8a44783345af6bb8585a9057b82551713b1b023e 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Equippable.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Equippable.java
+@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#EQUIPPABLE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Equippable extends BuildableDataComponent<Equippable, Equippable.Builder> {
+ 
+@@ -107,7 +107,7 @@ public interface Equippable extends BuildableDataComponent<Equippable, Equippabl
+     /**
+      * Builder for {@link Equippable}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<Equippable> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Fireworks.java b/src/main/java/io/papermc/paper/datacomponent/item/Fireworks.java
+index 72aa1b4bda2693e0cd78d93449dda23bd1b74062..890fc4489d6a64c0fb0da549e26a8181238f7c05 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Fireworks.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Fireworks.java
+@@ -14,7 +14,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#FIREWORKS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Fireworks {
+ 
+@@ -47,7 +47,7 @@ public interface Fireworks {
+     /**
+      * Builder for {@link Fireworks}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<Fireworks> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java b/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
+index 78598187286d2774b041fe6b6c9ee80d3ef62455..d2e822ffaf1a0ca9a99ad95a8d8575a4044960e0 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/FoodProperties.java
+@@ -12,7 +12,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#FOOD
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface FoodProperties extends BuildableDataComponent<FoodProperties, FoodProperties.Builder> {
+ 
+@@ -48,7 +48,7 @@ public interface FoodProperties extends BuildableDataComponent<FoodProperties, F
+     /**
+      * Builder for {@link FoodProperties}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<FoodProperties> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ItemAdventurePredicate.java b/src/main/java/io/papermc/paper/datacomponent/item/ItemAdventurePredicate.java
+index c8a23d57253a8b3b8ad1f01364611a6671e635a5..bcfe1ac4106dc9e259ebb33858a2ea38b30b3d97 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ItemAdventurePredicate.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ItemAdventurePredicate.java
+@@ -15,7 +15,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#CAN_PLACE_ON
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ItemAdventurePredicate {
+ 
+@@ -40,7 +40,7 @@ public interface ItemAdventurePredicate {
+     /**
+      * Builder for {@link ItemAdventurePredicate}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ItemAdventurePredicate> {
+         /**
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ItemArmorTrim.java b/src/main/java/io/papermc/paper/datacomponent/item/ItemArmorTrim.java
+index bae6ad86229c0f98305033edcbe4479932cc5cf4..32ada152d4952b7867dbb9e63417e069a93fd9b2 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ItemArmorTrim.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ItemArmorTrim.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#TRIM
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ItemArmorTrim  {
+ 
+@@ -31,7 +31,7 @@ public interface ItemArmorTrim  {
+     /**
+      * Builder for {@link ItemArmorTrim}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ItemArmorTrim> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ItemAttributeModifiers.java b/src/main/java/io/papermc/paper/datacomponent/item/ItemAttributeModifiers.java
+index 0c7b585298458878651ebce9a2d061fdc8ee1c6b..3679189587cc5d16bc487f0f2b044b86683e479a 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ItemAttributeModifiers.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ItemAttributeModifiers.java
+@@ -15,7 +15,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#ATTRIBUTE_MODIFIERS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ItemAttributeModifiers {
+ 
+@@ -67,7 +67,7 @@ public interface ItemAttributeModifiers {
+     /**
+      * Builder for {@link ItemAttributeModifiers}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ItemAttributeModifiers> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ItemContainerContents.java b/src/main/java/io/papermc/paper/datacomponent/item/ItemContainerContents.java
+index 3b00e34a1d6aeec694c712d7a3a323da938f270b..95f1a90b87d32c783573f72ed42e8aa3511ac78a 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ItemContainerContents.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ItemContainerContents.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#CONTAINER
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ItemContainerContents {
+ 
+@@ -35,7 +35,7 @@ public interface ItemContainerContents {
+     @Contract(value = "-> new", pure = true)
+     @Unmodifiable List<ItemStack> contents();
+ 
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ItemContainerContents> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ItemEnchantments.java b/src/main/java/io/papermc/paper/datacomponent/item/ItemEnchantments.java
+index a36266df0f52fcc0dbb35e5a2789f9090d93f4b3..ef1c1d5cdc29b65a9566478a3516bae7bbb44b8e 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ItemEnchantments.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ItemEnchantments.java
+@@ -15,7 +15,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#STORED_ENCHANTMENTS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ItemEnchantments {
+ 
+@@ -40,7 +40,7 @@ public interface ItemEnchantments {
+     /**
+      * Builder for {@link ItemEnchantments}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ItemEnchantments> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ItemLore.java b/src/main/java/io/papermc/paper/datacomponent/item/ItemLore.java
+index 3be62f6005e0343c3a6ebd04e3ee824e0b969113..976ec46a44e5cf630d0816fe8bee034f0164b024 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ItemLore.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ItemLore.java
+@@ -14,7 +14,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#LORE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ItemLore {
+ 
+@@ -47,7 +47,7 @@ public interface ItemLore {
+     /**
+      * Builder for {@link ItemLore}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ItemLore> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/JukeboxPlayable.java b/src/main/java/io/papermc/paper/datacomponent/item/JukeboxPlayable.java
+index d9c5f3fe0337980ead76af26d1bcf31340818077..81c9cfab4ff1f6ff845a13bbbcecee3409d93106 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/JukeboxPlayable.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/JukeboxPlayable.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#JUKEBOX_PLAYABLE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface JukeboxPlayable  {
+ 
+@@ -26,7 +26,7 @@ public interface JukeboxPlayable  {
+     /**
+      * Builder for {@link JukeboxPlayable}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<JukeboxPlayable> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/LodestoneTracker.java b/src/main/java/io/papermc/paper/datacomponent/item/LodestoneTracker.java
+index b919672ceea74ae09324653847b30fde293054d8..1d046274a8547fade6829cd5062b0c2a08a47b79 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/LodestoneTracker.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/LodestoneTracker.java
+@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#LODESTONE_TRACKER
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface LodestoneTracker {
+ 
+@@ -45,7 +45,7 @@ public interface LodestoneTracker {
+     /**
+      * Builder for {@link LodestoneTracker}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<LodestoneTracker> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/MapDecorations.java b/src/main/java/io/papermc/paper/datacomponent/item/MapDecorations.java
+index 1e611f1f918c33f8d89ad23cf2fc44a127af233c..4381d401b19b41c15589e1f7e9e76f95794d7f90 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/MapDecorations.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/MapDecorations.java
+@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#MAP_DECORATIONS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface MapDecorations {
+ 
+@@ -53,7 +53,7 @@ public interface MapDecorations {
+     /**
+      * Decoration present on the map.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface DecorationEntry {
+ 
+@@ -94,7 +94,7 @@ public interface MapDecorations {
+      * Builder for {@link MapDecorations}.
+      */
+     @ApiStatus.NonExtendable
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     interface Builder extends DataComponentBuilder<MapDecorations> {
+ 
+         /**
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/MapId.java b/src/main/java/io/papermc/paper/datacomponent/item/MapId.java
+index 045bfe0ce5080b57a40be03a65b1a2aaf9089120..c9fdb6c5e9548d83d78fcdc6fb2106452e42b3ab 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/MapId.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/MapId.java
+@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
+  */
+ @NullMarked
+ @ApiStatus.NonExtendable
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ public interface MapId {
+ 
+     @Contract(value = "_ -> new", pure = true)
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/MapItemColor.java b/src/main/java/io/papermc/paper/datacomponent/item/MapItemColor.java
+index 87845d19a25ed2ae79b868fcfe40b88a2dc83f97..1ffcbb09c6a1b99524ea402dcef331100186d30e 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/MapItemColor.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/MapItemColor.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#MAP_COLOR
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface MapItemColor {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/OminousBottleAmplifier.java b/src/main/java/io/papermc/paper/datacomponent/item/OminousBottleAmplifier.java
+index 4f16e08f04c2cea24f3cb132ff21f4bdd6b70582..7fcc65a056c640cf453fca3fadc90c823fd9434d 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/OminousBottleAmplifier.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/OminousBottleAmplifier.java
+@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#OMINOUS_BOTTLE_AMPLIFIER
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface OminousBottleAmplifier {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/PotDecorations.java b/src/main/java/io/papermc/paper/datacomponent/item/PotDecorations.java
+index 15154d7f9f861991134eb5a5210f7244db3216eb..f15a76dc7037e790fe904c05fb25871e1324d1e4 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/PotDecorations.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/PotDecorations.java
+@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#POT_DECORATIONS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface PotDecorations {
+ 
+@@ -61,7 +61,7 @@ public interface PotDecorations {
+     /**
+      * Builder for {@link PotDecorations}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<PotDecorations> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/PotionContents.java b/src/main/java/io/papermc/paper/datacomponent/item/PotionContents.java
+index 984f793a42af792b0e6a6d1d0dce849caa5e72a0..0add233e5a22e3dadab2346a125971f9bc325a58 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/PotionContents.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/PotionContents.java
+@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#POTION_CONTENTS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface PotionContents {
+ 
+@@ -81,7 +81,7 @@ public interface PotionContents {
+     @Contract(pure = true)
+     Color computeEffectiveColor();
+ 
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<PotionContents> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Repairable.java b/src/main/java/io/papermc/paper/datacomponent/item/Repairable.java
+index ff84d9123aab0ad2f93b397e20a37f21894547a3..f58943f06c143ea69dc1caa6437e8f5745927b01 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Repairable.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Repairable.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#REPAIRABLE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Repairable {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/ResolvableProfile.java b/src/main/java/io/papermc/paper/datacomponent/item/ResolvableProfile.java
+index dc6cd191553e7ca5b6c5768f594924e4c39fcbbe..da5c806f525f0087d7cc8f924c0bf631eaf11423 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/ResolvableProfile.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/ResolvableProfile.java
+@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#PROFILE
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ResolvableProfile {
+ 
+@@ -75,7 +75,7 @@ public interface ResolvableProfile {
+     /**
+      * Builder for {@link ResolvableProfile}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<ResolvableProfile> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/SeededContainerLoot.java b/src/main/java/io/papermc/paper/datacomponent/item/SeededContainerLoot.java
+index f79af65e8f3f8ffbb9be1cf1c6b537cd1e2b1031..bc2bb8913ccf4ad6a6200ac13f18b502f552705f 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/SeededContainerLoot.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/SeededContainerLoot.java
+@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#CONTAINER_LOOT
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface SeededContainerLoot {
+ 
+@@ -44,7 +44,7 @@ public interface SeededContainerLoot {
+     /**
+      * Builder for {@link SeededContainerLoot}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<SeededContainerLoot> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/SuspiciousStewEffects.java b/src/main/java/io/papermc/paper/datacomponent/item/SuspiciousStewEffects.java
+index 9a740ef7da967e865a801367cf179eead0632d66..965716428d65c3c07bf80813d39202e5f2ff1487 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/SuspiciousStewEffects.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/SuspiciousStewEffects.java
+@@ -14,7 +14,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#SUSPICIOUS_STEW_EFFECTS
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface SuspiciousStewEffects {
+ 
+@@ -39,7 +39,7 @@ public interface SuspiciousStewEffects {
+     /**
+      * Builder for {@link SuspiciousStewEffects}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<SuspiciousStewEffects> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Tool.java b/src/main/java/io/papermc/paper/datacomponent/item/Tool.java
+index e1ef5cffa48e4ed1a064dad52608c7e1200c54d1..079d539a24b4b83753e67c40b877992d59ca6a8e 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Tool.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Tool.java
+@@ -19,7 +19,7 @@ import org.jspecify.annotations.Nullable;
+  * @see DataComponentTypes#TOOL
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Tool {
+ 
+@@ -80,7 +80,7 @@ public interface Tool {
+     @Contract(pure = true)
+     boolean canDestroyBlocksInCreative();
+ 
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Rule {
+ 
+@@ -111,7 +111,7 @@ public interface Tool {
+     /**
+      * Builder for {@link Tool}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<Tool> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/TooltipDisplay.java b/src/main/java/io/papermc/paper/datacomponent/item/TooltipDisplay.java
+index 85aaae68adcf84956f49ce58dc31492316be2aab..cd313459529c03c34ce181f004d3a6e2555c7f0f 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/TooltipDisplay.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/TooltipDisplay.java
+@@ -9,7 +9,7 @@ import org.jspecify.annotations.NullMarked;
+ import java.util.Set;
+ 
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface TooltipDisplay {
+ 
+@@ -30,7 +30,7 @@ public interface TooltipDisplay {
+     /**
+      * Builder for {@link TooltipDisplay}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<TooltipDisplay> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/UseCooldown.java b/src/main/java/io/papermc/paper/datacomponent/item/UseCooldown.java
+index 57fc55ad1def2bb14fc0a95ee3c0c157b0ac53fb..8fba125e17a389abac3e0b86f0a8f77bf1ac9f63 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/UseCooldown.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/UseCooldown.java
+@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#USE_COOLDOWN
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface UseCooldown {
+ 
+@@ -45,7 +45,7 @@ public interface UseCooldown {
+     @Contract(pure = true)
+     @Nullable Key cooldownGroup();
+ 
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<UseCooldown> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/UseRemainder.java b/src/main/java/io/papermc/paper/datacomponent/item/UseRemainder.java
+index aaecc3c954ea7c6b70c1effea65a34901e1a0924..57dcc495bc5009e92cc78962cc20b8cd1fe83db4 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/UseRemainder.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/UseRemainder.java
+@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#USE_REMAINDER
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface UseRemainder {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/Weapon.java b/src/main/java/io/papermc/paper/datacomponent/item/Weapon.java
+index 856120108ca8ebfadd90b8c80455a1508ecfae9d..ff5570fbb696f11cdbbe28c6410d27a41e15feae 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/Weapon.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/Weapon.java
+@@ -5,7 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
+ import org.jspecify.annotations.NullMarked;
+ 
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface Weapon {
+ 
+@@ -31,7 +31,7 @@ public interface Weapon {
+     /**
+      * Builder for {@link Weapon}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<Weapon> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/WritableBookContent.java b/src/main/java/io/papermc/paper/datacomponent/item/WritableBookContent.java
+index 828d3bb1c763e0f3c89a73d6b70d1f006258644f..42756eac8510cd61132eb0d2b0f16064d25586b7 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/WritableBookContent.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/WritableBookContent.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#WRITABLE_BOOK_CONTENT
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface WritableBookContent {
+ 
+@@ -33,7 +33,7 @@ public interface WritableBookContent {
+     /**
+      * Builder for {@link WritableBookContent}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<WritableBookContent> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/WrittenBookContent.java b/src/main/java/io/papermc/paper/datacomponent/item/WrittenBookContent.java
+index 979bc05009b84b6fcdb59938cceace351e61c78b..4794edbf5467fba116edebffa5f9b53ad7c76b2a 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/WrittenBookContent.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/WrittenBookContent.java
+@@ -16,7 +16,7 @@ import org.jspecify.annotations.NullMarked;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#WRITTEN_BOOK_CONTENT
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface WrittenBookContent {
+ 
+@@ -74,7 +74,7 @@ public interface WrittenBookContent {
+     /**
+      * Builder for {@link WrittenBookContent}.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface Builder extends DataComponentBuilder<WrittenBookContent> {
+ 
+diff --git a/src/main/java/io/papermc/paper/datacomponent/item/consumable/ConsumeEffect.java b/src/main/java/io/papermc/paper/datacomponent/item/consumable/ConsumeEffect.java
+index 8442532a1874a2ee30633b79603dd930478a5955..80c36d7a10302acc0800f3f85849c5e4fab2c181 100644
+--- a/src/main/java/io/papermc/paper/datacomponent/item/consumable/ConsumeEffect.java
++++ b/src/main/java/io/papermc/paper/datacomponent/item/consumable/ConsumeEffect.java
+@@ -13,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
+  * Effect that occurs when consuming an item.
+  */
+ @NullMarked
+-@ApiStatus.Experimental
++// @ApiStatus.Experimental // KioCG
+ @ApiStatus.NonExtendable
+ public interface ConsumeEffect {
+ 
+@@ -75,7 +75,7 @@ public interface ConsumeEffect {
+     /**
+      * Represents a consumable effect that randomly teleports the entity on consumption.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface TeleportRandomly extends ConsumeEffect {
+ 
+@@ -90,7 +90,7 @@ public interface ConsumeEffect {
+     /**
+      * Represents a consumable effect that removes status effects on consumption.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface RemoveStatusEffects extends ConsumeEffect {
+ 
+@@ -105,7 +105,7 @@ public interface ConsumeEffect {
+     /**
+      * Represents a consumable effect that plays a sound on consumption.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface PlaySound extends ConsumeEffect {
+ 
+@@ -120,7 +120,7 @@ public interface ConsumeEffect {
+     /**
+      * Represents a consumable effect that clears all effects on consumption.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface ClearAllStatusEffects extends ConsumeEffect {
+ 
+@@ -129,7 +129,7 @@ public interface ConsumeEffect {
+     /**
+      * Represents a consumable effect that applies potion effects based on a probability on consumption.
+      */
+-    @ApiStatus.Experimental
++    // @ApiStatus.Experimental // KioCG
+     @ApiStatus.NonExtendable
+     interface ApplyStatusEffects extends ConsumeEffect {
+ 
+diff --git a/src/main/java/org/bukkit/inventory/ItemStack.java b/src/main/java/org/bukkit/inventory/ItemStack.java
+index 4b77c6a78915c556ea7fd3a2d03cf082921affb1..3a3e0b8c9551078847327d1643de7d399d76f76a 100644
+--- a/src/main/java/org/bukkit/inventory/ItemStack.java
++++ b/src/main/java/org/bukkit/inventory/ItemStack.java
+@@ -1189,7 +1189,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @see #hasData(io.papermc.paper.datacomponent.DataComponentType) for DataComponentType.NonValued
+      */
+     @org.jetbrains.annotations.Contract(pure = true)
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public <T> @Nullable T getData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type) {
+         return this.craftDelegate.getData(type);
+     }
+@@ -1205,7 +1205,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      */
+     @Utility
+     @org.jetbrains.annotations.Contract(value = "_, !null -> !null", pure = true)
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public <T> @Nullable T getDataOrDefault(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<? extends T> type, final @Nullable T fallback) {
+         final T object = this.getData(type);
+         return object != null ? object : fallback;
+@@ -1218,7 +1218,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @return {@code true} if set, {@code false} otherwise
+      */
+     @org.jetbrains.annotations.Contract(pure = true)
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public boolean hasData(final io.papermc.paper.datacomponent.@NotNull DataComponentType type) {
+         return this.craftDelegate.hasData(type);
+     }
+@@ -1229,7 +1229,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @return an immutable set of data component types
+      */
+     @org.jetbrains.annotations.Contract("-> new")
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public java.util.@org.jetbrains.annotations.Unmodifiable Set<io.papermc.paper.datacomponent.@NotNull DataComponentType> getDataTypes() {
+         return this.craftDelegate.getDataTypes();
+     }
+@@ -1245,7 +1245,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @param <T> value type
+      */
+     @Utility
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type, final @NotNull io.papermc.paper.datacomponent.DataComponentBuilder<T> valueBuilder) {
+         this.setData(type, valueBuilder.build());
+     }
+@@ -1284,7 +1284,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @param value value to set
+      * @param <T> value type
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type, final @NotNull T value) {
+         this.craftDelegate.setData(type, value);
+     }
+@@ -1294,7 +1294,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      *
+      * @param type the data component type
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull NonValued type) {
+         this.craftDelegate.setData(type);
+     }
+@@ -1304,7 +1304,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      *
+      * @param type the data component type
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public void unsetData(final io.papermc.paper.datacomponent.@NotNull DataComponentType type) {
+         this.craftDelegate.unsetData(type);
+     }
+@@ -1315,7 +1315,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      *
+      * @param type the data component type
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public void resetData(final io.papermc.paper.datacomponent.@NotNull DataComponentType type) {
+         this.craftDelegate.resetData(type);
+     }
+@@ -1340,7 +1340,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @param source the item stack to copy from
+      * @param filter predicate for which components to copy
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public void copyDataFrom(final @NotNull ItemStack source, final @NotNull Predicate<io.papermc.paper.datacomponent.@NotNull DataComponentType> filter) {
+         this.craftDelegate.copyDataFrom(source, filter);
+     }
+@@ -1352,7 +1352,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @param type the data component type
+      * @return {@code true} if the data type is overridden
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public boolean isDataOverridden(final io.papermc.paper.datacomponent.@NotNull DataComponentType type) {
+         return this.craftDelegate.isDataOverridden(type);
+     }
+@@ -1365,7 +1365,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @param excludeTypes the data component types to ignore
+      * @return {@code true} if the provided item is equal, ignoring the provided components
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public boolean matchesWithoutData(final @NotNull ItemStack item, final @NotNull java.util.Set<io.papermc.paper.datacomponent.@NotNull DataComponentType> excludeTypes) {
+         return this.matchesWithoutData(item, excludeTypes, false);
+     }
+@@ -1379,7 +1379,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+      * @param ignoreCount ignore the count of the item
+      * @return {@code true} if the provided item is equal, ignoring the provided components
+      */
+-    @org.jetbrains.annotations.ApiStatus.Experimental
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
+     public boolean matchesWithoutData(final @NotNull ItemStack item, final @NotNull java.util.Set<io.papermc.paper.datacomponent.@NotNull DataComponentType> excludeTypes, final boolean ignoreCount) {
+         return this.craftDelegate.matchesWithoutData(item, excludeTypes, ignoreCount);
+     }
