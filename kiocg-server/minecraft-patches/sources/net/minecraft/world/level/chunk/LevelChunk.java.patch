@@ -16,32 +16,34 @@
          // CraftBukkit start
          this.persistentDataContainer = chunk.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
          // CraftBukkit end
-@@ -867,11 +_,15 @@
-         }
-     }
+@@ -869,7 +_,11 @@
  
--    public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
-+    public <T extends BlockEntity> boolean updateBlockEntityTicker(T blockEntity) { // KioCG - optimize block entity
+     public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
          BlockState blockState = blockEntity.getBlockState();
 -        BlockEntityTicker<T> ticker = blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType());
 +        // KioCG start - optimize block entity
 +        boolean needTicking = blockEntity.preFirstTick || blockEntity.needTicking(this.level, blockEntity.getBlockPos(), blockState);
 +        BlockEntityTicker<T> ticker = !needTicking ? null : blockState.getTicker(this.level, (BlockEntityType<T>)blockEntity.getType());
++        blockEntity.tickerTicking = false;
 +        // KioCG end - optimize block entity
          if (ticker == null) {
              this.removeBlockEntityTicker(blockEntity.getBlockPos());
-+            return false; // KioCG - optimize block entity
          } else {
-             this.tickersInLevel
-                 .compute(
-@@ -892,6 +_,7 @@
-                         }
-                     }
-                 );
-+            return true; // KioCG - optimize block entity
-         }
-     }
- 
+@@ -880,12 +_,14 @@
+                         TickingBlockEntity tickingBlockEntity = this.createTicker(blockEntity, ticker);
+                         if (ticker1 != null) {
+                             ticker1.rebind(tickingBlockEntity);
++                            blockEntity.tickerTicking = true; // KioCG - optimize block entity
+                             return (LevelChunk.RebindableTickingBlockEntityWrapper)ticker1;
+                         } else if (this.isInLevel()) {
+                             LevelChunk.RebindableTickingBlockEntityWrapper rebindableTickingBlockEntityWrapper = new LevelChunk.RebindableTickingBlockEntityWrapper(
+                                 tickingBlockEntity
+                             );
+                             this.level.addBlockEntityTicker(rebindableTickingBlockEntityWrapper);
++                            blockEntity.tickerTicking = true; // KioCG - optimize block entity
+                             return rebindableTickingBlockEntityWrapper;
+                         } else {
+                             return null;
 @@ -917,8 +_,10 @@
                      try {
                          ProfilerFiller profilerFiller = Profiler.get();

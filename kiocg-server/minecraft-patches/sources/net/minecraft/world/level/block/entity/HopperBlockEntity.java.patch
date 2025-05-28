@@ -1,6 +1,60 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -37,6 +_,12 @@
+@@ -33,10 +_,66 @@
+     public static final int HOPPER_CONTAINER_SIZE = 5;
+     private static final int[][] CACHED_SLOTS = new int[54][];
+     private static final int NO_COOLDOWN_TIME = -1;
+-    private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
++    // KioCG start - optimize block entity
++    private HopperNonNullList<ItemStack> items = withSize(5, ItemStack.EMPTY);
++    public <E> HopperNonNullList<E> withSize(int size, E defaultValue) {
++        org.apache.commons.lang3.Validate.notNull(defaultValue);
++        Object[] objects = new Object[size];
++        java.util.Arrays.fill(objects, defaultValue);
++        return new HopperNonNullList<>(java.util.Arrays.asList((E[])objects), defaultValue);
++    }
++    public class HopperNonNullList<E> extends NonNullList<E> {
++        protected HopperNonNullList(List<E> list, @Nullable E defaultValue) {
++            super(list, defaultValue);
++        }
++
++        @Override
++        public E set(int index, E value) {
++            E prev = super.set(index, value);
++            if (!HopperBlockEntity.this.tickerTicking && !HopperBlockEntity.this.preFirstTick) {
++                if (HopperBlockEntity.this.needEjectItems && !((ItemStack) value).isEmpty()) {
++                    HopperBlockEntity.this.updateBlockEntityTicker();
++                }
++                if (HopperBlockEntity.this.needSuckInItems && ((ItemStack) value).getCount() != ((ItemStack) value).getMaxStackSize()) {
++                    HopperBlockEntity.this.updateBlockEntityTicker();
++                }
++            }
++            return prev;
++        }
++
++        @Override
++        public void add(int index, E value) {
++            super.add(index, value);
++            if (!HopperBlockEntity.this.tickerTicking && !HopperBlockEntity.this.preFirstTick) {
++                if (HopperBlockEntity.this.needEjectItems && !((ItemStack) value).isEmpty()) {
++                    HopperBlockEntity.this.updateBlockEntityTicker();
++                }
++            }
++        }
++
++        @Override
++        public E remove(int index) {
++            E prev = super.remove(index);
++            if (!HopperBlockEntity.this.tickerTicking && !HopperBlockEntity.this.preFirstTick) {
++                if (HopperBlockEntity.this.needSuckInItems) {
++                    HopperBlockEntity.this.updateBlockEntityTicker();
++                }
++            }
++            return prev;
++        }
++    }
++    // KioCG end - optimize block entity
++
      public int cooldownTime = -1;
      private long tickedGameTime;
      private Direction facing;
@@ -8,16 +62,37 @@
 +    private boolean needSuckInItems = true;
 +    private boolean needEjectItems = true;
 +    private boolean needDoEntityInside = false;
++    private boolean needDropItems = false;
 +    // KioCG end - optimize block entity
 +    @Nullable public java.util.Set<net.minecraft.world.item.Item> itemFilter; // KioCG - hopper filter
  
      // CraftBukkit start - add fields and methods
      public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
-@@ -86,6 +_,7 @@
+@@ -80,12 +_,13 @@
+     @Override
+     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+         super.loadAdditional(tag, registries);
+-        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
++        this.items = withSize(this.getContainerSize(), ItemStack.EMPTY); // KioCG - optimize block entity
+         if (!this.tryLoadLootTable(tag)) {
+             ContainerHelper.loadAllItems(tag, this.items, registries);
          }
  
          this.cooldownTime = tag.getIntOr("TransferCooldown", -1);
 +        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null; // KioCG - hopper filter
+     }
+ 
+     @Override
+@@ -106,7 +_,11 @@
+     @Override
+     public ItemStack removeItem(int index, int count) {
+         this.unpackLootTable(null);
+-        return ContainerHelper.removeItem(this.getItems(), index, count);
++        // KioCG start - optimize block entity: 触发更新
++        ItemStack itemStack = ContainerHelper.removeItem(this.getItems(), index, count);
++        this.getItems().set(index, this.getItems().get(index));
++        return itemStack;
++        // KioCG end - optimize block entity: 触发更新
      }
  
      @Override
@@ -30,21 +105,25 @@
              });
              if (!result && blockEntity.level.spigotConfig.hopperCheck > 1) {
                  blockEntity.setCooldown(blockEntity.level.spigotConfig.hopperCheck);
-@@ -143,6 +_,24 @@
+@@ -143,6 +_,28 @@
          }
      }
  
 +    // KioCG start - optimize block entity
 +    @Override
 +    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
++        if (!state.getValue(HopperBlock.ENABLED)) return false;
++
 +        BlockPos abovePos = pos.above();
 +        BlockState aboveState = level.getBlockState(abovePos);
 +        BlockPos facingPos = pos.relative(this.facing);
 +        BlockState facingState = level.getBlockState(facingPos);
 +        this.needDoEntityInside = !hasBlockContainer(level, abovePos, aboveState);
 +        this.needSuckInItems = !this.needDoEntityInside || aboveState.is(BlockTags.RAILS);
-+        this.needEjectItems = facingState.is(BlockTags.RAILS) || hasBlockContainer(level, facingPos, facingState);
-+        return this.needSuckInItems || this.needEjectItems;
++        this.needDropItems = facingState.isAir();
++        this.needEjectItems = this.needDropItems || facingState.is(BlockTags.RAILS) || hasBlockContainer(level, facingPos, facingState);
++        final int fullState = getFullState(this); // Paper - Perf: Optimize Hoppers
++        return this.needSuckInItems && fullState != HOPPER_IS_FULL || this.needEjectItems && fullState != HOPPER_EMPTY;
 +    }
 +
 +    private static boolean hasBlockContainer(Level level, BlockPos pos, BlockState state) {
@@ -55,7 +134,7 @@
      // Paper start - Perf: Optimize Hoppers
      private static final int HOPPER_EMPTY = 0;
      private static final int HOPPER_HAS_ITEMS = 1;
-@@ -188,11 +_,12 @@
+@@ -188,12 +_,20 @@
                  boolean flag = false;
                  final int fullState = getFullState(blockEntity); // Paper - Perf: Optimize Hoppers
                  if (fullState != HOPPER_EMPTY) { // Paper - Perf: Optimize Hoppers
@@ -65,10 +144,19 @@
  
                  if (fullState != HOPPER_IS_FULL || flag) { // Paper - Perf: Optimize Hoppers
                      flag |= validator.getAsBoolean(); // Paper - note: this is not a validator, it's what adds/sucks in items
+-                }
 +                } else { blockEntity.setCooldown(level.spigotConfig.hopperTransfer); // KioCG - optimize block entity
-                 }
++                }
++
++                // KioCG start - optimize block entity
++                if (!blockEntity.needSuckInItems && fullState == HOPPER_EMPTY
++                    || !blockEntity.needEjectItems && fullState == HOPPER_IS_FULL) {
++                    blockEntity.updateBlockEntityTicker();
++                }
++                // KioCG end - optimize block entity
  
                  if (flag) {
+                     blockEntity.setCooldown(level.spigotConfig.hopperTransfer); // Spigot
 @@ -208,7 +_,7 @@
  
      private boolean inventoryFull() {
@@ -78,7 +166,14 @@
                  return false;
              }
          }
-@@ -227,6 +_,8 @@
+@@ -221,12 +_,14 @@
+     private static boolean skipPullModeEventFire;
+     private static boolean skipPushModeEventFire;
+ 
+-    private static boolean hopperPush(final Level level, final Container destination, final Direction direction, final HopperBlockEntity hopper) {
++    private static boolean hopperPush(final Level level, final @Nullable Container destination, final Direction direction, final HopperBlockEntity hopper) { // KioCG - hopper drop items: allow nullable
+         skipPushModeEventFire = skipHopperEvents;
+         boolean foundItem = false;
          for (int i = 0; i < hopper.getContainerSize(); ++i) {
              final ItemStack item = hopper.getItem(i);
              if (!item.isEmpty()) {
@@ -87,6 +182,59 @@
                  foundItem = true;
                  ItemStack origItemStack = item;
                  ItemStack movedItem = origItemStack;
+@@ -237,7 +_,7 @@
+ 
+                 // We only need to fire the event once to give protection plugins a chance to cancel this event
+                 // Because nothing uses getItem, every event call should end up the same result.
+-                if (!skipPushModeEventFire) {
++                if (!skipPushModeEventFire && destination != null) { // KioCG - hopper drop items: allow nullable
+                     movedItem = callPushMoveEvent(destination, movedItem, hopper);
+                     if (movedItem == null) { // cancelled
+                         origItemStack.setCount(originalItemCount);
+@@ -245,7 +_,34 @@
+                     }
+                 }
+ 
+-                final ItemStack remainingItem = addItem(hopper, destination, movedItem, direction);
++                // KioCG start - hopper drop items
++                final ItemStack remainingItem;
++                if (destination != null) {
++                    remainingItem = addItem(hopper, destination, movedItem, direction);
++                } else {
++                    BlockPos toCopy = hopper.worldPosition;
++                    // 当destination == null时, direction为漏斗朝向
++                    net.minecraft.world.phys.Vec3 vec3 = switch (direction) {
++                        case DOWN ->
++                                new net.minecraft.world.phys.Vec3(toCopy.getX() + 0.5, toCopy.getY() - net.minecraft.world.entity.EntityType.ITEM.getHeight() - 0.125, toCopy.getZ() + 0.5);
++                        case NORTH ->
++                                new net.minecraft.world.phys.Vec3(toCopy.getX() + 0.5, toCopy.getY() + (1.0 / 16.0 * 6.0) - (net.minecraft.world.entity.EntityType.ITEM.getHeight() / 2.0) - 0.125, toCopy.getZ() - (net.minecraft.world.entity.EntityType.ITEM.getWidth() / 2.0));
++                        case SOUTH ->
++                                new net.minecraft.world.phys.Vec3(toCopy.getX() + 0.5, toCopy.getY() + (1.0 / 16.0 * 6.0) - (net.minecraft.world.entity.EntityType.ITEM.getHeight() / 2.0) - 0.125, toCopy.getZ() + 1 + (net.minecraft.world.entity.EntityType.ITEM.getWidth() / 2.0));
++                        case WEST ->
++                                new net.minecraft.world.phys.Vec3(toCopy.getX() - (net.minecraft.world.entity.EntityType.ITEM.getWidth() / 2.0), toCopy.getY() + (1.0 / 16.0 * 6.0) - (net.minecraft.world.entity.EntityType.ITEM.getHeight() / 2.0) - 0.125, toCopy.getZ() + 0.5);
++                        case EAST ->
++                                new net.minecraft.world.phys.Vec3(toCopy.getX() + 1 + (net.minecraft.world.entity.EntityType.ITEM.getWidth() / 2.0), toCopy.getY() + (1.0 / 16.0 * 6.0) - (net.minecraft.world.entity.EntityType.ITEM.getHeight() / 2.0) - 0.125, toCopy.getZ() + 0.5);
++                        default -> throw new IllegalStateException();
++                    };
++                    ItemEntity itemEntity = new ItemEntity(level, vec3.x(), vec3.y(), vec3.z(), movedItem);
++                    itemEntity.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
++                    itemEntity.setDefaultPickUpDelay();
++                    level.addFreshEntity(itemEntity);
++
++                    remainingItem = ItemStack.EMPTY;
++                }
++                // KioCG end - hopper drop items
+                 final int remainingItemCount = remainingItem.getCount();
+                 if (remainingItemCount != movedItemCount) {
+                     origItemStack = origItemStack.copy(true);
+@@ -254,6 +_,7 @@
+                         origItemStack.setCount(originalItemCount - movedItemCount + remainingItemCount);
+                     }
+                     hopper.setItem(i, origItemStack);
++                    if (destination != null) // KioCG - hopper drop items: allow nullable
+                     destination.setChanged();
+                     return true;
+                 }
 @@ -267,6 +_,8 @@
      }
  
@@ -96,7 +244,15 @@
          ItemStack movedItem = origItemStack;
          final int originalItemCount = origItemStack.getCount();
          final int movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
-@@ -423,6 +_,11 @@
+@@ -417,12 +_,19 @@
+     // Paper end - Perf: Optimize Hoppers
+ 
+     private static boolean ejectItems(Level level, BlockPos pos, HopperBlockEntity blockEntity) {
++        if (blockEntity.needDropItems) return hopperPush(level, null, blockEntity.facing, blockEntity); // KioCG - hopper drop items
++
+         Container attachedContainer = getAttachedContainer(level, pos, blockEntity);
+         if (attachedContainer == null) {
+             return false;
          } else {
              Direction opposite = blockEntity.facing.getOpposite();
              if (isFullContainer(attachedContainer, opposite)) {
@@ -156,7 +312,7 @@
 +        return !filter.isEmpty() ? filter : null;
 +    }
 +
-+    public static boolean suckInFilter(Container hopper, ItemStack itemstack) {
++    public static boolean suckInFilter(@Nullable Container hopper, ItemStack itemstack) {
 +        if (hopper instanceof HopperBlockEntity blockEntity) {
 +            if (blockEntity.itemFilter != null) {
 +                return blockEntity.itemFilter.contains(itemstack.getItem());
@@ -278,8 +434,12 @@
          Block block = state.getBlock();
          if (block instanceof WorldlyContainerHolder) {
              return ((WorldlyContainerHolder)block).getContainer(state, level, pos);
-@@ -862,11 +_,21 @@
-         this.items = items;
+@@ -859,14 +_,24 @@
+ 
+     @Override
+     protected void setItems(NonNullList<ItemStack> items) {
+-        this.items = items;
++        this.items = new HopperNonNullList<>(new java.util.ArrayList<>(items), ItemStack.EMPTY); // KioCG - optimize block entity
      }
  
 +    private int suckInTime = 0; // KioCG - optimize block entity: item search hopper
