@@ -17,7 +17,7 @@ public class TPSBarCommand {
                                     .executes(context -> execute(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException())))
                                     .then(Commands.argument("targets", EntityArgument.players())
                                                   .requires(listener -> listener.hasPermission(2, "bukkit.command.tpsbar.other"))
-                                                  .executes((context) -> execute(context.getSource(), EntityArgument.getPlayers(context, "targets")))
+                                                  .executes(context -> execute(context.getSource(), EntityArgument.getPlayers(context, "targets")))
                                          )
                            );
     }

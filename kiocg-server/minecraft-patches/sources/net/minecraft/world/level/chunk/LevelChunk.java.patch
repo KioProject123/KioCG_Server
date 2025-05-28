@@ -44,17 +44,20 @@
                              return rebindableTickingBlockEntityWrapper;
                          } else {
                              return null;
-@@ -917,8 +_,10 @@
+@@ -917,9 +_,13 @@
                      try {
                          ProfilerFiller profilerFiller = Profiler.get();
                          profilerFiller.push(this::getType);
 +                        LevelChunk.this.chunkHot.startTicking(); try { // KioCG - chunk hot
                          BlockState blockState = LevelChunk.this.getBlockState(blockPos);
                          if (this.blockEntity.getType().isValid(blockState)) {
-+                            if (!this.blockEntity.preFirstTick || !(this.blockEntity.preFirstTick = false) && this.blockEntity.updateBlockEntityTicker()) // KioCG - optimize block entity
++                            if (!this.blockEntity.preFirstTick || !(this.blockEntity.preFirstTick = false) && this.blockEntity.updateBlockEntityTicker()) { // KioCG - optimize block entity
                              this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
++                            com.kiocg.command.TickerViewCommand.onBlockEntityTicking(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState); // KioCG - ticker view
++                            } // KioCG - optimize block entity
                              this.loggedInvalidBlockState = false;
                          // Paper start - Remove the Block Entity if it's invalid
+                         } else {
 @@ -931,6 +_,7 @@
                              // Paper end - Remove the Block Entity if it's invalid
                          }
