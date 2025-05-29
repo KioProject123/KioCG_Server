@@ -120,7 +120,7 @@
 +        BlockState facingState = level.getBlockState(facingPos);
 +        this.needDoEntityInside = !hasBlockContainer(level, abovePos, aboveState);
 +        this.needSuckInItems = !this.needDoEntityInside || aboveState.is(BlockTags.RAILS);
-+        this.needDropItems = facingState.isAir();
++        this.needDropItems = facingState.getCollisionShape(level, pos).isEmpty();
 +        this.needEjectItems = this.needDropItems || facingState.is(BlockTags.RAILS) || hasBlockContainer(level, facingPos, facingState);
 +        final int fullState = getFullState(this); // Paper - Perf: Optimize Hoppers
 +        return this.needSuckInItems && fullState != HOPPER_IS_FULL || this.needEjectItems && fullState != HOPPER_EMPTY;
