@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/ResetProfession.java
++++ b/net/minecraft/world/entity/ai/behavior/ResetProfession.java
+@@ -11,7 +_,7 @@
+         return BehaviorBuilder.create(
+             instance -> instance.group(instance.absent(MemoryModuleType.JOB_SITE)).apply(instance, jobSite -> (level, villager, gameTime) -> {
+                 VillagerData villagerData = villager.getVillagerData();
+-                boolean flag = !villagerData.profession().is(VillagerProfession.NONE) && !villagerData.profession().is(VillagerProfession.NITWIT);
++                boolean flag = !villagerData.profession().is(VillagerProfession.NONE) && !villagerData.profession().is(VillagerProfession.NITWIT) && !villager.level().paperConfig().kiocgConfig.entity.animal.villagerRandomProfession; // KioCG - villager random profession
+                 if (flag && villager.getVillagerXp() == 0 && villagerData.level() <= 1) {
+                     // CraftBukkit start
+                     org.bukkit.event.entity.VillagerCareerChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callVillagerCareerChangeEvent(villager, org.bukkit.craftbukkit.entity.CraftVillager.CraftProfession.minecraftHolderToBukkit(level.registryAccess().getOrThrow(VillagerProfession.NONE)), org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason.LOSING_JOB);

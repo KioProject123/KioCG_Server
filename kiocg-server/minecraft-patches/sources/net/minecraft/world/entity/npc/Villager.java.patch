@@ -43,7 +43,7 @@
          }
  
          villagerBrain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(holder, 0.5F));
-@@ -292,10 +_,18 @@
+@@ -292,22 +_,32 @@
          // Paper start - EAR 2
          this.customServerAiStep(level, false);
      }
@@ -54,6 +54,7 @@
          profilerFiller.push("villagerBrain");
 +        // KioCG start - lobotomized villager
 +        if (this.level().isBrightOutside() && (this.tickCount + this.getId()) % 100 == 0 && this.shouldRestock()) {
++            this.playWorkSound();
 +            this.restock();
 +        }
 +        if (this.lobotomized.checkLobotomized(this)) {
@@ -63,6 +64,44 @@
          if (!inactive) this.getBrain().tick(level, this); // Paper - EAR 2
          profilerFiller.pop();
          if (this.assignProfessionWhenSpawned) {
+             this.assignProfessionWhenSpawned = false;
+         }
+ 
+-        if (!this.isTrading() && this.updateMerchantTimer > 0) {
++        if (this.updateMerchantTimer > 0) { // KioCG - villager random profession: 交易过程中允许升级
+             this.updateMerchantTimer--;
+             if (this.updateMerchantTimer <= 0) {
+                 if (this.increaseProfessionLevelOnUpdate) {
+                     this.increaseMerchantCareer();
+                     this.increaseProfessionLevelOnUpdate = false;
++                    this.playWorkSound(); // KioCG - villager random profession
+                 }
+ 
+                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
+@@ -327,9 +_,21 @@
+             }
+         }
+ 
+-        if (this.getVillagerData().profession().is(VillagerProfession.NONE) && this.isTrading()) {
+-            this.stopTrading();
++        // KioCG start - villager random profession
++        if (this.getVillagerData().profession().is(VillagerProfession.NONE)) {
++            if (this.isTrading()) {
++                this.stopTrading();
++            }
++
++            if (this.level().paperConfig().kiocgConfig.entity.animal.villagerRandomProfession && !this.isBaby()) {
++                List<ResourceKey<VillagerProfession>> professions = new java.util.ArrayList<>(BuiltInRegistries.VILLAGER_PROFESSION.registryKeySet());
++                professions.remove(VillagerProfession.NONE);
++                professions.remove(VillagerProfession.NITWIT);
++                ResourceKey<VillagerProfession> profession = professions.get(this.random.nextInt(professions.size()));
++                this.setVillagerData(this.getVillagerData().withProfession(BuiltInRegistries.VILLAGER_PROFESSION.getOrThrow(profession)));
++            }
+         }
++        // KioCG end - villager random profession
+ 
+         if (inactive) return; // Paper - EAR 2
+         super.customServerAiStep(level);
 @@ -383,6 +_,7 @@
      }
  
@@ -71,14 +110,6 @@
          this.updateSpecialPrices(player);
          this.setTradingPlayer(player);
          this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().level());
-@@ -431,6 +_,7 @@
-         this.resendOffersToTradingPlayer();
-         this.lastRestockGameTime = this.level().getGameTime();
-         this.numberOfRestocksToday++;
-+        this.playWorkSound(); // KioCG - lobotomized villager
-     }
- 
-     private void resendOffersToTradingPlayer() {
 @@ -465,21 +_,22 @@
      public boolean shouldRestock() {
          long l = this.lastRestockGameTime + 12000L;
@@ -129,3 +160,11 @@
          return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
      }
  
+@@ -891,6 +_,7 @@
+                 if (itemListings != null) {
+                     MerchantOffers offers = this.getOffers();
+                     this.addOffersFromItemListings(offers, itemListings, amount); // Paper - More vanilla friendly methods to update trades
++                    this.resendOffersToTradingPlayer(); // KioCG - villager random profession: 交易过程中允许升级
+                     return true; // Paper - More vanilla friendly methods to update trades
+                 }
+             }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/AssignProfessionFromJobSite.java
++++ b/net/minecraft/world/entity/ai/behavior/AssignProfessionFromJobSite.java
+@@ -25,7 +_,7 @@
+                             potentialJobSite.erase();
+                             jobSite.set(globalPos);
+                             level.broadcastEntityEvent(villager, (byte)14);
+-                            if (!villager.getVillagerData().profession().is(VillagerProfession.NONE)) {
++                            if (!villager.getVillagerData().profession().is(VillagerProfession.NONE) || villager.level().paperConfig().kiocgConfig.entity.animal.villagerRandomProfession) { // KioCG - villager random profession
+                                 return true;
+                             } else {
+                                 MinecraftServer server = level.getServer();

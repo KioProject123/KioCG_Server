@@ -156,11 +156,15 @@
      @Override
      protected final void serverAiStep() {
          this.noActionTime++;
-@@ -1167,6 +_,7 @@
+@@ -1167,6 +_,11 @@
              );
          }
  
-+        this.getAttribute(Attributes.SCALE).addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, -1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)); // KioCG - mob spawning or dying animation
++        // KioCG start - mob spawning or dying animation
++        if (this.spawningAnimation && this.tickCount <= 10) {
++            this.getAttribute(Attributes.SCALE).addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, (this.tickCount / 10.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
++        }
++        // KioCG end - mob spawning or dying animation
          this.setLeftHanded(random.nextFloat() < 0.05F);
          return spawnGroupData;
      }
