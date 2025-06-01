@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -125,6 +_,7 @@
+@@ -122,9 +_,11 @@
+     private long lastGossipDecayTime = 0L;
+     private int villagerXp = 0;
+     private long lastRestockGameTime = 0L;
++    private int lastRestockDays = 0; // KioCG - villager restock every day
      public int numberOfRestocksToday = 0;
      private long lastRestockCheckDayTime;
      private boolean assignProfessionWhenSpawned = false;
@@ -110,45 +114,45 @@
          this.updateSpecialPrices(player);
          this.setTradingPlayer(player);
          this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().level());
-@@ -465,21 +_,22 @@
-     public boolean shouldRestock() {
-         long l = this.lastRestockGameTime + 12000L;
-         long gameTime = this.level().getGameTime();
--        boolean flag = gameTime > l;
-+        boolean flag = gameTime > l && false; // KioCG - villager restock every day: 去除半天刷新一次补货? 意义不明
-         long dayTime = this.level().getDayTime();
-         if (this.lastRestockCheckDayTime > 0L) {
-             long l1 = this.lastRestockCheckDayTime / 24000L;
-             long l2 = dayTime / 24000L;
-+            // KioCG - 注释: 天数不同则补货
-             flag |= l2 > l1;
-         }
- 
-         this.lastRestockCheckDayTime = dayTime;
-         if (flag) {
-             this.lastRestockGameTime = gameTime;
--            this.resetNumberOfRestocks();
-+            this.numberOfRestocksToday = 1; // KioCG - villager restock every day: 补货后会变成2, 用于兼容插件
-         }
- 
--        return this.allowedToRestock() && this.needsToRestock();
-+        return flag; // KioCG - villager restock every day
+@@ -463,6 +_,7 @@
      }
  
-     private void catchUpDemand() {
-@@ -555,6 +_,7 @@
+     public boolean shouldRestock() {
++        /* // KioCG - villager restock every day
+         long l = this.lastRestockGameTime + 12000L;
+         long gameTime = this.level().getGameTime();
+         boolean flag = gameTime > l;
+@@ -478,7 +_,15 @@
+             this.lastRestockGameTime = gameTime;
+             this.resetNumberOfRestocks();
+         }
++        */ // KioCG - villager restock every day
+ 
++        // KioCG start - villager restock every day
++        int days = this.level().getDays();
++        if (this.lastRestockDays != days) {
++            this.lastRestockDays = days;
++            this.numberOfRestocksToday = 1;
++        }
++        // KioCG end - villager restock every day
+         return this.allowedToRestock() && this.needsToRestock();
+     }
+ 
+@@ -555,6 +_,8 @@
          if (this.assignProfessionWhenSpawned) {
              compound.putBoolean("AssignProfessionWhenSpawned", true);
          }
 +        compound.putBoolean("KioCG.Lobotomized", this.lobotomized.isLobotomized); // KioCG - lobotomized villager
++        compound.putInt("KioCG.LastRestockDays", this.lastRestockDays); // KioCG - villager restock every day
      }
  
      @Override
-@@ -573,6 +_,7 @@
+@@ -573,6 +_,8 @@
  
          this.numberOfRestocksToday = compound.getIntOr("RestocksToday", 0);
          this.assignProfessionWhenSpawned = compound.getBooleanOr("AssignProfessionWhenSpawned", false);
 +        this.lobotomized.isLobotomized = compound.getBooleanOr("KioCG.Lobotomized", false); // KioCG - lobotomized villager
++        this.lastRestockDays = compound.getIntOr("KioCG.LastRestockDays", 0); // KioCG - villager restock every day
      }
  
      @Override
