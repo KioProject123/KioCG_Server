@@ -1,0 +1,66 @@
+--- a/net/minecraft/world/level/block/ChestBlock.java
++++ b/net/minecraft/world/level/block/ChestBlock.java
+@@ -87,9 +_,16 @@
+                 @Override
+                 public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+                     if (first.canOpen(player) && second.canOpen(player)) {
++                        // KioCG start - expand container rows
++                        if (container.getContainerSize() > 6 * 9) {
++                            ChestBlock.sendTooLargeMessage(player);
++                            return null;
++                        }
++                        // KioCG end - expand container rows
++
+                         first.unpackLootTable(playerInventory.player);
+                         second.unpackLootTable(playerInventory.player);
+-                        return ChestMenu.sixRows(containerId, playerInventory, container);
++                        return net.minecraft.world.level.block.entity.RowsContainerBlockEntity.createMenu(containerId, playerInventory, container); // KioCG - expand container rows
+                     } else {
+                         return null;
+                     }
+@@ -230,8 +_,43 @@
+             }
+         }
+ 
+-        return this.defaultBlockState().setValue(FACING, opposite).setValue(TYPE, chestType).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+-    }
++        // KioCG start - expand container rows
++        BlockState placeState = this.defaultBlockState().setValue(FACING, opposite).setValue(TYPE, chestType).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
++        if (this.chestTooLarge(context, placeState)) {
++            return null;
++        }
++        return placeState;
++        // KioCG end - expand container rows
++    }
++
++    // KioCG start - expand container rows
++    private boolean chestTooLarge(BlockPlaceContext context, BlockState placeState) {
++        int rows = context.getItemInHand().getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER_ROWS, getDefaultRows());
++        if (placeState.getValue(TYPE) != ChestType.SINGLE && context.getLevel().getBlockEntity(context.getClickedPos().relative(getConnectedDirection(placeState))) instanceof ChestBlockEntity chest) {
++            rows += chest.getRows();
++        }
++
++        if (rows > 6) {
++            if (context.getPlayer() != null) {
++                sendTooLargeMessage(context.getPlayer());
++            }
++            return true;
++        }
++        return false;
++    }
++
++    private static void sendTooLargeMessage(@Nullable Player player) {
++        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
++            Component component = Component.literal("容器大小超过上限").withStyle(net.minecraft.ChatFormatting.RED);
++            serverPlayer.sendSystemMessage(component, true);
++            serverPlayer.containerMenu.sendAllDataToRemote();
++        }
++    }
++
++    protected int getDefaultRows() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.defaultChestRows;
++    }
++    // KioCG end - expand container rows
+ 
+     @Override
+     protected FluidState getFluidState(BlockState state) {

@@ -1,19 +1,60 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -26,7 +_,7 @@
+@@ -24,9 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.ChestType;
  
- public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
+-public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
++public class ChestBlockEntity extends RowsContainerBlockEntity implements LidBlockEntity { // KioCG - expand container rows
      private static final int EVENT_SET_OPEN_COUNT = 1;
 -    private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
-+    private NonNullList<ItemStack> items; // KioCG - expand container rows: 移至构造函数
++    private NonNullList<ItemStack> items = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
      public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
          @Override
          protected void onOpen(Level level, BlockPos pos, BlockState state) {
-@@ -92,6 +_,7 @@
- 
-     protected ChestBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
-         super(type, pos, blockState);
-+        this.items = NonNullList.withSize(type == BlockEntityType.TRAPPED_CHEST ? 54 : 27, ItemStack.EMPTY); // KioCG - expand container rows
+@@ -98,10 +_,17 @@
+         this(BlockEntityType.CHEST, pos, blockState);
      }
  
-     public ChestBlockEntity(BlockPos pos, BlockState blockState) {
++    // KioCG start - expand container rows
++    // @Override
++    // public int getContainerSize() {
++    //     return 27;
++    // }
++
+     @Override
+-    public int getContainerSize() {
+-        return 27;
++    protected int getDefaultRows() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.defaultChestRows;
+     }
++    // KioCG end - expand container rows
+ 
+     @Override
+     protected Component getDefaultName() {
+@@ -111,7 +_,7 @@
+     @Override
+     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+         super.loadAdditional(tag, registries);
+-        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
++        this.items = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
+         if (!this.tryLoadLootTable(tag)) {
+             ContainerHelper.loadAllItems(tag, this.items, registries);
+         }
+@@ -202,10 +_,12 @@
+         otherChest.setItems(items);
+     }
+ 
+-    @Override
+-    protected AbstractContainerMenu createMenu(int id, Inventory player) {
+-        return ChestMenu.threeRows(id, player, this);
+-    }
++    // KioCG start - expand container rows
++    // @Override
++    // protected AbstractContainerMenu createMenu(int id, Inventory player) {
++    //     return ChestMenu.threeRows(id, player, this);
++    // }
++    // KioCG end - expand container rows
+ 
+     public void recheckOpen() {
+         if (!this.remove) {

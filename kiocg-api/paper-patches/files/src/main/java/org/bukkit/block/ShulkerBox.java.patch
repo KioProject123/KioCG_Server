@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/block/ShulkerBox.java
++++ b/src/main/java/org/bukkit/block/ShulkerBox.java
+@@ -8,7 +_,7 @@
+ /**
+  * Represents a captured state of a ShulkerBox.
+  */
+-public interface ShulkerBox extends Container, LootableBlockInventory, Lidded { // Paper
++public interface ShulkerBox extends RowsContainer, LootableBlockInventory, Lidded { // Paper // KioCG - expand container rows
+ 
+     /**
+      * Get the {@link DyeColor} corresponding to this ShulkerBox

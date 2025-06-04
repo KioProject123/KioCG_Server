@@ -1,0 +1,8 @@
+--- a/src/main/java/org/bukkit/block/Barrel.java
++++ b/src/main/java/org/bukkit/block/Barrel.java
+@@ -5,4 +_,4 @@
+ /**
+  * Represents a captured state of a Barrel.
+  */
+-public interface Barrel extends Container, com.destroystokyo.paper.loottable.LootableBlockInventory, Lidded { } // Paper
++public interface Barrel extends RowsContainer, com.destroystokyo.paper.loottable.LootableBlockInventory, Lidded { } // Paper // KioCG - expand container rows

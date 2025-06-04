@@ -1,0 +1,12 @@
+--- a/data/minecraft/loot_table/blocks/trapped_chest.json
++++ b/data/minecraft/loot_table/blocks/trapped_chest.json
+@@ -15,7 +_,8 @@
+             {
+               "function": "minecraft:copy_components",
+               "include": [
+-                "minecraft:custom_name"
++                "minecraft:custom_name",
++                "minecraft:container_rows"
+               ],
+               "source": "block_entity"
+             }

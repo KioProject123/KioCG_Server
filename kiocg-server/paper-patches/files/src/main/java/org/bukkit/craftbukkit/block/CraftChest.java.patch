@@ -1,0 +1,19 @@
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
+@@ -124,4 +_,16 @@
+             && ChestBlock.isChestBlockedAt(world, neighbourBlockPos);
+     }
+     // Paper end - More Chest Block API
++
++    // KioCG start - expand container rows
++    @Override
++    public int getRows() {
++        return getSnapshot().getRows();
++    }
++
++    @Override
++    public void setRows(int rows) {
++        getSnapshot().setRows(rows);
++    }
++    // KioCG end - expand container rows
+ }

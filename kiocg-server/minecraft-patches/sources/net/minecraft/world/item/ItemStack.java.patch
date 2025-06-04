@@ -291,7 +291,7 @@
 +
 +    private void tickFreshness(long tickTime, long prevTickTime) {
 +        if (prevTickTime < tickTime) {
-+            int spend = spendFreshness(prevTickTime + 1, tickTime, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshness.timeInterval);
++            int spend = spendFreshness(prevTickTime + 1, tickTime, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshnessTickInterval);
 +            if (spend != 0) {
 +                this.setDamageValue(this.getDamageValue() + spend);
 +            }

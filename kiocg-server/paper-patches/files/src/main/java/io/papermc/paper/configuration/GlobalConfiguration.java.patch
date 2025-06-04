@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -404,4 +_,123 @@
+@@ -404,4 +_,125 @@
              }
          }
      }
@@ -10,6 +10,15 @@
 +
 +    public class KiocgConfig extends ConfigurationPart {
 +        public String feedbackForwardingSenderName = "MOSS";
++        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap", "challenges");
++        public boolean dontKillMyPet = true;
++        public double petTeleportDistanceSqr = 256.0;
++        public boolean petFollowKeepChunkLoaded = true;
++        public Component sleepProgressClock = Component.text("\uD83D\uDE34");
++        public Component sleepProgressLeft = Component.text("☽", NamedTextColor.BLUE);
++        public Component sleepProgressRight = Component.text("☀", NamedTextColor.YELLOW);
++        public String sleepProgressContent = "                              ";
++        public int foodFreshnessTickInterval = 1800;
 +
 +        public ModelItems modelItems;
 +        public class ModelItems extends ConfigurationPart {
@@ -85,9 +94,19 @@
 +            }
 +        }
 +
-+        public Enchant enchant;
-+        public class Enchant extends ConfigurationPart {
-+            public boolean allowUnsafeCommand = true;
++        public Command command;
++        public class Command extends ConfigurationPart {
++            public boolean allowUnsafeEnchant = true;
++
++            public String tpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms SAN<yellow>:</yellow> <hotpct>%";
++            public net.kyori.adventure.bossbar.BossBar.Overlay tpsBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
++            public net.kyori.adventure.bossbar.BossBar.Color tpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
++            public net.kyori.adventure.bossbar.BossBar.Color tpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
++            public net.kyori.adventure.bossbar.BossBar.Color tpsBarProgressColorLow = net.kyori.adventure.bossbar.BossBar.Color.RED;
++            public String tpsBarTextColorGood = "<green><text>";
++            public String tpsBarTextColorMedium = "<yellow><text>";
++            public String tpsBarTextColorLow = "<red><text>";
++            public int tpsBarTickInterval = 20;
 +        }
 +
 +        public Anvil anvil;
@@ -97,29 +116,12 @@
 +            public boolean renameNoLevelCost = true;
 +        }
 +
-+        public boolean dontKillMyPet = true;
-+        public double petTeleportDistanceSqr = 256.0;
-+        public boolean petFollowKeepChunkLoaded = true;
-+        public Component sleepProgressClock = Component.text("\uD83D\uDE34");
-+        public Component sleepProgressLeft = Component.text("☽", NamedTextColor.BLUE);
-+        public Component sleepProgressRight = Component.text("☀", NamedTextColor.YELLOW);
-+        public String sleepProgressContent = "                              ";
-+
-+        public String commandTpsBarTitle = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms SAN<yellow>:</yellow> <hotpct>%";
-+        public net.kyori.adventure.bossbar.BossBar.Overlay commandTpsBarProgressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
-+        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
-+        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
-+        public net.kyori.adventure.bossbar.BossBar.Color commandTpsBarProgressColorLow = net.kyori.adventure.bossbar.BossBar.Color.RED;
-+        public String commandTpsBarTextColorGood = "<green><text>";
-+        public String commandTpsBarTextColorMedium = "<yellow><text>";
-+        public String commandTpsBarTextColorLow = "<red><text>";
-+        public int commandTpsBarTickInterval = 20;
-+
-+        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap", "challenges");
-+
-+        public FoodFreshness foodFreshness;
-+        public class FoodFreshness extends ConfigurationPart {
-+            public int timeInterval = 1800;
++        public Container container;
++        public class Container extends ConfigurationPart {
++            public int defaultChestRows = 2;
++            public int defaultTrappedChestRows = 2;
++            public int defaultBarrelRows = 2;
++            public int defaultShulkerBoxRows = 2;
 +        }
 +    }
 +    // KioCG end

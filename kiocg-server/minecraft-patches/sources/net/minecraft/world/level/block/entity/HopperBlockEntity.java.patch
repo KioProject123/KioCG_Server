@@ -344,8 +344,8 @@
  
      public static boolean addItem(Container container, ItemEntity item) {
 +        if (!HopperBlockEntity.suckInFilter(container, item.getItem())) return false; // KioCG - hopper filter
-+        if (!item.level().paperConfig().kiocgConfig.hopperPullsEntityOwnedItem && item.target != null) return false; // KioCG - hopper filter
-+        if (!item.level().paperConfig().kiocgConfig.hopperPullsInfinitePickupItem && item.pickupDelay == Short.MAX_VALUE) return false; // KioCG - hopper filter
++        if (!item.level().paperConfig().kiocgConfig.block.hopperPullsEntityOwnedItem && item.target != null) return false; // KioCG - hopper filter
++        if (!item.level().paperConfig().kiocgConfig.block.hopperPullsInfinitePickupItem && item.pickupDelay == Short.MAX_VALUE) return false; // KioCG - hopper filter
 +
          boolean flag = false;
          // CraftBukkit start
@@ -377,8 +377,8 @@
  
      public static ItemStack addItem(@Nullable Container source, Container destination, ItemStack stack, @Nullable Direction direction) {
 +        // KioCG start - hopper filter
-+        if (source instanceof BaseContainerBlockEntity lockable1 && !lockable1.getLevel().paperConfig().kiocgConfig.hopperPullsLockedContainer && lockable1.lockKey != net.minecraft.world.LockCode.NO_LOCK
-+            || destination instanceof BaseContainerBlockEntity lockable2 && !lockable2.getLevel().paperConfig().kiocgConfig.hopperPullsLockedContainer && lockable2.lockKey != net.minecraft.world.LockCode.NO_LOCK) {
++        if (source instanceof BaseContainerBlockEntity lockable1 && !lockable1.getLevel().paperConfig().kiocgConfig.block.hopperPullsLockedContainer && lockable1.lockKey != net.minecraft.world.LockCode.NO_LOCK
++            || destination instanceof BaseContainerBlockEntity lockable2 && !lockable2.getLevel().paperConfig().kiocgConfig.block.hopperPullsLockedContainer && lockable2.lockKey != net.minecraft.world.LockCode.NO_LOCK) {
 +            return stack;
 +        }
 +        // KioCG end - hopper filter
@@ -412,7 +412,7 @@
 +        // KioCG start - optimize block entity: 正确阻止区块加载
 +        BlockState blockState = !level.spigotConfig.hopperCanLoadChunks ? level.getBlockStateIfLoaded(pos) : level.getBlockState(pos);
 +        if (blockState == null) return null;
-+        return getContainerAt(level, pos, blockState, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, !level.paperConfig().kiocgConfig.hopperRailsOptimize); // Paper - Optimize hoppers // KioCG - hopper rails optimize: 不用额外判断阻塞
++        return getContainerAt(level, pos, blockState, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, !level.paperConfig().kiocgConfig.block.hopperRailsOptimize); // Paper - Optimize hoppers // KioCG - hopper rails optimize: 不用额外判断阻塞
 +        // KioCG end - optimize block entity: 正确阻止区块加载
      }
  
@@ -421,7 +421,7 @@
          // Paper end - Perf: Optimize Hoppers
          Container blockContainer = getBlockContainer(level, pos, state);
          if (blockContainer == null && (!optimizeEntities || !level.paperConfig().hopper.ignoreOccludingBlocks || !state.getBukkitMaterial().isOccluding())) { // Paper - Perf: Optimize Hoppers
-+            if (level.paperConfig().kiocgConfig.hopperRailsOptimize && state.is(BlockTags.RAILS)) // KioCG - hopper rails optimize: 不要吸取铁轨外的矿车
++            if (level.paperConfig().kiocgConfig.block.hopperRailsOptimize && state.is(BlockTags.RAILS)) // KioCG - hopper rails optimize: 不要吸取铁轨外的矿车
              blockContainer = getEntityContainer(level, x, y, z);
          }
  

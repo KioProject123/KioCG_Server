@@ -1,0 +1,12 @@
+--- a/data/minecraft/loot_table/blocks/white_shulker_box.json
++++ b/data/minecraft/loot_table/blocks/white_shulker_box.json
+@@ -13,7 +_,8 @@
+                 "minecraft:custom_name",
+                 "minecraft:container",
+                 "minecraft:lock",
+-                "minecraft:container_loot"
++                "minecraft:container_loot",
++                "minecraft:container_rows"
+               ],
+               "source": "block_entity"
+             }

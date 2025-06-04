@@ -1,0 +1,68 @@
+--- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
+@@ -32,7 +_,7 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer {
++public class ShulkerBoxBlockEntity extends RowsContainerBlockEntity implements WorldlyContainer { // KioCG - expand container rows
+     public static final int COLUMNS = 9;
+     public static final int ROWS = 3;
+     public static final int CONTAINER_SIZE = 27;
+@@ -40,8 +_,8 @@
+     public static final int OPENING_TICK_LENGTH = 10;
+     public static final float MAX_LID_HEIGHT = 0.5F;
+     public static final float MAX_LID_ROTATION = 270.0F;
+-    private static final int[] SLOTS = IntStream.range(0, 27).toArray();
+-    private NonNullList<ItemStack> itemStacks = NonNullList.withSize(27, ItemStack.EMPTY);
++    private static final int[] SLOTS = IntStream.range(0, 6 * 9).toArray(); // KioCG - expand container rows
++    private NonNullList<ItemStack> itemStacks = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
+     public int openCount;
+     private ShulkerBoxBlockEntity.AnimationStatus animationStatus = ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
+     private float progress;
+@@ -167,10 +_,17 @@
+         }
+     }
+ 
++    // KioCG start - expand container rows
++    // @Override
++    // public int getContainerSize() {
++    //     return this.itemStacks.size();
++    // }
++
+     @Override
+-    public int getContainerSize() {
+-        return this.itemStacks.size();
++    protected int getDefaultRows() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.defaultShulkerBoxRows;
+     }
++    // KioCG end - expand container rows
+ 
+     @Override
+     public boolean triggerEvent(int id, int type) {
+@@ -251,7 +_,7 @@
+     }
+ 
+     public void loadFromTag(CompoundTag tag, HolderLookup.Provider levelRegistry) {
+-        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
++        this.itemStacks = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
+         if (!this.tryLoadLootTable(tag)) {
+             ContainerHelper.loadAllItems(tag, this.itemStacks, levelRegistry);
+         }
+@@ -291,10 +_,12 @@
+         return this.color;
+     }
+ 
+-    @Override
+-    protected AbstractContainerMenu createMenu(int id, Inventory player) {
+-        return new ShulkerBoxMenu(id, player, this);
+-    }
++    // KioCG start - expand container rows
++    // @Override
++    // protected AbstractContainerMenu createMenu(int id, Inventory player) {
++    //     return new ShulkerBoxMenu(id, player, this);
++    // }
++    // KioCG end - expand container rows
+ 
+     public boolean isClosed() {
+         return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;

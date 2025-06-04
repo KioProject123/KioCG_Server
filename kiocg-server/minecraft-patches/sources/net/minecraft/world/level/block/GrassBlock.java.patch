@@ -77,7 +77,7 @@
 +
 +    @Override
 +    protected void dayTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-+        if (random.nextFloat() > (float) level.paperConfig().kiocgConfig.flowersAndGrassesSpreadChance) { return; }
++        if (random.nextFloat() > (float) level.paperConfig().kiocgConfig.block.flowersAndGrassesSpreadChance) { return; }
 +        final net.minecraft.world.level.chunk.ChunkAccess cachedBlockChunk = level.getChunkIfLoaded(pos);
 +        if (cachedBlockChunk == null) { // Is this needed?
 +            return;

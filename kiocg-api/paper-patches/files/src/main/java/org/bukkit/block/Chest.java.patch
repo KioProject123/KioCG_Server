@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/block/Chest.java
++++ b/src/main/java/org/bukkit/block/Chest.java
+@@ -9,7 +_,7 @@
+ /**
+  * Represents a captured state of a chest.
+  */
+-public interface Chest extends Container, LootableBlockInventory, Lidded { // Paper
++public interface Chest extends RowsContainer, LootableBlockInventory, Lidded { // Paper // KioCG - expand container rows
+ 
+     /**
+      * Gets the inventory of the chest block represented by this block state.

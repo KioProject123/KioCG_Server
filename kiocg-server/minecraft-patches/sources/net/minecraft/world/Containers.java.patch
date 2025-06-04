@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/Containers.java
 +++ b/net/minecraft/world/Containers.java
+@@ -19,6 +_,15 @@
+     }
+ 
+     private static void dropContents(Level level, double x, double y, double z, Container inventory) {
++        // KioCG start - expand container rows
++        if (inventory instanceof net.minecraft.world.level.block.entity.RowsContainerBlockEntity rowsContainer) {
++            for (ItemStack content : rowsContainer.getContents()) {
++                dropItemStack(level, x, y, z, content);
++            }
++            return;
++        }
++        // KioCG end - expand container rows
++
+         for (int i = 0; i < inventory.getContainerSize(); i++) {
+             dropItemStack(level, x, y, z, inventory.getItem(i));
+         }
 @@ -37,7 +_,10 @@
          double d5 = Math.floor(z) + level.random.nextDouble() * d1 + d2;
  

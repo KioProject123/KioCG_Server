@@ -1,33 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/TrappedChestBlockEntity.java
-@@ -14,6 +_,8 @@
-         super(BlockEntityType.TRAPPED_CHEST, pos, blockState);
-     }
- 
-+    // KioCG start - expand container rows
-+    /*
-     @Override
-     protected void signalOpenCount(Level level, BlockPos pos, BlockState state, int eventId, int eventParam) {
-         super.signalOpenCount(level, pos, state, eventId, eventParam);
-@@ -24,4 +_,21 @@
+@@ -24,4 +_,11 @@
              level.updateNeighborsAt(pos.below(), block, orientation);
          }
      }
-+     */
 +
++    // KioCG start - expand container rows
 +    @Override
-+    protected net.minecraft.world.inventory.AbstractContainerMenu createMenu(int id, net.minecraft.world.entity.player.Inventory player) {
-+        return net.minecraft.world.inventory.ChestMenu.sixRows(id, player, this);
-+    }
-+
-+    @Override
-+    protected net.minecraft.network.chat.Component getDefaultName() {
-+        return net.minecraft.network.chat.Component.translatable("container.chestDouble");
-+    }
-+
-+    @Override
-+    public int getContainerSize() {
-+        return 54;
++    protected int getDefaultRows() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.defaultTrappedChestRows;
 +    }
 +    // KioCG end - expand container rows
  }

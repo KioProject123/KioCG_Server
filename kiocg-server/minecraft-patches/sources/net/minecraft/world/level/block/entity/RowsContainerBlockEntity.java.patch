@@ -1,0 +1,98 @@
+--- /dev/null
++++ b/net/minecraft/world/level/block/entity/RowsContainerBlockEntity.java
+@@ -1,0 +_,95 @@
++package net.minecraft.world.level.block.entity;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.HolderLookup;
++import net.minecraft.core.component.DataComponentGetter;
++import net.minecraft.core.component.DataComponentMap;
++import net.minecraft.core.component.DataComponents;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.world.Container;
++import net.minecraft.world.entity.player.Inventory;
++import net.minecraft.world.inventory.AbstractContainerMenu;
++import net.minecraft.world.inventory.ChestMenu;
++import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.InventoryCloseEvent;
++
++// KioCG start - expand container rows: all class
++public abstract class RowsContainerBlockEntity extends RandomizableContainerBlockEntity {
++    private int rows = getDefaultRows();
++
++    protected RowsContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
++        super(type, pos, blockState);
++    }
++
++    protected abstract int getDefaultRows();
++
++    public int getRows() {
++        return this.rows;
++    }
++
++    public void setRows(int rows) {
++        if (this.rows != rows) {
++            for (HumanEntity viewer : this.getViewers()) {
++                viewer.closeInventory(InventoryCloseEvent.Reason.CANT_USE);
++            }
++
++            this.rows = rows;
++        }
++    }
++
++    @Override
++    public final int getContainerSize() {
++        return this.rows * 9;
++    }
++
++    @Override
++    protected final AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
++        return createMenu(containerId, inventory, this);
++    }
++
++    public static AbstractContainerMenu createMenu(int containerId, Inventory inventory, Container container) {
++        return switch (container.getContainerSize()) {
++            case 9 -> ChestMenu.oneRow(containerId, inventory, container);
++            case 2 * 9 -> ChestMenu.twoRows(containerId, inventory, container);
++            case 3 * 9 -> ChestMenu.threeRows(containerId, inventory, container);
++            case 4 * 9 -> ChestMenu.fourRows(containerId, inventory, container);
++            case 5 * 9 -> ChestMenu.fiveRows(containerId, inventory, container);
++            case 6 * 9 -> ChestMenu.sixRows(containerId, inventory, container);
++            default -> throw new IllegalArgumentException("Unsupported inventory size " + container.getContainerSize());
++        };
++    }
++
++    @Override
++    protected void applyImplicitComponents(DataComponentGetter componentGetter) {
++        super.applyImplicitComponents(componentGetter);
++        this.rows = componentGetter.getOrDefault(DataComponents.CONTAINER_ROWS, getDefaultRows());
++    }
++
++    @Override
++    protected void collectImplicitComponents(DataComponentMap.Builder components) {
++        super.collectImplicitComponents(components);
++        if (this.rows != getDefaultRows()) {
++            components.set(DataComponents.CONTAINER_ROWS, this.rows);
++        }
++    }
++
++    @Override
++    public void removeComponentsFromTag(CompoundTag tag) {
++        super.removeComponentsFromTag(tag);
++        tag.remove("KioCG.Rows");
++    }
++
++    @Override
++    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
++        super.loadAdditional(tag, registries);
++        this.rows = tag.getIntOr("KioCG.Rows", getDefaultRows());
++    }
++
++    @Override
++    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
++        super.saveAdditional(tag, registries);
++        tag.putInt("KioCG.Rows", this.rows);
++    }
++}
++// KioCG end - expand container rows: all class

@@ -85,7 +85,7 @@
          this.tickRegeneration();
 -        this.inventory.tick();
 +        // KioCG start - food freshness
-+        boolean tickFood = this.level().getGameTime() % io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshness.timeInterval == 0;
++        boolean tickFood = this.level().getGameTime() % io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshnessTickInterval == 0;
 +        if (tickFood) {
 +            this.tickMenuFoodFreshness(this.containerMenu);
 +        }

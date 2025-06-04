@@ -1,0 +1,19 @@
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftShulkerBox.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftShulkerBox.java
+@@ -80,4 +_,16 @@
+         return getBlockEntity().opened;
+     }
+     // Paper end - More Lidded Block API
++
++    // KioCG start - expand container rows
++    @Override
++    public int getRows() {
++        return getSnapshot().getRows();
++    }
++
++    @Override
++    public void setRows(int rows) {
++        getSnapshot().setRows(rows);
++    }
++    // KioCG end - expand container rows
+ }

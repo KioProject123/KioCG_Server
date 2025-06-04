@@ -7,7 +7,7 @@
 -            if (random.nextFloat() < (level.spigotConfig.saplingModifier / (100.0F * 7))) { // Paper - Fix Spigot growth modifiers
 +            if (random.nextFloat() < (level.spigotConfig.saplingModifier / 100.0F)) { // Paper - Fix Spigot growth modifiers // KioCG - crops grow every day
 +                // KioCG start - saplings withered
-+                if (random.nextFloat() < (float) level.paperConfig().kiocgConfig.saplingsWitheredChance) {
++                if (random.nextFloat() < (float) level.paperConfig().kiocgConfig.block.saplingsWitheredChance) {
 +                    level.setBlockAndUpdate(pos, Blocks.DEAD_BUSH.defaultBlockState());
 +                } else
 +                // KioCG end - saplings withered

@@ -1,5 +1,14 @@
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+@@ -53,7 +_,7 @@
+         return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
+     }
+ 
+-    protected ItemStack[] asCraftMirror(List<net.minecraft.world.item.ItemStack> mcItems) {
++    public static ItemStack[] asCraftMirror(List<net.minecraft.world.item.ItemStack> mcItems) { // KioCG - expand container rows: public static
+         int size = mcItems.size();
+         ItemStack[] items = new ItemStack[size];
+ 
 @@ -261,19 +_,41 @@
      }
  

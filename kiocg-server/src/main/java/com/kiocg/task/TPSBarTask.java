@@ -36,7 +36,7 @@ public class TPSBarTask extends BossBarTask {
 
     @Override
     BossBar createBossBar() {
-        return BossBar.bossBar(Component.text(""), 0.0F, GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorGood, GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressOverlay);
+        return BossBar.bossBar(Component.text(""), 0.0F, GlobalConfiguration.get().kiocgConfig.command.tpsBarProgressColorGood, GlobalConfiguration.get().kiocgConfig.command.tpsBarProgressOverlay);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class TPSBarTask extends BossBarTask {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         bossbar.progress(getBossBarProgress((float) serverPlayer.getNearbyChunkHot(), (float) serverPlayer.level().paperConfig().kiocgConfig.chunkHot.phaseGood));
         bossbar.color(getBossBarColor(serverPlayer));
-        bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.commandTpsBarTitle,
+        bossbar.name(MiniMessage.miniMessage().deserialize(GlobalConfiguration.get().kiocgConfig.command.tpsBarTitle,
                                                            Placeholder.component("hotpct", getChunkHotColor(serverPlayer, true)),
                                                            Placeholder.component("tps", getTPSColor()),
                                                            Placeholder.component("mspt", getMSPTColor()),
@@ -54,7 +54,7 @@ public class TPSBarTask extends BossBarTask {
 
     @Override
     public void run() {
-        if (++tick < GlobalConfiguration.get().kiocgConfig.commandTpsBarTickInterval) {
+        if (++tick < GlobalConfiguration.get().kiocgConfig.command.tpsBarTickInterval) {
             return;
         }
         tick = 0;
@@ -73,11 +73,11 @@ public class TPSBarTask extends BossBarTask {
         long hot = player.getNearbyChunkHot();
         WorldConfiguration.KiocgConfig.ChunkHot hotCfg = player.level().paperConfig().kiocgConfig.chunkHot;
         if (hot < hotCfg.phaseGood) {
-            return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorGood;
+            return GlobalConfiguration.get().kiocgConfig.command.tpsBarProgressColorGood;
         } else if (hot < hotCfg.phaseMedium) {
-            return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorMedium;
+            return GlobalConfiguration.get().kiocgConfig.command.tpsBarProgressColorMedium;
         } else {
-            return GlobalConfiguration.get().kiocgConfig.commandTpsBarProgressColorLow;
+            return GlobalConfiguration.get().kiocgConfig.command.tpsBarProgressColorLow;
         }
     }
 
@@ -108,11 +108,11 @@ public class TPSBarTask extends BossBarTask {
 
     private <T> String getColor(T value, Predicate<T> goodValue, Predicate<T> mediumValue) {
         if (goodValue.test(value)) {
-            return GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorGood;
+            return GlobalConfiguration.get().kiocgConfig.command.tpsBarTextColorGood;
         } else if (mediumValue.test(value)) {
-            return GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorMedium;
+            return GlobalConfiguration.get().kiocgConfig.command.tpsBarTextColorMedium;
         } else {
-            return GlobalConfiguration.get().kiocgConfig.commandTpsBarTextColorLow;
+            return GlobalConfiguration.get().kiocgConfig.command.tpsBarTextColorLow;
         }
     }
 }

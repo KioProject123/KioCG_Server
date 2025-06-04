@@ -1,0 +1,64 @@
+--- a/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
+@@ -20,7 +_,7 @@
+ import net.minecraft.world.level.block.BarrelBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+-public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
++public class BarrelBlockEntity extends RowsContainerBlockEntity { // KioCG - expand container rows
+     // CraftBukkit start - add fields and methods
+     public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
+     private int maxStack = MAX_STACK;
+@@ -56,7 +_,7 @@
+     }
+     // CraftBukkit end
+ 
+-    private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
++    private NonNullList<ItemStack> items = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
+     public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+         @Override
+         protected void onOpen(Level level, BlockPos pos, BlockState state) {
+@@ -100,16 +_,23 @@
+     @Override
+     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+         super.loadAdditional(tag, registries);
+-        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
++        this.items = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
+         if (!this.tryLoadLootTable(tag)) {
+             ContainerHelper.loadAllItems(tag, this.items, registries);
+         }
+     }
+ 
++    // KioCG start - expand container rows
++    // @Override
++    // public int getContainerSize() {
++    //     return 27;
++    // }
++
+     @Override
+-    public int getContainerSize() {
+-        return 27;
++    protected int getDefaultRows() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.defaultBarrelRows;
+     }
++    // KioCG end - expand container rows
+ 
+     @Override
+     protected NonNullList<ItemStack> getItems() {
+@@ -126,10 +_,12 @@
+         return Component.translatable("container.barrel");
+     }
+ 
+-    @Override
+-    protected AbstractContainerMenu createMenu(int id, Inventory player) {
+-        return ChestMenu.threeRows(id, player, this);
+-    }
++    // KioCG start - expand container rows
++    // @Override
++    // protected AbstractContainerMenu createMenu(int id, Inventory player) {
++    //     return ChestMenu.threeRows(id, player, this);
++    // }
++    // KioCG end - expand container rows
+ 
+     @Override
+     public void startOpen(Player player) {

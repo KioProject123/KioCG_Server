@@ -1,18 +1,14 @@
 --- a/net/minecraft/world/level/block/TrappedChestBlock.java
 +++ b/net/minecraft/world/level/block/TrappedChestBlock.java
-@@ -37,6 +_,8 @@
-         return Stats.CUSTOM.get(Stats.TRIGGER_TRAPPED_CHEST);
-     }
- 
-+    // KioCG start - expand container rows
-+    /*
-     @Override
-     protected boolean isSignalSource(BlockState state) {
-         return true;
-@@ -51,4 +_,6 @@
+@@ -51,4 +_,11 @@
      protected int getDirectSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
          return side == Direction.UP ? blockState.getSignal(blockAccess, pos, side) : 0;
      }
-+     */
++
++    // KioCG start - expand container rows
++    @Override
++    protected int getDefaultRows() {
++        return io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.defaultTrappedChestRows;
++    }
 +    // KioCG end - expand container rows
  }

@@ -61,8 +61,8 @@
 +                    blockPosBelowThatAffectsMyMovement = this.getBlockPosBelowThatAffectsMyMovement();
 +                    belowState = level.getBlockState(blockPosBelowThatAffectsMyMovement);
 +                }
-+                if (level.paperConfig().kiocgConfig.hopperPullsEntityOwnedItem || this.target == null) { // KioCG - hopper filter
-+                    if (level.paperConfig().kiocgConfig.hopperPullsInfinitePickupItem || this.pickupDelay != Short.MAX_VALUE) { // KioCG - hopper filter
++                if (level.paperConfig().kiocgConfig.block.hopperPullsEntityOwnedItem || this.target == null) { // KioCG - hopper filter
++                    if (level.paperConfig().kiocgConfig.block.hopperPullsInfinitePickupItem || this.pickupDelay != Short.MAX_VALUE) { // KioCG - hopper filter
 +                        belowState.itemSearchHopper(level, blockPosBelowThatAffectsMyMovement, this, net.minecraft.world.entity.InsideBlockEffectApplier.NOOP);
 +                    }
 +                }

@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
+@@ -151,7 +_,7 @@
+             case CHEST:
+             case ENDER_CHEST:
+             case BARREL:
+-                this.delegate = new ChestMenu(net.minecraft.world.inventory.MenuType.GENERIC_9x3, windowId, bottom, top, top.getContainerSize() / 9);
++                this.delegate = new ChestMenu(null, windowId, bottom, top, top.getContainerSize() / 9); // KioCG start - expand container rows: MenuType暂未使用
+                 break;
+             case DISPENSER:
+             case DROPPER:

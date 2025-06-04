@@ -1,0 +1,15 @@
+--- /dev/null
++++ b/src/main/java/org/bukkit/block/RowsContainer.java
+@@ -1,0 +_,12 @@
++package org.bukkit.block;
++
++import org.jspecify.annotations.NullMarked;
++
++// KioCG start - expand container rows: all class
++@NullMarked
++public interface RowsContainer extends Container {
++    int getRows();
++
++    void setRows(int rows);
++}
++// KioCG end - expand container rows: all class

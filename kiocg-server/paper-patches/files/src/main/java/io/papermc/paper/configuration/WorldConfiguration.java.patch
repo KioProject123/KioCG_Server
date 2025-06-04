@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -578,4 +_,103 @@
+@@ -578,4 +_,106 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -11,10 +11,7 @@
 +    public class KiocgConfig extends ConfigurationPart {
 +        public boolean deathKeepHotbarAndArmorItems = true;
 +        public boolean deathItemsOnlyPickupByOneself = true;
-+        public boolean hopperPullsLockedContainer = false;
-+        public boolean hopperPullsEntityOwnedItem = false;
-+        public boolean hopperPullsInfinitePickupItem = false;
-+        public boolean hopperRailsOptimize = true;
++        public int sleepHealingRegenRate = 10;
 +
 +        public TheLongDark theLongDark;
 +        public class TheLongDark extends ConfigurationPart {
@@ -44,6 +41,17 @@
 +            }
 +
 +            public int campfireBoilingWaterTime = 600;
++        }
++
++        public Block block;
++        public class Block extends ConfigurationPart {
++            public boolean hopperPullsLockedContainer = false;
++            public boolean hopperPullsEntityOwnedItem = false;
++            public boolean hopperPullsInfinitePickupItem = false;
++            public boolean hopperRailsOptimize = true;
++            public double saplingsWitheredChance = 0.025;
++            public double flowersAndGrassesSpreadChance = 0.01;
++            public boolean rainExtinguishesFlames = true;
 +        }
 +
 +        public Entity entity;
@@ -88,11 +96,6 @@
 +            public boolean mobSpawningAnimation = true;
 +            public boolean mobDyingAnimation = true;
 +        }
-+
-+        public int sleepHealingRegenRate = 10;
-+        public double saplingsWitheredChance = 0.025;
-+        public double flowersAndGrassesSpreadChance = 0.01;
-+        public boolean rainExtinguishesFlames = true;
 +
 +        public ChunkHot chunkHot;
 +        public class ChunkHot extends ConfigurationPart {
