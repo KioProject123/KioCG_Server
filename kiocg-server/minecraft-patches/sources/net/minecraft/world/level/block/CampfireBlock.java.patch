@@ -16,3 +16,26 @@
          super.entityInside(state, level, pos, entity, effectApplier);
      }
  
+@@ -182,6 +_,22 @@
+             }
+         }
+     }
++
++    // KioCG start - rain extinguishes flames
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return state.getValue(CampfireBlock.LIT);
++    }
++
++    @Override
++    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
++        if (level.paperConfig().kiocgConfig.rainExtinguishesFlames && level.isRainingAt(pos.above()) && state.getValue(CampfireBlock.LIT)) {
++            level.levelEvent(null, 1009, pos, 0);
++            CampfireBlock.dowse(null, level, pos, state);
++            level.setBlockAndUpdate(pos, state.setValue(CampfireBlock.LIT, false));
++        }
++    }
++    // KioCG end - rain extinguishes flames
+ 
+     public static void dowse(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state) {
+         if (level.isClientSide()) {

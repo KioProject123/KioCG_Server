@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -578,4 +_,102 @@
+@@ -578,4 +_,103 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -92,6 +92,7 @@
 +        public int sleepHealingRegenRate = 10;
 +        public double saplingsWitheredChance = 0.025;
 +        public double flowersAndGrassesSpreadChance = 0.01;
++        public boolean rainExtinguishesFlames = true;
 +
 +        public ChunkHot chunkHot;
 +        public class ChunkHot extends ConfigurationPart {

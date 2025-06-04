@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/block/TorchBlock.java
++++ b/net/minecraft/world/level/block/TorchBlock.java
+@@ -47,4 +_,19 @@
+         level.addParticle(ParticleTypes.SMOKE, d, d1, d2, 0.0, 0.0, 0.0);
+         level.addParticle(this.flameParticle, d, d1, d2, 0.0, 0.0, 0.0);
+     }
++
++    // KioCG start - rain extinguishes flames
++    @Override
++    protected boolean isRandomlyTicking(BlockState state) {
++        return true;
++    }
++
++    @Override
++    protected void randomTick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, RandomSource random) {
++        if (level.paperConfig().kiocgConfig.rainExtinguishesFlames && level.isRainingAt(pos)) {
++            level.removeBlock(pos, false);
++            level.levelEvent(null, net.minecraft.world.level.block.LevelEvent.SOUND_EXTINGUISH_FIRE, pos, 0);
++        }
++    }
++    // KioCG end - rain extinguishes flames
+ }
