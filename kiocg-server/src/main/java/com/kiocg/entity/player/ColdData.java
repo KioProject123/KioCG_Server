@@ -13,32 +13,37 @@ import net.minecraft.world.level.LightLayer;
 
 public class ColdData {
     public static final int MAX_VALUE = 60 * 20 * 10;
+    private static final float STIFFNESS = 0.1f; // 刚度
+    private static final float DAMPING = 0.5f; // 阻尼
 
     private final Player player;
-    private int coldValue = MAX_VALUE;
+    private int targetTemp = MAX_VALUE;
+    private int currentTemp = targetTemp;
+
+    private float velocity;
 
     public ColdData(Player player) {
         this.player = player;
     }
 
     public int getColdValue() {
-        return coldValue;
+        return targetTemp;
     }
 
     public void setColdValue(int value) {
-        coldValue = value;
+        targetTemp = value;
     }
 
     public void addColdValue(int add) {
-        coldValue = Mth.clamp(coldValue + add, 0, MAX_VALUE);
+        targetTemp = Mth.clamp(targetTemp + add, 0, MAX_VALUE);
     }
 
     public float getColdProgress() {
-        return (float) coldValue / MAX_VALUE;
+        return (float) currentTemp / MAX_VALUE;
     }
 
     public boolean isFrozen(Player player) {
-        return coldValue <= 0 && !player.getAbilities().invulnerable;
+        return currentTemp <= 0 && !player.getAbilities().invulnerable;
     }
 
     public boolean isInWater;
@@ -81,15 +86,25 @@ public class ColdData {
             ((ServerPlayer) player).connection.send(new ClientboundSetExperiencePacket(getColdProgress(), player.totalExperience, player.experienceLevel));
         }
 
+        updateCurrentTemp();
+
         isInWater = false;
         isInLava = false;
     }
 
+    private void updateCurrentTemp() {
+        float displacement = targetTemp - currentTemp;
+        float acceleration = STIFFNESS * displacement - DAMPING * velocity;
+        velocity += acceleration;
+        currentTemp = Mth.clamp((int) (currentTemp + velocity), 0, MAX_VALUE);
+    }
+
     public void readAdditionalSaveData(CompoundTag nbt) {
-        coldValue = nbt.getIntOr("KioCG.ColdValue", MAX_VALUE);
+        targetTemp = nbt.getIntOr("KioCG.ColdValue", MAX_VALUE);
+        currentTemp = targetTemp;
     }
 
     public void addAdditionalSaveData(CompoundTag nbt) {
-        nbt.putInt("KioCG.ColdValue", coldValue);
+        nbt.putInt("KioCG.ColdValue", targetTemp);
     }
 }
