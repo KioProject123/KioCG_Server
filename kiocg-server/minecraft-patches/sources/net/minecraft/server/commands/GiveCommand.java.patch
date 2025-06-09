@@ -1,0 +1,25 @@
+--- a/net/minecraft/server/commands/GiveCommand.java
++++ b/net/minecraft/server/commands/GiveCommand.java
+@@ -61,10 +_,20 @@
+             for (ServerPlayer serverPlayer : targets) {
+                 int i1 = count;
+ 
+-                while (i1 > 0) {
++                // KioCG start - give command event
++                ItemStack itemStackOversized = item.createItemStack(count, true);
++                if (!new com.kiocg.event.command.GiveCommandEvent(
++                        source.getBukkitSender(),
++                        serverPlayer.getBukkitEntity(),
++                        org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemStackOversized))
++                        .callEvent()) {
++                    continue;
++                }
++                while (!itemStackOversized.isEmpty()) {
++                // KioCG end - give command event
+                     int min = Math.min(maxStackSize, i1);
+                     i1 -= min;
+-                    ItemStack itemStack1 = item.createItemStack(min, false);
++                    ItemStack itemStack1 = itemStackOversized.split(min); // KioCG - give command event
+                     boolean flag = serverPlayer.getInventory().add(itemStack1);
+                     if (flag && itemStack1.isEmpty()) {
+                         ItemEntity itemEntity = serverPlayer.drop(itemStack, false);

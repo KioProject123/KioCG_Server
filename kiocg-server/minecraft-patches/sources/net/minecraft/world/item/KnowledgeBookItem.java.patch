@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/item/KnowledgeBookItem.java
++++ b/net/minecraft/world/item/KnowledgeBookItem.java
+@@ -27,8 +_,9 @@
+     public InteractionResult use(Level level, Player player, InteractionHand hand) {
+         ItemStack itemInHand = player.getItemInHand(hand);
+         List<ResourceKey<Recipe<?>>> list = itemInHand.getOrDefault(DataComponents.RECIPES, List.of());
+-        itemInHand.consume(1, player);
++        // itemInHand.consume(1, player); // KioCG - use knowledge book correctly: 下移
+         if (list.isEmpty()) {
++            player.inventoryMenu.sendAllDataToRemote(); // KioCG - use knowledge book correctly
+             return InteractionResult.FAIL;
+         } else {
+             if (!level.isClientSide) {
+@@ -39,16 +_,24 @@
+                     Optional<RecipeHolder<?>> optional = recipeManager.byKey(resourceKey);
+                     if (!optional.isPresent()) {
+                         LOGGER.error("Invalid recipe: {}", resourceKey);
++                        player.inventoryMenu.sendAllDataToRemote(); // KioCG - use knowledge book correctly
+                         return InteractionResult.FAIL;
+                     }
+ 
+                     list1.add(optional.get());
+                 }
+ 
+-                player.awardRecipes(list1);
++                // KioCG start - use knowledge book correctly
++                if (player.awardRecipes(list1) == 0) {
++                    ((net.minecraft.server.level.ServerPlayer) player).sendSystemMessage(net.minecraft.network.chat.Component.literal("所含配方均已解锁").withStyle(net.minecraft.ChatFormatting.RED), true);
++                    player.inventoryMenu.sendAllDataToRemote();
++                    return InteractionResult.FAIL;
++                }
++                // KioCG end - use knowledge book correctly
+                 player.awardStat(Stats.ITEM_USED.get(this));
+             }
+ 
++            itemInHand.consume(1, player); // KioCG - use knowledge book correctly: 下移
+             return InteractionResult.SUCCESS;
+         }
+     }
