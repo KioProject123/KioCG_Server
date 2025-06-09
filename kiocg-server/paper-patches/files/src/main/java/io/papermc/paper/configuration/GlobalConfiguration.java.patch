@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -404,4 +_,125 @@
+@@ -404,4 +_,128 @@
              }
          }
      }
@@ -14,6 +14,9 @@
 +        public boolean dontKillMyPet = true;
 +        public double petTeleportDistanceSqr = 256.0;
 +        public boolean petFollowKeepChunkLoaded = true;
++        public Component airProgressHave = Component.text("\uD83E\uDEE7", NamedTextColor.BLUE);
++        public Component airProgressLost = Component.text("\uD83E\uDEE7", NamedTextColor.GRAY);
++        public Component airProgressO2 = Component.text("O₂ ", NamedTextColor.BLUE).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
 +        public Component sleepProgressClock = Component.text("\uD83D\uDE34");
 +        public Component sleepProgressLeft = Component.text("☽", NamedTextColor.BLUE);
 +        public Component sleepProgressRight = Component.text("☀", NamedTextColor.YELLOW);

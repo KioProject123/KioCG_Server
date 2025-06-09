@@ -14,7 +14,7 @@
  
      protected LivingEntity(EntityType<? extends LivingEntity> entityType, Level level) {
          super(entityType, level);
-@@ -435,12 +_,14 @@
+@@ -435,6 +_,7 @@
                  }
              }
  
@@ -22,13 +22,38 @@
              if (this.isEyeInFluid(FluidTags.WATER)
                  && !serverLevel1.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
                  boolean flag1 = !this.canBreatheUnderwater()
-                     && !MobEffectUtil.hasWaterBreathing(this)
-                     && (!flag || !((Player)this).getAbilities().invulnerable);
-                 if (flag1) {
-+                    if (this instanceof ServerPlayer serverPlayer) serverPlayer.thirstData.underWater = true; // KioCG - the long dark
-                     this.setAirSupply(this.decreaseAirSupply(this.getAirSupply()));
-                     if (this.getAirSupply() == -20) {
-                         this.setAirSupply(0);
+@@ -447,8 +_,19 @@
+                         serverLevel1.broadcastEntityEvent(this, (byte)67);
+                         this.hurtServer(serverLevel1, this.damageSources().drown(), 2.0F);
+                     }
++                    // KioCG start - the long dark
++                    if (this instanceof ServerPlayer serverPlayer) {
++                        serverPlayer.thirstData.underWater = true;
++                        serverPlayer.sendAirMessage(Math.max(this.getAirSupply(), 0), this.getMaxAirSupply());
++                    }
++                    // KioCG end - the long dark
+                 } else if (this.getAirSupply() < this.getMaxAirSupply()) {
+                     this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
++                    // KioCG start - the long dark
++                    if (this instanceof ServerPlayer serverPlayer) {
++                        serverPlayer.sendAirMessage(Math.max(this.getAirSupply(), 0), this.getMaxAirSupply());
++                    }
++                    // KioCG end - the long dark
+                 }
+ 
+                 if (this.isPassenger() && this.getVehicle() != null && this.getVehicle().dismountsUnderwater()) {
+@@ -456,6 +_,11 @@
+                 }
+             } else if (this.getAirSupply() < this.getMaxAirSupply()) {
+                 this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
++                // KioCG start - the long dark
++                if (this instanceof ServerPlayer serverPlayer) {
++                    serverPlayer.sendAirMessage(Math.max(this.getAirSupply(), 0), this.getMaxAirSupply());
++                }
++                // KioCG end - the long dark
+             }
+ 
+             BlockPos blockPos = this.blockPosition();
 @@ -523,7 +_,7 @@
      }
  

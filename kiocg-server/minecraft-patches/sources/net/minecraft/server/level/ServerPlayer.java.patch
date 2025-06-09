@@ -111,19 +111,38 @@
              }
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
-@@ -920,6 +_,12 @@
+@@ -920,8 +_,29 @@
              if (this.tickCount % 10 == 0 && this.foodData.needsFood()) {
                  this.foodData.setFoodLevel(this.foodData.getFoodLevel() + 1);
              }
+-        }
+-    }
 +
 +            // kioCG start - the long dark
 +            if (this.tickCount % 10 == 0 && this.thirstData.needsWater()) {
 +                this.thirstData.setThirstValue(this.thirstData.getThirstValue() + 1);
 +            }
 +            // kioCG end - the long dark
-         }
-     }
++        }
++    }
++
++    // KioCG start - the long dark
++    public void sendAirMessage(int value, int maxValue) {
++        net.kyori.adventure.text.Component bubbles = io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.airProgressO2;
++        int air = (int) Math.ceil(value / (maxValue / 10.0));
++        for (int i = 1; i <= 10; i++) {
++            if (air >= i) {
++                bubbles = bubbles.append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.airProgressHave);
++            } else {
++                bubbles = bubbles.append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.airProgressLost);
++            }
++        }
++        this.getBukkitEntity().sendActionBar(bubbles);
++    }
++    // KioCG end - the long dark
  
+     @Override
+     public void resetFallDistance() {
 @@ -1017,11 +_,31 @@
              return;
          }
