@@ -90,3 +90,17 @@
                                                  if (clickedItem.getCount() >= 0) {
                                                      if (clickedItem.getCount() + cursor.getCount() <= cursor.getMaxStackSize()) {
                                                          // As of 1.5, this is result slots only
+@@ -3153,6 +_,13 @@
+                         } else {
+                             event = new InventoryClickEvent(inventory, type, slotNum, click, action);
+                         }
++
++                        // KioCG start - customize default components
++                        CraftItemStack currentItem = (CraftItemStack) event.getCurrentItem();
++                        if (currentItem != null && currentItem.handle != null && currentItem.handle.has(DataComponents.SLOT_LOCK) && !this.player.canUseGameMasterBlocks()) {
++                            cancelled = true;
++                        }
++                        // KioCG end - customize default components
+ 
+                         org.bukkit.inventory.Inventory top = inventory.getTopInventory();
+                         if (slotNum == 0 && top instanceof final org.bukkit.inventory.CraftingInventory craftingInv) {
