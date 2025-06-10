@@ -97,7 +97,7 @@
 +                        // KioCG start - customize default components
 +                        if (slotNum >= 0) {
 +                            Slot slot = this.player.containerMenu.getSlot(slotNum);
-+                            if (slot != null && slot.hasItem() && slot.getItem().has(DataComponents.SLOT_LOCK) && !this.player.canUseGameMasterBlocks()) {
++                            if (slot != null && slot.hasItem() && slot.getItem().has(DataComponents.SLOT_LOCK)) {
 +                                cancelled = true;
 +                            }
 +                        }
