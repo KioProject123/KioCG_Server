@@ -55,7 +55,7 @@
                      } finally {
                          net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(prev);
                      }
-@@ -254,6 +_,55 @@
+@@ -254,6 +_,54 @@
          return !this.isEmpty() ? this.components.asPatch() : DataComponentPatch.EMPTY;
      }
  
@@ -75,13 +75,12 @@
 +                }
 +            }
 +
-+            if (saveAdditional(builder) || changed) {
-+                CustomData customData = this.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-+                customData = customData.update(tag -> {
-+                    RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
-+                    tag.store("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps, patch);
-+                });
-+                builder.set(DataComponents.CUSTOM_DATA, customData);
++            changed |= saveAdditional(builder);
++            if (changed) {
++                net.minecraft.nbt.CompoundTag compoundTag = new net.minecraft.nbt.CompoundTag();
++                RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
++                compoundTag.store("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps, patch);
++                builder.set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
 +            }
 +
 +            return builder.build();
