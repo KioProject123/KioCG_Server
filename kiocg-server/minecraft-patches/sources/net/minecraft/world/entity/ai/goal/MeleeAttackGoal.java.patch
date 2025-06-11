@@ -1,14 +1,41 @@
 --- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
-@@ -39,7 +_,7 @@
-             LivingEntity target = this.mob.getTarget();
-             if (target == null) {
-                 return false;
+@@ -31,20 +_,26 @@
+ 
+     @Override
+     public boolean canUse() {
++        // KioCG start - fix nod bug
++        LivingEntity target = this.mob.getTarget();
++        if (target == null) {
++            return false;
++        } else if (!target.isAlive() || target.nearDeath()) { // KioCG - dont kill my pet
++            return false;
++        } else {
++            this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
++        }
++        // KioCG end - fix nod bug
++
+         long gameTime = this.mob.level().getGameTime();
+         if (gameTime - this.lastCanUseCheck < 20L) {
+             return false;
+         } else {
+             this.lastCanUseCheck = gameTime;
+-            LivingEntity target = this.mob.getTarget();
+-            if (target == null) {
+-                return false;
 -            } else if (!target.isAlive()) {
-+            } else if (!target.isAlive() || target.nearDeath()) { // KioCG - dont kill my pet
-                 return false;
-             } else {
-                 this.path = this.mob.getNavigation().createPath(target, 0);
+-                return false;
+-            } else {
+-                this.path = this.mob.getNavigation().createPath(target, 0);
+-                return this.path != null || this.mob.isWithinMeleeAttackRange(target);
+-            }
++            // KioCG start - fix nod bug
++            this.path = this.mob.getNavigation().createPath(target, 0);
++            return this.path != null || this.mob.isWithinMeleeAttackRange(target);
++            // KioCG end - fix nod bug
+         }
+     }
+ 
 @@ -53,7 +_,7 @@
          LivingEntity target = this.mob.getTarget();
          if (target == null) {
