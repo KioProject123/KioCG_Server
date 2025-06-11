@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -1166,6 +_,38 @@
+@@ -1163,6 +_,38 @@
          return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
      }
  
@@ -38,4 +38,4 @@
 +
      @Override
      public CombatTracker getCombatTracker() {
-         return this.combatTracker;
+         return this.getHandle().getCombatTracker().paperCombatTracker;

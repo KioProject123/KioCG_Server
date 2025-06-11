@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
-@@ -665,7 +_,7 @@
+@@ -663,7 +_,7 @@
          }
  
          // Check the patch by first stripping excluded types and then compare the trimmed patches

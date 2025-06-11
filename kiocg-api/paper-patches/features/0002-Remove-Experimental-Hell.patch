@@ -75,7 +75,7 @@ index e2266d86a4dd1bf20346e48c428f8baf8a84b76b..07573bac7edf566d511c2eced1313d56
  public interface DataComponentType extends Keyed {
  
 diff --git a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
-index da93a59597e6212eee19464e6c64e3828a7a8fa0..18e5b67ebb4704841f0b96cdc7531eaa8d1a548e 100644
+index 58741ebb072fb1d8f8fbdaf8f12e091987031067..952faa6e9198ba455463fa7ef63e46291103065d 100644
 --- a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
 @@ -82,7 +82,7 @@ import static java.util.Objects.requireNonNull;
@@ -163,19 +163,19 @@ index 65f1bc8d1bea0042dca9683c439561132dbeea5c..dc545ef06d2a215a640b1a351f8f0a05
      interface Builder extends DataComponentBuilder<BlockItemDataProperties> {
          // building this requires BlockProperty API, so an empty builder for now (essentially read-only)
 diff --git a/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java b/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java
-index bf53d0e0b008f5ab77d8a700d1cca319eba098b8..995a9f251900c47544137896ebc63dbdad32cccb 100644
+index d7372673accc1057318f80dedc34d21f47228d53..d47e2f42a7529bf5e50b84b312a9768ce41dca01 100644
 --- a/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/item/BlocksAttacks.java
-@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
- 
- // TODO
+@@ -18,7 +18,7 @@ import java.util.List;
+  * @see io.papermc.paper.datacomponent.DataComponentTypes#BLOCKS_ATTACKS
+  */
  @NullMarked
 -@ApiStatus.Experimental
 +// @ApiStatus.Experimental // KioCG
  @ApiStatus.NonExtendable
  public interface BlocksAttacks {
  
-@@ -37,7 +37,7 @@ public interface BlocksAttacks {
+@@ -84,7 +84,7 @@ public interface BlocksAttacks {
      /**
       * Builder for {@link BlocksAttacks}.
       */

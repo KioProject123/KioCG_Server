@@ -1,9 +1,11 @@
 --- a/src/main/java/org/bukkit/entity/Villager.java
 +++ b/src/main/java/org/bukkit/entity/Villager.java
-@@ -391,4 +_,6 @@
-      * reputation regardless of its impact and the player associated.
+@@ -392,6 +_,8 @@
       */
      public void clearReputations();
-+
+ 
 +    public boolean isLobotomized(); // KioCG - lobotomized villager
- }
++
+     /**
+      * Updates the demand for Villager offers.
+      * Demand can rise and fall based on how often offers are traded.

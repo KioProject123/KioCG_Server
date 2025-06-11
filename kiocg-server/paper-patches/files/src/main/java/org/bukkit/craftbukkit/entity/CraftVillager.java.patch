@@ -1,14 +1,16 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftVillager.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftVillager.java
-@@ -380,4 +_,11 @@
-     public void clearReputations() {
+@@ -249,6 +_,13 @@
          getHandle().getGossips().gossips.clear();
      }
-+
+ 
 +    // KioCG start - lobotomized villager
 +    @Override
 +    public boolean isLobotomized() {
 +        return getHandle().isLobotomized();
 +    }
 +    // KioCG end - lobotomized villager
- }
++
+     @Override
+     public void updateDemand() {
+         getHandle().updateDemand();

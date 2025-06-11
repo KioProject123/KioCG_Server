@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -219,6 +_,7 @@
+@@ -223,6 +_,7 @@
      private double health = 20;
      private boolean scaledHealth = false;
      private double healthScale = 20;
@@ -8,7 +8,7 @@
      private CraftWorldBorder clientWorldBorder = null;
      private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
      public org.bukkit.event.player.PlayerResourcePackStatusEvent.Status resourcePackStatus; // Paper - more resource pack API
-@@ -266,6 +_,29 @@
+@@ -270,6 +_,29 @@
          }
      }
  
@@ -38,7 +38,7 @@
      @Override
      public boolean isOp() {
          return this.server.getHandle().isOp(this.getProfile());
-@@ -2242,7 +_,7 @@
+@@ -2244,7 +_,7 @@
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it
@@ -47,7 +47,7 @@
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
-@@ -3466,6 +_,54 @@
+@@ -3474,6 +_,54 @@
      }
      // Paper end
  
@@ -102,7 +102,7 @@
      public Player.Spigot spigot() {
          return this.spigot;
      }
-@@ -3568,4 +_,44 @@
+@@ -3576,4 +_,44 @@
      public void setDeathScreenScore(final int score) {
          getHandle().setScore(score);
      }

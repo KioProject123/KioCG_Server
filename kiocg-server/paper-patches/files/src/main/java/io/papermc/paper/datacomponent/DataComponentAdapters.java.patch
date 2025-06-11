@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/DataComponentAdapters.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentAdapters.java
-@@ -195,6 +_,15 @@
+@@ -196,6 +_,15 @@
          register(DataComponents.SHEEP_COLOR, nms -> DyeColor.getByWoolData((byte) nms.getId()), api -> net.minecraft.world.item.DyeColor.byId(api.getWoolData()));
          register(DataComponents.SHULKER_COLOR, nms -> DyeColor.getByWoolData((byte) nms.getId()), api -> net.minecraft.world.item.DyeColor.byId(api.getWoolData()));
  
@@ -13,6 +13,6 @@
 +        register(DataComponents.EXTENDED_AFTER_LORE, PaperItemLore::new);
 +        // KioCG end - customize default components
 +
-         for (final Map.Entry<ResourceKey<DataComponentType<?>>, DataComponentType<?>> componentType : BuiltInRegistries.DATA_COMPONENT_TYPE.entrySet()) {
-             if (!ADAPTERS.containsKey(componentType.getKey())) {
-                 registerUnimplemented(componentType.getValue());
+         for (final ResourceKey<DataComponentType<?>> key : BuiltInRegistries.DATA_COMPONENT_TYPE.registryKeySet()) {
+             if (!ADAPTERS.containsKey(key)) {
+                 registerUnimplemented(key);

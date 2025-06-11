@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
 +++ b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
-@@ -37,6 +_,7 @@
+@@ -40,6 +_,7 @@
   * An implementation will handle the creation and application for ItemMeta.
   * This class should not be implemented by a plugin in a live environment.
   */

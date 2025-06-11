@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/entity/FishHook.java
 +++ b/src/main/java/org/bukkit/entity/FishHook.java
-@@ -381,4 +_,6 @@
+@@ -383,4 +_,6 @@
       *                               {@link org.bukkit.inventory.ItemType#FISHING_ROD} in the specified equipment slot.
       */
      int retrieve(@NotNull EquipmentSlot slot);
