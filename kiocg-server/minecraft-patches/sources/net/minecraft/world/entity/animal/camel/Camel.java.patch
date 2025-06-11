@@ -1,10 +1,7 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -408,9 +_,10 @@
- 
-             boolean isBaby = this.isBaby();
+@@ -410,7 +_,7 @@
              if (isBaby) {
-+                if (!this.canFeed(player)) return false; // KioCG - breeding animals
                  this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
                  if (!this.level().isClientSide) {
 -                    this.ageUp(10);

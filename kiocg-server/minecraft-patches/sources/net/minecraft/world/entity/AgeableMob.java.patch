@@ -22,14 +22,18 @@
          if (this.ageLocked) return; // Paper - Honor ageLock
          int age = this.getAge();
          int previousAge = age; // Paper - Decompile fix: lvt reassignment lost
-@@ -95,6 +_,15 @@
+@@ -95,6 +_,19 @@
          this.ageUp(amount, false);
      }
  
 +    // KioCG start - breeding animals
 +    public void ageUp() {
-+        if (!this.canFeed()) return; // 额外的保障
++        if (!this.canFeed()) {
++            this.hurtServer(this.serverLevel(), this.damageSources().generic(), 2.0F);
++            return;
++        }
 +
++        this.heal(2.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
 +        ageUp(240);
 +        this.feedingFeed();
 +    }

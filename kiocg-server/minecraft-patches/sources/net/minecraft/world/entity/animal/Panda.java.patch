@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/entity/animal/Panda.java
 +++ b/net/minecraft/world/entity/animal/Panda.java
-@@ -627,8 +_,9 @@
-             }
+@@ -628,7 +_,7 @@
  
              if (this.isBaby()) {
-+                if (!this.canFeed(player)) return InteractionResult.PASS; // KioCG - breeding animals
                  this.usePlayerItem(player, hand, itemInHand);
 -                this.ageUp((int)(-this.getAge() / 20 * 0.1F), true);
 +                this.ageUp(); // KioCG - breeding animals

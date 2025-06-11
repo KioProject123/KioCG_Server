@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/entity/animal/Dolphin.java
 +++ b/net/minecraft/world/entity/animal/Dolphin.java
-@@ -318,8 +_,9 @@
-             }
+@@ -319,7 +_,7 @@
  
              if (this.isBaby()) {
-+                if (!this.canFeed(player)) return InteractionResult.PASS; // KioCG - breeding animals
                  itemInHand.consume(1, player);
 -                this.ageUp(getSpeedUpSecondsWhenFeeding(-this.age), true);
 +                this.ageUp(); // KioCG - breeding animals

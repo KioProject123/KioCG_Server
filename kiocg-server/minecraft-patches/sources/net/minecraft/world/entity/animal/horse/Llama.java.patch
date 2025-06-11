@@ -1,14 +1,10 @@
 --- a/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -209,9 +_,11 @@
-         }
- 
-         if (this.isBaby() && i > 0) {
-+            if (!this.canFeed(player)) return false; // KioCG - breeding animals
+@@ -212,6 +_,7 @@
              this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
              if (!this.level().isClientSide) {
                  this.ageUp(i);
-+                this.ageUp(); // KioCG - breeding animals: 保留额外成长
++                // this.ageUp(); // KioCG - breeding animals: 保留额外成长
                  flag = true;
              }
          }
