@@ -198,11 +198,11 @@
 +        return foodProperties != null && foodProperties.freshness() > 0;
 +    }
 +
-+    public boolean deepTick(java.util.function.BooleanSupplier supplier) {
-+        return deepTick(supplier, 0);
++    public boolean deepTick(java.util.function.Function<ItemStack, Boolean> function) {
++        return deepTick(function, 0);
 +    }
 +
-+    private boolean deepTick(java.util.function.BooleanSupplier supplier, int deep) {
++    private boolean deepTick(java.util.function.Function<ItemStack, Boolean> function, int deep) {
 +        if (!this.isEmpty() && deep <= 1) {
 +            boolean changed = false;
 +
@@ -210,7 +210,7 @@
 +            if (bundleContents != null) {
 +                boolean changed1 = false;
 +                for (ItemStack itemStack : bundleContents.items()) {
-+                    if (itemStack.deepTick(supplier, deep + 1)) {
++                    if (itemStack.deepTick(function, deep + 1)) {
 +                        changed1 = true;
 +                    }
 +                }
@@ -225,7 +225,7 @@
 +            if (container != null) {
 +                boolean changed1 = false;
 +                for (ItemStack itemStack : container.nonEmptyItems()) {
-+                    if (itemStack.deepTick(supplier, deep + 1)) {
++                    if (itemStack.deepTick(function, deep + 1)) {
 +                        changed1 = true;
 +                    }
 +                }
@@ -236,7 +236,7 @@
 +                }
 +            }
 +
-+            return supplier.getAsBoolean() || changed;
++            return function.apply(this) || changed;
 +        }
 +        return false;
 +    }
@@ -246,7 +246,7 @@
 +    }
 +
 +    public boolean tickFood(long tickTime, boolean applyDamage) {
-+        return deepTick(() -> enableFreshness(tickTime, applyDamage));
++        return deepTick(itemStack -> itemStack.enableFreshness(tickTime, applyDamage));
 +    }
 +
 +    public boolean tickFoodFreeze(long tickTime) {
@@ -254,7 +254,7 @@
 +    }
 +
 +    public boolean tickFoodFreeze(long tickTime, boolean applyDamage) {
-+        return deepTick(() -> disableFreshness(tickTime, applyDamage));
++        return deepTick(itemStack -> itemStack.disableFreshness(tickTime, applyDamage));
 +    }
 +
 +    private boolean enableFreshness(long tickTime, boolean applyDamage) {
