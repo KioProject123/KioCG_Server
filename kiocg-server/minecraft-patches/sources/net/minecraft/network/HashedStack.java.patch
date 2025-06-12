@@ -5,7 +5,7 @@
              return this.count == stack.getCount()
                  && this.item.equals(stack.getItemHolder())
 -                && this.components.matches(stack.getComponentsPatch(), hashGenerator);
-+                && this.components.matches(stack.getRemoteComponentsPatch(), hashGenerator); // KioCG - customize default components
++                && this.components.matches(ItemStack.codecRemoteComponent(stack), hashGenerator); // KioCG - customize default components
          }
      }
  }

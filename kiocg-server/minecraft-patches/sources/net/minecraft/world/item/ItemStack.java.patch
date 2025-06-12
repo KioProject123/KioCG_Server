@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -109,12 +_,25 @@
+@@ -109,12 +_,36 @@
          codec -> RecordCodecBuilder.mapCodec(
              instance -> instance.group(
                      Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
@@ -18,28 +18,41 @@
 +            instance -> instance.group(
 +                    Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
 +                    ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(ItemStack::getCount), // KioCG - allow overstacked items
-+                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.getRemoteComponentsPatch())
++                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> codecRemoteComponent(stack))
 +                )
 +                .apply(instance, ItemStack::new)
 +        )
 +    );
++
++    public static DataComponentPatch codecRemoteComponent(ItemStack itemStack) {
++        io.netty.buffer.ByteBuf byteBuf = io.netty.buffer.ByteBufAllocator.DEFAULT.buffer();
++        try {
++            RegistryFriendlyByteBuf registryFriendlyByteBuf = new RegistryFriendlyByteBuf(byteBuf, net.minecraft.server.MinecraftServer.getServer().registryAccess());
++            DataComponentPatch.STREAM_CODEC.encode(registryFriendlyByteBuf, itemStack.getRemoteComponentsPatch());
++            return DataComponentPatch.STREAM_CODEC.decode(registryFriendlyByteBuf);
++        } finally {
++            byteBuf.release();
++        }
++    }
 +    // KioCG end - customize default components
      public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(MAP_CODEC::codec);
      public static final Codec<ItemStack> SINGLE_ITEM_CODEC = Codec.lazyInitialized(
          () -> RecordCodecBuilder.create(
-@@ -192,6 +_,18 @@
+@@ -192,6 +_,20 @@
                  } else {
                      Holder<Item> holder = Item.STREAM_CODEC.decode(buffer);
                      DataComponentPatch dataComponentPatch = codec.decode(buffer);
 +                    // KioCG start - customize default components: 修复创造模式物品
-+                    @Nullable Optional<? extends CustomData> optional = dataComponentPatch.get(DataComponents.CUSTOM_DATA);
-+                    if (optional != null && optional.isPresent()) {
-+                        Optional<DataComponentPatch> originalComponents = optional.flatMap(customData -> {
-+                            RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
-+                            return customData.getUnsafe().read("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps);
-+                        });
-+                        if (originalComponents.isPresent()) {
-+                            dataComponentPatch = originalComponents.get();
++                    if (codec == DataComponentPatch.DELIMITED_STREAM_CODEC) {
++                        @Nullable Optional<? extends CustomData> optional = dataComponentPatch.get(DataComponents.CUSTOM_DATA);
++                        if (optional != null && optional.isPresent()) {
++                            Optional<DataComponentPatch> originalComponents = optional.flatMap(customData -> {
++                                RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
++                                return customData.getUnsafe().read("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps);
++                            });
++                            if (originalComponents.isPresent()) {
++                                dataComponentPatch = originalComponents.get();
++                            }
 +                        }
 +                    }
 +                    // KioCG end - customize default components: 修复创造模式物品
