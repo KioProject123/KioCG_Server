@@ -1,16 +1,36 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -109,12 +_,36 @@
+@@ -104,17 +_,54 @@
+         Component.translatable("item.op_warning.line3").withStyle(ChatFormatting.RED)
+     );
+     private static final Component UNBREAKABLE_TOOLTIP = Component.translatable("item.unbreakable").withStyle(ChatFormatting.BLUE);
++
++    public static final ThreadLocal<Boolean> REMOTE_HASH = ThreadLocal.withInitial(() -> false); // KioCG - customize default components
+     public static final MapCodec<ItemStack> MAP_CODEC = MapCodec.recursive(
+         "ItemStack",
          codec -> RecordCodecBuilder.mapCodec(
              instance -> instance.group(
                      Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
 -                    ExtraCodecs.intRange(1, 99).fieldOf("count").orElse(1).forGetter(ItemStack::getCount),
+-                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
+-                )
+-                .apply(instance, ItemStack::new)
+-        )
+-    );
 +                    ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(ItemStack::getCount), // KioCG - allow overstacked items
-                     DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
-                 )
-                 .apply(instance, ItemStack::new)
-         )
-     );
++                    // KioCG start - customize default components
++                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> {
++                        if (REMOTE_HASH.get()) {
++                            return stack.getRemoteComponentsPatch();
++                        } else {
++                            return stack.components.asPatch();
++                        }
++                    })
++                    // KioCG end - customize default components
++                )
++                .apply(instance, ItemStack::new)
++        )
++    );
 +    // KioCG start - customize default components
 +    public static final MapCodec<ItemStack> REMOTE_MAP_CODEC = MapCodec.recursive(
 +        "ItemStack",
@@ -18,22 +38,25 @@
 +            instance -> instance.group(
 +                    Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
 +                    ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(ItemStack::getCount), // KioCG - allow overstacked items
-+                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> codecRemoteComponent(stack))
++                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> {
++                        // 流编解码以获得嵌套物品(收纳袋等)的内部物品的components.
++                        // 仍然有一些bug, 比如底层Item新增的组件将无法正常取得,
++                        // 例如, 食物的MAX_DAMAGE.
++                        // 这只会影响到消息链中的ShowItem, 因此修复它不是高优先级的.
++                        //TODO 需要在正确的地方设置ItemStack#REMOTE_HASH以使内部物品能够编码正确的RemoteComponentsPatch.
++                        io.netty.buffer.ByteBuf byteBuf = io.netty.buffer.ByteBufAllocator.DEFAULT.buffer();
++                        try {
++                            RegistryFriendlyByteBuf registryFriendlyByteBuf = new RegistryFriendlyByteBuf(byteBuf, net.minecraft.server.MinecraftServer.getServer().registryAccess());
++                            DataComponentPatch.STREAM_CODEC.encode(registryFriendlyByteBuf, stack.getRemoteComponentsPatch());
++                            return DataComponentPatch.STREAM_CODEC.decode(registryFriendlyByteBuf);
++                        } finally {
++                            byteBuf.release();
++                        }
++                    })
 +                )
 +                .apply(instance, ItemStack::new)
 +        )
 +    );
-+
-+    public static DataComponentPatch codecRemoteComponent(ItemStack itemStack) {
-+        io.netty.buffer.ByteBuf byteBuf = io.netty.buffer.ByteBufAllocator.DEFAULT.buffer();
-+        try {
-+            RegistryFriendlyByteBuf registryFriendlyByteBuf = new RegistryFriendlyByteBuf(byteBuf, net.minecraft.server.MinecraftServer.getServer().registryAccess());
-+            DataComponentPatch.STREAM_CODEC.encode(registryFriendlyByteBuf, itemStack.getRemoteComponentsPatch());
-+            return DataComponentPatch.STREAM_CODEC.decode(registryFriendlyByteBuf);
-+        } finally {
-+            byteBuf.release();
-+        }
-+    }
 +    // KioCG end - customize default components
      public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(MAP_CODEC::codec);
      public static final Codec<ItemStack> SINGLE_ITEM_CODEC = Codec.lazyInitialized(

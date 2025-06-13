@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/HashedPatchMap.java
++++ b/net/minecraft/network/HashedPatchMap.java
+@@ -42,10 +_,19 @@
+                     return false;
+                 }
+ 
++                // KioCG start - customize default components
++                try {
++                net.minecraft.world.item.ItemStack.REMOTE_HASH.set(true);
++                // KioCG end - customize default components
+                 Integer integer1 = hashGenerator.apply(typedDataComponent);
+                 if (!integer1.equals(integer)) {
+                     return false;
+                 }
++                // KioCG start - customize default components
++                } finally {
++                    net.minecraft.world.item.ItemStack.REMOTE_HASH.set(false);
++                }
++                // KioCG end - customize default components
+             }
+ 
+             return true;
