@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -892,8 +_,158 @@
+@@ -892,8 +_,167 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -221,25 +221,23 @@
 +        return foodProperties != null && foodProperties.freshness() > 0;
 +    }
 +
-+    public boolean deepTick(java.util.function.Function<ItemStack, Boolean> function) {
-+        return deepTick(function, 0);
-+    }
-+
-+    private boolean deepTick(java.util.function.Function<ItemStack, Boolean> function, int deep) {
-+        if (!this.isEmpty() && deep <= 1) {
++    public boolean deepTick(java.util.function.Function<ItemStack, Boolean> function, int maxDepth) {
++        if (!this.isEmpty() && maxDepth >= 0) {
 +            boolean changed = false;
 +
 +            net.minecraft.world.item.component.BundleContents bundleContents = this.get(DataComponents.BUNDLE_CONTENTS);
 +            if (bundleContents != null) {
 +                boolean changed1 = false;
++                List<ItemStack> result = new java.util.ArrayList<>(bundleContents.size());
 +                for (ItemStack itemStack : bundleContents.items()) {
-+                    if (itemStack.deepTick(function, deep + 1)) {
++                    // 如果不进行克隆, 保存时可能丢失数据
++                    result.add(itemStack = itemStack.copy());
++                    if (itemStack.deepTick(function, maxDepth - 1)) {
 +                        changed1 = true;
 +                    }
 +                }
-+                // 创建一个新的对象, 避免编码缓存导致的问题
 +                if (changed1) {
-+                    this.set(DataComponents.BUNDLE_CONTENTS, new net.minecraft.world.item.component.BundleContents((List<ItemStack>) bundleContents.items()));
++                    this.set(DataComponents.BUNDLE_CONTENTS, new net.minecraft.world.item.component.BundleContents(List.copyOf(result)));
 +                    changed = true;
 +                }
 +            }
@@ -247,19 +245,22 @@
 +            ItemContainerContents container = this.get(DataComponents.CONTAINER);
 +            if (container != null) {
 +                boolean changed1 = false;
-+                for (ItemStack itemStack : container.nonEmptyItems()) {
-+                    if (itemStack.deepTick(function, deep + 1)) {
++                List<ItemStack> result = new java.util.ArrayList<>(container.items.size());
++                for (ItemStack itemStack : container.items) {
++                    // 如果不进行克隆, 保存时可能丢失数据
++                    result.add(itemStack = itemStack.copy());
++                    if (itemStack.deepTick(function, maxDepth - 1)) {
 +                        changed1 = true;
 +                    }
 +                }
-+                // 创建一个新的对象, 避免编码缓存导致的问题
 +                if (changed1) {
-+                    this.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(container.items));
++                    this.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.copyOf(result)));
 +                    changed = true;
 +                }
 +            }
 +
-+            return function.apply(this) || changed;
++            changed |= function.apply(this);
++            return changed;
 +        }
 +        return false;
 +    }
@@ -269,7 +270,11 @@
 +    }
 +
 +    public boolean tickFood(long tickTime, boolean applyDamage) {
-+        return deepTick(itemStack -> itemStack.enableFreshness(tickTime, applyDamage));
++        return deepTick(itemStack -> itemStack.enableFreshness(tickTime, applyDamage), 1);
++    }
++
++    public boolean tickFoodDeep(long tickTime, boolean applyDamage) {
++        return deepTick(itemStack -> itemStack.enableFreshness(tickTime, applyDamage), 64);
 +    }
 +
 +    public boolean tickFoodFreeze(long tickTime) {
@@ -277,7 +282,11 @@
 +    }
 +
 +    public boolean tickFoodFreeze(long tickTime, boolean applyDamage) {
-+        return deepTick(itemStack -> itemStack.disableFreshness(tickTime, applyDamage));
++        return deepTick(itemStack -> itemStack.disableFreshness(tickTime, applyDamage), 1);
++    }
++
++    public boolean tickFoodFreezeDeep(long tickTime, boolean applyDamage) {
++        return deepTick(itemStack -> itemStack.disableFreshness(tickTime, applyDamage), 64);
 +    }
 +
 +    private boolean enableFreshness(long tickTime, boolean applyDamage) {

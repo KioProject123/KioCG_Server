@@ -42,21 +42,13 @@
      public void setAge(int age) {
          int age1 = this.getAge();
          this.age = age;
-@@ -104,12 +_,50 @@
+@@ -104,12 +_,42 @@
          }
      }
  
 +    // KioCG start - breeding animals
 +    public boolean canFeed() {
-+        return this.canFeed(null);
-+    }
-+
-+    public boolean canFeed(@Nullable net.minecraft.world.entity.player.Player player) {
-+        boolean success = this.feedingToday < (this.isHugeSimulate() ? 3 : 1);
-+        if (!success && player != null) {
-+            player.containerMenu.sendAllDataToRemote();
-+        }
-+        return success;
++        return this.feedingToday < (this.isHugeSimulate() ? 3 : 1);
 +    }
 +
 +    public void feedingFeed() {
