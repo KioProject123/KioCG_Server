@@ -127,8 +127,8 @@
 +    }
 +
 +    @Override
-+    public @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey) {
-+        return this.registerItems.get(namespacedKey).clone();
++    public @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey, int amount) {
++        return this.registerItems.get(namespacedKey).asQuantity(amount);
 +    }
 +    // KioCG end - more api
  }
