@@ -27,16 +27,37 @@
      /**
       * Clears the list of crafting recipes.
       */
-@@ -1335,6 +_,12 @@
-     public static boolean removeRecipe(@NotNull NamespacedKey key) {
+@@ -1336,6 +_,12 @@
          return server.removeRecipe(key);
      }
-+
+ 
 +    // KioCG start - more api
 +    public static boolean removeRecipe(@NotNull List<NamespacedKey> key) {
 +        return server.removeRecipe(key);
 +    }
 +    // KioCG end - more api
- 
++
      // Paper start - method to resend recipes
      /**
+      * Remove a recipe from the server.
+@@ -2991,6 +_,20 @@
+         return server.isGlobalTickThread();
+     }
+     // Paper end - Folia region threading API
++
++    // KioCG start - more api
++    public static void registerItem(@NotNull NamespacedKey namespacedKey, @NotNull ItemStack itemStack) {
++        server.registerItem(namespacedKey, itemStack);
++    }
++
++    public static boolean unregisterItem(@NotNull NamespacedKey namespacedKey) {
++        return server.unregisterItem(namespacedKey);
++    }
++
++    public static @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey) {
++        return server.getRegisterItem(namespacedKey);
++    }
++    // KioCG end - more api
+ 
+     /**
+      * @deprecated All methods on this class have been deprecated, see the individual methods for replacements.
