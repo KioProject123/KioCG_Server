@@ -116,7 +116,7 @@
 +    @Override
 +    public void registerItem(@NotNull NamespacedKey namespacedKey, @NotNull ItemStack itemStack) {
 +        Preconditions.checkArgument(!itemStack.isEmpty(), "ItemStack cannot be empty");
-+        if (this.registerItems.putIfAbsent(namespacedKey, itemStack) != null) {
++        if (this.registerItems.putIfAbsent(namespacedKey, itemStack.asOne()) != null) {
 +            throw new IllegalArgumentException("NamespacedKey has already been registered");
 +        }
 +    }
@@ -128,7 +128,7 @@
 +
 +    @Override
 +    public @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey) {
-+        return this.registerItems.get(namespacedKey);
++        return this.registerItems.get(namespacedKey).clone();
 +    }
 +    // KioCG end - more api
  }
