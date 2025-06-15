@@ -9,6 +9,14 @@
      private File container;
      private WarningState warningState = WarningState.DEFAULT;
      public ApiVersion minimumAPI;
+@@ -316,6 +_,7 @@
+     private final io.papermc.paper.potion.PaperPotionBrewer potionBrewer;
+     public final io.papermc.paper.SparksFly spark;
+     private final ServerConfiguration serverConfig = new PaperServerConfiguration();
++    private final Map<NamespacedKey, ItemStack> registerItems = new java.util.HashMap<>(); // KioCG - more api
+ 
+     // Paper start - Folia region threading API
+     private final io.papermc.paper.threadedregions.scheduler.FallbackRegionScheduler regionizedScheduler = new io.papermc.paper.threadedregions.scheduler.FallbackRegionScheduler();
 @@ -716,6 +_,13 @@
          return (player != null) ? player.getBukkitEntity() : null;
      }
@@ -99,3 +107,28 @@
          }
          return removed;
          // Paper end - resend recipes on successful removal
+@@ -3206,4 +_,24 @@
+     public void allowPausing(final Plugin plugin, final boolean value) {
+         this.console.addPluginAllowingSleep(plugin.getName(), value);
+     }
++
++    // KioCG start - more api
++    @Override
++    public void registerItem(@NotNull NamespacedKey namespacedKey, @NotNull ItemStack itemStack) {
++        Preconditions.checkArgument(!itemStack.isEmpty(), "ItemStack cannot be empty");
++        if (this.registerItems.putIfAbsent(namespacedKey, itemStack) != null) {
++            throw new IllegalArgumentException("NamespacedKey has already been registered");
++        }
++    }
++
++    @Override
++    public boolean unregisterItem(@NotNull NamespacedKey namespacedKey) {
++        return this.registerItems.remove(namespacedKey) != null;
++    }
++
++    @Override
++    public @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey) {
++        return this.registerItems.get(namespacedKey);
++    }
++    // KioCG end - more api
+ }
