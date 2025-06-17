@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/block/data/CraftBlockData.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/data/CraftBlockData.java
-@@ -746,6 +_,16 @@
+@@ -747,6 +_,16 @@
          return CraftBlockStates.getBlockState(this.state, null);
      }
  

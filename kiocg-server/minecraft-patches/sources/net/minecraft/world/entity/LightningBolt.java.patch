@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -40,6 +_,7 @@
+@@ -41,6 +_,7 @@
      private final Set<Entity> hitEntities = Sets.newHashSet();
      private int blocksSetOnFire;
      public boolean isEffect; // Paper - Properly handle lightning effects api
@@ -8,7 +8,7 @@
  
      public LightningBolt(EntityType<? extends LightningBolt> entityType, Level level) {
          super(entityType, level);
-@@ -130,6 +_,21 @@
+@@ -131,6 +_,21 @@
                          CriteriaTriggers.LIGHTNING_STRIKE.trigger(serverPlayer, this, entities);
                      }
                  }

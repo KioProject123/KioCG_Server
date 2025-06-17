@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -59,6 +_,10 @@
+@@ -56,6 +_,10 @@
      public boolean canMobPickup = true; // Paper - Item#canEntityPickup
      private int despawnRate = -1; // Paper - Alternative item-despawn-rate
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
@@ -11,7 +11,7 @@
  
      public ItemEntity(EntityType<? extends ItemEntity> entityType, Level level) {
          super(entityType, level);
-@@ -185,16 +_,30 @@
+@@ -175,16 +_,30 @@
                  }
              }
  
@@ -44,7 +44,7 @@
                  }
  
                  this.setDeltaMovement(this.getDeltaMovement().multiply(f, 0.98, f));
-@@ -204,7 +_,25 @@
+@@ -194,7 +_,25 @@
                          this.setDeltaMovement(deltaMovement1.multiply(1.0, -0.5, 1.0));
                      }
                  }
@@ -71,7 +71,7 @@
  
              boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX())
                  || Mth.floor(this.yo) != Mth.floor(this.getY())
-@@ -238,6 +_,37 @@
+@@ -228,6 +_,37 @@
          }
      }
  
@@ -109,7 +109,7 @@
      @Override
      public BlockPos getBlockPosBelowThatAffectsMyMovement() {
          return this.getOnPos(0.999999F);
-@@ -346,7 +_,7 @@
+@@ -336,7 +_,7 @@
      public final boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
          if (this.isInvulnerableToBase(damageSource)) {
              return false;
@@ -118,7 +118,7 @@
              return false;
          } else if (!this.getItem().canBeHurtBy(damageSource)) {
              return false;
-@@ -370,6 +_,7 @@
+@@ -360,6 +_,7 @@
  
      @Override
      public boolean ignoreExplosion(Explosion explosion) {
@@ -126,7 +126,7 @@
          return !explosion.shouldAffectBlocklikeEntities() || super.ignoreExplosion(explosion);
      }
  
-@@ -485,7 +_,18 @@
+@@ -470,7 +_,18 @@
              }
              // CraftBukkit end
              // Paper end - PlayerAttemptPickupItemEvent
@@ -146,7 +146,7 @@
                  if (flyAtPlayer) // Paper - PlayerPickupItemEvent
                  entity.take(this, count);
                  if (item.isEmpty()) {
-@@ -496,6 +_,7 @@
+@@ -481,6 +_,7 @@
                  entity.awardStat(Stats.ITEM_PICKED_UP.get(item1), count);
                  entity.onItemPickup(this);
              }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
-@@ -107,6 +_,47 @@
+@@ -105,6 +_,47 @@
          }
      }
  
@@ -48,7 +48,7 @@
      @Override
      public ClientboundBlockEntityDataPacket getUpdatePacket() {
          return ClientboundBlockEntityDataPacket.create(this);
-@@ -200,6 +_,7 @@
+@@ -198,6 +_,7 @@
      @Override
      public void setTheItem(ItemStack item) {
          this.unpackLootTable(null);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -169,7 +_,7 @@
+@@ -170,7 +_,7 @@
      @Override
      protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
          super.dropCustomDeathLoot(level, damageSource, recentlyHit);
@@ -9,7 +9,7 @@
              ItemStack itemStack = new ItemStack(Items.PIGLIN_HEAD);
              creeper.increaseDroppedSkulls();
              this.spawnAtLocation(level, itemStack);
-@@ -292,7 +_,10 @@
+@@ -293,7 +_,10 @@
      }
  
      @Override
@@ -21,7 +21,7 @@
          this.getEntityData().set(DATA_BABY_ID, childZombie);
          if (!this.level().isClientSide) {
              AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
-@@ -423,7 +_,7 @@
+@@ -424,7 +_,7 @@
  
      @Override
      public boolean wantsToPickUp(ServerLevel level, ItemStack stack) {

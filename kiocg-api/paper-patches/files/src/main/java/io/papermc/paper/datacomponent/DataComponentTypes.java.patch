@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
-@@ -397,4 +_,13 @@
+@@ -396,4 +_,13 @@
  
      private DataComponentTypes() {
      }

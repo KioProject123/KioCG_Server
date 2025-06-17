@@ -16,7 +16,7 @@
          this.rootsToUpdate.clear();
          this.progressChanged.clear();
          this.isFirstPacket = true;
-@@ -179,6 +_,14 @@
+@@ -178,6 +_,14 @@
              }
              // Paper end - Add PlayerAdvancementCriterionGrantEvent
              this.unregisterListeners(advancement);
@@ -31,7 +31,7 @@
              this.progressChanged.add(advancement);
              flag = true;
              if (!isDone && orStartProgress.isDone()) {
-@@ -233,7 +_,55 @@
+@@ -232,7 +_,55 @@
          }
      }
  
@@ -88,7 +88,7 @@
          AdvancementProgress orStartProgress = this.getOrStartProgress(advancement);
          if (!orStartProgress.isDone()) {
              for (Entry<String, Criterion<?>> entry : advancement.value().criteria().entrySet()) {
-@@ -246,6 +_,7 @@
+@@ -245,6 +_,7 @@
      }
  
      private <T extends CriterionTriggerInstance> void registerListener(AdvancementHolder advancement, String criterionKey, Criterion<T> criterion) {
@@ -96,7 +96,7 @@
          criterion.trigger().addPlayerListener(this, new CriterionTrigger.Listener<>(criterion.triggerInstance(), advancement, criterionKey));
      }
  
-@@ -261,6 +_,7 @@
+@@ -260,6 +_,7 @@
      }
  
      private <T extends CriterionTriggerInstance> void removeListener(AdvancementHolder advancement, String criterionKey, Criterion<T> criterion) {

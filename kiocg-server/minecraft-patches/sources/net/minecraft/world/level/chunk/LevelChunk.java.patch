@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -86,6 +_,7 @@
+@@ -88,6 +_,7 @@
      private final LevelChunkTicks<Block> blockTicks;
      private final LevelChunkTicks<Fluid> fluidTicks;
      private LevelChunk.UnsavedListener unsavedListener = chunkPos -> {};
@@ -8,7 +8,7 @@
      // CraftBukkit start
      public boolean mustNotSave;
      public boolean needsDecoration;
-@@ -205,6 +_,7 @@
+@@ -207,6 +_,7 @@
          this.setLightCorrect(chunk.isLightCorrect());
          this.markUnsaved();
          this.needsDecoration = true; // CraftBukkit
@@ -16,7 +16,7 @@
          // CraftBukkit start
          this.persistentDataContainer = chunk.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
          // CraftBukkit end
-@@ -869,7 +_,11 @@
+@@ -876,7 +_,11 @@
  
      public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
          BlockState blockState = blockEntity.getBlockState();
@@ -29,7 +29,7 @@
          if (ticker == null) {
              this.removeBlockEntityTicker(blockEntity.getBlockPos());
          } else {
-@@ -880,12 +_,14 @@
+@@ -887,12 +_,14 @@
                          TickingBlockEntity tickingBlockEntity = this.createTicker(blockEntity, ticker);
                          if (ticker1 != null) {
                              ticker1.rebind(tickingBlockEntity);
@@ -44,7 +44,7 @@
                              return rebindableTickingBlockEntityWrapper;
                          } else {
                              return null;
-@@ -917,9 +_,13 @@
+@@ -924,9 +_,13 @@
                      try {
                          ProfilerFiller profilerFiller = Profiler.get();
                          profilerFiller.push(this::getType);
@@ -58,7 +58,7 @@
                              this.loggedInvalidBlockState = false;
                          // Paper start - Remove the Block Entity if it's invalid
                          } else {
-@@ -931,6 +_,7 @@
+@@ -938,6 +_,7 @@
                              // Paper end - Remove the Block Entity if it's invalid
                          }
  

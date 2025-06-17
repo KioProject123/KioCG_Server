@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 @@ -24,9 +_,9 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.block.state.properties.ChestType;
+ import net.minecraft.world.level.storage.ValueInput;
+ import net.minecraft.world.level.storage.ValueOutput;
  
 -public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
 +public class ChestBlockEntity extends RowsContainerBlockEntity implements LidBlockEntity { // KioCG - expand container rows
@@ -34,12 +34,12 @@
      protected Component getDefaultName() {
 @@ -111,7 +_,7 @@
      @Override
-     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-         super.loadAdditional(tag, registries);
+     protected void loadAdditional(ValueInput input) {
+         super.loadAdditional(input);
 -        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 +        this.items = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
-         if (!this.tryLoadLootTable(tag)) {
-             ContainerHelper.loadAllItems(tag, this.items, registries);
+         if (!this.tryLoadLootTable(input)) {
+             ContainerHelper.loadAllItems(input, this.items);
          }
 @@ -202,10 +_,12 @@
          otherChest.setItems(items);

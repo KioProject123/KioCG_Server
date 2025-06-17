@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -717,7 +_,7 @@
+@@ -721,7 +_,7 @@
          }
  
          int _int = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
@@ -9,7 +9,7 @@
              // Paper start - create time skip event - move up calculations
              final long newDayTime = this.levelData.getDayTime() + 24000L;
              org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(
-@@ -745,6 +_,21 @@
+@@ -749,6 +_,21 @@
          this.updateSkyBrightness();
          if (runsNormally) {
              this.tickTime();
@@ -31,7 +31,7 @@
          }
  
          profilerFiller.push("tickPending");
-@@ -853,7 +_,12 @@
+@@ -857,7 +_,12 @@
  
      private void wakeUpAllPlayers() {
          this.sleepStatus.removeAllSleepers();
@@ -45,7 +45,7 @@
      }
  
      // Paper start - optimise random ticking
-@@ -904,6 +_,44 @@
+@@ -908,6 +_,44 @@
              }
          }
  
@@ -90,7 +90,7 @@
          return;
      }
      // Paper end - optimise random ticking
-@@ -1051,6 +_,7 @@
+@@ -1055,6 +_,7 @@
      }
  
      private void announceSleepStatus() {
@@ -98,7 +98,7 @@
          if (this.canSleepThroughNights()) {
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int _int = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
-@@ -1265,10 +_,16 @@
+@@ -1273,10 +_,16 @@
          profilerFiller.push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
          profilerFiller.incrementCounter("tickNonPassenger");
          final boolean isActive = io.papermc.paper.entity.activation.ActivationRange.checkIfActive(entity); // Paper - EAR 2
@@ -115,7 +115,7 @@
          profilerFiller.pop();
  
          for (Entity entity1 : entity.getPassengers()) {
-@@ -1293,6 +_,11 @@
+@@ -1301,6 +_,11 @@
              ProfilerFiller profilerFiller = Profiler.get();
              profilerFiller.push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(passengerEntity.getType()).toString());
              profilerFiller.incrementCounter("tickPassenger");
@@ -127,7 +127,7 @@
              // Paper start - EAR 2
              if (isActive) {
              passengerEntity.rideTick();
-@@ -1304,6 +_,7 @@
+@@ -1312,6 +_,7 @@
                  ridingEntity.positionRider(passengerEntity);
              }
              // Paper end - EAR 2
@@ -135,7 +135,7 @@
              profilerFiller.pop();
  
              for (Entity entity : passengerEntity.getPassengers()) {
-@@ -1587,8 +_,29 @@
+@@ -1609,8 +_,29 @@
      }
      // CraftBukkit end
  
@@ -165,7 +165,7 @@
          // CraftBukkit start
          Player breakerPlayer = null;
          Entity entity = this.getEntity(breakerId);
-@@ -1606,7 +_,7 @@
+@@ -1628,7 +_,7 @@
          }
          // Paper end - Add BlockBreakProgressUpdateEvent
          for (ServerPlayer serverPlayer : this.server.getPlayerList().getPlayers()) {
@@ -174,7 +174,7 @@
                  double d = pos.getX() - serverPlayer.getX();
                  double d1 = pos.getY() - serverPlayer.getY();
                  double d2 = pos.getZ() - serverPlayer.getZ();
-@@ -1616,7 +_,7 @@
+@@ -1638,7 +_,7 @@
                  }
                  // CraftBukkit end
                  if (d * d + d1 * d1 + d2 * d2 < 1024.0) {
@@ -183,7 +183,7 @@
                  }
              }
          }
-@@ -1855,7 +_,7 @@
+@@ -1877,7 +_,7 @@
          Explosion.BlockInteraction blockInteraction = switch (explosionInteraction) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
@@ -192,7 +192,7 @@
                  ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
-@@ -2638,6 +_,7 @@
+@@ -2691,6 +_,7 @@
  
              entity.updateDynamicGameEventListener(DynamicGameEventListener::add);
              entity.inWorld = true; // CraftBukkit - Mark entity as in world

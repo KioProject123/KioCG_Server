@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -29,13 +_,16 @@
+@@ -30,13 +_,16 @@
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
      private long ticketTimer = 0L;
@@ -17,7 +17,7 @@
      }
  
      @Override
-@@ -203,7 +_,12 @@
+@@ -200,7 +_,12 @@
                          || sectionPosZ != SectionPos.blockToSectionCoord(blockPos.getZ())
                  )
                  && owner instanceof ServerPlayer serverPlayer1) {

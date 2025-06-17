@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -37,6 +_,7 @@
+@@ -39,6 +_,7 @@
      // CraftBukkit start - data containers
      private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
      public final org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer persistentDataContainer;
@@ -8,7 +8,7 @@
      // CraftBukkit end
      private static final Codec<BlockEntityType<?>> TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
      private static final Logger LOGGER = LogUtils.getLogger();
-@@ -47,6 +_,8 @@
+@@ -49,6 +_,8 @@
      protected boolean remove;
      private BlockState blockState;
      private DataComponentMap components = DataComponentMap.EMPTY;
@@ -17,7 +17,7 @@
  
      public BlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
          this.type = type;
-@@ -66,6 +_,19 @@
+@@ -68,6 +_,19 @@
          return this.type.isValid(state);
      }
  
@@ -37,7 +37,7 @@
      public static BlockPos getPosFromTag(ChunkPos chunkPos, CompoundTag tag) {
          int intOr = tag.getIntOr("x", 0);
          int intOr1 = tag.getIntOr("y", 0);
-@@ -311,7 +_,7 @@
+@@ -336,7 +_,7 @@
                  return dataComponentMap.getOrDefault(component, defaultValue);
              }
          });

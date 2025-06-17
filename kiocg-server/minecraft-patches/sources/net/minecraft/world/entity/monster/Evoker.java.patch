@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Evoker.java
 +++ b/net/minecraft/world/entity/monster/Evoker.java
-@@ -296,7 +_,7 @@
+@@ -279,7 +_,7 @@
                  return false;
              } else {
                  ServerLevel serverLevel = getServerLevel(Evoker.this.level());

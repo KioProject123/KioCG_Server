@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -410,7 +_,7 @@
+@@ -416,7 +_,7 @@
              if (isBaby) {
                  this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
                  if (!this.level().isClientSide) {

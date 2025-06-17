@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/BlockAttachedEntity.java
 +++ b/net/minecraft/world/entity/decoration/BlockAttachedEntity.java
-@@ -86,7 +_,7 @@
+@@ -87,7 +_,7 @@
      public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
          if (this.isInvulnerableToBase(damageSource)) {
              return false;

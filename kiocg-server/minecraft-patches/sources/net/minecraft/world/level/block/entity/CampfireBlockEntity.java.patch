@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -40,6 +_,26 @@
+@@ -47,6 +_,26 @@
      public final int[] cookingTime = new int[4];
      public final boolean[] stopCooking = new boolean[4]; // Paper - Add more Campfire API
  
@@ -27,7 +27,7 @@
      public CampfireBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.CAMPFIRE, pos, blockState);
      }
-@@ -56,14 +_,20 @@
+@@ -63,14 +_,20 @@
          for (int i = 0; i < campfire.items.size(); i++) {
              ItemStack itemStack = campfire.items.get(i);
              if (!itemStack.isEmpty()) {
@@ -50,7 +50,7 @@
                      ItemStack itemStack1 = optionalCookingRecipe
                          .map(recipe -> recipe.value().assemble(singleRecipeInput, level.registryAccess()))
                          .orElse(itemStack);
-@@ -79,14 +_,23 @@
+@@ -86,14 +_,23 @@
                              result,
                              (org.bukkit.inventory.CookingRecipe<?>) optionalCookingRecipe.map(RecipeHolder::toBukkitRecipe).orElse(null) // Paper -Add recipe to cook events
                          );
@@ -75,7 +75,7 @@
                          // Paper start - Fix item locations dropped from campfires
                          double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
                          while (!itemStack1.isEmpty()) {
-@@ -95,7 +_,18 @@
+@@ -102,7 +_,18 @@
                              level.addFreshEntity(droppedItem);
                          }
                          // Paper end - Fix item locations dropped from campfires
@@ -94,7 +94,7 @@
                          level.sendBlockUpdated(pos, state, state, 3);
                          level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
-@@ -103,10 +_,81 @@
+@@ -110,10 +_,81 @@
              }
          }
  
@@ -177,7 +177,7 @@
  
      public static void cooldownTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
          boolean flag = false;
-@@ -117,10 +_,12 @@
+@@ -124,10 +_,12 @@
                  blockEntity.cookingProgress[i] = Mth.clamp(blockEntity.cookingProgress[i] - 2, 0, blockEntity.cookingTime[i]);
              }
          }
@@ -190,8 +190,8 @@
      }
  
      public static void particleTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity) {
-@@ -205,8 +_,13 @@
-         return compoundTag;
+@@ -217,8 +_,13 @@
+         return var4;
      }
  
 -    public boolean placeFood(ServerLevel level, @Nullable LivingEntity entity, ItemStack stack) {
@@ -206,7 +206,7 @@
              ItemStack itemStack = this.items.get(i);
              if (itemStack.isEmpty()) {
                  Optional<RecipeHolder<CampfireCookingRecipe>> recipeFor = level.recipeAccess()
-@@ -214,6 +_,13 @@
+@@ -226,6 +_,13 @@
                  if (recipeFor.isEmpty()) {
                      return false;
                  }
@@ -220,7 +220,7 @@
  
                  // CraftBukkit start
                  org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(
-@@ -226,6 +_,7 @@
+@@ -238,6 +_,7 @@
                  // CraftBukkit end
                  this.cookingProgress[i] = 0;
                  this.items.set(i, stack.consumeAndReturn(1, entity));

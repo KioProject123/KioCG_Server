@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -152,7 +_,7 @@
+@@ -153,7 +_,7 @@
  
              if (this.isBaby()) {
                  this.usePlayerItem(player, hand, itemInHand);
@@ -9,7 +9,7 @@
                  this.playEatingSound();
                  return InteractionResult.SUCCESS;
              }
-@@ -179,7 +_,7 @@
+@@ -180,7 +_,7 @@
      }
  
      public boolean canFallInLove() {
@@ -18,7 +18,7 @@
      }
  
      @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper - Fix EntityBreedEvent copying
-@@ -197,7 +_,9 @@
+@@ -198,7 +_,9 @@
              this.breedItem = null; // Paper - Fix EntityBreedEvent copying; clear if cancelled
              return;
          }
@@ -27,9 +27,9 @@
 +        dropDefaultLootTable(); // KioCG - breeding animals
 +        // this.inLove = entityEnterLoveModeEvent.getTicksInLove(); // KioCG - breeding animals: 不再进入繁殖阶段
          // CraftBukkit end
-         if (player != null) {
-             this.loveCause = player.getUUID();
-@@ -206,6 +_,21 @@
+         if (player instanceof ServerPlayer serverPlayer) {
+             this.loveCause = new EntityReference<>(serverPlayer);
+@@ -207,6 +_,21 @@
          this.level().broadcastEntityEvent(this, (byte)18);
      }
  
@@ -51,7 +51,7 @@
      public void setInLoveTime(int inLove) {
          this.inLove = inLove;
      }
-@@ -273,8 +_,10 @@
+@@ -269,8 +_,10 @@
              player.awardStat(Stats.ANIMALS_BRED);
              CriteriaTriggers.BRED_ANIMALS.trigger(player, this, animal, baby);
          } // Paper - Call EntityBreedEvent

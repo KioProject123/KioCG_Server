@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
-@@ -94,7 +_,7 @@
+@@ -95,7 +_,7 @@
                  this.hurtServer(serverLevel, this.damageSources().onFire().knownCause(org.bukkit.event.entity.EntityDamageEvent.DamageCause.MELTING), 1.0F); // CraftBukkit
              }
  
@@ -9,7 +9,7 @@
                  return;
              }
  
-@@ -106,6 +_,13 @@
+@@ -107,6 +_,13 @@
                  int floor2 = Mth.floor(this.getZ() + (i / 2 % 2 * 2 - 1) * 0.25F);
                  BlockPos blockPos = new BlockPos(floor, floor1, floor2);
                  if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {

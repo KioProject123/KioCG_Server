@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/attributes/Attributes.java
 +++ b/net/minecraft/world/entity/ai/attributes/Attributes.java
-@@ -76,7 +_,7 @@
+@@ -79,7 +_,7 @@
          "sneaking_speed", new RangedAttribute("attribute.name.sneaking_speed", 0.3, 0.0, 1.0).setSyncable(true)
      );
      public static final Holder<Attribute> SPAWN_REINFORCEMENTS_CHANCE = register(

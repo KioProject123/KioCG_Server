@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -349,6 +_,13 @@
+@@ -379,6 +_,13 @@
          );
          if (randomItemWith.isPresent()) {
              ItemStack itemStack = randomItemWith.get().itemStack();
@@ -11,6 +11,6 @@
 +            }
 +            // KioCG end - adjust enchantment
 +
-             int i = EnchantmentHelper.modifyDurabilityToRepairFromXp(player.serverLevel(), itemStack, value);
+             int i = EnchantmentHelper.modifyDurabilityToRepairFromXp(player.level(), itemStack, value);
              int min = Math.min(i, itemStack.getDamageValue());
              // CraftBukkit start

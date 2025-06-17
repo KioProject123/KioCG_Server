@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -449,7 +_,7 @@
+@@ -455,7 +_,7 @@
              f = 4.0F;
              i = 60;
              i1 = 5;
@@ -9,7 +9,7 @@
                  flag = true;
                  this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
              }
-@@ -457,7 +_,7 @@
+@@ -463,7 +_,7 @@
              f = 10.0F;
              i = 240;
              i1 = 10;
@@ -18,7 +18,7 @@
                  flag = true;
                  this.setInLove(player, stack.copy()); // Paper - Fix EntityBreedEvent copying
              }
-@@ -472,6 +_,7 @@
+@@ -478,6 +_,7 @@
              this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
              if (!this.level().isClientSide) {
                  this.ageUp(i);

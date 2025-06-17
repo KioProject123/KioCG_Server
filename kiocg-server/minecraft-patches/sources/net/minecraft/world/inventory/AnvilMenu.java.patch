@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -79,6 +_,12 @@
+@@ -80,6 +_,12 @@
  
      @Override
      protected void onTake(Player player, ItemStack stack) {
@@ -13,9 +13,9 @@
          if (!player.hasInfiniteMaterials()) {
              player.giveExperienceLevels(-this.cost.get());
          }
-@@ -97,9 +_,10 @@
+@@ -104,9 +_,10 @@
+         }
  
-         this.cost.set(AnvilMenu.DEFAULT_DENIED_COST); // CraftBukkit - use a variable for set a cost for denied item
          this.inputSlots.setItem(0, ItemStack.EMPTY);
 +        new com.kiocg.event.inventory.AnvilResultTakenEvent(player.getBukkitEntity(), getBukkitView(), oldResult, oldFirstItem, oldSecondItem).callEvent(); // KioCG - ResultTakenEvent
          this.access.execute((level, blockPos) -> {
@@ -25,7 +25,7 @@
                  BlockState blockState1 = AnvilBlock.damage(blockState);
                  // Paper start - AnvilDamageEvent
                  com.destroystokyo.paper.event.block.AnvilDamagedEvent event = new com.destroystokyo.paper.event.block.AnvilDamagedEvent(getBukkitView(), blockState1 != null ? org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(blockState1) : null);
-@@ -129,16 +_,27 @@
+@@ -136,16 +_,27 @@
          ItemStack item = this.inputSlots.getItem(0);
          this.onlyRenaming = false;
          this.cost.set(1);
@@ -57,7 +57,7 @@
                  boolean hasStoredEnchantments = item1.has(DataComponents.STORED_ENCHANTMENTS);
                  if (itemStack.isDamageableItem() && item.isValidRepairItem(item1)) {
                      int min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);
-@@ -153,6 +_,12 @@
+@@ -160,6 +_,12 @@
                          int i3 = itemStack.getDamageValue() - min;
                          itemStack.setDamageValue(i3);
                          i++;
@@ -70,7 +70,7 @@
                          min = Math.min(itemStack.getDamageValue(), itemStack.getMaxDamage() / 4);
                      }
  
-@@ -235,21 +_,33 @@
+@@ -242,21 +_,33 @@
                  if (!this.itemName.equals(item.getHoverName().getString())) {
                      i1 = 1;
                      i += i1;
@@ -107,7 +107,7 @@
                  // CraftBukkit start
                  if (this.cost.get() >= this.maximumRepairCost) {
                      this.cost.set(this.maximumRepairCost - 1);
-@@ -270,6 +_,7 @@
+@@ -277,6 +_,7 @@
                  }
  
                  if (i1 != i || i1 == 0) {
@@ -115,7 +115,7 @@
                      minxx = calculateIncreasedRepairCost(minxx);
                  }
  
-@@ -290,11 +_,52 @@
+@@ -297,11 +_,52 @@
          return (int)Math.min(oldRepairCost * 2L + 1L, 2147483647L);
      }
  

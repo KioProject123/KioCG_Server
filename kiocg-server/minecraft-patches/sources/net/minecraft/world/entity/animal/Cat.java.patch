@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
-@@ -96,19 +_,26 @@
+@@ -97,19 +_,26 @@
          this.temptGoal = new Cat.CatTemptGoal(this, 0.6, stack -> stack.is(ItemTags.CAT_FOOD), true);
          this.goalSelector.addGoal(1, new FloatGoal(this));
          this.goalSelector.addGoal(1, new TamableAnimal.TamableAnimalPanicGoal(1.5));
@@ -39,7 +39,7 @@
      }
  
      public Holder<CatVariant> getVariant() {
-@@ -394,6 +_,18 @@
+@@ -395,6 +_,18 @@
                      }
  
                      return InteractionResult.SUCCESS;
@@ -58,7 +58,7 @@
                  }
  
                  InteractionResult interactionResult = super.mobInteract(player, hand);
-@@ -498,9 +_,9 @@
+@@ -499,9 +_,9 @@
  
          @Override
          public boolean canUse() {
@@ -70,7 +70,7 @@
                  return false;
              } else {
                  LivingEntity owner = this.cat.getOwner();
-@@ -606,6 +_,7 @@
+@@ -607,6 +_,7 @@
          public void tick() {
              if (this.ownerPlayer != null && this.goalPos != null) {
                  this.cat.setInSittingPose(false);
@@ -78,7 +78,7 @@
                  this.cat.getNavigation().moveTo(this.goalPos.getX(), this.goalPos.getY(), this.goalPos.getZ(), 1.1F);
                  if (this.cat.distanceToSqr(this.ownerPlayer) < 2.5) {
                      this.onBedTicks++;
-@@ -650,7 +_,7 @@
+@@ -651,7 +_,7 @@
  
          @Override
          public boolean canUse() {

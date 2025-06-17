@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
 @@ -20,7 +_,7 @@
- import net.minecraft.world.level.block.BarrelBlock;
- import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.storage.ValueInput;
+ import net.minecraft.world.level.storage.ValueOutput;
  
 -public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
 +public class BarrelBlockEntity extends RowsContainerBlockEntity { // KioCG - expand container rows
@@ -20,12 +20,12 @@
          protected void onOpen(Level level, BlockPos pos, BlockState state) {
 @@ -100,16 +_,23 @@
      @Override
-     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-         super.loadAdditional(tag, registries);
+     protected void loadAdditional(ValueInput input) {
+         super.loadAdditional(input);
 -        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 +        this.items = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
-         if (!this.tryLoadLootTable(tag)) {
-             ContainerHelper.loadAllItems(tag, this.items, registries);
+         if (!this.tryLoadLootTable(input)) {
+             ContainerHelper.loadAllItems(input, this.items);
          }
      }
  

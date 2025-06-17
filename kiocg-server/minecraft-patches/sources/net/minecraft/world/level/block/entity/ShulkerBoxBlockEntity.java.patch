@@ -43,11 +43,11 @@
 @@ -251,7 +_,7 @@
      }
  
-     public void loadFromTag(CompoundTag tag, HolderLookup.Provider levelRegistry) {
+     public void loadFromTag(ValueInput input) {
 -        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 +        this.itemStacks = NonNullList.withSize(6 * 9, ItemStack.EMPTY); // KioCG - expand container rows
-         if (!this.tryLoadLootTable(tag)) {
-             ContainerHelper.loadAllItems(tag, this.itemStacks, levelRegistry);
+         if (!this.tryLoadLootTable(input)) {
+             ContainerHelper.loadAllItems(input, this.itemStacks);
          }
 @@ -291,10 +_,12 @@
          return this.color;

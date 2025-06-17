@@ -20,29 +20,26 @@
      public void setActiveChest(EnderChestBlockEntity enderChestBlockEntity) {
          this.activeChest = enderChestBlockEntity;
      }
-@@ -40,14 +_,14 @@
+@@ -39,19 +_,19 @@
+     }
  
-     @Override
-     public void fromTag(ListTag tag, HolderLookup.Provider levelRegistry) {
+     public void fromSlots(ValueInput.TypedInputList<ItemStackWithSlot> input) {
 -        for (int i = 0; i < this.getContainerSize(); i++) {
 +        for (int i = 0; i < 6 * 9; i++) { // KioCG - expand container rows: 始终加载最大末影箱
              this.setItem(i, ItemStack.EMPTY);
          }
  
-         for (int i = 0; i < tag.size(); i++) {
-             CompoundTag compoundOrEmpty = tag.getCompoundOrEmpty(i);
-             int i1 = compoundOrEmpty.getByteOr("Slot", (byte)0) & 255;
--            if (i1 >= 0 && i1 < this.getContainerSize()) {
-+            if (i1 >= 0 && i1 < 6 * 9) { // KioCG - expand container rows: 始终加载最大末影箱
-                 this.setItem(i1, ItemStack.parse(levelRegistry, compoundOrEmpty).orElse(ItemStack.EMPTY));
+         for (ItemStackWithSlot itemStackWithSlot : input) {
+-            if (itemStackWithSlot.isValidInContainer(this.getContainerSize())) {
++            if (itemStackWithSlot.isValidInContainer(6 * 9)) { // KioCG - expand container rows: 始终加载最大末影箱
+                 this.setItem(itemStackWithSlot.slot(), itemStackWithSlot.stack());
              }
          }
-@@ -57,7 +_,7 @@
-     public ListTag createTag(HolderLookup.Provider levelRegistry) {
-         ListTag listTag = new ListTag();
+     }
  
+     public void storeAsSlots(ValueOutput.TypedOutputList<ItemStackWithSlot> output) {
 -        for (int i = 0; i < this.getContainerSize(); i++) {
 +        for (int i = 0; i < 6 * 9; i++) { // KioCG - expand container rows: 始终加载最大末影箱
              ItemStack item = this.getItem(i);
              if (!item.isEmpty()) {
-                 CompoundTag compoundTag = new CompoundTag();
+                 output.add(new ItemStackWithSlot(i, item));

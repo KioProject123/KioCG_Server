@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ConversionType.java
 +++ b/net/minecraft/world/entity/ConversionType.java
-@@ -14,6 +_,12 @@
+@@ -17,6 +_,12 @@
          void convert(Mob oldMob, Mob newMob, ConversionParams conversionParams) {
              Entity firstPassenger = oldMob.getFirstPassenger();
              newMob.copyPosition(oldMob);
@@ -13,7 +13,7 @@
              newMob.setDeltaMovement(oldMob.getDeltaMovement());
              if (firstPassenger != null) {
                  firstPassenger.stopRiding();
-@@ -99,6 +_,8 @@
+@@ -103,6 +_,8 @@
              newMob.setBaby(true);
          }
  
@@ -22,7 +22,7 @@
          if (oldMob instanceof AgeableMob ageableMob && newMob instanceof AgeableMob ageableMob1) {
              ageableMob1.setAge(ageableMob.getAge());
              ageableMob1.forcedAge = ageableMob.forcedAge;
-@@ -114,6 +_,15 @@
+@@ -118,6 +_,15 @@
          if (conversionParams.preserveCanPickUpLoot()) {
              newMob.setCanPickUpLoot(oldMob.canPickUpLoot());
          }

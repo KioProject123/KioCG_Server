@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Zoglin.java
 +++ b/net/minecraft/world/entity/monster/Zoglin.java
-@@ -257,11 +_,19 @@
+@@ -258,11 +_,19 @@
      }
  
      @Override

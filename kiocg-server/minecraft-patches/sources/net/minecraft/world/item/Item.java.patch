@@ -83,7 +83,7 @@
  
          public Item.Properties usingConvertsTo(Item usingConvertsTo) {
              return this.component(DataComponents.USE_REMAINDER, new UseRemainder(new ItemStack(usingConvertsTo)));
-@@ -531,16 +_,60 @@
+@@ -535,16 +_,60 @@
              return this.model.get(Objects.requireNonNull(this.id, "Item id not set"));
          }
  
@@ -148,7 +148,7 @@
              DataComponentMap dataComponentMap = this.components.set(DataComponents.ITEM_NAME, itemName).set(DataComponents.ITEM_MODEL, itemModel).build();
              if (dataComponentMap.has(DataComponents.DAMAGE) && dataComponentMap.getOrDefault(DataComponents.MAX_STACK_SIZE, 1) > 1) {
                  throw new IllegalStateException("Item cannot have both durability and be stackable");
-@@ -548,6 +_,12 @@
+@@ -552,6 +_,12 @@
                  return dataComponentMap;
              }
          }

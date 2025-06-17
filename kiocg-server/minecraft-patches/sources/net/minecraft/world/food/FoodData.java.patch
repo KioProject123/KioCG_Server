@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -52,11 +_,13 @@
+@@ -53,11 +_,13 @@
              if (this.saturationLevel > 0.0F) {
                  this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
              } else if (difficulty != Difficulty.PEACEFUL) {
@@ -14,7 +14,7 @@
                  }
  
                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetHealthPacket(player.getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
-@@ -65,7 +_,29 @@
+@@ -66,7 +_,29 @@
          }
  
          boolean _boolean = serverLevel.getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);

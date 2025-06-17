@@ -2,7 +2,6 @@ package com.kiocg.entity.player;
 
 import io.papermc.paper.configuration.WorldConfiguration;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -10,6 +9,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class ColdData {
     public static final int MAX_VALUE = 60 * 20 * 10;
@@ -69,13 +70,13 @@ public class ColdData {
                 playerTemperature += Math.min(blockLight, 12) * config.playerLightBlockMultiplier;
             }
 
-            if (config.isInWater != 0 && (this.isInWater || player.isInPowderSnow || player.isInWater())) {
+            if (config.isInWater != 0 && this.isInWater) {
                 playerTemperature += config.isInWater;
             } else if (config.isInRain != 0 && player.isInRain()) {
                 playerTemperature += config.isInRain;
             }
 
-            if (config.isInLava != 0 && (this.isInLava || player.isInLava())) {
+            if (config.isInLava != 0 && this.isInLava) {
                 playerTemperature += config.isInLava;
             } else if (config.isOnFire != 0 && player.getRemainingFireTicks() > 0) {
                 playerTemperature += config.isOnFire;
@@ -99,12 +100,12 @@ public class ColdData {
         currentTemp = Mth.clamp((int) (currentTemp + velocity), 0, MAX_VALUE);
     }
 
-    public void readAdditionalSaveData(CompoundTag nbt) {
-        targetTemp = nbt.getIntOr("KioCG.ColdValue", MAX_VALUE);
+    public void readAdditionalSaveData(ValueInput input) {
+        targetTemp = input.getIntOr("KioCG.ColdValue", MAX_VALUE);
         currentTemp = targetTemp;
     }
 
-    public void addAdditionalSaveData(CompoundTag nbt) {
-        nbt.putInt("KioCG.ColdValue", targetTemp);
+    public void addAdditionalSaveData(ValueOutput output) {
+        output.putInt("KioCG.ColdValue", targetTemp);
     }
 }

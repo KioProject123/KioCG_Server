@@ -189,8 +189,8 @@
 +    // KioCG end - change container behavior
 +
      @Override
-     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-         super.loadAdditional(tag, registries);
+     protected void loadAdditional(ValueInput input) {
+         super.loadAdditional(input);
 @@ -302,14 +_,15 @@
              return potionBrewing.isIngredient(stack);
          } else {

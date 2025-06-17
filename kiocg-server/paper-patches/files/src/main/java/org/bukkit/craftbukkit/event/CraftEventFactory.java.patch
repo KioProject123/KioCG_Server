@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -461,6 +_,36 @@
+@@ -462,6 +_,36 @@
          return event;
      }
  
@@ -37,7 +37,7 @@
      public static PlayerInteractEvent callPlayerInteractEvent(net.minecraft.world.entity.player.Player player, Action action, ItemStack item, InteractionHand hand) {
          if (action != Action.LEFT_CLICK_AIR && action != Action.RIGHT_CLICK_AIR) {
              throw new AssertionError(String.format("%s performing %s with %s", player, action, item));
-@@ -517,6 +_,41 @@
+@@ -518,6 +_,41 @@
          return event;
      }
  
@@ -79,7 +79,7 @@
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, net.minecraft.world.entity.LivingEntity coverted, EntityTransformEvent.TransformReason transformReason) {
          return CraftEventFactory.callEntityTransformEvent(original, Collections.singletonList(coverted), transformReason);
      }
-@@ -879,10 +_,16 @@
+@@ -880,10 +_,16 @@
      }
  
      public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
@@ -90,7 +90,7 @@
 +        // KioCG end - death drop protect
          CraftPlayer entity = victim.getBukkitEntity();
          CraftDamageSource bukkitDamageSource = new CraftDamageSource(damageSource);
-         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(victim.serverLevel(), damageSource.getEntity()), 0, deathMessage, showDeathMessages);
+         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(victim.level(), damageSource.getEntity()), 0, deathMessage, showDeathMessages);
          event.setKeepInventory(keepInventory);
 +        event.getItemsToKeep().addAll(keeps); // KioCG - death drop protect
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel

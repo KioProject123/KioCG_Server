@@ -1,24 +1,24 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -261,7 +_,7 @@
-         );
-         GameRules gameRules = serverLevel.getGameRules();
-         boolean _boolean = gameRules.getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN);
--        boolean _boolean1 = gameRules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO);
-+        boolean _boolean1 = gameRules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) && !player.getBukkitEntity().hasPermission("kiocg.reduced_debug_info.bypass"); // KioCG - more permission
-         boolean _boolean2 = gameRules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
-         serverGamePacketListenerImpl.send(
-             new ClientboundLoginPacket(
-@@ -505,6 +_,8 @@
+@@ -262,7 +_,7 @@
+             );
+             GameRules gameRules = serverLevel.getGameRules();
+             boolean _boolean = gameRules.getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN);
+-            boolean _boolean1 = gameRules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO);
++            boolean _boolean1 = gameRules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) && !player.getBukkitEntity().hasPermission("kiocg.reduced_debug_info.bypass"); // KioCG - more permission
+             boolean _boolean2 = gameRules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
+             serverGamePacketListenerImpl.send(
+                 new ClientboundLoginPacket(
+@@ -508,6 +_,8 @@
      }
      public @Nullable net.kyori.adventure.text.Component remove(ServerPlayer player, net.kyori.adventure.text.Component leaveMessage) {
          // Paper end - Fix kick event leave message not being sent
 +        com.kiocg.task.BossBarTask.removeFromAll(player.getBukkitEntity()); // KioCG - bossbar task
 +        com.kiocg.command.TickerViewCommand.onPlayerQuit(player); // KioCG - ticker view
-         ServerLevel serverLevel = player.serverLevel();
+         ServerLevel serverLevel = player.level();
          player.awardStat(Stats.LEAVE_GAME);
          // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
-@@ -785,7 +_,7 @@
+@@ -781,7 +_,7 @@
          serverPlayer.connection.send(new ClientboundSetDefaultSpawnPositionPacket(level.getSharedSpawnPos(), level.getSharedSpawnAngle()));
          serverPlayer.connection.send(new ClientboundChangeDifficultyPacket(levelData.getDifficulty(), levelData.isDifficultyLocked()));
          serverPlayer.connection
@@ -27,16 +27,16 @@
          this.sendActivePlayerEffects(serverPlayer);
          this.sendLevelInfo(serverPlayer, level);
          this.sendPlayerPermissionLevel(serverPlayer);
-@@ -1151,7 +_,7 @@
+@@ -1147,7 +_,7 @@
          player.refreshEntityData(player); // CraftBukkit - SPIGOT-7218: sync metadata
          player.connection.send(new ClientboundSetHeldSlotPacket(player.getInventory().getSelectedSlot()));
          // CraftBukkit start - from GameRules
--        int i = player.serverLevel().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) ? 22 : 23;
-+        int i = player.serverLevel().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) && !player.getBukkitEntity().hasPermission("kiocg.reduced_debug_info.bypass") ? 22 : 23; // KioCG - more permission
+-        int i = player.level().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) ? 22 : 23;
++        int i = player.level().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) && !player.getBukkitEntity().hasPermission("kiocg.reduced_debug_info.bypass") ? 22 : 23; // KioCG - more permission
          player.connection.send(new ClientboundEntityEventPacket(player, (byte) i));
-         float immediateRespawn = player.serverLevel().getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0F: 0.0F;
+         float immediateRespawn = player.level().getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0F: 0.0F;
          player.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.IMMEDIATE_RESPAWN, immediateRespawn));
-@@ -1276,7 +_,7 @@
+@@ -1272,7 +_,7 @@
      public void broadcastChatMessage(PlayerChatMessage message, Predicate<ServerPlayer> shouldFilterMessageTo, @Nullable ServerPlayer sender, ChatType.Bound boundChatType, @Nullable Function<net.kyori.adventure.audience.Audience, Component> unsignedFunction) {
          // Paper end
          boolean flag = this.verifyChatTrusted(message);

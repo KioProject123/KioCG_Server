@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Dolphin.java
 +++ b/net/minecraft/world/entity/animal/Dolphin.java
-@@ -319,7 +_,7 @@
+@@ -320,7 +_,7 @@
  
              if (this.isBaby()) {
                  itemInHand.consume(1, player);
@@ -9,7 +9,7 @@
              } else {
                  this.setGotFish(true);
                  itemInHand.consume(1, player);
-@@ -490,6 +_,13 @@
+@@ -491,6 +_,13 @@
              return this.player != null && this.player.isSwimming() && this.dolphin.getTarget() != this.player;
          }
  
@@ -23,7 +23,7 @@
          @Override
          public boolean canContinueToUse() {
              return this.player != null && this.player.isSwimming() && this.dolphin.distanceToSqr(this.player) < 256.0;
-@@ -534,6 +_,13 @@
+@@ -535,6 +_,13 @@
                  return !entitiesOfClass.isEmpty() || !Dolphin.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
              }
          }

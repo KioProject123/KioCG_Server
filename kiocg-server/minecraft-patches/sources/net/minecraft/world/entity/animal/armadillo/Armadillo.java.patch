@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/armadillo/Armadillo.java
 +++ b/net/minecraft/world/entity/animal/armadillo/Armadillo.java
-@@ -141,7 +_,7 @@
+@@ -142,7 +_,7 @@
          profilerFiller.push("armadilloActivityUpdate");
          ArmadilloAi.updateActivity(this);
          profilerFiller.pop();
@@ -9,7 +9,7 @@
              this.forceDrops = true; // CraftBukkit
              if (this.dropFromGiftLootTable(level, BuiltInLootTables.ARMADILLO_SHED, this::spawnAtLocation)) {
                  this.playSound(SoundEvents.ARMADILLO_SCUTE_DROP, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-@@ -314,10 +_,11 @@
+@@ -315,10 +_,11 @@
      }
  
      public boolean brushOffScute() {

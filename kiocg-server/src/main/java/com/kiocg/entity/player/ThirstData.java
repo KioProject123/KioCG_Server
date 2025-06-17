@@ -1,6 +1,5 @@
 package com.kiocg.entity.player;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -8,6 +7,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class ThirstData {
     public static final int MAX_VALUE = 20;
@@ -102,13 +103,13 @@ public class ThirstData {
         }
     }
 
-    public void readAdditionalSaveData(CompoundTag nbt) {
-        thirstValue = nbt.getIntOr("KioCG.ThirstValue", MAX_VALUE);
-        thirstRegain = nbt.getFloatOr("KioCG.ThirstRegain", 0.0F);
+    public void readAdditionalSaveData(ValueInput input) {
+        thirstValue = input.getIntOr("KioCG.ThirstValue", MAX_VALUE);
+        thirstRegain = input.getFloatOr("KioCG.ThirstRegain", 0.0F);
     }
 
-    public void addAdditionalSaveData(CompoundTag nbt) {
-        nbt.putInt("KioCG.ThirstValue", thirstValue);
-        nbt.putFloat("KioCG.ThirstRegain", thirstRegain);
+    public void addAdditionalSaveData(ValueOutput output) {
+        output.putInt("KioCG.ThirstValue", thirstValue);
+        output.putFloat("KioCG.ThirstRegain", thirstRegain);
     }
 }

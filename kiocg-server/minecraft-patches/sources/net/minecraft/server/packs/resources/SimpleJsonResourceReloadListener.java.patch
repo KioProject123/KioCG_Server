@@ -4,9 +4,9 @@
              ResourceLocation resourceLocation1 = lister.fileToId(resourceLocation);
  
              try (Reader reader = entry.getValue().openAsReader()) {
--                codec.parse(ops, JsonParser.parseReader(reader)).ifSuccess(object -> {
+-                codec.parse(ops, StrictJsonParser.parse(reader)).ifSuccess(object -> {
 +                // KioCG start - allow recipe removal
-+                JsonElement json = JsonParser.parseReader(reader);
++                JsonElement json = StrictJsonParser.parse(reader);
 +                if (json.isJsonNull()) continue;
 +                codec.parse(ops, json).ifSuccess(object -> {
 +                // KioCG end - allow recipe removal

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/goal/DoorInteractGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/DoorInteractGoal.java
-@@ -77,6 +_,13 @@
+@@ -75,6 +_,13 @@
          }
      }
  

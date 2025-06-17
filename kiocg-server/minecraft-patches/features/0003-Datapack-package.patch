@@ -5,10 +5,10 @@ Subject: [PATCH] Datapack package
 
 
 diff --git a/net/minecraft/server/Main.java b/net/minecraft/server/Main.java
-index 3f33974b36fc667f7d3d67f8e01951334007577f..69d2fa7b5b82cc1a0999e1dcb4f5f7c48264077e 100644
+index 4e96941c34a58522be09b739db59ff8f2216391c..f1b87d27675b865f212b17573e3e04c5e88329bb 100644
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -317,6 +317,7 @@ public class Main {
+@@ -318,6 +318,7 @@ public class Main {
              // KioCG start - biome modification
              final com.kiocg.world.BiomeModification biomeModification = new com.kiocg.world.BiomeModification(worldStem.registries().compositeAccess());
              biomeModification.addCustom();
@@ -17,7 +17,7 @@ index 3f33974b36fc667f7d3d67f8e01951334007577f..69d2fa7b5b82cc1a0999e1dcb4f5f7c4
              // KioCG end - biome modification
  
 diff --git a/net/minecraft/world/entity/monster/ElderGuardian.java b/net/minecraft/world/entity/monster/ElderGuardian.java
-index fd33a8b59f40299ab644a4c52921b66a9b6552ca..8ea80e1cbe252509815328d246f81134024bdc93 100644
+index 7eef05b988d52391ab061382fd8898705c705e03..0f1e7fd5b29f9649287a591dbf6176a403fa8ee7 100644
 --- a/net/minecraft/world/entity/monster/ElderGuardian.java
 +++ b/net/minecraft/world/entity/monster/ElderGuardian.java
 @@ -63,7 +63,7 @@ public class ElderGuardian extends Guardian {
@@ -77,24 +77,11 @@ index 8d6def85583a111841b28f20f58ddb8b8cbd7bc1..885a75f1d83e895dd9c9e22a549eb083
      @Override
      public boolean doHurtTarget(ServerLevel level, Entity source) {
          boolean flag = super.doHurtTarget(level, source);
-diff --git a/net/minecraft/world/entity/projectile/Projectile.java b/net/minecraft/world/entity/projectile/Projectile.java
-index 2e8d70c7db9876d59e73d718c06682a83e1c4ccd..fca22e24047e3bdec6c444aa160e3c5e096fdb3b 100644
---- a/net/minecraft/world/entity/projectile/Projectile.java
-+++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -128,7 +128,7 @@ public abstract class Projectile extends Entity implements TraceableEntity {
-     protected void setOwnerThroughUUID(@Nullable UUID uuid) {
-         if (!Objects.equals(this.ownerUUID, uuid)) {
-             this.ownerUUID = uuid;
--            this.cachedOwner = uuid != null ? this.findOwner(uuid) : null;
-+            this.cachedOwner = null; // KioCG
-         }
-     }
- 
 diff --git a/net/minecraft/world/entity/projectile/ThrownTrident.java b/net/minecraft/world/entity/projectile/ThrownTrident.java
-index afa8ce32b3d950f30dd1f60933a7119645e70198..5721d7c8e827e2d32bbd1322622e38bd95eb3fa6 100644
+index e15baf0e0a580aa19c1d15da02dce089d94f54a1..67d737b57403b473cc0b14816db747ec7862eddc 100644
 --- a/net/minecraft/world/entity/projectile/ThrownTrident.java
 +++ b/net/minecraft/world/entity/projectile/ThrownTrident.java
-@@ -301,12 +301,28 @@ public class ThrownTrident extends AbstractArrow {
+@@ -302,12 +302,28 @@ public class ThrownTrident extends AbstractArrow {
  
      @Override
      public void tickDespawn() {
@@ -116,7 +103,7 @@ index afa8ce32b3d950f30dd1f60933a7119645e70198..5721d7c8e827e2d32bbd1322622e38bd
 +     * but they will despawn as normal once picked up and thrown again by a player.
 +     */
 +    private boolean moderOwner() {
-+        return moderUUID.equals(this.ownerUUID);
++        return this.owner != null && moderUUID.equals(this.owner.getUUID());
 +    }
 +    // KioCG end
 +
@@ -137,10 +124,10 @@ index bad1a03167f7586e5279592adcb43350c9b528cd..9759922b95d7885f65b1ec41a7c0617a
      private final BiomeSpecialEffects specialEffects;
      private final ThreadLocal<Long2FloatLinkedOpenHashMap> temperatureCache = ThreadLocal.withInitial(() -> Util.make(() -> {
 diff --git a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
-index e2abd838252a50618789123477a96545454621b4..9501ab81873eb16e515d1bd098ecdf54a3845bf0 100644
+index 4f17d5642f04592d8cbb47d9c49707431a3051d9..9defc534db971b2f864c90eedf13b123224493f3 100644
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
-@@ -155,6 +155,8 @@ public class JukeboxBlockEntity extends BlockEntity implements ContainerSingleIt
+@@ -150,6 +150,8 @@ public class JukeboxBlockEntity extends BlockEntity implements ContainerSingleIt
      public void setTheItem(ItemStack item) {
          this.item = item;
          boolean flag = !this.item.isEmpty();
@@ -789,10 +776,10 @@ index fbddece382f84a1795ebe84bbbff9b20a248b57d..515303e12d71260ac33abc1c557933b4
  
      static <P extends StructureProcessor> StructureProcessorType<P> register(String name, MapCodec<P> codec) {
 diff --git a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-index bb8b5ca9044ecb33687e7f20cfb0acbf55f887c7..862203e3f9433ce876d45d55da65332d142c9108 100644
+index f21e612a35d6ac4482dbf5d14e506959659e371a..c35d54b457061cfa7a6cc6c93c2414036f7c8313 100644
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -78,6 +78,8 @@ public class StructureTemplate {
+@@ -84,6 +84,8 @@ public class StructureTemplate {
      public org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer(StructureTemplate.DATA_TYPE_REGISTRY);
      // CraftBukkit end
  
@@ -801,7 +788,7 @@ index bb8b5ca9044ecb33687e7f20cfb0acbf55f887c7..862203e3f9433ce876d45d55da65332d
      public Vec3i getSize() {
          return this.size;
      }
-@@ -248,6 +250,7 @@ public class StructureTemplate {
+@@ -256,6 +258,7 @@ public class StructureTemplate {
      }
  
      public boolean placeInWorld(ServerLevelAccessor serverLevel, BlockPos offset, BlockPos pos, StructurePlaceSettings settings, RandomSource random, int flags) {
@@ -809,33 +796,33 @@ index bb8b5ca9044ecb33687e7f20cfb0acbf55f887c7..862203e3f9433ce876d45d55da65332d
          if (this.palettes.isEmpty()) {
              return false;
          } else {
-@@ -409,6 +412,15 @@ public class StructureTemplate {
+@@ -423,6 +426,15 @@ public class StructureTemplate {
+                     }
+ 
+                     if (!settings.isIgnoreEntities()) {
++                        // KioCG start
++                        context.set(new com.yungnickyoung.minecraft.yungsapi.world.processor.StructureProcessingContext(
++                                serverLevel,
++                                settings,
++                                offset,
++                                pos,
++                                entityInfoList
++                        ));
++                        // KioCG end
+                         this.placeEntities(
+                             wrappedAccess, // CraftBukkit
+                             offset,
+@@ -433,6 +445,7 @@ public class StructureTemplate {
+                             settings.shouldFinalizeEntities(),
+                             scopedCollector
+                         );
++                        context.remove(); // KioCG
+                     }
                  }
  
-                 if (!settings.isIgnoreEntities()) {
-+                    // KioCG start
-+                    context.set(new com.yungnickyoung.minecraft.yungsapi.world.processor.StructureProcessingContext(
-+                            serverLevel,
-+                            settings,
-+                            offset,
-+                            pos,
-+                            entityInfoList
-+                    ));
-+                    // KioCG end
-                     this.placeEntities(
-                         wrappedAccess, // CraftBukkit
-                         offset,
-@@ -418,6 +430,7 @@ public class StructureTemplate {
-                         boundingBox,
-                         settings.shouldFinalizeEntities()
-                     );
-+                    context.remove(); // KioCG
-                 }
- 
-                 return true;
-@@ -494,6 +507,47 @@ public class StructureTemplate {
-         @Nullable BoundingBox boundingBox,
-         boolean withEntities
+@@ -511,6 +524,47 @@ public class StructureTemplate {
+         boolean finalize,
+         ProblemReporter problemReporter
      ) {
 +        // KioCG start
 +        com.yungnickyoung.minecraft.yungsapi.world.processor.StructureProcessingContext ctx = context.get();
@@ -858,15 +845,15 @@ index bb8b5ca9044ecb33687e7f20cfb0acbf55f887c7..862203e3f9433ce876d45d55da65332d
 +                    listTag.add(DoubleTag.valueOf(entityPos.z));
 +                    entityNbt.put("Pos", listTag);
 +                    entityNbt.remove("UUID");
-+                    tryCreateEntity(serverLevel, entityNbt).ifPresent((entity) -> {
++                    tryCreateEntity(problemReporter, level, entityNbt).ifPresent((entity) -> {
 +                        float f = entity.mirror(ctx.structurePlaceSettings().getMirror());
 +                        f += entity.getYRot() - entity.rotate(ctx.structurePlaceSettings().getRotation());
 +                        entity.snapTo(entityPos.x, entityPos.y, entityPos.z, f, entity.getXRot());
 +                        if (ctx.structurePlaceSettings().shouldFinalizeEntities() && entity instanceof Mob) {
-+                            ((Mob) entity).finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(BlockPos.containing(entityPos)), EntitySpawnReason.STRUCTURE, null);
++                            ((Mob) entity).finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(entityPos)), EntitySpawnReason.STRUCTURE, null);
 +                        }
 +
-+                        serverLevel.addFreshEntityWithPassengers(entity);
++                        level.addFreshEntityWithPassengers(entity);
 +                    });
 +                }
 +            }
@@ -881,7 +868,7 @@ index bb8b5ca9044ecb33687e7f20cfb0acbf55f887c7..862203e3f9433ce876d45d55da65332d
          for (StructureTemplate.StructureEntityInfo structureEntityInfo : this.entityInfoList) {
              BlockPos blockPos = transform(structureEntityInfo.blockPos, mirror, rotation, offset).offset(pos);
              if (boundingBox == null || boundingBox.isInside(blockPos)) {
-@@ -527,6 +581,62 @@ public class StructureTemplate {
+@@ -538,6 +592,63 @@ public class StructureTemplate {
  
      }
  
@@ -932,15 +919,16 @@ index bb8b5ca9044ecb33687e7f20cfb0acbf55f887c7..862203e3f9433ce876d45d55da65332d
 +     * Attempts to create an entity from a CompoundTag.
 +     * If the entity cannot be created, returns an empty Optional.
 +     */
-+    private static Optional<Entity> tryCreateEntity(ServerLevelAccessor serverLevelAccessor, CompoundTag compoundTag) {
++    private static Optional<Entity> tryCreateEntity(ProblemReporter problemReporter, ServerLevelAccessor serverLevelAccessor, CompoundTag compoundTag) {
 +        try {
-+            return EntityType.create(compoundTag, serverLevelAccessor.getLevel(), EntitySpawnReason.STRUCTURE);
++            net.minecraft.world.level.storage.ValueInput valueInput = TagValueInput.create(problemReporter, serverLevelAccessor.registryAccess(), compoundTag);
++            return EntityType.create(valueInput, serverLevelAccessor.getLevel(), EntitySpawnReason.STRUCTURE);
 +        } catch (Exception exception) {
 +            return Optional.empty();
 +        }
 +    }
 +    // KioCG end
 +
-     private static Optional<Entity> createEntityIgnoreException(ServerLevelAccessor level, CompoundTag tag) {
+     private static Optional<Entity> createEntityIgnoreException(ProblemReporter problemReporter, ServerLevelAccessor level, CompoundTag tag) {
          // CraftBukkit start
          // try {

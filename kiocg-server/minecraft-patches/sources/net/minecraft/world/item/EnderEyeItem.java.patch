@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/EnderEyeItem.java
 +++ b/net/minecraft/world/item/EnderEyeItem.java
-@@ -53,8 +_,11 @@
+@@ -54,8 +_,11 @@
              context.getItemInHand().shrink(1);
              level.levelEvent(1503, clickedPos, 0);
              BlockPattern.BlockPatternMatch blockPatternMatch = EndPortalFrameBlock.getOrCreatePortalShape().find(level, clickedPos);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
-@@ -37,6 +_,8 @@
+@@ -38,6 +_,8 @@
          TamableAnimal.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE
      );
      private boolean orderedToSit = false;
@@ -9,23 +9,23 @@
  
      protected TamableAnimal(EntityType<? extends TamableAnimal> entityType, Level level) {
          super(entityType, level);
-@@ -58,6 +_,7 @@
-         }
- 
-         compound.putBoolean("Sitting", this.orderedToSit);
-+        compound.putBoolean("KioCG.FollowOwner", this.followOwner); // KioCG - pet follow owner api
+@@ -56,6 +_,7 @@
+         EntityReference<LivingEntity> ownerReference = this.getOwnerReference();
+         EntityReference.store(ownerReference, output, "Owner");
+         output.putBoolean("Sitting", this.orderedToSit);
++        output.putBoolean("KioCG.FollowOwner", this.followOwner); // KioCG - pet follow owner api
      }
  
      @Override
-@@ -78,6 +_,7 @@
+@@ -76,6 +_,7 @@
  
-         this.orderedToSit = compound.getBooleanOr("Sitting", false);
+         this.orderedToSit = input.getBooleanOr("Sitting", false);
          this.setInSittingPose(this.orderedToSit, false); // Paper - Add EntityToggleSitEvent
-+        this.followOwner = compound.getBooleanOr("KioCG.FollowOwner", true); // KioCG - pet follow owner api
++        this.followOwner = input.getBooleanOr("KioCG.FollowOwner", true); // KioCG - pet follow owner api
      }
  
      @Override
-@@ -146,6 +_,7 @@
+@@ -123,6 +_,7 @@
          if (applyTamingSideEffects) {
              this.applyTamingSideEffects();
          }
@@ -33,7 +33,7 @@
      }
  
      protected void applyTamingSideEffects() {
-@@ -256,13 +_,86 @@
+@@ -233,13 +_,86 @@
          super.die(cause);
      }
  
@@ -121,7 +121,7 @@
  
      public void tryToTeleportToOwner() {
          LivingEntity owner = this.getOwner();
-@@ -273,15 +_,18 @@
+@@ -250,15 +_,18 @@
  
      public boolean shouldTryTeleportToOwner() {
          LivingEntity owner = this.getOwner();
@@ -145,7 +145,7 @@
                  if (this.maybeTeleportTo(pos.getX() + randomInt, pos.getY() + randomInt2, pos.getZ() + randomInt1)) {
                      return;
                  }
-@@ -322,6 +_,7 @@
+@@ -299,6 +_,7 @@
      }
  
      public final boolean unableToMoveToOwner() {
@@ -153,7 +153,7 @@
          return this.isOrderedToSit() || this.isPassenger() || this.mayBeLeashed() || this.getOwner() != null && this.getOwner().isSpectator();
      }
  
-@@ -337,6 +_,13 @@
+@@ -314,6 +_,13 @@
          public TamableAnimalPanicGoal(final double speedModifier) {
              super(TamableAnimal.this, speedModifier);
          }

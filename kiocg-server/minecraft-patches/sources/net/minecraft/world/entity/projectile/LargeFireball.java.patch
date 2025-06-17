@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -19,20 +_,20 @@
+@@ -20,20 +_,20 @@
  
      public LargeFireball(EntityType<? extends LargeFireball> entityType, Level level) {
          super(entityType, level);

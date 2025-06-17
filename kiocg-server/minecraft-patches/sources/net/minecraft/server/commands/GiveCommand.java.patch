@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/commands/GiveCommand.java
 +++ b/net/minecraft/server/commands/GiveCommand.java
-@@ -61,10 +_,20 @@
+@@ -64,10 +_,20 @@
              for (ServerPlayer serverPlayer : targets) {
                  int i1 = count;
  
@@ -22,4 +22,4 @@
 +                    ItemStack itemStack1 = itemStackOversized.split(min); // KioCG - give command event
                      boolean flag = serverPlayer.getInventory().add(itemStack1);
                      if (flag && itemStack1.isEmpty()) {
-                         ItemEntity itemEntity = serverPlayer.drop(itemStack, false, false, false, null); // Paper - do not fire PlayerDropItemEvent for /give command
+                         ItemEntity itemEntity = serverPlayer.drop(itemStack, false);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
-@@ -23,6 +_,12 @@
+@@ -24,6 +_,12 @@
      protected int forcedAge = 0;
      protected int forcedAgeTimer;
      public boolean ageLocked; // CraftBukkit
@@ -13,7 +13,7 @@
  
      protected AgeableMob(EntityType<? extends AgeableMob> entityType, Level level) {
          super(entityType, level);
-@@ -69,6 +_,8 @@
+@@ -70,6 +_,8 @@
      }
  
      public void ageUp(int amount, boolean forced) {
@@ -21,8 +21,8 @@
 +
          if (this.ageLocked) return; // Paper - Honor ageLock
          int age = this.getAge();
-         int previousAge = age; // Paper - Decompile fix: lvt reassignment lost
-@@ -95,6 +_,19 @@
+         int previousAge = age;
+@@ -96,6 +_,19 @@
          this.ageUp(amount, false);
      }
  
@@ -42,7 +42,7 @@
      public void setAge(int age) {
          int age1 = this.getAge();
          this.age = age;
-@@ -104,12 +_,42 @@
+@@ -105,12 +_,42 @@
          }
      }
  
@@ -71,34 +71,34 @@
 +    // KioCG end - breeding animals
 +
      @Override
-     public void addAdditionalSaveData(CompoundTag compound) {
-         super.addAdditionalSaveData(compound);
-         compound.putInt("Age", this.getAge());
-         compound.putInt("ForcedAge", this.forcedAge);
-         compound.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
+     protected void addAdditionalSaveData(ValueOutput output) {
+         super.addAdditionalSaveData(output);
+         output.putInt("Age", this.getAge());
+         output.putInt("ForcedAge", this.forcedAge);
+         output.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
 +        // KioCG start - breeding animals
-+        compound.putInt("KioCG.SurvivalDays", this.survivalDays);
-+        compound.putInt("KioCG.FeedingDays", this.feedingDays);
-+        compound.putInt("KioCG.FeedingToday", this.feedingToday);
-+        compound.putInt("KioCG.ProduceToday", this.produceToday);
++        output.putInt("KioCG.SurvivalDays", this.survivalDays);
++        output.putInt("KioCG.FeedingDays", this.feedingDays);
++        output.putInt("KioCG.FeedingToday", this.feedingToday);
++        output.putInt("KioCG.ProduceToday", this.produceToday);
 +        // KioCG end - breeding animals
      }
  
      @Override
-@@ -118,6 +_,12 @@
-         this.setAge(compound.getIntOr("Age", 0));
-         this.forcedAge = compound.getIntOr("ForcedAge", 0);
-         this.ageLocked = compound.getBooleanOr("AgeLocked", false); // CraftBukkit
+@@ -119,6 +_,12 @@
+         this.setAge(input.getIntOr("Age", 0));
+         this.forcedAge = input.getIntOr("ForcedAge", 0);
+         this.ageLocked = input.getBooleanOr("AgeLocked", false); // CraftBukkit
 +        // KioCG start - breeding animals
-+        this.survivalDays = compound.getIntOr("KioCG.SurvivalDays", 0);
-+        this.feedingDays = compound.getIntOr("KioCG.FeedingDays", 0);
-+        this.feedingToday = compound.getIntOr("KioCG.FeedingToday", 0);
-+        this.produceToday = compound.getIntOr("KioCG.ProduceToday", 0);
++        this.survivalDays = input.getIntOr("KioCG.SurvivalDays", 0);
++        this.feedingDays = input.getIntOr("KioCG.FeedingDays", 0);
++        this.feedingToday = input.getIntOr("KioCG.FeedingToday", 0);
++        this.produceToday = input.getIntOr("KioCG.ProduceToday", 0);
 +        // KioCG end - breeding animals
      }
  
      @Override
-@@ -138,7 +_,7 @@
+@@ -139,7 +_,7 @@
          } else {
              int age = this.getAge();
              if (age < 0) {
@@ -107,7 +107,7 @@
              } else if (age > 0) {
                  this.setAge(--age);
              }
-@@ -160,10 +_,19 @@
+@@ -161,10 +_,19 @@
          } else if (this.isAlive()) {
              int age = this.getAge();
              if (age < 0) {
@@ -128,7 +128,7 @@
          }
      }
  
-@@ -179,7 +_,10 @@
+@@ -180,7 +_,10 @@
      }
  
      @Override

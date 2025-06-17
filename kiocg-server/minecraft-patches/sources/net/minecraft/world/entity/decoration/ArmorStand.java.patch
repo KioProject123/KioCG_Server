@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -243,7 +_,7 @@
+@@ -201,7 +_,7 @@
      }
  
      @Override
@@ -9,7 +9,7 @@
          if (!this.level().paperConfig().entities.armorStands.doCollisionEntityLookups) return; // Paper - Option to prevent armor stands from doing entity lookups
          for (Entity entity : this.level().getEntitiesOfClass(AbstractMinecart.class, this.getBoundingBox(), RIDABLE_MINECARTS)) { // Paper - optimise collisions
              if (this.distanceToSqr(entity) <= 0.2) {
-@@ -355,7 +_,7 @@
+@@ -313,7 +_,7 @@
      public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
          if (this.isRemoved()) {
              return false;

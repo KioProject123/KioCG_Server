@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Inventory.java
 +++ b/net/minecraft/world/entity/player/Inventory.java
-@@ -325,11 +_,12 @@
+@@ -342,11 +_,12 @@
          }
      }
  
@@ -14,7 +14,7 @@
              }
          }
      }
-@@ -343,7 +_,7 @@
+@@ -360,7 +_,7 @@
              return false;
          } else {
              try {

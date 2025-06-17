@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
-@@ -199,6 +_,13 @@
+@@ -217,6 +_,13 @@
          return this.getSnapshot().persistentDataContainer;
      }
  

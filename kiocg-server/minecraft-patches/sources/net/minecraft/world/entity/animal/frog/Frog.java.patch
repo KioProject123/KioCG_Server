@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/frog/Frog.java
 +++ b/net/minecraft/world/entity/animal/frog/Frog.java
-@@ -282,7 +_,7 @@
+@@ -283,7 +_,7 @@
      }
  
      @Override

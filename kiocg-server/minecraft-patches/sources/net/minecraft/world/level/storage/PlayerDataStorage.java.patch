@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -33,6 +_,11 @@
+@@ -34,6 +_,11 @@
      public void save(Player player) {
          if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
-         try {
+         try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(player.problemPath(), LOGGER)) {
 +            // KioCG start - food freshness
 +            java.util.function.Consumer<net.minecraft.world.item.ItemStack> tickFood = item -> item.tickFoodDeep(player.level().getGameTime(), true);
 +            player.getInventory().getNonEquipmentItems().forEach(tickFood);
 +            player.getEnderChestInventory().getItems().forEach(tickFood);
 +            // KioCG end - food freshness
-             CompoundTag compoundTag = player.saveWithoutId(new CompoundTag());
+             TagValueOutput tagValueOutput = TagValueOutput.createWithContext(scopedCollector, player.registryAccess());
+             player.saveWithoutId(tagValueOutput);
              Path path = this.playerDir.toPath();
-             Path path1 = Files.createTempFile(path, player.getStringUUID() + "-", ".dat");
-@@ -100,6 +_,11 @@
-             }
+@@ -104,6 +_,11 @@
  
-             player.load(tag); // From below
+             ValueInput valueInput = TagValueInput.create(problemReporter, player.registryAccess(), tag);
+             player.load(valueInput); // From below
 +            // KioCG start - food freshness
 +            java.util.function.Consumer<net.minecraft.world.item.ItemStack> tickFood = item -> item.tickFoodDeep(player.level().getGameTime(), false);
 +            player.getInventory().getNonEquipmentItems().forEach(tickFood);
 +            player.getEnderChestInventory().getItems().forEach(tickFood);
 +            // KioCG end - food freshness
-             return tag;
+             return valueInput;
          });
      }

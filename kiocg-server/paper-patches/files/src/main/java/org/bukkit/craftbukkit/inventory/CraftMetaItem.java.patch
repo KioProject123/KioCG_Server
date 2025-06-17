@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
-@@ -767,7 +_,12 @@
+@@ -769,7 +_,12 @@
                  CraftMetaItem.getOrEmpty(unhandledPatch, CraftMetaItem.CAN_BREAK).ifPresent(data -> {
                      this.canBreakPredicates = List.copyOf(data.predicates);
                  });
@@ -14,7 +14,7 @@
  
                  for (Entry<DataComponentType<?>, Optional<?>> entry : unhandledPatch.entrySet()) {
                      // Move removed unhandled tags to dedicated removedTags
-@@ -1635,7 +_,7 @@
+@@ -1637,7 +_,7 @@
  
      @Override
      public FoodComponent getFood() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 +++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-@@ -413,7 +_,10 @@
+@@ -424,7 +_,10 @@
      }
  
      @Override

@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/inventory/CrafterMenu.java
 @@ -122,9 +_,16 @@
          if (this.player instanceof ServerPlayer serverPlayer) {
-             ServerLevel serverLevel = serverPlayer.serverLevel();
+             ServerLevel serverLevel = serverPlayer.level();
              CraftingInput craftInput = this.container.asCraftInput();
 -            ItemStack itemStack = CrafterBlock.getPotentialResults(serverLevel, craftInput)
 +            // KioCG start - call PrepareItemCraftEvent for crafter

@@ -4,16 +4,16 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
-+import net.minecraft.core.HolderLookup;
 +import net.minecraft.core.component.DataComponentGetter;
 +import net.minecraft.core.component.DataComponentMap;
 +import net.minecraft.core.component.DataComponents;
-+import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.world.Container;
 +import net.minecraft.world.entity.player.Inventory;
 +import net.minecraft.world.inventory.AbstractContainerMenu;
 +import net.minecraft.world.inventory.ChestMenu;
 +import net.minecraft.world.level.block.state.BlockState;
++import net.minecraft.world.level.storage.ValueInput;
++import net.minecraft.world.level.storage.ValueOutput;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryCloseEvent;
 +
@@ -78,21 +78,21 @@
 +    }
 +
 +    @Override
-+    public void removeComponentsFromTag(CompoundTag tag) {
-+        super.removeComponentsFromTag(tag);
-+        tag.remove("KioCG.Rows");
++    public void removeComponentsFromTag(ValueOutput output) {
++        super.removeComponentsFromTag(output);
++        output.discard("KioCG.Rows");
 +    }
 +
 +    @Override
-+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-+        super.loadAdditional(tag, registries);
-+        this.rows = tag.getIntOr("KioCG.Rows", getDefaultRows());
++    protected void loadAdditional(ValueInput input) {
++        super.loadAdditional(input);
++        this.rows = input.getIntOr("KioCG.Rows", getDefaultRows());
 +    }
 +
 +    @Override
-+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-+        super.saveAdditional(tag, registries);
-+        tag.putInt("KioCG.Rows", this.rows);
++    protected void saveAdditional(ValueOutput output) {
++        super.saveAdditional(output);
++        output.putInt("KioCG.Rows", this.rows);
 +    }
 +}
 +// KioCG end - expand container rows: all class

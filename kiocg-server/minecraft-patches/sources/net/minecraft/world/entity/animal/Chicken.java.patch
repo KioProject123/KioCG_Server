@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Chicken.java
 +++ b/net/minecraft/world/entity/animal/Chicken.java
-@@ -67,7 +_,7 @@
+@@ -68,7 +_,7 @@
  
      public Chicken(EntityType<? extends Chicken> entityType, Level level) {
          super(entityType, level);
@@ -9,7 +9,7 @@
          this.setPathfindingMalus(PathType.WATER, 0.0F);
      }
  
-@@ -110,7 +_,7 @@
+@@ -111,7 +_,7 @@
          }
  
          this.flap = this.flap + this.flapping * 2.0F;
@@ -18,7 +18,7 @@
              this.forceDrops = true; // CraftBukkit
              if (this.dropFromGiftLootTable(serverLevel, BuiltInLootTables.CHICKEN_LAY, this::spawnAtLocation)) {
                  this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-@@ -118,7 +_,8 @@
+@@ -119,7 +_,8 @@
              }
              this.forceDrops = false; // CraftBukkit
  

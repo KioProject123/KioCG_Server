@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Display.java
 +++ b/net/minecraft/world/entity/Display.java
-@@ -233,6 +_,77 @@
+@@ -231,6 +_,77 @@
          this.entityData.set(DATA_RIGHT_ROTATION_ID, transformation.getRightRotation());
      }
  
@@ -76,5 +76,5 @@
 +    // KioCG end - more general methods
 +
      @Override
-     protected void addAdditionalSaveData(CompoundTag tag) {
-         tag.store("transformation", Transformation.EXTENDED_CODEC, createTransformation(this.entityData));
+     protected void addAdditionalSaveData(ValueOutput output) {
+         output.store("transformation", Transformation.EXTENDED_CODEC, createTransformation(this.entityData));

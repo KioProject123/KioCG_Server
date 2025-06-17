@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
-@@ -26,6 +_,38 @@
+@@ -27,6 +_,38 @@
      private static final boolean DEFAULT_SHOW_BOTTOM = true;
      public int time;
      public boolean generatedByDragonFight = false; // Paper - Fix invulnerable end crystals
@@ -39,7 +39,7 @@
  
      public EndCrystal(EntityType<? extends EndCrystal> entityType, Level level) {
          super(entityType, level);
-@@ -74,13 +_,74 @@
+@@ -75,13 +_,74 @@
              }
          }
          // Paper end - Fix invulnerable end crystals
@@ -96,34 +96,40 @@
 +    // KioCG end - end crystal turret
  
      @Override
-     protected void addAdditionalSaveData(CompoundTag compound) {
-         compound.storeNullable("beam_target", BlockPos.CODEC, this.getBeamTarget());
-         compound.putBoolean("ShowBottom", this.showsBottom());
-         compound.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
+     protected void addAdditionalSaveData(ValueOutput output) {
+         output.storeNullable("beam_target", BlockPos.CODEC, this.getBeamTarget());
+         output.putBoolean("ShowBottom", this.showsBottom());
+         output.putBoolean("Paper.GeneratedByDragonFight", this.generatedByDragonFight); // Paper - Fix invulnerable end crystals
 +
 +        // KioCG start - end crystal turret
 +        if (this.turretCooldown != null) {
-+            compound.putInt("KioCG.TurretCooldown", this.turretCooldown);
++            output.putInt("KioCG.TurretCooldown", this.turretCooldown);
 +        }
 +        if (this.turretRange != null) {
-+            compound.putDouble("KioCG.TurretRange", this.turretRange);
++            output.putDouble("KioCG.TurretRange", this.turretRange);
 +        }
 +        if (this.turretDamage != null) {
-+            compound.putDouble("KioCG.TurretDamage", this.turretDamage);
++            output.putDouble("KioCG.TurretDamage", this.turretDamage);
 +        }
 +        // KioCG end - end crystal turret
      }
  
      @Override
-@@ -88,6 +_,12 @@
-         this.setBeamTarget(compound.read("beam_target", BlockPos.CODEC).orElse(null));
-         this.setShowBottom(compound.getBooleanOr("ShowBottom", true));
-         this.generatedByDragonFight = compound.getBooleanOr("Paper.GeneratedByDragonFight", false); // Paper - Fix invulnerable end crystals
+@@ -89,6 +_,18 @@
+         this.setBeamTarget(input.read("beam_target", BlockPos.CODEC).orElse(null));
+         this.setShowBottom(input.getBooleanOr("ShowBottom", true));
+         this.generatedByDragonFight = input.getBooleanOr("Paper.GeneratedByDragonFight", false); // Paper - Fix invulnerable end crystals
 +
 +        // KioCG start - end crystal turret
-+        compound.getInt("KioCG.TurretCooldown").ifPresent(cooldown -> this.turretCooldown = cooldown);
-+        compound.getDouble("KioCG.TurretRange").ifPresent(range -> this.turretRange = range);
-+        compound.getDouble("KioCG.TurretDamage").ifPresent(damage -> this.turretDamage = damage);
++        input.getInt("KioCG.TurretCooldown").ifPresent(cooldown -> this.turretCooldown = cooldown);
++        double turretRange;
++        if ((turretRange = input.getDoubleOr("KioCG.TurretRange", -1.0)) >= 0.0) {
++            this.turretRange = turretRange;
++        }
++        double turretDamage;
++        if ((turretDamage = input.getDoubleOr("KioCG.TurretDamage", -1.0)) >= 0.0) {
++            this.turretDamage = turretDamage;
++        }
 +        // KioCG end - end crystal turret
      }
  

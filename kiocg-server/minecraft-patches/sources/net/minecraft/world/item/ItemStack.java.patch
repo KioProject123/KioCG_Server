@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -104,17 +_,54 @@
+@@ -101,17 +_,54 @@
          Component.translatable("item.op_warning.line3").withStyle(ChatFormatting.RED)
      );
      private static final Component UNBREAKABLE_TOOLTIP = Component.translatable("item.unbreakable").withStyle(ChatFormatting.BLUE);
@@ -61,7 +61,7 @@
      public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(MAP_CODEC::codec);
      public static final Codec<ItemStack> SINGLE_ITEM_CODEC = Codec.lazyInitialized(
          () -> RecordCodecBuilder.create(
-@@ -192,6 +_,20 @@
+@@ -189,6 +_,20 @@
                  } else {
                      Holder<Item> holder = Item.STREAM_CODEC.decode(buffer);
                      DataComponentPatch dataComponentPatch = codec.decode(buffer);
@@ -70,7 +70,7 @@
 +                        @Nullable Optional<? extends CustomData> optional = dataComponentPatch.get(DataComponents.CUSTOM_DATA);
 +                        if (optional != null && optional.isPresent()) {
 +                            Optional<DataComponentPatch> originalComponents = optional.flatMap(customData -> {
-+                                RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
++                                RegistryOps<net.minecraft.nbt.Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
 +                                return customData.getUnsafe().read("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps);
 +                            });
 +                            if (originalComponents.isPresent()) {
@@ -82,7 +82,7 @@
                      return new ItemStack(holder, varInt, dataComponentPatch);
                  }
              }
-@@ -207,7 +_,7 @@
+@@ -204,7 +_,7 @@
                      boolean prev = net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.get();
                      try (final io.papermc.paper.util.SafeAutoClosable ignored = io.papermc.paper.util.sanitizer.ItemObfuscationSession.withContext(c -> c.itemStack(value))) { // pass the itemstack as context to the obfuscation session
                          net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(true);
@@ -91,7 +91,7 @@
                      } finally {
                          net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(prev);
                      }
-@@ -254,6 +_,54 @@
+@@ -251,6 +_,54 @@
          return !this.isEmpty() ? this.components.asPatch() : DataComponentPatch.EMPTY;
      }
  
@@ -114,7 +114,7 @@
 +            changed |= saveAdditional(builder);
 +            if (changed) {
 +                net.minecraft.nbt.CompoundTag compoundTag = new net.minecraft.nbt.CompoundTag();
-+                RegistryOps<Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(NbtOps.INSTANCE);
++                RegistryOps<net.minecraft.nbt.Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
 +                compoundTag.store("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps, patch);
 +                builder.set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
 +            }
@@ -146,7 +146,7 @@
      public DataComponentMap immutableComponents() {
          return !this.isEmpty() ? this.components.toImmutableMap() : DataComponentMap.EMPTY;
      }
-@@ -295,7 +_,7 @@
+@@ -292,7 +_,7 @@
      }
  
      public static DataResult<Unit> validateComponents(DataComponentMap components) {
@@ -155,7 +155,7 @@
              return DataResult.error(() -> "Item cannot be both damageable and stackable");
          } else {
              ItemContainerContents itemContainerContents = components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-@@ -380,6 +_,16 @@
+@@ -372,6 +_,16 @@
          if (player != null && !player.getAbilities().mayBuild && !this.canPlaceOnBlockInAdventureMode(new BlockInWorld(context.getLevel(), clickedPos, false))) {
              return InteractionResult.PASS;
          } else {
@@ -172,7 +172,7 @@
              Item item = this.getItem();
              // CraftBukkit start - handle all block place event logic here
              DataComponentPatch previousPatch = this.components.asPatch();
-@@ -606,7 +_,7 @@
+@@ -582,7 +_,7 @@
      }
  
      public boolean isStackable() {
@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -892,8 +_,167 @@
+@@ -872,8 +_,167 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -351,8 +351,8 @@
  
      public static MapCodec<ItemStack> lenientOptionalFieldOf(String fieldName) {
          return CODEC.lenientOptionalFieldOf(fieldName)
-@@ -1276,6 +_,12 @@
-         EnchantmentHelper.updateEnchantments(this, enchantments -> enchantments.upgrade(enchantment, level));
+@@ -1206,6 +_,12 @@
+         EnchantmentHelper.updateEnchantments(this, mutable -> mutable.upgrade(enchantment, level));
      }
  
 +    // KioCG start - allow unsafe enchant
@@ -364,7 +364,7 @@
      public boolean isEnchanted() {
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
-@@ -1284,6 +_,14 @@
+@@ -1214,6 +_,14 @@
          return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
      }
  
@@ -379,7 +379,7 @@
      public boolean isFramed() {
          return this.entityRepresentation instanceof ItemFrame;
      }
-@@ -1415,6 +_,15 @@
+@@ -1347,6 +_,15 @@
  
      public boolean isValidRepairItem(ItemStack item) {
          Repairable repairable = this.get(DataComponents.REPAIRABLE);

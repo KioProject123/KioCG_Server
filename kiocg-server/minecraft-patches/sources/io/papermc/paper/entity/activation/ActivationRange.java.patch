@@ -1,6 +1,6 @@
 --- a/io/papermc/paper/entity/activation/ActivationRange.java
 +++ b/io/papermc/paper/entity/activation/ActivationRange.java
-@@ -142,14 +_,16 @@
+@@ -148,14 +_,16 @@
              }
  
              final int worldHeight = world.getHeight();
@@ -23,9 +23,9 @@
 +            ActivationType.VILLAGER.boundingBox = getActivationRange(player, villagerActivationRange, 0);
 +            // KioCG end - optimize entity activation range
  
-             final java.util.List<Entity> entities = world.getEntities((Entity) null, ActivationRange.maxBB, e -> true);
+             final List<Entity> entities = world.getEntities((Entity) null, ActivationRange.maxBB, e -> true);
              final boolean tickMarkers = world.paperConfig().entities.markers.tick;
-@@ -163,6 +_,32 @@
+@@ -169,6 +_,32 @@
          }
      }
  
@@ -58,7 +58,7 @@
      /**
       * Tries to activate an entity.
       *
-@@ -203,11 +_,17 @@
+@@ -209,11 +_,17 @@
          if ((entity.activationType != ActivationType.WATER && entity.isInWater() && entity.isPushedByFluid())) {
              return 100;
          }
@@ -67,7 +67,7 @@
              return 100;
          }
          if (!(entity instanceof final AbstractArrow arrow)) {
-             if ((!entity.onGround() && !(entity instanceof FlyingMob))) {
+             if ((!entity.onGround() && !isEntityThatFlies(entity))) {
 +                // KioCG start - radical optimization
 +                if (!(entity instanceof net.minecraft.world.entity.animal.WaterAnimal) && !(entity instanceof net.minecraft.world.entity.animal.axolotl.Axolotl) && !(entity instanceof net.minecraft.world.entity.animal.Turtle)
 +                    && !(entity instanceof net.minecraft.world.entity.animal.FlyingAnimal) && !(entity instanceof net.minecraft.world.entity.animal.allay.Allay)
@@ -76,7 +76,7 @@
                  return 10;
              }
          } else if (!arrow.isInGround()) {
-@@ -251,7 +_,7 @@
+@@ -257,7 +_,7 @@
                  return 1;
              }
              if (entity instanceof final Animal animal) {

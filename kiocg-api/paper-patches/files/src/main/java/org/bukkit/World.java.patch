@@ -9,7 +9,7 @@
  
      // Paper start - void damage configuration
      /**
-@@ -4384,6 +_,78 @@
+@@ -4402,6 +_,78 @@
       */
      @NotNull
      public Collection<GeneratedStructure> getStructures(int x, int z, @NotNull Structure structure);

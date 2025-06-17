@@ -70,15 +70,15 @@
      public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
 @@ -80,12 +_,13 @@
      @Override
-     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-         super.loadAdditional(tag, registries);
+     protected void loadAdditional(ValueInput input) {
+         super.loadAdditional(input);
 -        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 +        this.items = withSize(this.getContainerSize(), ItemStack.EMPTY); // KioCG - optimize block entity
-         if (!this.tryLoadLootTable(tag)) {
-             ContainerHelper.loadAllItems(tag, this.items, registries);
+         if (!this.tryLoadLootTable(input)) {
+             ContainerHelper.loadAllItems(input, this.items);
          }
  
-         this.cooldownTime = tag.getIntOr("TransferCooldown", -1);
+         this.cooldownTime = input.getIntOr("TransferCooldown", -1);
 +        this.itemFilter = this.hasCustomName() ? HopperBlockEntity.parseItemFilter(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(this.getCustomName())) : null; // KioCG - hopper filter
      }
  

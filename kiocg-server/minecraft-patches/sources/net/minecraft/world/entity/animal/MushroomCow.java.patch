@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -92,6 +_,13 @@
+@@ -93,6 +_,13 @@
      public InteractionResult mobInteract(Player player, InteractionHand hand) {
          ItemStack itemInHand = player.getItemInHand(hand);
          if (itemInHand.is(Items.BOWL) && !this.isBaby()) {
@@ -14,7 +14,7 @@
              boolean flag = false;
              ItemStack itemStack;
              if (this.stewEffects != null) {
-@@ -104,6 +_,7 @@
+@@ -105,6 +_,7 @@
              }
  
              ItemStack itemStack1 = ItemUtils.createFilledResult(itemInHand, player, itemStack, false);

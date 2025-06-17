@@ -50,21 +50,21 @@ public class PharaohUtil {
         return false;
     }
 
-    public static boolean isPharaoh(CompoundTag mobNbt, RegistryAccess registryAccess) {
-        if (!mobNbt.getString("id").get().equals("minecraft:husk")) return false;
-
-        ListTag armorItems = mobNbt.getListOrEmpty("ArmorItems");
-        if (armorItems.size() != 4) return false;
-
-        CompoundTag helmetTag = armorItems.getCompoundOrEmpty(3);
-        ItemStack helmetItemStack = ItemStack.parse(registryAccess, helmetTag).get();
-        if (!helmetItemStack.is(Items.PLAYER_HEAD)) return false;
-
-        ResolvableProfile profile = helmetItemStack.get(DataComponents.PROFILE);
-        return profile != null && profile.properties().values().stream()
-                .filter(property -> property.name().equals("textures"))
-                .anyMatch(property -> property.value().equals(PHARAOH_HEAD_TEXTURE));
-    }
+    // public static boolean isPharaoh(CompoundTag mobNbt, RegistryAccess registryAccess) {
+    //     if (!mobNbt.getString("id").get().equals("minecraft:husk")) return false;
+    //
+    //     ListTag armorItems = mobNbt.getListOrEmpty("ArmorItems");
+    //     if (armorItems.size() != 4) return false;
+    //
+    //     CompoundTag helmetTag = armorItems.getCompoundOrEmpty(3);
+    //     ItemStack helmetItemStack = ItemStack.parse(registryAccess, helmetTag).get();
+    //     if (!helmetItemStack.is(Items.PLAYER_HEAD)) return false;
+    //
+    //     ResolvableProfile profile = helmetItemStack.get(DataComponents.PROFILE);
+    //     return profile != null && profile.properties().values().stream()
+    //             .filter(property -> property.name().equals("textures"))
+    //             .anyMatch(property -> property.value().equals(PHARAOH_HEAD_TEXTURE));
+    // }
 
     // public static void attachSpawnPos(CompoundTag mobNbt, Vec3 pos) {
     //     ListTag spawnPos = new ListTag();

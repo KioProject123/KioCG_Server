@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -122,9 +_,11 @@
+@@ -123,9 +_,11 @@
      private long lastGossipDecayTime = 0L;
      private int villagerXp = 0;
      private long lastRestockGameTime = 0L;
@@ -12,7 +12,7 @@
      private static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(
          MemoryModuleType.HOME,
          MemoryModuleType.JOB_SITE,
-@@ -160,12 +_,12 @@
+@@ -161,12 +_,12 @@
      private static final ImmutableList<SensorType<? extends Sensor<? super Villager>>> SENSOR_TYPES = ImmutableList.of(
          SensorType.NEAREST_LIVING_ENTITIES,
          SensorType.NEAREST_PLAYERS,
@@ -28,7 +28,7 @@
          SensorType.GOLEM_DETECTED
      );
      public static final Map<MemoryModuleType<GlobalPos>, BiPredicate<Villager, Holder<PoiType>>> POI_MEMORIES = ImmutableMap.of(
-@@ -227,11 +_,13 @@
+@@ -228,11 +_,13 @@
              villagerBrain.addActivity(Activity.PLAY, VillagerGoalPackages.getPlayPackage(0.5F));
          } else {
              villagerBrain.setSchedule(Schedule.VILLAGER_DEFAULT);
@@ -47,7 +47,7 @@
          }
  
          villagerBrain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(holder, 0.5F));
-@@ -292,22 +_,32 @@
+@@ -293,22 +_,32 @@
          // Paper start - EAR 2
          this.customServerAiStep(level, false);
      }
@@ -82,7 +82,7 @@
                  }
  
                  this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
-@@ -327,9 +_,21 @@
+@@ -328,9 +_,21 @@
              }
          }
  
@@ -106,7 +106,7 @@
  
          if (inactive) return; // Paper - EAR 2
          super.customServerAiStep(level);
-@@ -383,6 +_,7 @@
+@@ -384,6 +_,7 @@
      }
  
      private void startTrading(Player player) {
@@ -114,7 +114,7 @@
          this.updateSpecialPrices(player);
          this.setTradingPlayer(player);
          this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().level());
-@@ -463,6 +_,7 @@
+@@ -464,6 +_,7 @@
      }
  
      public boolean shouldRestock() {
@@ -122,7 +122,7 @@
          long l = this.lastRestockGameTime + 12000L;
          long gameTime = this.level().getGameTime();
          boolean flag = gameTime > l;
-@@ -478,7 +_,15 @@
+@@ -479,7 +_,15 @@
              this.lastRestockGameTime = gameTime;
              this.resetNumberOfRestocks();
          }
@@ -138,25 +138,25 @@
          return this.allowedToRestock() && this.needsToRestock();
      }
  
-@@ -555,6 +_,8 @@
+@@ -556,6 +_,8 @@
          if (this.assignProfessionWhenSpawned) {
-             compound.putBoolean("AssignProfessionWhenSpawned", true);
+             output.putBoolean("AssignProfessionWhenSpawned", true);
          }
-+        compound.putBoolean("KioCG.Lobotomized", this.lobotomized.isLobotomized); // KioCG - lobotomized villager
-+        compound.putInt("KioCG.LastRestockDays", this.lastRestockDays); // KioCG - villager restock every day
++        output.putBoolean("KioCG.Lobotomized", this.lobotomized.isLobotomized); // KioCG - lobotomized villager
++        output.putInt("KioCG.LastRestockDays", this.lastRestockDays); // KioCG - villager restock every day
      }
  
      @Override
-@@ -573,6 +_,8 @@
+@@ -574,6 +_,8 @@
  
-         this.numberOfRestocksToday = compound.getIntOr("RestocksToday", 0);
-         this.assignProfessionWhenSpawned = compound.getBooleanOr("AssignProfessionWhenSpawned", false);
-+        this.lobotomized.isLobotomized = compound.getBooleanOr("KioCG.Lobotomized", false); // KioCG - lobotomized villager
-+        this.lastRestockDays = compound.getIntOr("KioCG.LastRestockDays", 0); // KioCG - villager restock every day
+         this.numberOfRestocksToday = input.getIntOr("RestocksToday", 0);
+         this.assignProfessionWhenSpawned = input.getBooleanOr("AssignProfessionWhenSpawned", false);
++        this.lobotomized.isLobotomized = input.getBooleanOr("KioCG.Lobotomized", false); // KioCG - lobotomized villager
++        this.lastRestockDays = input.getIntOr("KioCG.LastRestockDays", 0); // KioCG - villager restock every day
      }
  
      @Override
-@@ -697,6 +_,7 @@
+@@ -698,6 +_,7 @@
  
      @Override
      public boolean canBreed() {
@@ -164,7 +164,7 @@
          return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
      }
  
-@@ -891,6 +_,7 @@
+@@ -892,6 +_,7 @@
                  if (itemListings != null) {
                      MerchantOffers offers = this.getOffers();
                      this.addOffersFromItemListings(offers, itemListings, amount); // Paper - More vanilla friendly methods to update trades

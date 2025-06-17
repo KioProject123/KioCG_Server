@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -339,6 +_,12 @@
+@@ -360,6 +_,12 @@
      // Paper start
      public @Nullable Vec3 origin;
      public @Nullable UUID originWorld;
@@ -13,7 +13,7 @@
      // Paper end
      public boolean freezeLocked = false; // Paper - Freeze Tick Lock API
      public boolean fixedPose = false; // Paper - Expand Pose API
-@@ -2175,7 +_,11 @@
+@@ -2245,7 +_,11 @@
                          this.push(-d, 0.0, -d1);
                      }
  
@@ -26,7 +26,7 @@
                          entity.push(d, 0.0, d1);
                      }
                  }
-@@ -3411,6 +_,7 @@
+@@ -3606,6 +_,7 @@
      }
  
      public int getAirSupply() {
@@ -34,7 +34,7 @@
          return this.entityData.get(DATA_AIR_SUPPLY_ID);
      }
  
-@@ -3425,6 +_,7 @@
+@@ -3620,6 +_,7 @@
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
@@ -42,7 +42,7 @@
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
-@@ -4964,6 +_,12 @@
+@@ -5200,6 +_,12 @@
          return this.level;
      }
  
@@ -55,7 +55,7 @@
      public void setLevel(Level level) {
          this.level = level;
      }
-@@ -5118,4 +_,10 @@
+@@ -5365,4 +_,10 @@
          return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
      }
      // Paper end - Expose entity id counter

@@ -31,7 +31,7 @@
          // CraftBukkit start - tree generation
          if (this.captureTreeGeneration) {
              // Paper start - Protect Bedrock and End Portal/Frames from being destroyed
-@@ -1878,6 +_,12 @@
+@@ -1871,6 +_,12 @@
      public long getDayTime() {
          return this.levelData.getDayTime();
      }
