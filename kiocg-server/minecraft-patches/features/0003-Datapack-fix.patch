@@ -4,6 +4,19 @@ Date: Wed, 18 Jun 2025 14:32:03 +0800
 Subject: [PATCH] Datapack fix
 
 
+diff --git a/net/minecraft/util/StrictJsonParser.java b/net/minecraft/util/StrictJsonParser.java
+index f25be3cb852c131db66dc8700b864e113d44a4f2..0827a82706c453bf9f146fd711c70db67dbbf81a 100644
+--- a/net/minecraft/util/StrictJsonParser.java
++++ b/net/minecraft/util/StrictJsonParser.java
+@@ -16,7 +16,7 @@ public class StrictJsonParser {
+     public static JsonElement parse(Reader reader) throws JsonIOException, JsonSyntaxException {
+         try {
+             JsonReader jsonReader = new JsonReader(reader);
+-            jsonReader.setStrictness(Strictness.STRICT);
++            // jsonReader.setStrictness(Strictness.STRICT); // KioCG - datapack fix
+             JsonElement jsonElement = JsonParser.parseReader(jsonReader);
+             if (!jsonElement.isJsonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {
+                 throw new JsonSyntaxException("Did not consume the entire document.");
 diff --git a/net/minecraft/world/entity/monster/ElderGuardian.java b/net/minecraft/world/entity/monster/ElderGuardian.java
 index 7eef05b988d52391ab061382fd8898705c705e03..abea8b97c7130971858ca1343478e63c12c190ae 100644
 --- a/net/minecraft/world/entity/monster/ElderGuardian.java
