@@ -1,0 +1,82 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: KioProject <1105919949@qq.com>
+Date: Wed, 18 Jun 2025 14:32:03 +0800
+Subject: [PATCH] Datapack fix
+
+
+diff --git a/net/minecraft/world/entity/monster/ElderGuardian.java b/net/minecraft/world/entity/monster/ElderGuardian.java
+index 7eef05b988d52391ab061382fd8898705c705e03..abea8b97c7130971858ca1343478e63c12c190ae 100644
+--- a/net/minecraft/world/entity/monster/ElderGuardian.java
++++ b/net/minecraft/world/entity/monster/ElderGuardian.java
+@@ -63,7 +63,7 @@ public class ElderGuardian extends Guardian {
+     @Override
+     protected void customServerAiStep(ServerLevel level) {
+         super.customServerAiStep(level);
+-        if ((this.tickCount + this.getId()) % 1200 == 0) {
++        if ((this.tickCount + this.getId()) % 100 == 0) { // KioCG - datapack fix
+             MobEffectInstance mobEffectInstance = new MobEffectInstance(MobEffects.MINING_FATIGUE, 6000, 2);
+             List<ServerPlayer> list = MobEffectUtil.addEffectToPlayersAround(level, this, this.position(), 50.0, mobEffectInstance, 1200, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK, (player) -> new io.papermc.paper.event.entity.ElderGuardianAppearanceEvent((org.bukkit.entity.ElderGuardian) this.getBukkitEntity(), player.getBukkitEntity()).callEvent()); // CraftBukkit // Paper - Add ElderGuardianAppearanceEvent
+             list.forEach(
+diff --git a/net/minecraft/world/level/levelgen/feature/DeltaFeature.java b/net/minecraft/world/level/levelgen/feature/DeltaFeature.java
+index b57460d2eb3e8cb312d0c24a23bd5c2a6baf18f5..f4dfdca274c2bd9d30fe03a0f46697531943ca5f 100644
+--- a/net/minecraft/world/level/levelgen/feature/DeltaFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/DeltaFeature.java
+@@ -68,7 +68,10 @@ public class DeltaFeature extends Feature<DeltaFeatureConfiguration> {
+             return false;
+         } else {
+             for (Direction direction : DIRECTIONS) {
+-                boolean isAir = level.getBlockState(pos.relative(direction)).isAir();
++                // KioCG start - datapack fix: 落叶会导致流体错误生成
++                BlockState blockState1 = level.getBlockState(pos.relative(direction));
++                boolean isAir = !blockState1.getBlock().hasCollision && !blockState1.is(config.contents().getBlock());
++                // KioCG end - datapack fix: 落叶会导致流体错误生成
+                 if (isAir && direction != Direction.UP || !isAir && direction == Direction.UP) {
+                     return false;
+                 }
+diff --git a/net/minecraft/world/level/levelgen/feature/TreeFeature.java b/net/minecraft/world/level/levelgen/feature/TreeFeature.java
+index ef444a4975cb7b24b6dc3b0e6b8d727265bf6011..b9996d9bc8bf007f1b97d1c9e932c664d01363f4 100644
+--- a/net/minecraft/world/level/levelgen/feature/TreeFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/TreeFeature.java
+@@ -40,6 +40,18 @@ public class TreeFeature extends Feature<TreeConfiguration> {
+         return level.isStateAtPosition(pos, state -> state.is(Blocks.VINE));
+     }
+ 
++    // KioCG start - datapack fix: 修复悬空的藤蔓
++    public static void tryCleanHangingVine(LevelSimulatedReader level, BlockPos pos) {
++        if (level instanceof LevelWriter && TreeFeature.isVine(level, pos)) {
++            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
++            mutablePos.set(pos);
++            while (TreeFeature.isVine(level, mutablePos.move(Direction.DOWN))) {
++                ((LevelWriter) level).setBlock(mutablePos, Blocks.AIR.defaultBlockState(), 2);
++            }
++        }
++    }
++    // KioCG end - datapack fix: 修复悬空的藤蔓
++
+     public static boolean isAirOrLeaves(LevelSimulatedReader level, BlockPos pos) {
+         return level.isStateAtPosition(pos, state -> state.isAir() || state.is(BlockTags.LEAVES));
+     }
+diff --git a/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java b/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java
+index 8c6791796c18bc5906c6d72a07c13d2326476c74..48b1d2341d6627db916eb1f979202bb6f6da0c41 100644
+--- a/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java
++++ b/net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacer.java
+@@ -171,6 +171,7 @@ public abstract class FoliagePlacer {
+                 state = state.setValue(BlockStateProperties.WATERLOGGED, level.isFluidAtPosition(pos, fluidState -> fluidState.isSourceOfType(Fluids.WATER)));
+             }
+ 
++            TreeFeature.tryCleanHangingVine(level, pos); // KioCG - datapack fix: 修复悬空的藤蔓
+             foliageSetter.set(pos, state);
+             return true;
+         } else {
+diff --git a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
+index f441eff2bb16bf1b83188430e58a14d37c467c88..5d3a5b0272ec6ce81c19cabf7b016c100f5ab94e 100644
+--- a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
++++ b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
+@@ -84,6 +84,7 @@ public abstract class TrunkPlacer {
+         Function<BlockState, BlockState> propertySetter
+     ) {
+         if (this.validTreePos(level, pos)) {
++            TreeFeature.tryCleanHangingVine(level, pos); // KioCG - datapack fix: 修复悬空的藤蔓
+             blockSetter.accept(pos, propertySetter.apply(config.trunkProvider.getState(random, pos)));
+             return true;
+         } else {
