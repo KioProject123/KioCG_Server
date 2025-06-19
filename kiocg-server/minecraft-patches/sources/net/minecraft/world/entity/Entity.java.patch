@@ -26,6 +26,23 @@
                          entity.push(d, 0.0, d1);
                      }
                  }
+@@ -3010,6 +_,16 @@
+                             }
+                             // Paper end - EntityUnleashEvent
+                             // leashable2.dropLeash(); // Paper - EntityUnleashEvent - moved into handlePlayerUnleashEntityEvent
++
++                            // KioCG start - leash fence
++                            if (!this.isAlive()) {
++                                if (this instanceof net.minecraft.world.entity.decoration.LeashFenceKnotEntity leashFenceKnot) {
++                                    leashable2 = net.minecraft.world.entity.decoration.LeashFenceKnotEntity.getOrCreateKnot(level, leashFenceKnot.getPos());
++                                } else {
++                                    return InteractionResult.PASS;
++                                }
++                            }
++                            // KioCG end - leash fence
+                         }
+ 
+                         // Paper start - EntityLeashEvent
 @@ -3606,6 +_,7 @@
      }
  

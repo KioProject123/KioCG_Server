@@ -1,0 +1,9 @@
+--- a/src/main/java/org/bukkit/entity/LeashHitch.java
++++ b/src/main/java/org/bukkit/entity/LeashHitch.java
+@@ -3,5 +_,5 @@
+ /**
+  * Represents a Leash Hitch on a fence
+  */
+-public interface LeashHitch extends Hanging {
++public interface LeashHitch extends Hanging, io.papermc.paper.entity.Leashable { // KioCG - leash fence
+ }

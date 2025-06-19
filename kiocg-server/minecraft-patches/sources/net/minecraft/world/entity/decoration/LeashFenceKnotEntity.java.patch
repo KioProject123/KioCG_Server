@@ -1,0 +1,135 @@
+--- a/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
++++ b/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
+@@ -25,9 +_,16 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class LeashFenceKnotEntity extends BlockAttachedEntity {
++public class LeashFenceKnotEntity extends BlockAttachedEntity implements Leashable { // KioCG - leash fence
+     public static final double OFFSET_Y = 0.375;
+ 
++    // KioCG start - leash fence
++    @Nullable
++    private Leashable.LeashData leashData;
++    @Nullable
++    private org.bukkit.entity.LivingEntity fakeLeashEntity = null;
++    // KioCG end - leash fence
++
+     public LeashFenceKnotEntity(EntityType<? extends LeashFenceKnotEntity> entityType, Level level) {
+         super(entityType, level);
+     }
+@@ -56,15 +_,105 @@
+ 
+     @Override
+     public void dropItem(ServerLevel level, @Nullable Entity entity) {
++        // KioCG start - leash fence
++        if (this.isLeashed()) {
++            if (!(entity instanceof Player player && player.hasInfiniteMaterials())) {
++                this.dropLeash();
++            } else {
++                this.removeLeash();
++            }
++        }
++        // KioCG end - leash fence
+         this.playSound(SoundEvents.LEAD_UNTIED, 1.0F, 1.0F);
+     }
+ 
++    // KioCG start - leash fence
++    @Nullable
++    @Override
++    public Leashable.LeashData getLeashData() {
++        return this.leashData;
++    }
++
++    @Override
++    public void setLeashData(@Nullable Leashable.LeashData leashData) {
++        this.leashData = leashData;
++        if (leashData != null) {
++            if (leashData.leashHolder != null) {
++                if (this.fakeLeashEntity == null) {
++                    this.fakeLeashEntity = getFakeLeashEntity(this.level(), this.blockPosition());
++                }
++
++                this.fakeLeashEntity.lookAt(leashData.leashHolder.getX(), leashData.leashHolder.getY(), leashData.leashHolder.getZ(), io.papermc.paper.entity.LookAnchor.EYES);
++                this.fakeLeashEntity.setLeashHolder(leashData.leashHolder.getBukkitEntity());
++
++                sendToTracker(players -> {
++                    this.fakeLeashEntity.sendChanges(players); // 只有这样才能更新视角
++                    this.fakeLeashEntity.sendSpawn(players, this.fakeLeashEntity.getLocation());
++                });
++            }
++        } else {
++            if (this.fakeLeashEntity != null) {
++                sendToTracker(players -> this.fakeLeashEntity.sendRemove(players));
++                this.fakeLeashEntity = null;
++            }
++        }
++    }
++
++    private org.bukkit.entity.LivingEntity getFakeLeashEntity(Level level, BlockPos blockPos) {
++        org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockPos, level).add(0.5, OFFSET_Y, 0.5);
++        org.bukkit.entity.LivingEntity fakeEntity = level.getWorld().createEntity(location, org.bukkit.entity.Rabbit.class);
++        fakeEntity.setAI(false);
++        fakeEntity.setNoPhysics(true);
++        fakeEntity.setInvisible(true);
++        fakeEntity.setInvulnerable(true);
++        double scale = EntityType.LEASH_KNOT.getWidth() / org.bukkit.craftbukkit.entity.CraftEntityType.bukkitToMinecraft(fakeEntity.getType()).getWidth() - 0.01;
++        fakeEntity.getAttribute(org.bukkit.attribute.Attribute.SCALE).setBaseValue(scale);
++        return fakeEntity;
++    }
++
++    private void sendToTracker(java.util.function.Consumer<java.util.List<org.bukkit.entity.Player>> consumer) {
++        java.util.Set<org.bukkit.entity.Player> trackedBy = this.getBukkitEntity().getTrackedBy();
++        if (!trackedBy.isEmpty()) {
++            consumer.accept(new java.util.ArrayList<>(trackedBy));
++        }
++    }
++
++    @Override
++    public void tick() {
++        super.tick();
++        Leashable.tickLeash(this.serverLevel(), this);
++    }
++
++    @Override
++    public void onLeashRemoved() {
++        this.notifyLeasheeRemoved(null);
++    }
++
++    @Override
++    public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
++        super.startSeenByPlayer(player);
++        if (this.fakeLeashEntity != null) {
++            this.fakeLeashEntity.sendSpawn(player.getBukkitEntity(), this.fakeLeashEntity.getLocation());
++        }
++    }
++
++    @Override
++    public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
++        super.stopSeenByPlayer(player);
++        if (this.fakeLeashEntity != null) {
++            this.fakeLeashEntity.sendRemove(player.getBukkitEntity());
++        }
++    }
++    // KioCG end - leash fence
++
+     @Override
+     protected void addAdditionalSaveData(ValueOutput output) {
++        this.writeLeashData(output, this.leashData); // KioCG - leash fence
+     }
+ 
+     @Override
+     protected void readAdditionalSaveData(ValueInput input) {
++        this.readLeashData(input); // KioCG - leash fence
+     }
+ 
+     @Override
+@@ -110,7 +_,7 @@
+ 
+     @Override
+     public void notifyLeasheeRemoved(Leashable leashHolder) {
+-        if (Leashable.leashableLeashedTo(this).isEmpty()) {
++        if (!this.isLeashed() && Leashable.leashableLeashedTo(this).isEmpty()) { // KioCG - leash fence
+             this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DROP); // CraftBukkit - add Bukkit remove cause
+         }
+     }

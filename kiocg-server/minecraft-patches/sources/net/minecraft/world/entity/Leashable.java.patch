@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/entity/Leashable.java
++++ b/net/minecraft/world/entity/Leashable.java
+@@ -168,6 +_,7 @@
+             }
+ 
+             Entity leashHolder = entity.getLeashHolder();
++            if (!(entity instanceof LeashFenceKnotEntity && leashHolder instanceof LeashFenceKnotEntity)) // KioCG - leash fence
+             if (leashHolder != null && leashHolder.level() == entity.level()) {
+                 double d = entity.leashDistanceTo(leashHolder);
+                 entity.whenLeashedTo(leashHolder);
+@@ -342,6 +_,7 @@
+         } else {
+             Entity entity1 = leashData.leashHolder;
+             leashData.setLeashHolder(leashHolder);
++            entity.setLeashData(leashData); // KioCG - leash fence
+             if (entity1 != null && entity1 != leashHolder) {
+                 entity1.notifyLeasheeRemoved(entity);
+             }
+@@ -371,6 +_,7 @@
+                 Entity var3 = entity.level().getEntity(leashData.delayedLeashHolderId);
+                 if (var3 instanceof Entity) {
+                     leashData.setLeashHolder(var3);
++                    entity.setLeashData(leashData); // KioCG - leash fence
+                 }
+             }
+ 

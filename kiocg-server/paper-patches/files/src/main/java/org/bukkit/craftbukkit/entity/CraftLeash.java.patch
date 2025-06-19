@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLeash.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLeash.java
+@@ -6,7 +_,7 @@
+ import org.bukkit.craftbukkit.CraftServer;
+ import org.bukkit.entity.LeashHitch;
+ 
+-public class CraftLeash extends CraftBlockAttachedEntity implements LeashHitch {
++public class CraftLeash extends CraftBlockAttachedEntity implements LeashHitch, io.papermc.paper.entity.PaperLeashable { // KioCG - leash fence
+ 
+     public CraftLeash(CraftServer server, LeashFenceKnotEntity entity) {
+         super(server, entity);

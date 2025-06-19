@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/EntityType.java
++++ b/net/minecraft/world/entity/EntityType.java
+@@ -603,7 +_,7 @@
+         "leash_knot",
+         EntityType.Builder.<LeashFenceKnotEntity>of(LeashFenceKnotEntity::new, MobCategory.MISC)
+             .noLootTable()
+-            .noSave()
++            // .noSave() // KioCG - leash fence
+             .sized(0.375F, 0.5F)
+             .eyeHeight(0.0625F)
+             .clientTrackingRange(10)

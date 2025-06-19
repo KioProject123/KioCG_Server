@@ -1,0 +1,97 @@
+--- a/net/minecraft/world/item/LeadItem.java
++++ b/net/minecraft/world/item/LeadItem.java
+@@ -26,20 +_,20 @@
+         if (blockState.is(BlockTags.FENCES)) {
+             Player player = context.getPlayer();
+             if (!level.isClientSide && player != null) {
+-                return bindPlayerMobs(player, level, clickedPos, context.getHand()); // CraftBukkit - Pass hand
++                return bindPlayerMobs(player, level, clickedPos, context.getHand(), true); // CraftBukkit - Pass hand // KioCG - leash fence
+             }
+         }
+ 
+         return InteractionResult.PASS;
+     }
+ 
+-    public static InteractionResult bindPlayerMobs(Player player, Level level, BlockPos pos, net.minecraft.world.InteractionHand interactionHand) { // CraftBukkit - Add InteractionHand
++    public static InteractionResult bindPlayerMobs(Player player, Level level, BlockPos pos, net.minecraft.world.InteractionHand interactionHand, boolean isLeadItem) { // CraftBukkit - Add InteractionHand // KioCG - leash fence
+         LeashFenceKnotEntity leashFenceKnotEntity = null;
+         List<Leashable> list = Leashable.leashableInArea(level, Vec3.atCenterOf(pos), leashable1 -> leashable1.getLeashHolder() == player);
+         boolean flag = false;
+ 
+-        for (java.util.Iterator<Leashable> iterator = list.iterator(); iterator.hasNext();) { // Paper - use iterator to remove
+-            Leashable leashable = iterator.next(); // Paper - use iterator to remove
++        // KioCG start - leash fence
++        if (!list.isEmpty() || isLeadItem) {
+             if (leashFenceKnotEntity == null) {
+                 leashFenceKnotEntity = LeashFenceKnotEntity.getOrCreateKnot(level, pos);
+                 // CraftBukkit start - fire HangingPlaceEvent
+@@ -48,12 +_,42 @@
+                 level.getCraftServer().getPluginManager().callEvent(event);
+ 
+                 if (event.isCancelled()) {
+-                    leashFenceKnotEntity.discard(null); // CraftBukkit - add Bukkit remove cause
++                    leashFenceKnotEntity.notifyLeasheeRemoved(null); // CraftBukkit - add Bukkit remove cause
+                     return InteractionResult.PASS;
+                 }
+                 // CraftBukkit end
+-                leashFenceKnotEntity.playPlacementSound();
+-            }
++                // leashFenceKnotEntity.playPlacementSound();
++            }
++        }
++
++        if (list.isEmpty() && isLeadItem) {
++            if (leashFenceKnotEntity.isLeashed()) {
++                return InteractionResult.PASS;
++            }
++            leashFenceKnotEntity.setLeashedTo(player, false);
++            player.getItemInHand(interactionHand).shrink(1);
++            flag = true;
++        }
++        // KioCG end - leash fence
++
++        for (java.util.Iterator<Leashable> iterator = list.iterator(); iterator.hasNext();) { // Paper - use iterator to remove
++            Leashable leashable = iterator.next(); // Paper - use iterator to remove
++            // KioCG start - leash fence: 上移
++            // if (leashFenceKnotEntity == null) {
++            //     leashFenceKnotEntity = LeashFenceKnotEntity.getOrCreateKnot(level, pos);
++            //     // CraftBukkit start - fire HangingPlaceEvent
++            //     org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.CraftEquipmentSlot.getHand(interactionHand);
++            //     org.bukkit.event.hanging.HangingPlaceEvent event = new org.bukkit.event.hanging.HangingPlaceEvent((org.bukkit.entity.Hanging) leashFenceKnotEntity.getBukkitEntity(), player != null ? (org.bukkit.entity.Player) player.getBukkitEntity() : null, org.bukkit.craftbukkit.block.CraftBlock.at(level, pos), org.bukkit.block.BlockFace.SELF, hand);
++            //     level.getCraftServer().getPluginManager().callEvent(event);
++            //
++            //     if (event.isCancelled()) {
++            //         leashFenceKnotEntity.discard(null); // CraftBukkit - add Bukkit remove cause
++            //         return InteractionResult.PASS;
++            //     }
++            //     // CraftBukkit end
++            //     leashFenceKnotEntity.playPlacementSound();
++            // }
++            // KioCG end - leash fence: 上移
+ 
+             // CraftBukkit start
+             if (leashable instanceof net.minecraft.world.entity.Entity leashed) {
+@@ -70,12 +_,13 @@
+         }
+ 
+         if (flag) {
++            leashFenceKnotEntity.playPlacementSound(); // KioCG - leash fence
+             level.gameEvent(GameEvent.BLOCK_ATTACH, pos, GameEvent.Context.of(player));
+             return InteractionResult.SUCCESS_SERVER;
+         } else {
+             // CraftBukkit start - remove leash if we do not leash any entity because of the cancelled event
+             if (leashFenceKnotEntity != null) {
+-                leashFenceKnotEntity.discard(null);
++                leashFenceKnotEntity.notifyLeasheeRemoved(null); // KioCG - leash fence
+             }
+             // CraftBukkit end
+             return InteractionResult.PASS;
+@@ -84,7 +_,7 @@
+ 
+     // CraftBukkit start
+     public static InteractionResult bindPlayerMobs(Player player, Level world, BlockPos pos) {
+-        return LeadItem.bindPlayerMobs(player, world, pos, net.minecraft.world.InteractionHand.MAIN_HAND);
++        return LeadItem.bindPlayerMobs(player, world, pos, net.minecraft.world.InteractionHand.MAIN_HAND, false); // KioCG - leash fence
+     }
+     // CraftBukkit end
+ }
