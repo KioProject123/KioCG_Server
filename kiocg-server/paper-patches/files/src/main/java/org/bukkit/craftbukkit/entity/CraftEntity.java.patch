@@ -53,7 +53,7 @@
 +
 +    // KioCG start - send virtual entity api
 +    @Override
-+    public void sendSpawn(List<Player> players, Location location) {
++    public void sendSpawn(java.util.Collection<Player> players, Location location) {
 +        Preconditions.checkNotNull(players, "players cannot be null");
 +        Preconditions.checkArgument(!players.isEmpty(), "players cannot be empty");
 +        Preconditions.checkNotNull(location, "location cannot be null");
@@ -73,7 +73,7 @@
 +    }
 +
 +    @Override
-+    public void sendChanges(List<Player> players) {
++    public void sendChanges(java.util.Collection<Player> players) {
 +        Preconditions.checkNotNull(players, "players cannot be null");
 +        Preconditions.checkArgument(!players.isEmpty(), "players cannot be empty");
 +        List<ServerPlayer> serverPlayers = players.stream().map(player -> ((CraftPlayer) player).getHandle()).toList();
@@ -84,7 +84,7 @@
 +    }
 +
 +    @Override
-+    public void sendRemove(List<Player> players) {
++    public void sendRemove(java.util.Collection<Player> players) {
 +        Preconditions.checkNotNull(players, "players cannot be null");
 +        Preconditions.checkArgument(!players.isEmpty(), "players cannot be empty");
 +        List<ServerPlayer> serverPlayers = players.stream().map(player -> ((CraftPlayer) player).getHandle()).toList();

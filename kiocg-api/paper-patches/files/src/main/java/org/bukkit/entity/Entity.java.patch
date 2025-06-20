@@ -18,17 +18,17 @@
 +    default void sendSpawn(@NotNull Player player, @NotNull Location location) {
 +        sendSpawn(List.of(player), location);
 +    }
-+    void sendSpawn(@NotNull List<Player> players, @NotNull Location location);
++    void sendSpawn(@NotNull java.util.Collection<Player> players, @NotNull Location location);
 +
 +    default void sendChanges(@NotNull Player player) {
 +        sendChanges(List.of(player));
 +    }
-+    void sendChanges(@NotNull List<Player> players);
++    void sendChanges(@NotNull java.util.Collection<Player> players);
 +
 +    default void sendRemove(@NotNull Player player) {
 +        sendRemove(List.of(player));
 +    }
-+    void sendRemove(@NotNull List<Player> players);
++    void sendRemove(@NotNull java.util.Collection<Player> players);
 +    // KioCG end - send virtual entity api
  
      /**

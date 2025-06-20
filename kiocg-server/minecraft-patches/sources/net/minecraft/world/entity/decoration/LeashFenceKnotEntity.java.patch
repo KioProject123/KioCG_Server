@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
 +++ b/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
-@@ -25,9 +_,16 @@
+@@ -25,9 +_,119 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  
@@ -12,13 +12,116 @@
 +    @Nullable
 +    private Leashable.LeashData leashData;
 +    @Nullable
-+    private org.bukkit.entity.LivingEntity fakeLeashEntity = null;
++    private FakeLeashTracker fakeLeashTracker = null;
++
++    private class FakeLeashTracker {
++        private final java.util.Set<org.bukkit.entity.Player> closer = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
++        private final java.util.Set<org.bukkit.entity.Player> farAway = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
++        private final net.minecraft.world.entity.Mob entity;
++        private final org.bukkit.Location location;
++        private final double scale;
++        private final double ropeLeashOffset;
++        private final double entityLeashOffset;
++
++        private FakeLeashTracker(Level level, BlockPos blockPos) {
++            this.location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockPos, level.getWorld()).add(0.5, OFFSET_Y, 0.5);
++            this.entity = createFakeLeashEntity(this.location);
++            this.ropeLeashOffset = LeashFenceKnotEntity.this.getRopeHoldOffset().get(net.minecraft.core.Direction.Axis.Y);
++            this.entityLeashOffset = this.entity.getLeashOffset().get(net.minecraft.core.Direction.Axis.Y);
++            this.scale = this.calculateScale(this.ropeLeashOffset, this.entityLeashOffset, 0);
++            this.setScale(this.scale);
++        }
++
++        private void updateTracker(boolean force) {
++            this.sendUpdate(LeashFenceKnotEntity.this.getBukkitEntity().getTrackedBy(), force);
++        }
++
++        private void sendUpdate(java.util.Collection<org.bukkit.entity.Player> players, boolean force) {
++            if (!players.isEmpty()) {
++                if (force) {
++                    this.closer.removeAll(players);
++                    this.farAway.removeAll(players);
++                }
++
++                java.util.List<org.bukkit.entity.Player> updateCloser = new java.util.ArrayList<>();
++                java.util.List<org.bukkit.entity.Player> updateFarAway = new java.util.ArrayList<>();
++                for (org.bukkit.entity.Player player : players) {
++                    if (LeashFenceKnotEntity.this.closerThan(((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle(), 16)) {
++                        if (this.closer.add(player)) {
++                            this.farAway.remove(player);
++                            updateCloser.add(player);
++                        }
++                    } else {
++                        if (this.farAway.add(player)) {
++                            this.closer.remove(player);
++                            updateFarAway.add(player);
++                        }
++                    }
++                }
++
++                sendUpdateCloser(updateCloser, force);
++                sendUpdateFarAway(updateFarAway, force);
++            }
++        }
++
++        private void sendUpdateCloser(java.util.Collection<org.bukkit.entity.Player> players, boolean force) {
++            if (!players.isEmpty()) {
++                if (force) {
++                    this.entity.getBukkitEntity().sendChanges(players); // 只有这样才能更新视角
++                }
++                this.entity.getBukkitEntity().sendSpawn(players, this.location);
++            }
++        }
++
++        private void sendUpdateFarAway(java.util.Collection<org.bukkit.entity.Player> players, boolean force) {
++            float entityMoveDown = 0.5F;
++
++            if (!players.isEmpty()) {
++                Vec3 leashPosition = this.entity.getLeashPosition(0);
++
++                this.setScale(this.calculateScale(this.ropeLeashOffset, this.entityLeashOffset, entityMoveDown));
++                Vec3 displacement = this.entity.getLeashPosition(0).subtract(leashPosition);
++                if (force) {
++                    this.entity.getBukkitEntity().sendChanges(players); // 只有这样才能更新视角
++                }
++                this.entity.getBukkitEntity().sendSpawn(players, this.location.clone().subtract(org.bukkit.craftbukkit.util.CraftVector.toBukkit(displacement).setY(entityMoveDown)));
++
++                this.setScale(this.scale);
++            }
++        }
++
++        private void sendRemove(java.util.Collection<org.bukkit.entity.Player> players) {
++            if (!players.isEmpty()) {
++                this.entity.getBukkitEntity().sendRemove(players);
++                this.closer.removeAll(players);
++                this.farAway.removeAll(players);
++            }
++        }
++
++        private void setScale(double scale) {
++            this.entity.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.SCALE).setBaseValue(scale);
++            this.entity.refreshDimensions();
++        }
++
++        private net.minecraft.world.entity.Mob createFakeLeashEntity(org.bukkit.Location location) {
++            org.bukkit.entity.Mob fakeEntity = location.getWorld().createEntity(location, org.bukkit.entity.Rabbit.class);
++            fakeEntity.setAI(false);
++            fakeEntity.setNoPhysics(true);
++            fakeEntity.setInvisible(true);
++            fakeEntity.setInvulnerable(true);
++            return ((org.bukkit.craftbukkit.entity.CraftMob) fakeEntity).getHandle();
++        }
++
++        private double calculateScale(double targetOffset, double entityOffset, double entityMoveDown) {
++            return (targetOffset + entityMoveDown) / entityOffset;
++        }
++    }
 +    // KioCG end - leash fence
 +
      public LeashFenceKnotEntity(EntityType<? extends LeashFenceKnotEntity> entityType, Level level) {
          super(entityType, level);
      }
-@@ -56,15 +_,105 @@
+@@ -56,15 +_,85 @@
  
      @Override
      public void dropItem(ServerLevel level, @Nullable Entity entity) {
@@ -46,42 +149,19 @@
 +        this.leashData = leashData;
 +        if (leashData != null) {
 +            if (leashData.leashHolder != null) {
-+                if (this.fakeLeashEntity == null) {
-+                    this.fakeLeashEntity = getFakeLeashEntity(this.level(), this.blockPosition());
++                if (this.fakeLeashTracker == null) {
++                    this.fakeLeashTracker = new FakeLeashTracker(this.level(), this.blockPosition());
 +                }
 +
-+                this.fakeLeashEntity.lookAt(leashData.leashHolder.getX(), leashData.leashHolder.getY(), leashData.leashHolder.getZ(), io.papermc.paper.entity.LookAnchor.EYES);
-+                this.fakeLeashEntity.setLeashHolder(leashData.leashHolder.getBukkitEntity());
-+
-+                sendToTracker(players -> {
-+                    this.fakeLeashEntity.sendChanges(players); // 只有这样才能更新视角
-+                    this.fakeLeashEntity.sendSpawn(players, this.fakeLeashEntity.getLocation());
-+                });
++                this.fakeLeashTracker.entity.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.FEET, leashData.leashHolder.position());
++                this.fakeLeashTracker.entity.setLeashedTo(leashData.leashHolder, false);
++                this.fakeLeashTracker.updateTracker(true);
 +            }
 +        } else {
-+            if (this.fakeLeashEntity != null) {
-+                sendToTracker(players -> this.fakeLeashEntity.sendRemove(players));
-+                this.fakeLeashEntity = null;
++            if (this.fakeLeashTracker != null) {
++                this.fakeLeashTracker.sendRemove(this.getBukkitEntity().getTrackedBy());
++                this.fakeLeashTracker = null;
 +            }
-+        }
-+    }
-+
-+    private org.bukkit.entity.LivingEntity getFakeLeashEntity(Level level, BlockPos blockPos) {
-+        org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockPos, level).add(0.5, OFFSET_Y, 0.5);
-+        org.bukkit.entity.LivingEntity fakeEntity = level.getWorld().createEntity(location, org.bukkit.entity.Rabbit.class);
-+        fakeEntity.setAI(false);
-+        fakeEntity.setNoPhysics(true);
-+        fakeEntity.setInvisible(true);
-+        fakeEntity.setInvulnerable(true);
-+        double scale = EntityType.LEASH_KNOT.getWidth() / org.bukkit.craftbukkit.entity.CraftEntityType.bukkitToMinecraft(fakeEntity.getType()).getWidth() - 0.01;
-+        fakeEntity.getAttribute(org.bukkit.attribute.Attribute.SCALE).setBaseValue(scale);
-+        return fakeEntity;
-+    }
-+
-+    private void sendToTracker(java.util.function.Consumer<java.util.List<org.bukkit.entity.Player>> consumer) {
-+        java.util.Set<org.bukkit.entity.Player> trackedBy = this.getBukkitEntity().getTrackedBy();
-+        if (!trackedBy.isEmpty()) {
-+            consumer.accept(new java.util.ArrayList<>(trackedBy));
 +        }
 +    }
 +
@@ -89,6 +169,9 @@
 +    public void tick() {
 +        super.tick();
 +        Leashable.tickLeash(this.serverLevel(), this);
++        if (this.fakeLeashTracker != null && this.tickCount % 10 == 0) {
++            this.fakeLeashTracker.updateTracker(false);
++        }
 +    }
 +
 +    @Override
@@ -99,16 +182,16 @@
 +    @Override
 +    public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
 +        super.startSeenByPlayer(player);
-+        if (this.fakeLeashEntity != null) {
-+            this.fakeLeashEntity.sendSpawn(player.getBukkitEntity(), this.fakeLeashEntity.getLocation());
++        if (this.fakeLeashTracker != null) {
++            this.fakeLeashTracker.sendUpdate(java.util.List.of(player.getBukkitEntity()), false);
 +        }
 +    }
 +
 +    @Override
 +    public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
 +        super.stopSeenByPlayer(player);
-+        if (this.fakeLeashEntity != null) {
-+            this.fakeLeashEntity.sendRemove(player.getBukkitEntity());
++        if (this.fakeLeashTracker != null) {
++            this.fakeLeashTracker.sendRemove(java.util.List.of(player.getBukkitEntity()));
 +        }
 +    }
 +    // KioCG end - leash fence
@@ -133,3 +216,20 @@
              this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DROP); // CraftBukkit - add Bukkit remove cause
          }
      }
+@@ -149,8 +_,14 @@
+ 
+     @Override
+     public Vec3 getRopeHoldPosition(float partialTicks) {
+-        return this.getPosition(partialTicks).add(0.0, 0.2, 0.0);
+-    }
++        return this.getPosition(partialTicks).add(getRopeHoldOffset()); // KioCG - leash fence
++    }
++
++    // KioCG start - leash fence
++    public Vec3 getRopeHoldOffset() {
++        return new Vec3(0.0, 0.2, 0.0);
++    }
++    // KioCG end - leash fence
+ 
+     @Override
+     public ItemStack getPickResult() {
