@@ -196,7 +196,7 @@
              this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DROP); // CraftBukkit - add Bukkit remove cause
          }
      }
-@@ -149,8 +_,14 @@
+@@ -154,8 +_,14 @@
  
      @Override
      public Vec3 getRopeHoldPosition(float partialTicks) {

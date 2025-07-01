@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -166,8 +_,9 @@
+@@ -171,8 +_,9 @@
      private final @Nullable BiomeProvider biomeProvider;
      private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
      private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
@@ -8,10 +8,10 @@
 +    private final java.util.EnumMap<SpawnCategory, Integer> spawnCategoryLimit = new java.util.EnumMap<>(SpawnCategory.class); // KioCG - EnumMap
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
 +    public final java.util.Map<String, Object> temporaryMeta = new java.util.HashMap<>(); // KioCG - temporary meta
-     private net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
      // Paper start - void damage configuration
      private boolean voidDamageEnabled;
-@@ -2399,6 +_,13 @@
+     private float voidDamageAmount;
+@@ -2403,6 +_,13 @@
          return this.persistentDataContainer;
      }
  
@@ -25,8 +25,8 @@
      // Paper - replace feature flag API
  
      public void storeBukkitValues(CompoundTag c) {
-@@ -2491,4 +_,42 @@
-         return this.adventure$pointers;
+@@ -2488,4 +_,42 @@
+         return POINTERS_SUPPLIER.view(this);
      }
      // Paper end
 +

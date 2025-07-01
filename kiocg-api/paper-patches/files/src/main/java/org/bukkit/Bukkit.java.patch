@@ -40,7 +40,7 @@
      // Paper start - method to resend recipes
      /**
       * Remove a recipe from the server.
-@@ -2991,6 +_,24 @@
+@@ -3000,6 +_,24 @@
          return server.isGlobalTickThread();
      }
      // Paper end - Folia region threading API

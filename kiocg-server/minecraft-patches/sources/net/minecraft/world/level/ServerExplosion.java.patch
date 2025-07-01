@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
-@@ -487,6 +_,7 @@
+@@ -490,6 +_,7 @@
                  if (d <= 1.0) {
                      double d1 = entity.getX() - this.center.x;
                      double d2 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - this.center.y;
@@ -8,7 +8,7 @@
                      double d3 = entity.getZ() - this.center.z;
                      double squareRoot = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
                      if (squareRoot != 0.0) {
-@@ -494,6 +_,7 @@
+@@ -497,6 +_,7 @@
                          d2 /= squareRoot;
                          d3 /= squareRoot;
                          boolean shouldDamageEntity = this.damageCalculator.shouldDamageEntity(this, entity);
@@ -16,7 +16,7 @@
                          float knockbackMultiplier = this.damageCalculator.getKnockbackMultiplier(entity);
                          float f1 = !shouldDamageEntity && knockbackMultiplier == 0.0F ? 0.0F : this.getBlockDensity(this.center, entity); // Paper - Optimize explosions
                          if (shouldDamageEntity) {
-@@ -722,14 +_,14 @@
+@@ -720,14 +_,14 @@
          return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK
              && (
                  this.source == null

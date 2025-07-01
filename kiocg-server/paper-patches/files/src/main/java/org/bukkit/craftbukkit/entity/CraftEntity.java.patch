@@ -1,11 +1,10 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -91,11 +_,31 @@
+@@ -97,10 +_,30 @@
      private final EntityType entityType;
      private EntityDamageEvent lastDamageEvent;
      private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(CraftEntity.DATA_TYPE_REGISTRY);
 +    public final java.util.Map<String, Object> temporaryMeta = new java.util.HashMap<>(); // KioCG - temporary meta
-     protected net.kyori.adventure.pointer.Pointers adventure$pointers; // Paper - implement pointers
      // Paper start - Folia shedulers
      public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
      private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
@@ -32,7 +31,7 @@
      @Override
      public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
          return this.apiScheduler;
-@@ -946,6 +_,13 @@
+@@ -943,6 +_,13 @@
          return this.persistentDataContainer;
      }
  
@@ -46,7 +45,7 @@
      @Override
      public Pose getPose() {
          return Pose.values()[this.getHandle().getPose().ordinal()];
-@@ -1242,6 +_,49 @@
+@@ -1239,6 +_,49 @@
          this.entity.getIndirectPassengers().forEach(e -> e.level().addFreshEntity(e, reason));
          return true;
      }

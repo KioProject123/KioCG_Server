@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -1093,6 +_,7 @@
+@@ -1094,6 +_,7 @@
          this.safeShutdown(waitForServer, false);
      }
      public void safeShutdown(boolean waitForServer, boolean isRestarting) {
@@ -8,7 +8,7 @@
          this.isRestarting = isRestarting;
          this.hasLoggedStop = true; // Paper - Debugging
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
-@@ -1244,7 +_,7 @@
+@@ -1245,7 +_,7 @@
                  lastTick = currentTime;
                  this.nextTickTimeNanos += l;
  
@@ -17,7 +17,7 @@
                      ProfilerFiller profilerFiller = Profiler.get();
                      profilerFiller.push("tick");
                      this.tickFrame.start();
-@@ -1270,7 +_,7 @@
+@@ -1271,7 +_,7 @@
                      profilerFiller.pop();
                      this.logFullTickTime();
                  } finally {
@@ -26,7 +26,7 @@
                  }
  
                  this.isReady = true;
-@@ -1521,6 +_,17 @@
+@@ -1522,6 +_,17 @@
                  return;
              }
          }

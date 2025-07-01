@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/NamespacedKey.java
 +++ b/src/main/java/org/bukkit/NamespacedKey.java
-@@ -30,6 +_,7 @@
+@@ -34,6 +_,7 @@
       * compatibility measures.
       */
      public static final String BUKKIT = "bukkit";
@@ -8,7 +8,7 @@
  
      private final String namespace;
      private final String key;
-@@ -179,6 +_,13 @@
+@@ -149,6 +_,13 @@
      public static NamespacedKey minecraft(@NotNull String key) {
          return new NamespacedKey(MINECRAFT, key);
      }
