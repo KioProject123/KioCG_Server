@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
-@@ -151,7 +_,7 @@
+@@ -149,7 +_,7 @@
              case CHEST:
              case ENDER_CHEST:
              case BARREL:

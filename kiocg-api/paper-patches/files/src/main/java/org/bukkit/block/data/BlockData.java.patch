@@ -1,7 +1,7 @@
 --- a/src/main/java/org/bukkit/block/data/BlockData.java
 +++ b/src/main/java/org/bukkit/block/data/BlockData.java
-@@ -280,6 +_,12 @@
-     @ApiStatus.Experimental
+@@ -279,6 +_,12 @@
+     @NotNull
      BlockState createBlockState();
  
 +    // KioCG start - more api

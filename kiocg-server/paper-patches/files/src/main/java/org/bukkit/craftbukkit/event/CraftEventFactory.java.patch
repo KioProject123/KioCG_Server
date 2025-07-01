@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -462,6 +_,36 @@
+@@ -472,6 +_,36 @@
          return event;
      }
  
@@ -37,7 +37,7 @@
      public static PlayerInteractEvent callPlayerInteractEvent(net.minecraft.world.entity.player.Player player, Action action, ItemStack item, InteractionHand hand) {
          if (action != Action.LEFT_CLICK_AIR && action != Action.RIGHT_CLICK_AIR) {
              throw new AssertionError(String.format("%s performing %s with %s", player, action, item));
-@@ -518,6 +_,41 @@
+@@ -528,6 +_,41 @@
          return event;
      }
  
@@ -79,7 +79,7 @@
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, net.minecraft.world.entity.LivingEntity coverted, EntityTransformEvent.TransformReason transformReason) {
          return CraftEventFactory.callEntityTransformEvent(original, Collections.singletonList(coverted), transformReason);
      }
-@@ -880,10 +_,16 @@
+@@ -890,10 +_,16 @@
      }
  
      public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {

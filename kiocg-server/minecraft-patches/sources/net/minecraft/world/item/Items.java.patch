@@ -77,7 +77,7 @@
      );
      public static final Item SHIELD = registerItem(
          "shield",
-@@ -2265,6 +_,7 @@
+@@ -2268,6 +_,7 @@
              .rarity(Rarity.UNCOMMON)
              .component(DataComponents.CONSUMABLE, Consumables.OMINOUS_BOTTLE)
              .component(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, new OminousBottleAmplifier(0))

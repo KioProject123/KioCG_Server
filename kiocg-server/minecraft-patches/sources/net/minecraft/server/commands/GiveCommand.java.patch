@@ -22,4 +22,4 @@
 +                    ItemStack itemStack1 = itemStackOversized.split(min); // KioCG - give command event
                      boolean flag = serverPlayer.getInventory().add(itemStack1);
                      if (flag && itemStack1.isEmpty()) {
-                         ItemEntity itemEntity = serverPlayer.drop(itemStack, false);
+                         ItemEntity itemEntity = serverPlayer.drop(itemStack, false, false, false, null); // Paper - do not fire PlayerDropItemEvent for /give command

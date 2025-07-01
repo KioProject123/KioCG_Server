@@ -1,15 +1,15 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -431,6 +_,8 @@
+@@ -429,6 +_,8 @@
+     public boolean isRealPlayer; // Paper
      public @Nullable com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
-     public @Nullable String clientBrandName = null; // Paper - Brand support
      public @Nullable org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
 +    public boolean inStructure; // KioCG - player in structure api
 +    private long nearbyChunkHot = 0; public long getNearbyChunkHot() { return this.nearbyChunkHot; } // KioCG - chunk hot
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -773,6 +_,7 @@
+@@ -707,6 +_,7 @@
      }
  
      public void initMenu(AbstractContainerMenu menu) {
@@ -17,7 +17,7 @@
          menu.addSlotListener(this.containerListener);
          menu.setSynchronizer(this.containerSynchronizer);
      }
-@@ -795,6 +_,7 @@
+@@ -729,6 +_,7 @@
  
      @Override
      public void onInsideBlock(BlockState state) {
@@ -25,7 +25,7 @@
          CriteriaTriggers.ENTER_BLOCK.trigger(this, state);
      }
  
-@@ -842,6 +_,7 @@
+@@ -776,6 +_,7 @@
          }
  
          CriteriaTriggers.TICK.trigger(this);
@@ -33,7 +33,7 @@
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -850,7 +_,58 @@
+@@ -784,7 +_,58 @@
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this, true);
@@ -93,7 +93,7 @@
  
      private void updatePlayerAttributes() {
          AttributeInstance attribute = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
-@@ -941,11 +_,16 @@
+@@ -875,11 +_,16 @@
  
              if (this.totalExperience != this.lastSentExp) {
                  this.lastSentExp = this.totalExperience;
@@ -111,7 +111,7 @@
              }
  
              // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
-@@ -998,8 +_,29 @@
+@@ -932,8 +_,29 @@
              if (this.tickCount % 10 == 0 && this.foodData.needsFood()) {
                  this.foodData.setFoodLevel(this.foodData.getFoodLevel() + 1);
              }
@@ -143,7 +143,7 @@
  
      @Override
      public void resetFallDistance() {
-@@ -1095,11 +_,31 @@
+@@ -1029,11 +_,31 @@
              return;
          }
          List<DefaultDrop> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // Paper - Restore vanilla drops behavior
@@ -177,7 +177,7 @@
                  }
              }
          }
-@@ -1115,7 +_,7 @@
+@@ -1049,7 +_,7 @@
  
          String deathmessage = defaultMessage.getString();
          this.keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
@@ -186,7 +186,7 @@
          // Paper start - cancellable death event
          if (event.isCancelled()) {
              // make compatible with plugins that might have already set the health in an event listener
-@@ -1185,6 +_,8 @@
+@@ -1119,6 +_,8 @@
          this.setCamera(this); // Remove spectated target
          // CraftBukkit end
  
@@ -195,7 +195,7 @@
          this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment); // CraftBukkit - Get our scores instead
          LivingEntity killCredit = this.getKillCredit();
          if (killCredit != null) {
-@@ -1594,7 +_,7 @@
+@@ -1528,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
              this.setRespawnPosition(new ServerPlayer.RespawnConfig(this.level().dimension(), at, this.getYRot(), false), true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -204,7 +204,7 @@
                  return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                  if (!this.isCreative()) {
-@@ -1643,7 +_,7 @@
+@@ -1577,7 +_,7 @@
                      this.awardStat(Stats.SLEEP_IN_BED);
                      CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                  });
@@ -213,7 +213,7 @@
                      this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                  }
  
-@@ -1655,10 +_,27 @@
+@@ -1589,10 +_,27 @@
  
      @Override
      public void startSleeping(BlockPos pos) {
@@ -242,7 +242,7 @@
      private boolean bedInRange(BlockPos pos, Direction direction) {
          return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
      }
-@@ -1728,9 +_,9 @@
+@@ -1662,9 +_,9 @@
      }
  
      @Override
@@ -254,7 +254,7 @@
          }
      }
  
-@@ -2073,13 +_,18 @@
+@@ -2007,13 +_,18 @@
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
          this.wardenSpawnTracker = that.wardenSpawnTracker;
          this.chatSession = that.chatSession;
@@ -275,7 +275,7 @@
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
-@@ -2557,7 +_,7 @@
+@@ -2491,7 +_,7 @@
                  event.isForced()
              );
              if (event.willNotifyPlayer() && event.getNotification() != null) {
@@ -284,7 +284,7 @@
              }
          }
  
-@@ -2638,17 +_,25 @@
+@@ -2572,17 +_,25 @@
  
      public void loadGameTypes(@Nullable ValueInput input) {
          // Paper start - Expand PlayerGameModeChangeEvent
@@ -314,7 +314,7 @@
      }
  
      private void storeGameTypes(ValueOutput output) {
-@@ -3002,6 +_,8 @@
+@@ -2936,6 +_,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();

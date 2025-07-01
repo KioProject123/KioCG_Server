@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3860,6 +_,22 @@
+@@ -3859,6 +_,22 @@
      boolean isChunkSent(long chunkKey);
      // Paper end
  
@@ -23,7 +23,7 @@
      @Override
      Spigot spigot();
      // Spigot end
-@@ -3925,4 +_,76 @@
+@@ -3924,6 +_,78 @@
       * @param score New death screen score of player
       */
      void setDeathScreenScore(int score);
@@ -99,4 +99,6 @@
 +     */
 +    void clearBlockHighlights();
 +    // Purpur end
- }
+ 
+     /**
+      * Gets the game connection for this player.
