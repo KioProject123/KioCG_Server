@@ -16,3 +16,67 @@
                  }
  
                  if (packet != null) {
+@@ -351,6 +_,7 @@
+             if (this.entity.getId() == player.getId()) {
+                 ((ServerPlayer) this.entity).getBukkitEntity().injectScaledMaxHealth(syncableAttributes, false);
+             }
++            else this.hideAttribute(syncableAttributes, true); // KioCG - hide entity attribute
+             // CraftBukkit end
+             if (!syncableAttributes.isEmpty()) {
+                 consumer.accept(new ClientboundUpdateAttributesPacket(this.entity.getId(), syncableAttributes));
+@@ -420,9 +_,13 @@
+                 // CraftBukkit start - Send scaled max health
+                 if (this.entity instanceof ServerPlayer serverPlayer) {
+                     serverPlayer.getBukkitEntity().injectScaledMaxHealth(attributesToSync, false);
++                    serverPlayer.connection.send(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync)); // KioCG - hide entity attribute
+                 }
+                 // CraftBukkit end
+-                this.broadcastAndSend(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync));
++                // KioCG start - hide entity attribute
++                this.hideAttribute(attributesToSync, false);
++                this.broadcast.accept(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync));
++                // KioCG end - hide entity attribute
+             }
+ 
+             attributesToSync.clear();
+@@ -435,4 +_,40 @@
+             ((ServerPlayer)this.entity).connection.send(packet);
+         }
+     }
++
++    // KioCG start - hide entity attribute
++    private static final AttributeInstance DUMMY_MAX_HEALTH = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, (attribute) -> { });
++    private static final AttributeInstance DUMMY_MAX_ABSORPTION = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.MAX_ABSORPTION, (attribute) -> { });
++    private static final AttributeInstance DUMMY_ARMOR = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR, (attribute) -> { });
++    private static final AttributeInstance DUMMY_ARMOR_TOUGHNESS = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS, (attribute) -> { });
++    private static final java.util.Map<net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute>, AttributeInstance> HIDE_ATTRIBUTE = java.util.Map.of(
++            net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, DUMMY_MAX_HEALTH,
++            net.minecraft.world.entity.ai.attributes.Attributes.MAX_ABSORPTION, DUMMY_MAX_ABSORPTION,
++            net.minecraft.world.entity.ai.attributes.Attributes.ARMOR, DUMMY_ARMOR,
++            net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS, DUMMY_ARMOR_TOUGHNESS);
++
++    private void hideAttribute(Collection<AttributeInstance> collection, boolean force) {
++        List<AttributeInstance> list = new ArrayList<>(HIDE_ATTRIBUTE.size());
++
++        java.util.Iterator<AttributeInstance> iterator = collection.iterator();
++        while (iterator.hasNext()) {
++            AttributeInstance genericInstance = iterator.next();
++            AttributeInstance hide = HIDE_ATTRIBUTE.get(genericInstance.getAttribute());
++            if (hide != null) {
++                iterator.remove();
++                list.add(hide);
++            }
++        }
++
++        if (!force) {
++            collection.addAll(list);
++        } else {
++            HIDE_ATTRIBUTE.forEach((holder, attribute) -> {
++                if (((LivingEntity) this.entity).getAttributes().hasAttribute(holder)) {
++                    collection.add(attribute);
++                }
++            });
++        }
++    }
++    // KioCG end - hide entity attribute
+ }
