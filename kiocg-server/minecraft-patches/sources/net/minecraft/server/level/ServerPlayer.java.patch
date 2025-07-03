@@ -143,7 +143,7 @@
  
      @Override
      public void resetFallDistance() {
-@@ -1029,11 +_,31 @@
+@@ -1029,11 +_,36 @@
              return;
          }
          List<DefaultDrop> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // Paper - Restore vanilla drops behavior
@@ -159,6 +159,11 @@
                  if (!item.isEmpty() && !EnchantmentHelper.has(item, net.minecraft.world.item.enchantment.EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
 -                    loot.add(new DefaultDrop(item, stack -> this.drop(stack, true, false, false, null))); // Paper - Restore vanilla drops behavior; drop function taken from Inventory#dropAll (don't fire drop event)
 +                    // KioCG start - death drop protect
++                    if (item.has(DataComponents.VALUABLE)) {
++                        deathKeeps.add(item.getBukkitStack());
++                        continue;
++                    }
++
 +                    if (this.level().paperConfig().kiocgConfig.deathKeepHotbarAndArmorItems) {
 +                        if (i < Inventory.SELECTION_SIZE || i >= Inventory.INVENTORY_SIZE) {
 +                            deathKeeps.add(item.getBukkitStack());

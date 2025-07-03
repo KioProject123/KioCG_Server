@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
-@@ -396,4 +_,13 @@
+@@ -396,4 +_,14 @@
  
      private DataComponentTypes() {
      }
@@ -8,6 +8,7 @@
 +    // KioCG start - customize default components
 +    public static final DataComponentType.NonValued CANNOT_PLACE = unvalued("cannot_place");
 +    public static final DataComponentType.NonValued CANNOT_USE = unvalued("cannot_use");
++    public static final DataComponentType.NonValued VALUABLE = unvalued("valuable");
 +    public static final DataComponentType.NonValued SLOT_LOCK = unvalued("slot_lock");
 +    public static final DataComponentType.Valued<@IntRange(from = 1, to = 6) Integer> CONTAINER_ROWS = valued("container_rows");
 +    public static final DataComponentType.Valued<ItemLore> EXTENDED_BEFORE_LORE = valued("extended_before_lore");
