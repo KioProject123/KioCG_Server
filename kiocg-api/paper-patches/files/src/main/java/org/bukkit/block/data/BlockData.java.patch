@@ -1,12 +1,11 @@
 --- a/src/main/java/org/bukkit/block/data/BlockData.java
 +++ b/src/main/java/org/bukkit/block/data/BlockData.java
-@@ -279,6 +_,12 @@
+@@ -279,6 +_,11 @@
      @NotNull
      BlockState createBlockState();
  
 +    // KioCG start - more api
 +    @NotNull
-+    @ApiStatus.Experimental
 +    BlockState createBlockState(Location location);
 +    // KioCG end - more api
 +
