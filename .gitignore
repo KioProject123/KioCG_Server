@@ -2,7 +2,9 @@
 .gradle
 
 # Ignore Gradle build output directory
-build
+/build
+kiocg-api/build
+kiocg-server/build
 
 /run
 
