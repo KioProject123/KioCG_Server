@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/block/NetherPortalBlock.java
++++ b/net/minecraft/world/level/block/NetherPortalBlock.java
+@@ -142,6 +_,21 @@
+     public TeleportTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
+         // CraftBukkit start
+         ResourceKey<Level> resourceKey = level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER ? Level.OVERWORLD : Level.NETHER;
++
++        // KioCG start - portal only pass through player
++        net.minecraft.server.level.ServerPlayer serverPlayer = getPortalPlayer(entity);
++        if (serverPlayer == null) {
++            return null;
++        }
++
++        if (resourceKey == Level.OVERWORLD) {
++            resourceKey = serverPlayer.enteredNetherDimension;
++            if (resourceKey == null) {
++                return null;
++            }
++        }
++        // KioCG end - portal only pass through player
++
+         ServerLevel level1 = level.getServer().getLevel(resourceKey);
+         // Paper start - Add EntityPortalReadyEvent
+         io.papermc.paper.event.entity.EntityPortalReadyEvent portalReadyEvent = new io.papermc.paper.event.entity.EntityPortalReadyEvent(entity.getBukkitEntity(), level1 == null ? null : level1.getWorld(), org.bukkit.PortalType.NETHER);
+@@ -165,7 +_,7 @@
+             }
+             // Paper end - Configurable portal search radius
+             // CraftBukkit start
+-            org.bukkit.craftbukkit.event.CraftPortalEvent event = entity.callPortalEvent(entity, org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockPos, level1.getWorld()), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.NETHER_PORTAL, portalSearchRadius, level1.paperConfig().environment.portalCreateRadius); // Paper - use custom portal search radius
++            org.bukkit.craftbukkit.event.CraftPortalEvent event = entity.callPortalEvent(entity, org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockPos, level1.getWorld()), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.NETHER_PORTAL, portalSearchRadius, flag, level1.paperConfig().environment.portalCreateRadius); // Paper - use custom portal search radius // KioCG - portal only pass through player: 不要在主世界生成传送门
+             if (event == null) {
+                 return null;
+             }

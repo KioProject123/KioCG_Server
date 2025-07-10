@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -252,6 +_,10 @@
+     private Vec3 startingToFallPosition;
+     @Nullable
+     private Vec3 enteredNetherPosition;
++    // KioCG start - portal only pass through player
++    @Nullable
++    public ResourceKey<Level> enteredNetherDimension;
++    // KioCG end - portal only pass through player
+     @Nullable
+     private Vec3 enteredLavaOnVehiclePosition;
+     private SectionPos lastSectionPos = SectionPos.of(0, 0, 0);
 @@ -429,6 +_,8 @@
      public boolean isRealPlayer; // Paper
      public @Nullable com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
@@ -9,6 +20,22 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+@@ -551,6 +_,7 @@
+         super.readAdditionalSaveData(input);
+         this.wardenSpawnTracker = input.read("warden_spawn_tracker", WardenSpawnTracker.CODEC).orElseGet(WardenSpawnTracker::new);
+         this.enteredNetherPosition = input.read("entered_nether_pos", Vec3.CODEC).orElse(null);
++        this.enteredNetherDimension = input.read("KioCG_entered_nether_dimension", Level.RESOURCE_KEY_CODEC).orElse(null); // KioCG - portal only pass through player
+         this.seenCredits = input.getBooleanOr("seenCredits", false);
+         input.read("recipeBook", ServerRecipeBook.Packed.CODEC)
+             .ifPresent(packed -> this.recipeBook.loadUntrusted(packed, key -> this.server.getRecipeManager().byKey(key).isPresent()));
+@@ -571,6 +_,7 @@
+         this.storeGameTypes(output);
+         output.putBoolean("seenCredits", this.seenCredits);
+         output.storeNullable("entered_nether_pos", Vec3.CODEC, this.enteredNetherPosition);
++        output.storeNullable("KioCG_entered_nether_dimension", Level.RESOURCE_KEY_CODEC, this.enteredNetherDimension); // KioCG - portal only pass through player
+         this.saveParentVehicle(output);
+         output.store("recipeBook", ServerRecipeBook.Packed.CODEC, this.recipeBook.pack());
+         output.putString("Dimension", this.level().dimension().location().toString());
 @@ -707,6 +_,7 @@
      }
  
@@ -200,6 +227,39 @@
          this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment); // CraftBukkit - Get our scores instead
          LivingEntity killCredit = this.getKillCredit();
          if (killCredit != null) {
+@@ -1410,6 +_,11 @@
+                 if (level != null && resourceKey == net.minecraft.world.level.dimension.LevelStem.OVERWORLD && level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER) { // CraftBukkit - empty to fall through to null to event
+                     this.enteredNetherPosition = this.position();
+                 }
++                // KioCG start - portal only pass through player
++                if (level != null && level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER) { // CraftBukkit - empty to fall through to null to event
++                    this.enteredNetherDimension = this.level().dimension();
++                }
++                // KioCG end - portal only pass through player
+ 
+                 profilerFiller.pop();
+                 profilerFiller.push("placing");
+@@ -1461,10 +_,10 @@
+         Entity entity,
+         org.bukkit.Location exit,
+         org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause,
+-        int searchRadius, int creationRadius
++        int searchRadius, boolean canCreatePortal, int creationRadius // KioCG - portal only pass through player
+     ) {
+         org.bukkit.Location enter = this.getBukkitEntity().getLocation();
+-        org.bukkit.event.player.PlayerPortalEvent event = new org.bukkit.event.player.PlayerPortalEvent(this.getBukkitEntity(), enter, exit, cause, searchRadius, true, creationRadius);
++        org.bukkit.event.player.PlayerPortalEvent event = new org.bukkit.event.player.PlayerPortalEvent(this.getBukkitEntity(), enter, exit, cause, searchRadius, canCreatePortal, creationRadius); // KioCG - portal only pass through player
+         event.callEvent();
+         if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null) {
+             return null;
+@@ -1502,6 +_,7 @@
+ 
+         if (maindimensionkey1 != Level.NETHER) { // CraftBukkit
+             this.enteredNetherPosition = null;
++            this.enteredNetherDimension = null; // KioCG - portal only pass through player
+         }
+     }
+ 
 @@ -1528,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
@@ -280,6 +340,14 @@
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
+@@ -2046,6 +_,7 @@
+         // this.recipeBook.copyOverData(that.recipeBook); // CraftBukkit
+         this.seenCredits = that.seenCredits;
+         this.enteredNetherPosition = that.enteredNetherPosition;
++        this.enteredNetherDimension = that.enteredNetherDimension; // KioCG - portal only pass through player
+         this.chunkTrackingView = that.chunkTrackingView;
+         this.setShoulderEntityLeft(that.getShoulderEntityLeft());
+         this.setShoulderEntityRight(that.getShoulderEntityRight());
 @@ -2491,7 +_,7 @@
                  event.isForced()
              );

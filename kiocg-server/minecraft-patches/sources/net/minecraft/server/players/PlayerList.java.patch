@@ -27,6 +27,19 @@
          this.sendActivePlayerEffects(serverPlayer);
          this.sendLevelInfo(serverPlayer, level);
          this.sendPlayerPermissionLevel(serverPlayer);
+@@ -804,6 +_,12 @@
+ 
+         // Don't fire on respawn
+         if (fromWorld != level) {
++            // KioCG start - portal only pass through player
++            if (level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER) {
++                player.enteredNetherDimension = fromWorld.dimension();
++            }
++            // KioCG end - portal only pass through player
++
+             org.bukkit.event.player.PlayerChangedWorldEvent event = new org.bukkit.event.player.PlayerChangedWorldEvent(player.getBukkitEntity(), fromWorld.getWorld());
+             this.server.server.getPluginManager().callEvent(event);
+         }
 @@ -1131,7 +_,7 @@
          player.refreshEntityData(player); // CraftBukkit - SPIGOT-7218: sync metadata
          player.connection.send(new ClientboundSetHeldSlotPacket(player.getInventory().getSelectedSlot()));

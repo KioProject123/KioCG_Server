@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/level/block/Portal.java
++++ b/net/minecraft/world/level/block/Portal.java
+@@ -18,6 +_,18 @@
+         return Portal.Transition.NONE;
+     }
+ 
++    // KioCG start - portal only pass through player
++    @Nullable
++    default net.minecraft.server.level.ServerPlayer getPortalPlayer(Entity entity) {
++        if (entity instanceof net.minecraft.server.level.ServerPlayer player) {
++            return player;
++        } else if (entity.getFirstPassenger() instanceof net.minecraft.server.level.ServerPlayer player) {
++            return player;
++        }
++        return null;
++    }
++    // KioCG end - portal only pass through player
++
+     public static enum Transition {
+         CONFUSION,
+         NONE;
