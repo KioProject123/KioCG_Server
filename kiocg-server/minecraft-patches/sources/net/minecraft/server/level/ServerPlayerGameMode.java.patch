@@ -126,7 +126,7 @@
 +
 +            if (cancelled || interactCancelled) {
 +                this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
-+                this.player.containerMenu.sendAllDataToRemote(); // SPIGOT-2524
++                this.player.containerMenu.forceHeldSlotAndArmor(hand); // SPIGOT-2524
 +                return InteractionResult.FAIL;
 +            }
 +            stack = this.player.getItemInHand(hand); // Update in case it was changed in the event
@@ -138,7 +138,7 @@
 +            // KioCG start - customize default components
 +            if (stack.has(net.minecraft.core.component.DataComponents.CANNOT_USE)) {
 +                player.resyncUsingItem(player); // Paper - Properly cancel usable items
-+                player.containerMenu.sendAllDataToRemote(); // SPIGOT-2524
++                player.containerMenu.forceHeldSlotAndArmor(hand); // SPIGOT-2524
 +                return InteractionResult.FAIL;
 +            }
 +            // KioCG end - customize default components
@@ -161,7 +161,7 @@
          BlockState blockState = level.getBlockState(blockPos);
 @@ -491,6 +_,21 @@
              }
-             player.getBukkitEntity().updateInventory(); // SPIGOT-2867
+             player.containerMenu.forceHeldSlot(hand); // SPIGOT-2867
              this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
 +
 +            // KioCG start - PlayerItemUseEvent

@@ -7,7 +7,7 @@
 -        itemInHand.consume(1, player);
 +        // itemInHand.consume(1, player); // KioCG - use knowledge book correctly: 下移
          if (list.isEmpty()) {
-+            player.containerMenu.sendAllDataToRemote(); // KioCG - use knowledge book correctly
++            player.containerMenu.forceHeldSlot(hand); // KioCG - use knowledge book correctly
              return InteractionResult.FAIL;
          } else {
              if (!level.isClientSide) {
@@ -15,7 +15,7 @@
                      Optional<RecipeHolder<?>> optional = recipeManager.byKey(resourceKey);
                      if (!optional.isPresent()) {
                          LOGGER.error("Invalid recipe: {}", resourceKey);
-+                        player.containerMenu.sendAllDataToRemote(); // KioCG - use knowledge book correctly
++                        player.containerMenu.forceHeldSlot(hand); // KioCG - use knowledge book correctly
                          return InteractionResult.FAIL;
                      }
  
@@ -26,7 +26,7 @@
 +                // KioCG start - use knowledge book correctly
 +                if (player.awardRecipes(list1) == 0) {
 +                    ((net.minecraft.server.level.ServerPlayer) player).sendSystemMessage(net.minecraft.network.chat.Component.literal("所含配方均已解锁").withStyle(net.minecraft.ChatFormatting.RED), true);
-+                    player.containerMenu.sendAllDataToRemote();
++                    player.containerMenu.forceHeldSlot(hand);
 +                    return InteractionResult.FAIL;
 +                }
 +                // KioCG end - use knowledge book correctly

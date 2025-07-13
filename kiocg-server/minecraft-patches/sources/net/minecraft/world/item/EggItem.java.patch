@@ -1,12 +1,14 @@
 --- a/net/minecraft/world/item/EggItem.java
 +++ b/net/minecraft/world/item/EggItem.java
-@@ -22,6 +_,10 @@
+@@ -22,6 +_,12 @@
  
      @Override
      public InteractionResult use(Level level, Player player, InteractionHand hand) {
 +        // KioCG start - more food
-+        player.containerMenu.sendAllDataToRemote();
-+        if (true) return super.use(level, player, hand);
++        if (true) {
++            player.containerMenu.forceHeldSlot(hand);
++            return super.use(level, player, hand);
++        }
 +        // KioCG end - more food
          ItemStack itemInHand = player.getItemInHand(hand);
          // Paper start

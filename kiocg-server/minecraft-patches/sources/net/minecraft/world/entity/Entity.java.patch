@@ -43,7 +43,7 @@
                          }
  
                          // Paper start - EntityLeashEvent
-@@ -3606,6 +_,7 @@
+@@ -3605,6 +_,7 @@
      }
  
      public int getAirSupply() {
@@ -51,7 +51,7 @@
          return this.entityData.get(DATA_AIR_SUPPLY_ID);
      }
  
-@@ -3620,6 +_,7 @@
+@@ -3619,6 +_,7 @@
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
@@ -59,7 +59,7 @@
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
-@@ -4135,7 +_,7 @@
+@@ -4134,7 +_,7 @@
          Entity entity,
          org.bukkit.Location exit,
          org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause,
@@ -68,7 +68,7 @@
      ) {
          org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
          org.bukkit.Location enter = bukkitEntity.getLocation();
-@@ -4146,7 +_,7 @@
+@@ -4145,7 +_,7 @@
              case END_GATEWAY -> org.bukkit.PortalType.END_GATEWAY; // not actually used yet
              default -> org.bukkit.PortalType.CUSTOM;
          };
@@ -77,7 +77,7 @@
          event.callEvent();
          if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !entity.isAlive()) {
              return null;
-@@ -5200,6 +_,12 @@
+@@ -5199,6 +_,12 @@
          return this.level;
      }
  
@@ -90,7 +90,7 @@
      public void setLevel(Level level) {
          this.level = level;
      }
-@@ -5365,4 +_,10 @@
+@@ -5364,4 +_,10 @@
          return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
      }
      // Paper end - Expose entity id counter

@@ -162,7 +162,7 @@
 +            // KioCG start - customize default components
 +            if (this.has(DataComponents.CANNOT_PLACE)) {
 +                if (player != null) {
-+                    player.containerMenu.sendAllDataToRemote();
++                    player.containerMenu.forceHeldSlot(context.getHand());
 +                    player.resyncUsingItem((ServerPlayer) player);
 +                }
 +                return InteractionResult.FAIL;
@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -872,8 +_,167 @@
+@@ -868,8 +_,167 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -351,7 +351,7 @@
  
      public static MapCodec<ItemStack> lenientOptionalFieldOf(String fieldName) {
          return CODEC.lenientOptionalFieldOf(fieldName)
-@@ -1206,6 +_,12 @@
+@@ -1202,6 +_,12 @@
          EnchantmentHelper.updateEnchantments(this, mutable -> mutable.upgrade(enchantment, level));
      }
  
@@ -364,7 +364,7 @@
      public boolean isEnchanted() {
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
-@@ -1214,6 +_,14 @@
+@@ -1210,6 +_,14 @@
          return this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
      }
  
@@ -379,7 +379,7 @@
      public boolean isFramed() {
          return this.entityRepresentation instanceof ItemFrame;
      }
-@@ -1347,6 +_,15 @@
+@@ -1343,6 +_,15 @@
  
      public boolean isValidRepairItem(ItemStack item) {
          Repairable repairable = this.get(DataComponents.REPAIRABLE);

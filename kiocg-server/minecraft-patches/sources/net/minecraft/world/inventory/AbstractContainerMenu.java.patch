@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -234,10 +_,23 @@
+@@ -258,10 +_,23 @@
          return list;
      }
  
@@ -24,7 +24,7 @@
              this.triggerSlotListeners(i, item, supplier);
              this.synchronizeSlotToRemote(i, item, supplier);
          }
-@@ -256,6 +_,7 @@
+@@ -280,6 +_,7 @@
      }
  
      public void broadcastFullState() {
@@ -32,7 +32,7 @@
          for (int i = 0; i < this.slots.size(); i++) {
              ItemStack item = this.slots.get(i).getItem();
              this.triggerSlotListeners(i, item, item::copy);
-@@ -533,14 +_,14 @@
+@@ -555,14 +_,14 @@
                                  slot.onTake(player, itemStack2);
                              });
                          } else if (slot.mayPlace(carried2)) {
@@ -49,7 +49,7 @@
                              Optional<ItemStack> optional1 = slot.tryRemove(carried.getCount(), carried2.getMaxStackSize() - carried2.getCount(), player);
                              optional1.ifPresent(itemStack2 -> {
                                  carried2.grow(itemStack2.getCount());
-@@ -946,6 +_,16 @@
+@@ -968,6 +_,16 @@
          this.stateId = this.stateId + 1 & 32767;
          return this.stateId;
      }

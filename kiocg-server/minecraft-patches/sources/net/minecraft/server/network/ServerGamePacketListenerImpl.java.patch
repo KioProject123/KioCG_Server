@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -385,6 +_,7 @@
+@@ -397,6 +_,7 @@
              && this.server.getPlayerIdleTimeout() > 0
              && Util.getMillis() - this.player.getLastActionTime() > this.server.getPlayerIdleTimeout() * 1000L * 60L && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits
              this.player.resetLastActionTime(); // CraftBukkit - SPIGOT-854
@@ -8,7 +8,7 @@
              this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
          }
          // Paper start - Prevent causing expired keys from impacting new joins
-@@ -1856,6 +_,7 @@
+@@ -1868,6 +_,7 @@
          }
  
          this.player.teleportSetPosition(posMoveRotation, relatives);
@@ -16,7 +16,7 @@
          this.awaitingPositionFromClient = this.player.position();
          // CraftBukkit start - update last location
          this.lastPosX = this.awaitingPositionFromClient.x;
-@@ -2100,31 +_,37 @@
+@@ -2112,31 +_,37 @@
                  BlockHitResult hitResult = this.player.level().clip(new net.minecraft.world.level.ClipContext(from, to, net.minecraft.world.level.ClipContext.Block.OUTLINE, net.minecraft.world.level.ClipContext.Fluid.NONE, this.player));
  
                  boolean cancelled;
@@ -39,13 +39,13 @@
  
 -                if (cancelled) {
 -                    this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
--                    this.player.containerMenu.sendAllDataToRemote(); // SPIGOT-2524
+-                    this.player.containerMenu.forceHeldSlotAndArmor(hand); // SPIGOT-2524
 -                    return;
 -                }
 +                // KioCG start - PlayerItemUseEvent: 移动到useItem()
 +                // if (cancelled) {
 +                //     this.player.resyncUsingItem(this.player); // Paper - Properly cancel usable items
-+                //     this.player.containerMenu.sendAllDataToRemote(); // SPIGOT-2524
++                //     this.player.containerMenu.forceHeldSlotAndArmor(hand); // SPIGOT-2524
 +                //     return;
 +                // }
 +                // KioCG end - PlayerItemUseEvent: 移动到useItem()
@@ -60,7 +60,7 @@
                      && success.swingSource() == InteractionResult.SwingSource.SERVER) {
                      this.player.swing(hand, true);
                  }
-@@ -2758,6 +_,11 @@
+@@ -2770,6 +_,11 @@
                                      boolean triggerLeashUpdate = itemInHand.is(net.minecraft.world.item.Items.LEAD) && target instanceof net.minecraft.world.entity.Leashable;
                                      Item origItem = ServerGamePacketListenerImpl.this.player.getInventory().getSelectedItem().isEmpty() ? null : ServerGamePacketListenerImpl.this.player.getInventory().getSelectedItem().getItem();
  
@@ -71,8 +71,8 @@
 +                                    // KioCG end - customize default components
                                      ServerGamePacketListenerImpl.this.cserver.getPluginManager().callEvent(event);
  
-                                     // Entity in bucket - SPIGOT-4048 and SPIGOT-6859a
-@@ -2982,7 +_,7 @@
+                                     // Entity in bucket - SPIGOT-4048 and SPIGOT-6859
+@@ -2984,7 +_,7 @@
                                                      action = packet.buttonNum() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
                                                  }
                                              } else if (slot.mayPlace(cursor)) {
@@ -81,7 +81,7 @@
                                                      int toPlace = packet.buttonNum() == 0 ? cursor.getCount() : 1;
                                                      toPlace = Math.min(toPlace, clickedItem.getMaxStackSize() - clickedItem.getCount());
                                                      toPlace = Math.min(toPlace, slot.container.getMaxStackSize() - clickedItem.getCount());
-@@ -3018,7 +_,7 @@
+@@ -3020,7 +_,7 @@
                                                          action = InventoryAction.SWAP_WITH_CURSOR;
                                                      }
                                                  }
@@ -90,7 +90,7 @@
                                                  if (clickedItem.getCount() >= 0) {
                                                      if (clickedItem.getCount() + cursor.getCount() <= cursor.getMaxStackSize()) {
                                                          // As of 1.5, this is result slots only
-@@ -3158,6 +_,15 @@
+@@ -3160,6 +_,15 @@
                      }
  
                      if (packet.clickType() != net.minecraft.world.inventory.ClickType.QUICK_CRAFT) {

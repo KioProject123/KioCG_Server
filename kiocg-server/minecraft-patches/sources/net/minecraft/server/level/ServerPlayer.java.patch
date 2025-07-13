@@ -227,7 +227,7 @@
          this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment); // CraftBukkit - Get our scores instead
          LivingEntity killCredit = this.getKillCredit();
          if (killCredit != null) {
-@@ -1410,6 +_,11 @@
+@@ -1419,6 +_,11 @@
                  if (level != null && resourceKey == net.minecraft.world.level.dimension.LevelStem.OVERWORLD && level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER) { // CraftBukkit - empty to fall through to null to event
                      this.enteredNetherPosition = this.position();
                  }
@@ -239,7 +239,7 @@
  
                  profilerFiller.pop();
                  profilerFiller.push("placing");
-@@ -1461,10 +_,10 @@
+@@ -1470,10 +_,10 @@
          Entity entity,
          org.bukkit.Location exit,
          org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause,
@@ -252,7 +252,7 @@
          event.callEvent();
          if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null) {
              return null;
-@@ -1502,6 +_,7 @@
+@@ -1511,6 +_,7 @@
  
          if (maindimensionkey1 != Level.NETHER) { // CraftBukkit
              this.enteredNetherPosition = null;
@@ -260,7 +260,7 @@
          }
      }
  
-@@ -1528,7 +_,7 @@
+@@ -1537,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
              this.setRespawnPosition(new ServerPlayer.RespawnConfig(this.level().dimension(), at, this.getYRot(), false), true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
@@ -269,7 +269,7 @@
                  return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                  if (!this.isCreative()) {
-@@ -1577,7 +_,7 @@
+@@ -1586,7 +_,7 @@
                      this.awardStat(Stats.SLEEP_IN_BED);
                      CriteriaTriggers.SLEPT_IN_BED.trigger(this);
                  });
@@ -278,7 +278,7 @@
                      this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
                  }
  
-@@ -1589,10 +_,27 @@
+@@ -1598,10 +_,27 @@
  
      @Override
      public void startSleeping(BlockPos pos) {
@@ -307,7 +307,7 @@
      private boolean bedInRange(BlockPos pos, Direction direction) {
          return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
      }
-@@ -1662,9 +_,9 @@
+@@ -1671,9 +_,9 @@
      }
  
      @Override
@@ -319,7 +319,7 @@
          }
      }
  
-@@ -2007,13 +_,18 @@
+@@ -2016,13 +_,18 @@
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
          this.wardenSpawnTracker = that.wardenSpawnTracker;
          this.chatSession = that.chatSession;
@@ -340,7 +340,7 @@
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
-@@ -2046,6 +_,7 @@
+@@ -2055,6 +_,7 @@
          // this.recipeBook.copyOverData(that.recipeBook); // CraftBukkit
          this.seenCredits = that.seenCredits;
          this.enteredNetherPosition = that.enteredNetherPosition;
@@ -348,7 +348,7 @@
          this.chunkTrackingView = that.chunkTrackingView;
          this.setShoulderEntityLeft(that.getShoulderEntityLeft());
          this.setShoulderEntityRight(that.getShoulderEntityRight());
-@@ -2491,7 +_,7 @@
+@@ -2500,7 +_,7 @@
                  event.isForced()
              );
              if (event.willNotifyPlayer() && event.getNotification() != null) {
@@ -357,7 +357,7 @@
              }
          }
  
-@@ -2572,17 +_,25 @@
+@@ -2581,17 +_,25 @@
  
      public void loadGameTypes(@Nullable ValueInput input) {
          // Paper start - Expand PlayerGameModeChangeEvent
@@ -387,7 +387,7 @@
      }
  
      private void storeGameTypes(ValueOutput output) {
-@@ -2936,6 +_,8 @@
+@@ -2945,6 +_,8 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();

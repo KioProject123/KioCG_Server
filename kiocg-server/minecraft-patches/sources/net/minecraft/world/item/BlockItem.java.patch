@@ -7,7 +7,7 @@
 +                    // KioCG start - customize default components
 +                } else if (context.getItemInHand().has(DataComponents.CANNOT_PLACE)) {
 +                    if (context.getPlayer() != null) {
-+                        context.getPlayer().containerMenu.sendAllDataToRemote();
++                        context.getPlayer().containerMenu.forceHeldSlot(blockPlaceContext.getHand());
 +                    }
 +                    return InteractionResult.FAIL;
 +                    // KioCG end - customize default components

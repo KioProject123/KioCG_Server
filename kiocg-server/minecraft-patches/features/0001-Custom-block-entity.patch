@@ -423,7 +423,7 @@ index be6f37f91569c659c609e5e8d38671ca86f8cd95..8a1f42a77800c2c105e7a101a4d914fb
          int i = EnchantmentHelper.processBlockExperience(level, heldItem, amount.sample(level.getRandom()));
          if (i > 0) {
 diff --git a/net/minecraft/world/level/block/FlowerPotBlock.java b/net/minecraft/world/level/block/FlowerPotBlock.java
-index dccae78867d738c1711699761f97cc7cd356e5a8..d6702e415eecd669f4e43d2851fc5c8ea7440f16 100644
+index a972c5b4141c3f267070b65bbac5937967fdb3c8..7ace060aeb7751977eac512345c41cb9580c580a 100644
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
 @@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
@@ -465,7 +465,7 @@ index dccae78867d738c1711699761f97cc7cd356e5a8..d6702e415eecd669f4e43d2851fc5c8e
 +                } else if (pottedState.is(Blocks.CAKE)) {
 +                    net.minecraft.world.item.Item item = stack.getItem();
 +                    if (pottedState.getValue(CakeBlock.BITES) == 0 && stack.is(net.minecraft.tags.ItemTags.CANDLES) && Block.byItem(item) instanceof CandleBlock candleBlock) {
-+                        InteractionResult interactionResult = onPut(stack, level, pos, player);
++                        InteractionResult interactionResult = onPut(stack, level, pos, player, hand);
 +                        if (interactionResult == InteractionResult.SUCCESS) {
 +                            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
 +                            flowerPotBlockEntity.updatePottedState(CandleCakeBlock.byCandle(candleBlock));
@@ -482,7 +482,7 @@ index dccae78867d738c1711699761f97cc7cd356e5a8..d6702e415eecd669f4e43d2851fc5c8e
 +                Block block = blockItem.getBlock();
 +                java.util.Optional<BlockState> optional = net.minecraft.core.flowerpot.FlowerPotInteraction.getBlockState(level, pos, block);
 +                return optional.map(pottedState -> {
-+                    InteractionResult interactionResult = onPut(stack, level, pos, player);
++                    InteractionResult interactionResult = onPut(stack, level, pos, player, hand);
 +                    if (interactionResult == InteractionResult.SUCCESS) {
 +                        flowerPotBlockEntity.setPotted(block, pottedState, player.getDirection().getOpposite());
 +                        return InteractionResult.SUCCESS_SERVER;
@@ -499,7 +499,7 @@ index dccae78867d738c1711699761f97cc7cd356e5a8..d6702e415eecd669f4e43d2851fc5c8e
 +            // KioCG start - custom block entity
              return InteractionResult.CONSUME;
          } else {
-+            InteractionResult interactionResult = onPut(stack, level, pos, player);
++            InteractionResult interactionResult = onPut(stack, level, pos, player, hand);
 +            if (interactionResult == InteractionResult.SUCCESS) {
 +                level.setBlock(pos, blockState, 3);
 +            }
@@ -507,7 +507,7 @@ index dccae78867d738c1711699761f97cc7cd356e5a8..d6702e415eecd669f4e43d2851fc5c8e
 +        }
 +    }
 +
-+    private InteractionResult onPut(ItemStack stack, Level level, BlockPos pos, Player player) {
++    private InteractionResult onPut(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
 +        {
 +            // KioCG end - custom block entity
              // Paper start - Add PlayerFlowerPotManipulateEvent

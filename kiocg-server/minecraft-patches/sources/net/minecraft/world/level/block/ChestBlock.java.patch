@@ -6,7 +6,7 @@
                      if (first.canOpen(player) && second.canOpen(player)) {
 +                        // KioCG start - expand container rows
 +                        if (container.getContainerSize() > 6 * 9) {
-+                            ChestBlock.sendTooLargeMessage(player);
++                            ChestBlock.sendTooLargeMessage(player, null);
 +                            return null;
 +                        }
 +                        // KioCG end - expand container rows
@@ -18,7 +18,7 @@
                      } else {
                          return null;
                      }
-@@ -230,8 +_,43 @@
+@@ -230,8 +_,45 @@
              }
          }
  
@@ -42,18 +42,20 @@
 +
 +        if (rows > 6) {
 +            if (context.getPlayer() != null) {
-+                sendTooLargeMessage(context.getPlayer());
++                sendTooLargeMessage(context.getPlayer(), context.getHand());
 +            }
 +            return true;
 +        }
 +        return false;
 +    }
 +
-+    private static void sendTooLargeMessage(@Nullable Player player) {
++    private static void sendTooLargeMessage(@Nullable Player player, @Nullable net.minecraft.world.InteractionHand hand) {
 +        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
 +            Component component = Component.literal("容器大小超过上限").withStyle(net.minecraft.ChatFormatting.RED);
 +            serverPlayer.sendSystemMessage(component, true);
-+            serverPlayer.containerMenu.sendAllDataToRemote();
++            if (hand != null) {
++                serverPlayer.containerMenu.forceHeldSlot(hand);
++            }
 +        }
 +    }
 +

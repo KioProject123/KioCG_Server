@@ -169,13 +169,14 @@
      @Override
      protected void blockUsingItem(ServerLevel level, LivingEntity entity) {
          super.blockUsingItem(level, entity);
-@@ -1812,6 +_,13 @@
+@@ -1811,6 +_,14 @@
      }
  
      public boolean mayUseItemAt(BlockPos pos, Direction facing, ItemStack stack) {
 +        // KioCG start - customize default components
 +        if (stack.has(DataComponents.CANNOT_PLACE)) {
-+            this.containerMenu.sendAllDataToRemote();
++            this.containerMenu.forceHeldSlot(InteractionHand.MAIN_HAND);
++            this.containerMenu.forceHeldSlot(InteractionHand.OFF_HAND);
 +            return false;
 +        }
 +        // KioCG end - customize default components
@@ -183,7 +184,7 @@
          if (this.abilities.mayBuild) {
              return true;
          } else {
-@@ -2324,6 +_,13 @@
+@@ -2323,6 +_,13 @@
      public boolean onClimbable() {
          return !this.abilities.flying && super.onClimbable();
      }
