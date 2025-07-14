@@ -386,6 +386,23 @@
          if (destination instanceof WorldlyContainer worldlyContainer && direction != null) {
              int[] slotsForFace = worldlyContainer.getSlotsForFace(direction);
  
+@@ -674,6 +_,7 @@
+         if (canPlaceItemInContainer(destination, stack, slot, direction)) {
+             boolean flag = false;
+             boolean isEmpty = destination.isEmpty();
++            boolean destinationHopperTickerTicking = destination instanceof HopperBlockEntity hopperBlockEntity && hopperBlockEntity.tickerTicking; // KioCG - optimize block entity: 修复漏斗时序
+             if (item.isEmpty()) {
+                 // Spigot start - SPIGOT-6693, SimpleContainer#setItem
+                 ItemStack leftover = ItemStack.EMPTY; // Paper - Make hoppers respect inventory max stack size
+@@ -697,7 +_,7 @@
+ 
+             if (flag) {
+                 if (isEmpty && destination instanceof HopperBlockEntity hopperBlockEntity && !hopperBlockEntity.isOnCustomCooldown()) {
+-                    int min = 0;
++                    int min = !destinationHopperTickerTicking ? 1 : 0; // KioCG - optimize block entity: 修复漏斗时序
+                     if (source instanceof HopperBlockEntity hopperBlockEntity1 && hopperBlockEntity.tickedGameTime >= hopperBlockEntity1.tickedGameTime) {
+                         min = 1;
+                     }
 @@ -737,6 +_,8 @@
          BlockPos searchPosition = pos.relative(blockEntity.facing);
          Container inventory = getContainerAt(level, searchPosition);
