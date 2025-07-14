@@ -105,7 +105,7 @@
              });
              if (!result && blockEntity.level.spigotConfig.hopperCheck > 1) {
                  blockEntity.setCooldown(blockEntity.level.spigotConfig.hopperCheck);
-@@ -143,6 +_,29 @@
+@@ -143,6 +_,28 @@
          }
      }
  
@@ -119,8 +119,7 @@
 +        BlockPos facingPos = pos.relative(this.facing);
 +        BlockState facingState = level.getBlockState(facingPos);
 +        this.needDoEntityInside = !hasBlockContainer(level, abovePos, aboveState);
-+        // 不吸上方的漏斗来进一步优化
-+        this.needSuckInItems = (!this.needDoEntityInside && !aboveState.is(net.minecraft.world.level.block.Blocks.HOPPER)) || aboveState.is(BlockTags.RAILS);
++        this.needSuckInItems = !this.needDoEntityInside || aboveState.is(BlockTags.RAILS);
 +        this.needDropItems = facingState.getCollisionShape(level, pos).isEmpty();
 +        this.needEjectItems = this.needDropItems || facingState.is(BlockTags.RAILS) || hasBlockContainer(level, facingPos, facingState);
 +        final int fullState = getFullState(this); // Paper - Perf: Optimize Hoppers
@@ -426,7 +425,7 @@
              blockContainer = getEntityContainer(level, x, y, z);
          }
  
-@@ -793,11 +_,13 @@
+@@ -793,7 +_,7 @@
  
      @Nullable
      private static Container getBlockContainer(Level level, BlockPos pos, BlockState state) {
@@ -435,12 +434,6 @@
          Block block = state.getBlock();
          if (block instanceof WorldlyContainerHolder) {
              return ((WorldlyContainerHolder)block).getContainer(state, level, pos);
-         } else if (state.hasBlockEntity() && level.getBlockEntity(pos) instanceof Container container) {
-+            if (state.is(net.minecraft.world.level.block.Blocks.HOPPER)) return null; // KioCG - optimize block entity: 不吸上方的漏斗来进一步优化
-+
-             if (container instanceof ChestBlockEntity && block instanceof ChestBlock) {
-                 container = ChestBlock.getContainer((ChestBlock)block, state, level, pos, true);
-             }
 @@ -859,14 +_,24 @@
  
      @Override
