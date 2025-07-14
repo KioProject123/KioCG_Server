@@ -105,7 +105,7 @@
              });
              if (!result && blockEntity.level.spigotConfig.hopperCheck > 1) {
                  blockEntity.setCooldown(blockEntity.level.spigotConfig.hopperCheck);
-@@ -143,6 +_,28 @@
+@@ -143,6 +_,34 @@
          }
      }
  
@@ -116,12 +116,18 @@
 +
 +        BlockPos abovePos = pos.above();
 +        BlockState aboveState = level.getBlockState(abovePos);
-+        BlockPos facingPos = pos.relative(this.facing);
-+        BlockState facingState = level.getBlockState(facingPos);
 +        this.needDoEntityInside = !hasBlockContainer(level, abovePos, aboveState);
-+        this.needSuckInItems = !this.needDoEntityInside || aboveState.is(BlockTags.RAILS);
-+        this.needDropItems = facingState.getCollisionShape(level, pos).isEmpty();
-+        this.needEjectItems = this.needDropItems || facingState.is(BlockTags.RAILS) || hasBlockContainer(level, facingPos, facingState);
++        // 不吸上方的漏斗来进一步优化, 改为输出到下方漏斗
++        this.needSuckInItems = (!this.needDoEntityInside && !aboveState.is(net.minecraft.world.level.block.Blocks.HOPPER)) || aboveState.is(BlockTags.RAILS);
++        if (this.facing != Direction.DOWN && level.getBlockState(pos.below()).is(net.minecraft.world.level.block.Blocks.HOPPER)) {
++            this.needDropItems = false;
++            this.needEjectItems = true;
++        } else {
++            BlockPos facingPos = pos.relative(this.facing);
++            BlockState facingState = level.getBlockState(facingPos);
++            this.needDropItems = facingState.getCollisionShape(level, pos).isEmpty();
++            this.needEjectItems = this.needDropItems || facingState.is(BlockTags.RAILS) || hasBlockContainer(level, facingPos, facingState);
++        }
 +        final int fullState = getFullState(this); // Paper - Perf: Optimize Hoppers
 +        return this.needSuckInItems && fullState != HOPPER_IS_FULL || this.needEjectItems && fullState != HOPPER_EMPTY;
 +    }
@@ -244,11 +250,36 @@
          ItemStack movedItem = origItemStack;
          final int originalItemCount = origItemStack.getCount();
          final int movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
-@@ -417,12 +_,19 @@
+@@ -417,12 +_,44 @@
      // Paper end - Perf: Optimize Hoppers
  
      private static boolean ejectItems(Level level, BlockPos pos, HopperBlockEntity blockEntity) {
 +        if (blockEntity.needDropItems) return hopperPush(level, null, blockEntity.facing, blockEntity); // KioCG - hopper drop items
++
++        // KioCG start - optimize block entity: 向下方漏斗输出物品
++        if (blockEntity.facing != Direction.DOWN && level.getBlockState(pos.below()).is(net.minecraft.world.level.block.Blocks.HOPPER)) {
++            Direction prevFacing = blockEntity.facing;
++            try {
++                blockEntity.facing = Direction.DOWN;
++                Container attachedContainer = getAttachedContainer(level, pos, blockEntity);
++                if (attachedContainer == null) {
++                    // 执行侧面传输
++                } else {
++                    Direction opposite = blockEntity.facing.getOpposite();
++                    if (isFullContainer(attachedContainer, opposite)) {
++                        // 执行侧面传输
++                    } else {
++                        if (hopperPush(level, attachedContainer, opposite, blockEntity)) {
++                            return true;
++                        }
++                        // 执行侧面传输
++                    }
++                }
++            } finally {
++                blockEntity.facing = prevFacing;
++            }
++        }
++        // KioCG end - optimize block entity: 向下方漏斗输出物品
 +
          Container attachedContainer = getAttachedContainer(level, pos, blockEntity);
          if (attachedContainer == null) {
@@ -412,15 +443,17 @@
          org.bukkit.craftbukkit.block.CraftBlock hopper = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos);
          org.bukkit.craftbukkit.block.CraftBlock searchBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, searchPosition);
          return HopperBlockEntity.runHopperInventorySearchEvent(
-@@ -753,6 +_,8 @@
+@@ -751,7 +_,9 @@
+     @Nullable
+     private static Container getSourceContainer(Level level, Hopper hopper, BlockPos pos, BlockState state) {
          // CraftBukkit start
-         final Container inventory = HopperBlockEntity.getContainerAt(level, pos, state, hopper.getLevelX(), hopper.getLevelY() + 1.0D, hopper.getLevelZ());
- 
-+        if (org.bukkit.event.inventory.HopperInventorySearchEvent.getHandlerList().getRegisteredListeners().length == 0) return inventory; // KioCG - optimize block entity
+-        final Container inventory = HopperBlockEntity.getContainerAt(level, pos, state, hopper.getLevelX(), hopper.getLevelY() + 1.0D, hopper.getLevelZ());
++        final Container inventory = state.is(net.minecraft.world.level.block.Blocks.HOPPER) ? null : HopperBlockEntity.getContainerAt(level, pos, state, hopper.getLevelX(), hopper.getLevelY() + 1.0D, hopper.getLevelZ()); // KioCG - optimize block entity: 不吸上方的漏斗来进一步优化
 +
++        if (org.bukkit.event.inventory.HopperInventorySearchEvent.getHandlerList().getRegisteredListeners().length == 0) return inventory; // KioCG - optimize block entity
+ 
          final BlockPos hopperPos = BlockPos.containing(hopper.getLevelX(), hopper.getLevelY(), hopper.getLevelZ());
          org.bukkit.craftbukkit.block.CraftBlock hopperBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, hopperPos);
-         org.bukkit.craftbukkit.block.CraftBlock containerBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, hopperPos.above());
 @@ -772,7 +_,11 @@
  
      @Nullable
