@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/block/AnvilBlock.java
++++ b/net/minecraft/world/level/block/AnvilBlock.java
+@@ -130,4 +_,13 @@
+     public int getDustColor(BlockState state, BlockGetter reader, BlockPos pos) {
+         return state.getMapColor(reader, pos).col;
+     }
++
++    // KioCG start - change container behavior
++    @Override
++    protected void itemOnTop(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, net.minecraft.world.entity.InsideBlockEffectApplier effectApplier) {
++        if (itemEntity.hasCanPickUpDelay()) {
++            itemEntity.snapTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
++        }
++    }
++    // KioCG end - change container behavior
+ }

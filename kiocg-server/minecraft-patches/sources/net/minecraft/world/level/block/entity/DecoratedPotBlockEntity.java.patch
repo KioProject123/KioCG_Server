@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/DecoratedPotBlockEntity.java
-@@ -105,6 +_,47 @@
+@@ -105,6 +_,38 @@
          }
      }
  
@@ -18,27 +18,18 @@
 +    // }
 +
 +    private int suckInTime = 0;
-+    public static void itemSearchHopper(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.item.ItemEntity itemEntity, DecoratedPotBlockEntity blockEntity) {
++    public static void itemOnTop(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.item.ItemEntity itemEntity, DecoratedPotBlockEntity blockEntity) {
 +        if (blockEntity.suckInTime != net.minecraft.server.MinecraftServer.currentTick && !itemEntity.getItem().isEmpty()
 +            && itemEntity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(SUCK_AABB)) {
 +            if (itemEntity.canDecoratedPotSuck && net.minecraft.world.level.block.DecoratedPotBlock.putItem(itemEntity.getItem(), level, pos, null, blockEntity).consumesAction()) {
++                itemEntity.snapTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
 +                itemEntity.pickupDelay++;
-+                itemEntity.searchingHopper = true;
-+                blockEntity.setSuckInMovement(itemEntity);
 +                blockEntity.suckInTime = net.minecraft.server.MinecraftServer.currentTick;
 +            }
 +        }
 +    }
 +
-+    private void setSuckInMovement(net.minecraft.world.entity.item.ItemEntity itemEntity) {
-+        net.minecraft.world.phys.Vec3 deltaMovement = itemEntity.getDeltaMovement();
-+        if (deltaMovement.horizontalDistanceSqr() > 1.0E-5F) {
-+            itemEntity.setDeltaMovement(deltaMovement.x * 0.5F, deltaMovement.y, deltaMovement.z * 0.5F);
-+            itemEntity.hurtMarked = true;
-+        }
-+    }
-+
-+    private static final net.minecraft.world.phys.AABB SUCK_AABB = net.minecraft.world.level.block.Block.column(8.0, 16.0, 24.0).toAabbs().get(0);
++    private static final net.minecraft.world.phys.AABB SUCK_AABB = net.minecraft.world.level.block.Block.column(12.0, 16.0, 24.0).toAabbs().get(0);
 +    public static List<net.minecraft.world.entity.item.ItemEntity> getItemsAtAndAbove(net.minecraft.world.level.Level level, BlockPos pos) {
 +        net.minecraft.world.phys.AABB aabb = SUCK_AABB.move(pos.getX(), pos.getY(), pos.getZ());
 +        return level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, aabb, net.minecraft.world.entity.EntitySelector.ENTITY_STILL_ALIVE);

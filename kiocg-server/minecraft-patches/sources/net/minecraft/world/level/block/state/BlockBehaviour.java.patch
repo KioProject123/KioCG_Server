@@ -64,7 +64,7 @@
      }
  
 +    // KioCG start - optimize block entity: item search hopper
-+    protected void itemSearchHopper(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
++    protected void itemOnTop(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
 +    }
 +    // KioCG end - optimize block entity: item search hopper
 +
@@ -115,8 +115,8 @@
          }
  
 +        // KioCG start - optimize block entity: item search hopper
-+        public void itemSearchHopper(Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
-+            this.getBlock().itemSearchHopper(this.asState(), level, pos, itemEntity, effectApplier);
++        public void itemOnTop(Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
++            this.getBlock().itemOnTop(this.asState(), level, pos, itemEntity, effectApplier);
 +        }
 +        // KioCG end - optimize block entity: item search hopper
 +

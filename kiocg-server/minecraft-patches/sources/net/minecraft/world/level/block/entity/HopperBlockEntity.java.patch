@@ -484,7 +484,7 @@
          Block block = state.getBlock();
          if (block instanceof WorldlyContainerHolder) {
              return ((WorldlyContainerHolder)block).getContainer(state, level, pos);
-@@ -859,14 +_,24 @@
+@@ -859,14 +_,25 @@
  
      @Override
      protected void setItems(NonNullList<ItemStack> items) {
@@ -494,18 +494,19 @@
  
 +    private int suckInTime = 0; // KioCG - optimize block entity: item search hopper
      public static void entityInside(Level level, BlockPos pos, BlockState state, Entity entity, HopperBlockEntity blockEntity) {
-+        if (!blockEntity.needDoEntityInside || !state.getValue(HopperBlock.ENABLED)) return; // KioCG - optimize block entity: item search hopper
++        if (!blockEntity.needDoEntityInside || !state.getValue(HopperBlock.ENABLED) || blockEntity.suckInTime == net.minecraft.server.MinecraftServer.currentTick) return; // KioCG - optimize block entity: item search hopper
          if (entity instanceof ItemEntity itemEntity
              && !itemEntity.getItem().isEmpty()
              && entity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(blockEntity.getSuckAabb())) {
 -            tryMoveItems(level, pos, state, blockEntity, () -> addItem(blockEntity, itemEntity));
 +            // if (level.paperConfig().kiocgConfig.hopperRailsOptimize && level.getBlockState(pos.relative(Direction.UP)).is(BlockTags.RAILS)) return; // KioCG - hopper rails optimize: 不要吸取铁轨上的物品
 +            // KioCG start - optimize block entity: item search hopper
-+            if (blockEntity.suckInTime != net.minecraft.server.MinecraftServer.currentTick) {
-+                if (!blockEntity.inventoryFull()) {
-+                    addItem(blockEntity, itemEntity);
-+                }
++            if (blockEntity.inventoryFull()) {
 +                blockEntity.suckInTime = net.minecraft.server.MinecraftServer.currentTick;
++            } else {
++                if (addItem(blockEntity, itemEntity)) {
++                    blockEntity.suckInTime = net.minecraft.server.MinecraftServer.currentTick;
++                }
 +            }
 +            // KioCG end - optimize block entity: item search hopper
          }

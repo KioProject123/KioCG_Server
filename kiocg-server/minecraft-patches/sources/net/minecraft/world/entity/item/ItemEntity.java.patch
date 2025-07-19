@@ -1,17 +1,16 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -56,6 +_,10 @@
+@@ -56,6 +_,9 @@
      public boolean canMobPickup = true; // Paper - Item#canEntityPickup
      private int despawnRate = -1; // Paper - Alternative item-despawn-rate
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
 +    // KioCG start - optimize block entity: item search hopper
-+    public boolean searchingHopper = false;
 +    public boolean canDecoratedPotSuck = true;
 +    // KioCG end - optimize block entity: item search hopper
  
      public ItemEntity(EntityType<? extends ItemEntity> entityType, Level level) {
          super(entityType, level);
-@@ -183,16 +_,30 @@
+@@ -183,16 +_,29 @@
                  }
              }
  
@@ -32,7 +31,6 @@
 +                // KioCG start - optimize block entity: item search hopper // 提取变量
 +                blockPosBelowThatAffectsMyMovement = this.getBlockPosBelowThatAffectsMyMovement();
 +                belowState = level.getBlockState(blockPosBelowThatAffectsMyMovement);
-+                this.searchingHopper = true;
 +                // KioCG end - optimize block entity: item search hopper // 提取变量
                  // Paper start - Friction API
                  if (this.frictionState == net.kyori.adventure.util.TriState.FALSE) {
@@ -44,7 +42,7 @@
                  }
  
                  this.setDeltaMovement(this.getDeltaMovement().multiply(f, 0.98, f));
-@@ -202,7 +_,25 @@
+@@ -202,7 +_,17 @@
                          this.setDeltaMovement(deltaMovement1.multiply(1.0, -0.5, 1.0));
                      }
                  }
@@ -54,19 +52,11 @@
 +            }
 +
 +            // KioCG start - optimize block entity: item search hopper
-+            if (this.searchingHopper) {
-+                this.searchingHopper = false;
-+
-+                if (blockPosBelowThatAffectsMyMovement == null) {
-+                    blockPosBelowThatAffectsMyMovement = this.getBlockPosBelowThatAffectsMyMovement();
-+                    belowState = level.getBlockState(blockPosBelowThatAffectsMyMovement);
-+                }
-+                if (level.paperConfig().kiocgConfig.block.hopperPullsEntityOwnedItem || this.target == null) { // KioCG - hopper filter
-+                    if (level.paperConfig().kiocgConfig.block.hopperPullsInfinitePickupItem || this.pickupDelay != Short.MAX_VALUE) { // KioCG - hopper filter
-+                        belowState.itemSearchHopper(level, blockPosBelowThatAffectsMyMovement, this, net.minecraft.world.entity.InsideBlockEffectApplier.NOOP);
-+                    }
-+                }
++            if (blockPosBelowThatAffectsMyMovement == null) {
++                blockPosBelowThatAffectsMyMovement = this.getBlockPosBelowThatAffectsMyMovement();
++                belowState = level.getBlockState(blockPosBelowThatAffectsMyMovement);
 +            }
++            belowState.itemOnTop(level, blockPosBelowThatAffectsMyMovement, this, net.minecraft.world.entity.InsideBlockEffectApplier.NOOP);
 +            // KioCG end - optimize block entity: item search hopper
  
              boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX())
@@ -154,3 +144,16 @@
          }
      }
  
+@@ -562,6 +_,12 @@
+     public boolean hasPickUpDelay() {
+         return this.pickupDelay > 0;
+     }
++
++    // KioCG start - change container behavior
++    public boolean hasCanPickUpDelay() {
++        return hasPickUpDelay() && this.pickupDelay != INFINITE_PICKUP_DELAY;
++    }
++    // KioCG end - change container behavior
+ 
+     public void setUnlimitedLifetime() {
+         this.age = -32768;

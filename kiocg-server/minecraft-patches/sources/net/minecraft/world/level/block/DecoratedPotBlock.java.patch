@@ -90,7 +90,7 @@
              return InteractionResult.SUCCESS;
          } else {
              return InteractionResult.PASS;
-@@ -164,6 +_,22 @@
+@@ -164,6 +_,25 @@
      public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
          return new DecoratedPotBlockEntity(pos, state);
      }
@@ -103,10 +103,13 @@
 +    // }
 +
 +    @Override
-+    protected void itemSearchHopper(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, net.minecraft.world.entity.InsideBlockEffectApplier effectApplier) {
++    protected void itemOnTop(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, net.minecraft.world.entity.InsideBlockEffectApplier effectApplier) {
++        if (!level.paperConfig().kiocgConfig.block.hopperPullsEntityOwnedItem && itemEntity.target != null) return; // KioCG - hopper filter
++        if (!level.paperConfig().kiocgConfig.block.hopperPullsInfinitePickupItem && itemEntity.pickupDelay == Short.MAX_VALUE) return; // KioCG - hopper filter
++
 +        BlockEntity blockEntity = level.getBlockEntity(pos);
 +        if (blockEntity instanceof DecoratedPotBlockEntity) {
-+            DecoratedPotBlockEntity.itemSearchHopper(level, pos, state, itemEntity, (DecoratedPotBlockEntity) blockEntity);
++            DecoratedPotBlockEntity.itemOnTop(level, pos, state, itemEntity, (DecoratedPotBlockEntity) blockEntity);
 +        }
 +    }
 +    // KioCG end - infinite decorated pot

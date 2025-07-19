@@ -15,7 +15,7 @@
 +
 +    // KioCG start - optimize block entity: item search hopper
 +    @Override
-+    protected void itemSearchHopper(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
++    protected void itemOnTop(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.item.ItemEntity itemEntity, InsideBlockEffectApplier effectApplier) {
 +        BlockEntity blockEntity = level.getBlockEntity(pos);
 +        if (blockEntity instanceof HopperBlockEntity) {
 +            HopperBlockEntity.entityInside(level, pos, state, itemEntity, (HopperBlockEntity) blockEntity);
