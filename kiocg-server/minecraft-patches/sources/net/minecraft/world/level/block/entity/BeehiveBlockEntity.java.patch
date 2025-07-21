@@ -8,16 +8,7 @@
  
      public BeehiveBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.BEEHIVE, pos, blockState);
-@@ -267,7 +_,7 @@
-                             bee.dropOffNectar();
-                             if (state.is(BlockTags.BEEHIVES, blockStateBase -> blockStateBase.hasProperty(BeehiveBlock.HONEY_LEVEL))) {
-                                 int honeyLevel = getHoneyLevel(state);
--                                if (honeyLevel < 5) {
-+                                if (false && honeyLevel < 5) { // KioCG - beehive refill every night: 不要产生蜂蜜
-                                     int i = level.random.nextInt(100) == 0 ? 2 : 1;
-                                     if (honeyLevel + i > 5) {
-                                         i--;
-@@ -348,6 +_,21 @@
+@@ -348,9 +_,48 @@
              level.playSound(null, d, d1, d2, SoundEvents.BEEHIVE_WORK, SoundSource.BLOCKS, 1.0F, 1.0F);
          }
  
@@ -28,8 +19,9 @@
 +                if (days != beehive.honeyDays) {
 +                    beehive.honeyDays = days;
 +
-+                    if (getHoneyLevel(state) < BeehiveBlock.MAX_HONEY_LEVELS) {
-+                        level.setBlockAndUpdate(pos, state.setValue(BeehiveBlock.HONEY_LEVEL, BeehiveBlock.MAX_HONEY_LEVELS));
++                    int honeyLevel = getHoneyLevel(state);
++                    if (honeyLevel < BeehiveBlock.MAX_HONEY_LEVELS) {
++                        level.setBlockAndUpdate(pos, state.setValue(BeehiveBlock.HONEY_LEVEL, calculateNewHoneyLevel(level, pos, honeyLevel)));
 +                    }
 +                }
 +            }
@@ -39,6 +31,32 @@
          DebugPackets.sendHiveInfo(level, pos, state, beehive);
      }
  
++    // KioCG start - beehive refill every night
++    private static int calculateNewHoneyLevel(Level level, BlockPos pos, int honeyLevel) {
++        int xOff = pos.getX();
++        int yOff = pos.getY();
++        int zOff = pos.getZ();
++        for (int dz = -4; dz <= 4; ++dz) {
++            int z = dz + zOff;
++            for (int dx = -4; dx <= 4; ++dx) {
++                int x = xOff + dx;
++                for (int dy = -2; dy <= 0; ++dy) {
++                    int y = dy + yOff;
++                    net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunk(x >> 4, z >> 4);
++                    BlockState blockStateFinal = chunk.getBlockStateFinal(x, y, z);
++                    if (Bee.attractsBees(blockStateFinal) && ++honeyLevel >= BeehiveBlock.MAX_HONEY_LEVELS) {
++                        return BeehiveBlock.MAX_HONEY_LEVELS;
++                    }
++                }
++            }
++        }
++        return honeyLevel;
++    }
++    // KioCG end - beehive refill every night
++
+     @Override
+     protected void loadAdditional(ValueInput input) {
+         super.loadAdditional(input);
 @@ -358,6 +_,7 @@
          input.read("bees", BeehiveBlockEntity.Occupant.LIST_CODEC).orElse(List.of()).forEach(this::storeBee);
          this.savedFlowerPos = input.read("flower_pos", BlockPos.CODEC).orElse(null);
