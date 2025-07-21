@@ -484,7 +484,7 @@
          Block block = state.getBlock();
          if (block instanceof WorldlyContainerHolder) {
              return ((WorldlyContainerHolder)block).getContainer(state, level, pos);
-@@ -859,14 +_,25 @@
+@@ -859,14 +_,21 @@
  
      @Override
      protected void setItems(NonNullList<ItemStack> items) {
@@ -501,12 +501,8 @@
 -            tryMoveItems(level, pos, state, blockEntity, () -> addItem(blockEntity, itemEntity));
 +            // if (level.paperConfig().kiocgConfig.hopperRailsOptimize && level.getBlockState(pos.relative(Direction.UP)).is(BlockTags.RAILS)) return; // KioCG - hopper rails optimize: 不要吸取铁轨上的物品
 +            // KioCG start - optimize block entity: item search hopper
-+            if (blockEntity.inventoryFull()) {
++            if (blockEntity.inventoryFull() || addItem(blockEntity, itemEntity)) {
 +                blockEntity.suckInTime = net.minecraft.server.MinecraftServer.currentTick;
-+            } else {
-+                if (addItem(blockEntity, itemEntity)) {
-+                    blockEntity.suckInTime = net.minecraft.server.MinecraftServer.currentTick;
-+                }
 +            }
 +            // KioCG end - optimize block entity: item search hopper
          }

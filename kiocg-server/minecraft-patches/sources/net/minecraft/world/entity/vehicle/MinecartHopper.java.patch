@@ -23,7 +23,14 @@
      @Override
      public double getLevelX() {
          return this.getX();
-@@ -101,11 +_,21 @@
+@@ -95,17 +_,28 @@
+     }
+ 
+     private void tryConsumeItems() {
++        if (this.level().paperConfig().kiocgConfig.entity.hopperMinecartOnlyWorkOnRails && !this.isOnRails()) return; // KioCG - hopper minecart only work on rails
+         if (!this.level().isClientSide && this.isAlive() && this.isEnabled() && !this.consumedItemThisFrame && this.suckInItems()) {
+             this.consumedItemThisFrame = true;
+             this.setChanged();
          }
      }
  
