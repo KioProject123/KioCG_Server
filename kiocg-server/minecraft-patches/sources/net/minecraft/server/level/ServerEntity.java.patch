@@ -16,35 +16,95 @@
                  }
  
                  if (packet != null) {
-@@ -351,6 +_,7 @@
+@@ -342,7 +_,15 @@
+         Packet<ClientGamePacketListener> addEntityPacket = this.entity.getAddEntityPacket(this);
+         consumer.accept(addEntityPacket);
+         if (this.trackedDataValues != null) {
+-            consumer.accept(new ClientboundSetEntityDataPacket(this.entity.getId(), this.trackedDataValues));
++            // KioCG start - hide entity attribute
++            List<SynchedEntityData.DataValue<?>> trackedDataValues = this.trackedDataValues;
++            if (this.entity instanceof LivingEntity livingEntity && this.entity.hideAttributeFor(player)) {
++                List<SynchedEntityData.DataValue<?>> listFake = new ArrayList<>(trackedDataValues);
++                this.hideHealth(listFake);
++                trackedDataValues = listFake;
++            }
++            consumer.accept(new ClientboundSetEntityDataPacket(this.entity.getId(), trackedDataValues));
++            // KioCG end - hide entity attribute
+         }
+ 
+         if (this.entity instanceof LivingEntity livingEntity) {
+@@ -351,6 +_,11 @@
              if (this.entity.getId() == player.getId()) {
                  ((ServerPlayer) this.entity).getBukkitEntity().injectScaledMaxHealth(syncableAttributes, false);
              }
-+            else this.hideAttribute(syncableAttributes, true); // KioCG - hide entity attribute
++            // KioCG start - hide entity attribute
++            else if (this.entity.hideAttributeFor(player)) {
++                this.hideAttribute(syncableAttributes, true);
++            }
++            // KioCG end - hide entity attribute
              // CraftBukkit end
              if (!syncableAttributes.isEmpty()) {
                  consumer.accept(new ClientboundUpdateAttributesPacket(this.entity.getId(), syncableAttributes));
-@@ -420,9 +_,13 @@
-                 // CraftBukkit start - Send scaled max health
-                 if (this.entity instanceof ServerPlayer serverPlayer) {
+@@ -411,6 +_,20 @@
+         List<SynchedEntityData.DataValue<?>> list = entityData.packDirty();
+         if (list != null) {
+             this.trackedDataValues = entityData.getNonDefaultValues();
++            // KioCG start - hide entity attribute
++            if (this.entity instanceof LivingEntity) {
++                java.util.function.Supplier<Packet<?>> packetReal = com.google.common.base.Suppliers.memoize(
++                        () -> new ClientboundSetEntityDataPacket(this.entity.getId(), list)
++                );
++                List<SynchedEntityData.DataValue<?>> listFake = new ArrayList<>(list);
++                java.util.function.Supplier<Packet<?>> packetFake = com.google.common.base.Suppliers.memoize(
++                        () -> {
++                            this.hideHealth(listFake);
++                            return new ClientboundSetEntityDataPacket(this.entity.getId(), listFake);
++                        });
++                this.broadcastHideAttribute(packetReal, packetFake);
++            } else
++            // KioCG end - hide entity attribute
+             this.broadcastAndSend(new ClientboundSetEntityDataPacket(this.entity.getId(), list));
+         }
+ 
+@@ -422,7 +_,18 @@
                      serverPlayer.getBukkitEntity().injectScaledMaxHealth(attributesToSync, false);
-+                    serverPlayer.connection.send(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync)); // KioCG - hide entity attribute
                  }
                  // CraftBukkit end
 -                this.broadcastAndSend(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync));
 +                // KioCG start - hide entity attribute
-+                this.hideAttribute(attributesToSync, false);
-+                this.broadcast.accept(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync));
++                java.util.function.Supplier<Packet<?>> packetReal = com.google.common.base.Suppliers.memoize(
++                        () -> new ClientboundUpdateAttributesPacket(this.entity.getId(), attributesToSync)
++                );
++                List<AttributeInstance> listFake = new ArrayList<>(attributesToSync);
++                java.util.function.Supplier<Packet<?>> packetFake = com.google.common.base.Suppliers.memoize(
++                        () -> {
++                            this.hideAttribute(listFake, false);
++                            return new ClientboundUpdateAttributesPacket(this.entity.getId(), listFake);
++                        });
++                this.broadcastHideAttribute(packetReal, packetFake);
 +                // KioCG end - hide entity attribute
              }
  
              attributesToSync.clear();
-@@ -435,4 +_,40 @@
+@@ -435,4 +_,64 @@
              ((ServerPlayer)this.entity).connection.send(packet);
          }
      }
 +
 +    // KioCG start - hide entity attribute
++    public void broadcastHideAttribute(java.util.function.Supplier<Packet<?>> packetReal, java.util.function.Supplier<Packet<?>> packetFake) {
++        for (net.minecraft.server.network.ServerPlayerConnection serverPlayerConnection : this.trackedPlayers) {
++            if (!this.entity.hideAttributeFor(serverPlayerConnection.getPlayer())) {
++                serverPlayerConnection.send(packetReal.get());
++            } else {
++                serverPlayerConnection.send(packetFake.get());
++            }
++        }
++        if (this.entity instanceof ServerPlayer) {
++            ((ServerPlayer) this.entity).connection.send(packetReal.get());
++        }
++    }
++
 +    private static final AttributeInstance DUMMY_MAX_HEALTH = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, (attribute) -> { });
 +    private static final AttributeInstance DUMMY_MAX_ABSORPTION = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.MAX_ABSORPTION, (attribute) -> { });
 +    private static final AttributeInstance DUMMY_ARMOR = new AttributeInstance(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR, (attribute) -> { });
@@ -76,6 +136,17 @@
 +                    collection.add(attribute);
 +                }
 +            });
++        }
++    }
++
++    private void hideHealth(List<SynchedEntityData.DataValue<?>> trackedDataValues) {
++        java.util.ListIterator<SynchedEntityData.DataValue<?>> iterator = trackedDataValues.listIterator();
++        while (iterator.hasNext()) {
++            SynchedEntityData.DataValue<?> dataValue = iterator.next();
++            if (dataValue.id() == LivingEntity.DATA_HEALTH_ID.id()) {
++                iterator.set(new SynchedEntityData.DataValue<>(LivingEntity.DATA_HEALTH_ID.id(), net.minecraft.network.syncher.EntityDataSerializers.FLOAT, (float) DUMMY_MAX_HEALTH.getBaseValue()));
++                break;
++            }
 +        }
 +    }
 +    // KioCG end - hide entity attribute

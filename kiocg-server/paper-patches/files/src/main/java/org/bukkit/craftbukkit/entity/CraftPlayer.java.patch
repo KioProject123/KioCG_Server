@@ -47,15 +47,6 @@
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
-@@ -2877,7 +_,7 @@
-                 this.sendHealthUpdate();
-             }
-         }
--        this.getHandle().getEntityData().set(net.minecraft.world.entity.LivingEntity.DATA_HEALTH_ID, (float) this.getScaledHealth());
-+        this.getHandle().realHealth = (float) this.getScaledHealth(); // KioCG - hide entity attribute
- 
-         this.getHandle().maxHealthCache = this.getMaxHealth();
-     }
 @@ -3486,6 +_,54 @@
          return FeatureHooks.isChunkSent(this.getHandle(), chunkKey);
      }

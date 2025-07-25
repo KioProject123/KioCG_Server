@@ -1,18 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -185,7 +_,10 @@
-     protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
-     public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
-     protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
--    public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-+    // KioCG start - hide entity attribute
-+    public static final EntityDataAccessor<Float> DATA_HEALTH_ID1 = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-+    public float realHealth;
-+    // KioCG end - hide entity attribute
-     private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(
-         LivingEntity.class, EntityDataSerializers.PARTICLES
-     );
-@@ -287,13 +_,23 @@
+@@ -287,6 +_,13 @@
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
      public int shieldBlockingDelay = this.level().paperConfig().misc.shieldBlockingDelay; // Paper - Make shield blocking delay configurable
      // CraftBukkit end
@@ -26,26 +14,6 @@
  
      protected LivingEntity(EntityType<? extends LivingEntity> entityType, Level level) {
          super(entityType, level);
-         this.attributes = new AttributeMap(DefaultAttributes.getSupplier(entityType));
-         this.craftAttributes = new org.bukkit.craftbukkit.attribute.CraftAttributeMap(this.attributes); // CraftBukkit
-         // CraftBukkit - this.setHealth(this.getMaxHealth()) inlined and simplified to skip the instanceof check for Player, as getBukkitEntity() is not initialized in constructor
--        this.entityData.set(LivingEntity.DATA_HEALTH_ID, this.getMaxHealth());
-+        // KioCG start - hide entity attribute
-+        this.entityData.set(LivingEntity.DATA_HEALTH_ID1, (float) net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH.value().getDefaultValue());
-+        this.realHealth = this.getMaxHealth();
-+        // KioCG end - hide entity attribute
-         this.equipment = this.createEquipment();
-         this.blocksBuilding = true;
-         this.reapplyPosition();
-@@ -337,7 +_,7 @@
-         builder.define(DATA_EFFECT_AMBIENCE_ID, false);
-         builder.define(DATA_ARROW_COUNT_ID, 0);
-         builder.define(DATA_STINGER_COUNT_ID, 0);
--        builder.define(DATA_HEALTH_ID, 1.0F);
-+        builder.define(DATA_HEALTH_ID1, 1.0F); // KioCG - hide entity attribute
-         builder.define(SLEEPING_POS_ID, Optional.empty());
-     }
- 
 @@ -449,6 +_,7 @@
                  }
              }
@@ -241,24 +209,6 @@
      }
  
      public float getHealth() {
-@@ -1373,7 +_,7 @@
-             return (float) serverPlayer.getBukkitEntity().getHealth();
-         }
-         // CraftBukkit end
--        return this.entityData.get(DATA_HEALTH_ID);
-+        return this.realHealth; // KioCG - hide entity attribute
-     }
- 
-     public void setHealth(float health) {
-@@ -1397,7 +_,7 @@
-             return;
-         }
-         // CraftBukkit end
--        this.entityData.set(DATA_HEALTH_ID, Mth.clamp(health, 0.0F, this.getMaxHealth()));
-+        this.realHealth = Mth.clamp(health, 0.0F, this.getMaxHealth()); // KioCG - hide entity attribute
-     }
- 
-     public boolean isDeadOrDying() {
 @@ -1477,11 +_,12 @@
                  // CraftBukkit end
                  this.hurtDuration = 10;

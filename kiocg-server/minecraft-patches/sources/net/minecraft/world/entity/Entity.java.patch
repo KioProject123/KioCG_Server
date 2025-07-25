@@ -43,6 +43,19 @@
                          }
  
                          // Paper start - EntityLeashEvent
+@@ -3175,6 +_,12 @@
+         return this instanceof LivingEntity;
+     }
+ 
++    // KioCG start - hide entity attribute
++    public boolean hideAttributeFor(ServerPlayer serverPlayer) {
++        return this != serverPlayer && serverPlayer.getVehicle() != this;
++    }
++    // KioCG end - hide entity attribute
++
+     public boolean startRiding(Entity vehicle, boolean force) {
+         if (vehicle == this.vehicle || vehicle.level != this.level) { // Paper - Ensure entity passenger world matches ridden entity (bad plugins)
+             return false;
 @@ -3605,6 +_,7 @@
      }
  
