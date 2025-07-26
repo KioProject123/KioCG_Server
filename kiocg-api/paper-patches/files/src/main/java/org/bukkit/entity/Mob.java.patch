@@ -1,9 +1,9 @@
 --- a/src/main/java/org/bukkit/entity/Mob.java
 +++ b/src/main/java/org/bukkit/entity/Mob.java
-@@ -229,4 +_,10 @@
+@@ -257,4 +_,10 @@
+      * @return the amount of experience the mob will possibly drop
       */
-     public int getPossibleExperienceReward();
-     // Paper end - mob xp reward API
+     int getPossibleExperienceReward();
 +
 +    // KioCG start - entity bossbar api
 +    @Nullable

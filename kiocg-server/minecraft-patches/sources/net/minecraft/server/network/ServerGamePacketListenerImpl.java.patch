@@ -61,8 +61,8 @@
                      this.player.swing(hand, true);
                  }
 @@ -2770,6 +_,11 @@
-                                     boolean triggerLeashUpdate = itemInHand.is(net.minecraft.world.item.Items.LEAD) && target instanceof net.minecraft.world.entity.Leashable;
-                                     Item origItem = ServerGamePacketListenerImpl.this.player.getInventory().getSelectedItem().isEmpty() ? null : ServerGamePacketListenerImpl.this.player.getInventory().getSelectedItem().getItem();
+                                     final Item itemType = itemInHand.getItem();
+                                     boolean triggerLeashUpdate = itemStack.is(Items.LEAD) && target instanceof net.minecraft.world.entity.Leashable;
  
 +                                    // KioCG start - customize default components
 +                                    if (itemInHand.has(DataComponents.CANNOT_USE)) {
@@ -70,9 +70,9 @@
 +                                    }
 +                                    // KioCG end - customize default components
                                      ServerGamePacketListenerImpl.this.cserver.getPluginManager().callEvent(event);
+                                     final boolean resendData = event.isCancelled() || !ServerGamePacketListenerImpl.this.player.getItemInHand(hand).is(itemType);
  
-                                     // Entity in bucket - SPIGOT-4048 and SPIGOT-6859
-@@ -2984,7 +_,7 @@
+@@ -2985,7 +_,7 @@
                                                      action = packet.buttonNum() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
                                                  }
                                              } else if (slot.mayPlace(cursor)) {
@@ -81,7 +81,7 @@
                                                      int toPlace = packet.buttonNum() == 0 ? cursor.getCount() : 1;
                                                      toPlace = Math.min(toPlace, clickedItem.getMaxStackSize() - clickedItem.getCount());
                                                      toPlace = Math.min(toPlace, slot.container.getMaxStackSize() - clickedItem.getCount());
-@@ -3020,7 +_,7 @@
+@@ -3021,7 +_,7 @@
                                                          action = InventoryAction.SWAP_WITH_CURSOR;
                                                      }
                                                  }
@@ -90,7 +90,7 @@
                                                  if (clickedItem.getCount() >= 0) {
                                                      if (clickedItem.getCount() + cursor.getCount() <= cursor.getMaxStackSize()) {
                                                          // As of 1.5, this is result slots only
-@@ -3160,6 +_,15 @@
+@@ -3161,6 +_,15 @@
                      }
  
                      if (packet.clickType() != net.minecraft.world.inventory.ClickType.QUICK_CRAFT) {

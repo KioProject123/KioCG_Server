@@ -1,14 +1,14 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -304,6 +_,7 @@
-     };
+@@ -226,6 +_,7 @@
+     private double health = 20;
      private boolean scaledHealth = false;
      private double healthScale = 20;
 +    public int realAir; // KioCG - the long dark
      private CraftWorldBorder clientWorldBorder = null;
      private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
      private long lastSaveTime; // Paper - getLastPlayed replacement API
-@@ -383,6 +_,29 @@
+@@ -271,6 +_,29 @@
          }
      }
  
@@ -38,7 +38,7 @@
      @Override
      public boolean isOp() {
          return this.server.getHandle().isOp(this.getProfile());
-@@ -2319,7 +_,7 @@
+@@ -2195,7 +_,7 @@
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it
@@ -47,9 +47,9 @@
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
-@@ -3486,6 +_,54 @@
-         return FeatureHooks.isChunkSent(this.getHandle(), chunkKey);
+@@ -3408,6 +_,54 @@
      }
+     // Paper end
  
 +    // KioCG start - player in structure api
 +    @Override
@@ -102,7 +102,7 @@
      public Player.Spigot spigot() {
          return this.spigot;
      }
-@@ -3589,6 +_,46 @@
+@@ -3510,6 +_,46 @@
      public void setDeathScreenScore(final int score) {
          getHandle().setScore(score);
      }

@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -171,8 +_,9 @@
+@@ -172,8 +_,9 @@
      private final @Nullable BiomeProvider biomeProvider;
      private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
      private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
@@ -11,7 +11,7 @@
      // Paper start - void damage configuration
      private boolean voidDamageEnabled;
      private float voidDamageAmount;
-@@ -2403,6 +_,13 @@
+@@ -2404,6 +_,13 @@
          return this.persistentDataContainer;
      }
  
@@ -25,7 +25,7 @@
      // Paper - replace feature flag API
  
      public void storeBukkitValues(CompoundTag c) {
-@@ -2488,4 +_,42 @@
+@@ -2489,4 +_,42 @@
          return POINTERS_SUPPLIER.view(this);
      }
      // Paper end
