@@ -11,5 +11,5 @@
 +        PEELING,
 +        // KioCG end - monster strengthens
          /**
-          * When a creature is spawned by plugins
+          * When a creature is spawned by being rehydrated
           */
