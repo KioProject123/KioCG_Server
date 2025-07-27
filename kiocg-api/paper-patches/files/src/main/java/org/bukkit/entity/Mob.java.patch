@@ -1,13 +1,12 @@
 --- a/src/main/java/org/bukkit/entity/Mob.java
 +++ b/src/main/java/org/bukkit/entity/Mob.java
-@@ -257,4 +_,10 @@
+@@ -257,4 +_,9 @@
       * @return the amount of experience the mob will possibly drop
       */
      int getPossibleExperienceReward();
 +
 +    // KioCG start - entity bossbar api
-+    @Nullable
-+    public org.bukkit.boss.BossBar getBossbar();
-+    public void setBossbar(@Nullable org.bukkit.boss.BossBar bossbar);
++    public org.bukkit.boss.@Nullable BossBar getBossbar();
++    public void setBossbar(org.bukkit.boss.@Nullable BossBar bossbar);
 +    // KioCG end - entity bossbar api
  }
