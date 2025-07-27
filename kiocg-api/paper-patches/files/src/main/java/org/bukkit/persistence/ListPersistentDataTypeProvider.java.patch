@@ -1,0 +1,45 @@
+--- a/src/main/java/org/bukkit/persistence/ListPersistentDataTypeProvider.java
++++ b/src/main/java/org/bukkit/persistence/ListPersistentDataTypeProvider.java
+@@ -26,6 +_,13 @@
+             PersistentDataType.TAG_CONTAINER
+     );
+ 
++    // KioCG start - more api
++    private static final ListPersistentDataType<String, java.util.UUID> UUID = new ListPersistentDataTypeImpl<>(PersistentDataType.UUID);
++    private static final ListPersistentDataType<PersistentDataContainer, org.bukkit.Location> LOCATION = new ListPersistentDataTypeImpl<>(PersistentDataType.LOCATION);
++    private static final ListPersistentDataType<String, org.bukkit.inventory.ItemStack> ITEM_STACK = new ListPersistentDataTypeImpl<>(PersistentDataType.ITEM_STACK);
++    private static final ListPersistentDataType<String, org.bukkit.inventory.ItemStack[]> ITEM_STACK_ARRAY = new ListPersistentDataTypeImpl<>(PersistentDataType.ITEM_STACK_ARRAY);
++    // KioCG end - more api
++
+     ListPersistentDataTypeProvider() {
+     }
+ 
+@@ -160,6 +_,28 @@
+     public ListPersistentDataType<PersistentDataContainer, PersistentDataContainer> dataContainers() {
+         return DATA_CONTAINER;
+     }
++
++    // KioCG start - more api
++    @NotNull
++    public ListPersistentDataType<String, java.util.UUID> uuids() {
++        return UUID;
++    }
++
++    @NotNull
++    public ListPersistentDataType<PersistentDataContainer, org.bukkit.Location> locations() {
++        return LOCATION;
++    }
++
++    @NotNull
++    public ListPersistentDataType<String, org.bukkit.inventory.ItemStack> itemStacks() {
++        return ITEM_STACK;
++    }
++
++    @NotNull
++    public ListPersistentDataType<String, org.bukkit.inventory.ItemStack[]> itemStackArrays() {
++        return ITEM_STACK_ARRAY;
++    }
++    // KioCG end - more api
+ 
+     /**
+      * Constructs a new list persistent data type given any persistent data type
