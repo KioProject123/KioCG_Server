@@ -32,6 +32,24 @@
          for (int i = 0; i < this.slots.size(); i++) {
              ItemStack item = this.slots.get(i).getItem();
              this.triggerSlotListeners(i, item, item::copy);
+@@ -453,9 +_,17 @@
+                             int i2 = slot1.hasItem() ? slot1.getItem().getCount() : 0;
+                             int min = Math.min(itemStack.getMaxStackSize(), slot1.getMaxStackSize(itemStack));
+                             int min1 = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemStack) + i2, min);
++
++                            // KioCG start - InventoryExchangeItemEvent
++                            org.bukkit.inventory.InventoryView view = this.getBukkitView();
++                            org.bukkit.inventory.Inventory sourceInventory = player.carriedFrom;
++                            org.bukkit.inventory.Inventory destinationInventory = view.getInventory(slot1.index);
++                            if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(view, sourceInventory, () -> itemStack.copyWithCount(min1).asBukkitMirror(), destinationInventory)) {
++                            // KioCG end - InventoryExchangeItemEvent
+                             count -= min1 - i2;
+                             // slot1.setByPlayer(itemStack.copyWithCount(min1));
+                             draggedSlots.put(slot1.index, itemStack.copyWithCount(min1)); // CraftBukkit - Put in map instead of setting
++                            } // KioCG - InventoryExchangeItemEvent
+                         }
+                     }
+ 
 @@ -555,14 +_,14 @@
                                  slot.onTake(player, itemStack2);
                              });
@@ -49,6 +67,120 @@
                              Optional<ItemStack> optional1 = slot.tryRemove(carried.getCount(), carried2.getMaxStackSize() - carried2.getCount(), player);
                              optional1.ifPresent(itemStack2 -> {
                                  carried2.grow(itemStack2.getCount());
+@@ -591,33 +_,64 @@
+             if (!item.isEmpty() || !carried.isEmpty()) {
+                 if (item.isEmpty()) {
+                     if (slot.mayPickup(player)) {
++                        // KioCG start - InventoryExchangeItemEvent
++                        org.bukkit.inventory.InventoryView bukkitView = this.getBukkitView();
++                        org.bukkit.inventory.Inventory sourceInventory = bukkitView.getInventory(slotId);
++                        org.bukkit.inventory.Inventory destinationInventory = bukkitView.getBottomInventory();
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, carried::asBukkitCopy, destinationInventory)) {
++                        // KioCG end - InventoryExchangeItemEvent
+                         inventory.setItem(button, carried);
+                         slot.onSwapCraft(carried.getCount());
+                         slot.setByPlayer(ItemStack.EMPTY);
+                         slot.onTake(player, carried);
++                        } // KioCG - InventoryExchangeItemEvent
+                     }
+                 } else if (carried.isEmpty()) {
+                     if (slot.mayPlace(item)) {
++                        // KioCG start - InventoryExchangeItemEvent
++                        org.bukkit.inventory.InventoryView bukkitView = this.getBukkitView();
++                        org.bukkit.inventory.Inventory sourceInventory = bukkitView.getBottomInventory();
++                        org.bukkit.inventory.Inventory destinationInventory = bukkitView.getInventory(slotId);
++                        // KioCG end - InventoryExchangeItemEvent
+                         int maxStackSize = slot.getMaxStackSize(item);
+                         if (item.getCount() > maxStackSize) {
++                            if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, () -> item.copyWithCount(maxStackSize).asBukkitMirror(), destinationInventory)) { // KioCG - InventoryExchangeItemEvent
+                             slot.setByPlayer(item.split(maxStackSize));
++                            } // KioCG - InventoryExchangeItemEvent
+                         } else {
++                            if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, item::asBukkitCopy, destinationInventory)) { // KioCG - InventoryExchangeItemEvent
+                             inventory.setItem(button, ItemStack.EMPTY);
+                             slot.setByPlayer(item);
++                            } // KioCG - InventoryExchangeItemEvent
+                         }
+                     }
+                 } else if (slot.mayPickup(player) && slot.mayPlace(item)) {
++                    // KioCG start - InventoryExchangeItemEvent
++                    org.bukkit.inventory.InventoryView bukkitView = this.getBukkitView();
++                    org.bukkit.inventory.Inventory sourceInventory = bukkitView.getInventory(slotId);
++                    org.bukkit.inventory.Inventory destinationInventory = bukkitView.getBottomInventory();
++                    // KioCG end - InventoryExchangeItemEvent
+                     int maxStackSize = slot.getMaxStackSize(item);
+                     if (item.getCount() > maxStackSize) {
++                        // KioCG start - InventoryExchangeItemEvent
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, carried::asBukkitCopy, destinationInventory)
++                            && org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, destinationInventory, () -> item.copyWithCount(maxStackSize).asBukkitMirror(), sourceInventory)) {
++                        // KioCG end - InventoryExchangeItemEvent
+                         slot.setByPlayer(item.split(maxStackSize));
+                         slot.onTake(player, carried);
+                         if (!inventory.add(carried)) {
+                             player.drop(carried, true);
+                         }
++                        } // KioCG - InventoryExchangeItemEvent
+                     } else {
++                        // KioCG start - InventoryExchangeItemEvent
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, carried::asBukkitCopy, destinationInventory)
++                            && org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, destinationInventory, item::asBukkitCopy, sourceInventory)) {
++                        // KioCG end - InventoryExchangeItemEvent
+                         inventory.setItem(button, carried);
+                         slot.setByPlayer(item);
+                         slot.onTake(player, carried);
++                        } // KioCG - InventoryExchangeItemEvent
+                     }
+                 }
+             }
+@@ -656,16 +_,24 @@
+                 int maxStackSize = button == 0 ? 1 : -1;
+ 
+                 for (int i3 = 0; i3 < 2; i3++) {
+-                    for (int i4 = count; i4 >= 0 && i4 < this.slots.size() && itemStack.getCount() < itemStack.getMaxStackSize(); i4 += maxStackSize) {
++                    for (int i4 = count; i4 >= 0 && i4 < this.slots.size() && itemStack.getCount() < itemStack.getMaxStackSize(); i4 += maxStackSize) { // KioCG - InventoryExchangeItemEvent: i4
+                         Slot slot3 = this.slots.get(i4);
+                         if (slot3.hasItem()
+                             && canItemQuickReplace(slot3, itemStack, true)
+                             && slot3.mayPickup(player)
+                             && this.canTakeItemForPickAll(itemStack, slot3)) {
+-                            ItemStack item1 = slot3.getItem();
++                            ItemStack item1 = slot3.getItem(); // KioCG - InventoryExchangeItemEvent: item1
+                             if (i3 != 0 || item1.getCount() != item1.getMaxStackSize()) {
++                                // KioCG start - InventoryExchangeItemEvent
++                                org.bukkit.inventory.InventoryView bukkitView = this.getBukkitView();
++                                org.bukkit.inventory.Inventory sourceInventory = bukkitView.getInventory(i4);
++                                org.bukkit.inventory.Inventory destinationInventory = player.carriedFrom;
++                                int exchangeAmount = Math.min(item1.getCount(), itemStack.getMaxStackSize() - itemStack.getCount());
++                                if (org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, () -> item1.copyWithCount(exchangeAmount).asBukkitMirror(), destinationInventory)) {
++                                // KioCG end - InventoryExchangeItemEvent
+                                 ItemStack itemStack1 = slot3.safeTake(item1.getCount(), itemStack.getMaxStackSize() - itemStack.getCount(), player);
+                                 itemStack.grow(itemStack1.getCount());
++                                } // KioCG - InventoryExchangeItemEvent
+                             }
+                         }
+                     }
+@@ -705,6 +_,21 @@
+             ItemStack carried = this.getCarried();
+             if (!carried.isEmpty()) {
+                 this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
++                // KioCG start - InventoryExchangeItemEvent
++                org.bukkit.inventory.InventoryView bukkitView = this.getBukkitView();
++                org.bukkit.inventory.Inventory sourceInventory = player.carriedFrom;
++                org.bukkit.inventory.Inventory destinationInventory = bukkitView.getBottomInventory();
++                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryExchangeItemEvent(bukkitView, sourceInventory, carried::asBukkitCopy, destinationInventory)) {
++                    if (sourceInventory != null) {
++                        sourceInventory.addItem(carried.asBukkitMirror()).forEach((index, itemStack) -> {
++                            player.drop(org.bukkit.craftbukkit.inventory.CraftItemStack.unwrap(itemStack), false);
++                        });
++                    } else {
++                        player.drop(carried, false);
++                    }
++                }
++                else
++                // KioCG end - InventoryExchangeItemEvent
+                 dropOrPlaceInInventory(player, carried);
+                 // this.setCarried(ItemStack.EMPTY); // CraftBukkit - moved up
+             }
 @@ -968,6 +_,16 @@
          this.stateId = this.stateId + 1 & 32767;
          return this.stateId;

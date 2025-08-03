@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -182,6 +_,8 @@
+@@ -181,7 +_,10 @@
+     protected PlayerEnderChestContainer enderChestInventory = new PlayerEnderChestContainer(this); // CraftBukkit - add "this" to constructor
      public final InventoryMenu inventoryMenu;
      public AbstractContainerMenu containerMenu;
++    @Nullable public org.bukkit.inventory.Inventory carriedFrom = null; // KioCG - InventoryExchangeItemEvent
      protected FoodData foodData = new FoodData();
 +    public com.kiocg.entity.player.ColdData coldData = new com.kiocg.entity.player.ColdData(this); // KioCG - the long dark
 +    public com.kiocg.entity.player.ThirstData thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - the long dark

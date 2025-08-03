@@ -7,11 +7,12 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Called when a player interacts with a bottle
  */
+@NullMarked
 public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellable {
 
     private final Block blockClicked;
@@ -22,7 +23,7 @@ public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellab
     private boolean cancelled;
 
     @ApiStatus.Internal
-    public PlayerBottleEvent(@NotNull final Player player, @NotNull final Block blockClicked, @NotNull final ItemStack bottle, @NotNull final ItemStack resultItem, @NotNull final EquipmentSlot hand) {
+    public PlayerBottleEvent(final Player player, final Block blockClicked, final ItemStack bottle, final ItemStack resultItem, final EquipmentSlot hand) {
         super(player);
         this.blockClicked = blockClicked;
         this.bottle = bottle;
@@ -35,7 +36,6 @@ public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellab
      *
      * @return The Block which block is involved in this event
      */
-    @NotNull
     public final Block getBlock() {
         return this.blockClicked;
     }
@@ -45,7 +45,6 @@ public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellab
      *
      * @return the used bottle
      */
-    @NotNull
     public ItemStack getBottle() {
         return this.bottle;
     }
@@ -55,7 +54,6 @@ public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellab
      *
      * @return the hand
      */
-    @NotNull
     public EquipmentSlot getHand() {
         return this.hand;
     }
@@ -65,7 +63,6 @@ public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellab
      *
      * @return ItemStack hold in hand after the event.
      */
-    @NotNull
     public ItemStack getResultItem() {
         return this.resultItem;
     }
@@ -75,7 +72,7 @@ public abstract class PlayerBottleEvent extends PlayerEvent implements Cancellab
      *
      * @param itemStack the new held ItemStack after the bottle event.
      */
-    public void setResultItem(@NotNull ItemStack itemStack) {
+    public void setResultItem(ItemStack itemStack) {
         this.resultItem = itemStack;
     }
 

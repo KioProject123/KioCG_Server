@@ -13,8 +13,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * 当玩家尝试使用物品时触发.
@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link PlayerInteractEvent}的执行结果不影响本事件的触发, 使用{@link #useInteractedBlock()}和
  * {@link #useItemInHand()}获取其执行后的结果.
  */
+@NullMarked
 public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
@@ -40,15 +41,15 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
     private EquipmentSlot hand;
     private Vector clickedPosistion;
 
-    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @Nullable final PlayerInteractEvent interactEvent) {
+    public PlayerItemUseEvent(final Player who, final Action action, final ItemStack item, @Nullable final Block clickedBlock, final BlockFace clickedFace, @Nullable final PlayerInteractEvent interactEvent) {
         this(who, action, item, clickedBlock, clickedFace, EquipmentSlot.HAND, interactEvent);
     }
 
-    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @NotNull final EquipmentSlot hand, @Nullable final PlayerInteractEvent interactEvent) {
+    public PlayerItemUseEvent(final Player who, final Action action, final ItemStack item, @Nullable final Block clickedBlock, final BlockFace clickedFace, final EquipmentSlot hand, @Nullable final PlayerInteractEvent interactEvent) {
         this(who, action, item, clickedBlock, clickedFace, hand, null, interactEvent);
     }
 
-    public PlayerItemUseEvent(@NotNull final Player who, @NotNull final Action action, @NotNull final ItemStack item, @Nullable final Block clickedBlock, @NotNull final BlockFace clickedFace, @NotNull final EquipmentSlot hand, @Nullable final Vector clickedPosition, @Nullable final PlayerInteractEvent interactEvent) {
+    public PlayerItemUseEvent(final Player who, final Action action, final ItemStack item, @Nullable final Block clickedBlock, final BlockFace clickedFace, final EquipmentSlot hand, @Nullable final Vector clickedPosition, @Nullable final PlayerInteractEvent interactEvent) {
         super(who);
         this.action = action;
         this.item = item;
@@ -66,7 +67,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return Action returns the type of interaction
      */
-    @NotNull
     public Action getAction() {
         return action;
     }
@@ -76,7 +76,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return ItemStack the item used
      */
-    @NotNull
     public ItemStack getItem() {
         return this.item;
     }
@@ -87,7 +86,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return Material the material of the item used
      */
-    @NotNull
     public Material getMaterial() {
         return item.getType();
     }
@@ -126,7 +124,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return BlockFace returns the face of the block that was clicked
      */
-    @NotNull
     public BlockFace getBlockFace() {
         return blockFace;
     }
@@ -138,7 +135,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return the action to take with the interacted block
      */
-    @NotNull
     public Result useInteractedBlock() {
         return useClickedBlock;
     }
@@ -151,7 +147,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return the action to take with the item in hand
      */
-    @NotNull
     public Result useItemInHand() {
         return useItemInHand;
     }
@@ -162,7 +157,6 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      *
      * @return the hand used to interact. May be null.
      */
-    @NotNull
     public EquipmentSlot getHand() {
         return hand;
     }
@@ -173,8 +167,8 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
      * <p>
      * All vector components are between 0.0 and 1.0 inclusive.
      *
-     * @deprecated misleading, use {@link #getInteractionPoint()}
      * @return the clicked position. May be null.
+     * @deprecated misleading, use {@link #getInteractionPoint()}
      */
     @Nullable
     @Deprecated // Paper
@@ -186,6 +180,7 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
     }
 
     // Paper start
+
     /**
      * The exact point at which the interaction occurred. May be null.
      *
@@ -210,13 +205,11 @@ public class PlayerItemUseEvent extends PlayerEvent implements Cancellable {
         this.cancel = cancel;
     }
 
-    @NotNull
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
 
-    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

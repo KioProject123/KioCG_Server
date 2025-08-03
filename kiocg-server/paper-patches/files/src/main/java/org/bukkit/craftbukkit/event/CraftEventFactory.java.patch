@@ -96,3 +96,25 @@
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
          populateFields(victim, event); // Paper - make cancellable
          Bukkit.getServer().getPluginManager().callEvent(event);
+@@ -1298,6 +_,21 @@
+ 
+         return com.mojang.datafixers.util.Pair.of(event.titleOverride(), container); // Paper - Add titleOverride to InventoryOpenEvent
+     }
++
++    // KioCG start - InventoryExchangeItemEvent
++    public static boolean callInventoryExchangeItemEvent(InventoryView view, org.bukkit.inventory.Inventory sourceInventory, java.util.function.Supplier<org.bukkit.inventory.ItemStack> itemSupplier, org.bukkit.inventory.Inventory destinationInventory) {
++        if (sourceInventory == destinationInventory) {
++            return true;
++        }
++
++        org.bukkit.inventory.ItemStack itemStack = itemSupplier.get();
++        if (itemStack == null || itemStack.isEmpty()) {
++            return true;
++        }
++
++        return new com.kiocg.event.inventory.InventoryExchangeItemEvent(view, sourceInventory, itemStack, destinationInventory).callEvent();
++    }
++    // KioCG end - InventoryExchangeItemEvent
+ 
+     public static ItemStack callPreCraftEvent(CraftingContainer matrix, Container resultInventory, ItemStack result, InventoryView lastCraftView, boolean isRepair) {
+         CraftInventoryCrafting inventory = new CraftInventoryCrafting(matrix, resultInventory);

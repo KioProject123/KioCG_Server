@@ -319,6 +319,22 @@
          }
      }
  
+@@ -1823,6 +_,7 @@
+         this.connection.send(new ClientboundContainerClosePacket(this.containerMenu.containerId));
+         this.containerMenu = this.inventoryMenu;
+         // do not run close logic
++        this.carriedFrom = null; // KioCG - InventoryExchangeItemEvent
+     }
+     // Paper end - special close for unloaded inventory
+ 
+@@ -1831,6 +_,7 @@
+         this.containerMenu.removed(this);
+         this.inventoryMenu.transferState(this.containerMenu);
+         this.containerMenu = this.inventoryMenu;
++        this.carriedFrom = null; // KioCG - InventoryExchangeItemEvent
+     }
+ 
+     @Override
 @@ -2020,13 +_,18 @@
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
          this.wardenSpawnTracker = that.wardenSpawnTracker;

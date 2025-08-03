@@ -72,6 +72,14 @@
                                      ServerGamePacketListenerImpl.this.cserver.getPluginManager().callEvent(event);
                                      final boolean resendData = event.isCancelled() || !ServerGamePacketListenerImpl.this.player.getItemInHand(hand).is(itemType);
  
+@@ -2948,6 +_,7 @@
+                     InventoryClickEvent event;
+                     ClickType click = ClickType.UNKNOWN;
+                     InventoryAction action = InventoryAction.UNKNOWN;
++                    Integer exchangeItemAmount = null; // KioCG - InventoryExchangeItemEvent
+ 
+                     switch (packet.clickType()) {
+                         case PICKUP:
 @@ -2985,7 +_,7 @@
                                                      action = packet.buttonNum() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
                                                  }
@@ -81,7 +89,33 @@
                                                      int toPlace = packet.buttonNum() == 0 ? cursor.getCount() : 1;
                                                      toPlace = Math.min(toPlace, clickedItem.getMaxStackSize() - clickedItem.getCount());
                                                      toPlace = Math.min(toPlace, slot.container.getMaxStackSize() - clickedItem.getCount());
-@@ -3021,7 +_,7 @@
+@@ -2994,9 +_,10 @@
+                                                     } else if (toPlace == cursor.getCount()) {
+                                                         action = InventoryAction.PLACE_ALL;
+                                                     } else if (toPlace < 0) {
+-                                                        action = toPlace != -1 ? InventoryAction.PICKUP_SOME : InventoryAction.PICKUP_ONE; // this happens with oversized stacks
++                                                        // action = toPlace != -1 ? InventoryAction.PICKUP_SOME : InventoryAction.PICKUP_ONE; // this happens with oversized stacks // KioCG - 新版本不再发生
+                                                     } else if (toPlace != 0) {
+                                                         action = InventoryAction.PLACE_SOME;
++                                                        exchangeItemAmount = toPlace; // KioCG - InventoryExchangeItemEvent
+                                                     }
+                                                 } else if (cursor.getCount() <= slot.getMaxStackSize()) {
+                                                     if (cursor.getItem() instanceof net.minecraft.world.item.BundleItem && cursor.has(DataComponents.BUNDLE_CONTENTS) && packet.buttonNum() == 0) {
+@@ -3007,6 +_,7 @@
+                                                             action = InventoryAction.NOTHING;
+                                                         } else {
+                                                             action = InventoryAction.PICKUP_SOME_INTO_BUNDLE;
++                                                            exchangeItemAmount = toPickup; // KioCG - InventoryExchangeItemEvent
+                                                         }
+                                                     } else if (slot.getItem().getItem() instanceof net.minecraft.world.item.BundleItem && slot.getItem().has(DataComponents.BUNDLE_CONTENTS) && packet.buttonNum() == 0) {
+                                                         int toPickup = slot.getItem().get(DataComponents.BUNDLE_CONTENTS).getMaxAmountToAdd(cursor);
+@@ -3016,12 +_,13 @@
+                                                             action = InventoryAction.NOTHING;
+                                                         } else {
+                                                             action = InventoryAction.PLACE_SOME_INTO_BUNDLE;
++                                                            exchangeItemAmount = toPickup; // KioCG - InventoryExchangeItemEvent
+                                                         }
+                                                     } else {
                                                          action = InventoryAction.SWAP_WITH_CURSOR;
                                                      }
                                                  }
@@ -106,3 +140,69 @@
                          if (click == ClickType.NUMBER_KEY) {
                              event = new InventoryClickEvent(inventory, type, slotNum, click, action, packet.buttonNum());
                          } else {
+@@ -3213,7 +_,65 @@
+                         }
+ 
+                         if (event.getResult() != org.bukkit.event.Event.Result.DENY) { // if denied, synchronizing is fully handled by broadcastChanges at the end
++                            // KioCG start - InventoryExchangeItemEvent
++                            org.bukkit.inventory.Inventory sourceInventory = null;
++                            org.bukkit.inventory.Inventory destinationInventory = null;
++
++                            switch (event.getAction()) {
++                                case NOTHING, UNKNOWN -> {
++                                }
++                                case PICKUP_ALL, PICKUP_SOME, PICKUP_HALF, PICKUP_ONE, CLONE_STACK, PICKUP_FROM_BUNDLE -> this.player.carriedFrom = event.getClickedInventory();
++                                case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR, PLACE_FROM_BUNDLE, PLACE_ALL_INTO_BUNDLE, PLACE_SOME_INTO_BUNDLE -> {
++                                    sourceInventory = this.player.carriedFrom;
++                                    destinationInventory = event.getClickedInventory();
++                                }
++                                case DROP_ALL_CURSOR, DROP_ONE_CURSOR -> sourceInventory = this.player.carriedFrom;
++                                case DROP_ALL_SLOT, DROP_ONE_SLOT -> sourceInventory = event.getClickedInventory();
++                                case MOVE_TO_OTHER_INVENTORY -> {
++                                    //TODO 不是特别完善的算法, 有优化(偷懒)的成分
++                                    if (this.player.containerMenu != this.player.inventoryMenu) {
++                                        sourceInventory = event.getClickedInventory();
++                                        org.bukkit.inventory.Inventory topInventory = event.getView().getTopInventory();
++                                        org.bukkit.inventory.Inventory bottomInventory = event.getView().getBottomInventory();
++                                        destinationInventory = sourceInventory == topInventory ? bottomInventory : topInventory;
++                                    }
++                                }
++                                case HOTBAR_SWAP, COLLECT_TO_CURSOR -> {
++                                    // 在实际方法内处理
++                                }
++                                case PICKUP_ALL_INTO_BUNDLE, PICKUP_SOME_INTO_BUNDLE -> {
++                                    sourceInventory = event.getClickedInventory();
++                                    destinationInventory = this.player.carriedFrom;
++                                }
++                            }
++
++                            InventoryClickEvent finalEvent = event;
++                            Integer finalExchangeItemAmount = exchangeItemAmount;
++                            java.util.function.Supplier<org.bukkit.inventory.ItemStack> itemSupplier = () -> switch (finalEvent.getAction()) {
++                                case NOTHING, UNKNOWN, HOTBAR_MOVE_AND_READD -> null;
++                                case PICKUP_ALL, PICKUP_SOME, PICKUP_HALF, PICKUP_ONE, CLONE_STACK, PICKUP_FROM_BUNDLE -> null;
++                                case PLACE_ALL, SWAP_WITH_CURSOR, DROP_ALL_CURSOR, PLACE_ALL_INTO_BUNDLE -> finalEvent.getCursor().clone();
++                                case PLACE_SOME, PLACE_SOME_INTO_BUNDLE -> finalEvent.getCursor().asQuantity(finalExchangeItemAmount);
++                                case PLACE_ONE, DROP_ONE_CURSOR -> finalEvent.getCursor().asOne();
++                                case DROP_ALL_SLOT, PICKUP_ALL_INTO_BUNDLE -> finalEvent.getCurrentItem().clone();
++                                case DROP_ONE_SLOT -> finalEvent.getCurrentItem().asOne();
++                                case MOVE_TO_OTHER_INVENTORY -> finalEvent.getCurrentItem().clone(); //TODO 不是特别完善的算法, 有优化(偷懒)的成分
++                                case HOTBAR_SWAP, COLLECT_TO_CURSOR -> null; // 在实际方法内处理
++                                case PICKUP_SOME_INTO_BUNDLE -> finalEvent.getCurrentItem().asQuantity(finalExchangeItemAmount);
++                                case PLACE_FROM_BUNDLE -> {
++                                    net.minecraft.world.item.component.BundleContents bundleContents = this.player.containerMenu.getCarried().get(DataComponents.BUNDLE_CONTENTS);
++                                    net.minecraft.world.item.component.BundleContents.Mutable mutable = new net.minecraft.world.item.component.BundleContents.Mutable(bundleContents);
++                                    yield mutable.removeOne().asBukkitMirror(); // 不会实际修改
++                                }
++                            };
++
++                            if (CraftEventFactory.callInventoryExchangeItemEvent(event.getView(), sourceInventory, itemSupplier, destinationInventory)) {
+                             this.player.containerMenu.clicked(slotNum, packet.buttonNum(), packet.clickType(), this.player);
++                                if (event.getAction() == InventoryAction.SWAP_WITH_CURSOR) {
++                                    this.player.carriedFrom = destinationInventory;
++                                }
++                            }
++                            // KioCG end - InventoryExchangeItemEvent
+                         }
+ 
+                         if (event instanceof CraftItemEvent || event instanceof SmithItemEvent) {
