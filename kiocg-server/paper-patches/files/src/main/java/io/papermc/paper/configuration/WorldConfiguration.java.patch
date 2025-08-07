@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -583,4 +_,106 @@
+@@ -583,4 +_,107 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -49,6 +49,7 @@
 +            public boolean hopperPullsEntityOwnedItem = false;
 +            public boolean hopperPullsInfinitePickupItem = false;
 +            public boolean hopperRailsOptimize = true;
++            public boolean hopperMinecartPullsHopperOnly = true;
 +            public double saplingsWitheredChance = 0.025;
 +            public double flowersAndGrassesSpreadChance = 0.01;
 +            public boolean rainExtinguishesFlames = true;
