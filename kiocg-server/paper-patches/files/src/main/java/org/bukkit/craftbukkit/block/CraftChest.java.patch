@@ -7,7 +7,7 @@
 -        if (ChestBlock.getBlockType(this.data) == net.minecraft.world.level.block.DoubleBlockCombiner.BlockType.SINGLE) {
 +
 +        // KioCG start - more api: 提取方法
-+        net.minecraft.core.BlockPos neighbourBlockPos = getNeighbourBlockPos();
++        net.minecraft.core.BlockPos neighbourBlockPos = getNeighbourBlockPos(true);
 +        if (neighbourBlockPos == null) {
              return false;
          }
@@ -15,7 +15,7 @@
 +        return ChestBlock.isChestBlockedAt(world, neighbourBlockPos);
 +    }
 +
-+    private net.minecraft.core.BlockPos getNeighbourBlockPos() {
++    private net.minecraft.core.BlockPos getNeighbourBlockPos(boolean verify) {
 +        if (!isPlaced()) {
 +            return null;
 +        }
@@ -27,7 +27,7 @@
          net.minecraft.core.BlockPos neighbourBlockPos = getPosition().relative(direction);
          BlockState neighbourBlockState = world.getBlockStateIfLoaded(neighbourBlockPos);
 -        return neighbourBlockState != null
-+        if (neighbourBlockState != null
++        if (!verify || neighbourBlockState != null
              && neighbourBlockState.is(this.data.getBlock())
              && ChestBlock.getBlockType(neighbourBlockState) != net.minecraft.world.level.block.DoubleBlockCombiner.BlockType.SINGLE
 -            && ChestBlock.getConnectedDirection(neighbourBlockState) == direction.getOpposite()
@@ -40,8 +40,8 @@
 +    }
 +
 +    @Override
-+    public org.bukkit.block.Block getConnectedChest() {
-+        net.minecraft.core.BlockPos neighbourBlockPos = getNeighbourBlockPos();
++    public org.bukkit.block.Block getConnectedChest(boolean verify) {
++        net.minecraft.core.BlockPos neighbourBlockPos = getNeighbourBlockPos(verify);
 +        if (neighbourBlockPos == null) {
 +            return null;
 +        }
