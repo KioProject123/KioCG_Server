@@ -9,3 +9,10 @@
  
      /**
       * Gets the inventory of the chest block represented by this block state.
+@@ -37,4 +_,6 @@
+      */
+     boolean isBlocked();
+     // Paper end - More Chest Block API
++
++    @org.jspecify.annotations.Nullable Block getConnectedChest(); // KioCG - more api
+ }

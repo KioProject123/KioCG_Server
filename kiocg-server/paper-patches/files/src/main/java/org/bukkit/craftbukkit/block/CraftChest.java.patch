@@ -1,8 +1,54 @@
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
-@@ -124,4 +_,16 @@
-             && ChestBlock.isChestBlockedAt(world, neighbourBlockPos);
-     }
+@@ -111,17 +_,57 @@
+         if (ChestBlock.isChestBlockedAt(world, getPosition())) {
+             return true;
+         }
+-        if (ChestBlock.getBlockType(this.data) == net.minecraft.world.level.block.DoubleBlockCombiner.BlockType.SINGLE) {
++
++        // KioCG start - more api: 提取方法
++        net.minecraft.core.BlockPos neighbourBlockPos = getNeighbourBlockPos();
++        if (neighbourBlockPos == null) {
+             return false;
+         }
++
++        return ChestBlock.isChestBlockedAt(world, neighbourBlockPos);
++    }
++
++    private net.minecraft.core.BlockPos getNeighbourBlockPos() {
++        if (!isPlaced()) {
++            return null;
++        }
++        net.minecraft.world.level.LevelAccessor world = getWorldHandle();
++        if (ChestBlock.getBlockType(this.data) == net.minecraft.world.level.block.DoubleBlockCombiner.BlockType.SINGLE) {
++            return null;
++        }
+         net.minecraft.core.Direction direction = ChestBlock.getConnectedDirection(this.data);
+         net.minecraft.core.BlockPos neighbourBlockPos = getPosition().relative(direction);
+         BlockState neighbourBlockState = world.getBlockStateIfLoaded(neighbourBlockPos);
+-        return neighbourBlockState != null
++        if (neighbourBlockState != null
+             && neighbourBlockState.is(this.data.getBlock())
+             && ChestBlock.getBlockType(neighbourBlockState) != net.minecraft.world.level.block.DoubleBlockCombiner.BlockType.SINGLE
+-            && ChestBlock.getConnectedDirection(neighbourBlockState) == direction.getOpposite()
+-            && ChestBlock.isChestBlockedAt(world, neighbourBlockPos);
+-    }
++            && ChestBlock.getConnectedDirection(neighbourBlockState) == direction.getOpposite()) {
++            return neighbourBlockPos;
++        }
++        return null;
++    }
++
++    @Override
++    public org.bukkit.block.Block getConnectedChest() {
++        net.minecraft.core.BlockPos neighbourBlockPos = getNeighbourBlockPos();
++        if (neighbourBlockPos == null) {
++            return null;
++        }
++
++        return CraftBlock.at(getWorldHandle(), neighbourBlockPos);
++    }
++    // KioCG end - more api: 提取方法
      // Paper end - More Chest Block API
 +
 +    // KioCG start - expand container rows
