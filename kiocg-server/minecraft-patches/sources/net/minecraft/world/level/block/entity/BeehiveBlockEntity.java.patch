@@ -8,12 +8,12 @@
  
      public BeehiveBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.BEEHIVE, pos, blockState);
-@@ -341,16 +_,68 @@
+@@ -341,16 +_,69 @@
  
      public static void serverTick(Level level, BlockPos pos, BlockState state, BeehiveBlockEntity beehive) {
          tickOccupants(level, pos, state, beehive.stored, beehive.savedFlowerPos);
 -        if (!beehive.stored.isEmpty() && level.getRandom().nextDouble() < 0.005) {
-+        if (/*!beehive.stored.isEmpty() &&*/ level.getRandom().nextDouble() < 0.005) { // KioCG - beehive refill every night: 蜂巢始终工作!
++        if (/*!beehive.stored.isEmpty() &&*/ level.getRandom().nextDouble() < 0.005 && calculateNewHoneyLevel(level, pos, 0, BeehiveBlock.MAX_HONEY_LEVELS) > 0) { // KioCG - beehive refill every night: 蜂巢始终工作!
              double d = pos.getX() + 0.5;
              double d1 = pos.getY();
              double d2 = pos.getZ() + 0.5;
@@ -60,7 +60,8 @@
 +                int x = xOff + dx;
 +                for (int dy = -2; dy <= 0; ++dy) {
 +                    int y = dy + yOff;
-+                    net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunk(x >> 4, z >> 4);
++                    net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkIfLoaded(x >> 4, z >> 4);
++                    if (chunk == null) break; // 同一Y轴不需要再循环
 +                    BlockState blockStateFinal = chunk.getBlockStateFinal(x, y, z);
 +                    if (Bee.attractsBees(blockStateFinal)) {
 +                        honeyLevel = honeyLevel + added;
