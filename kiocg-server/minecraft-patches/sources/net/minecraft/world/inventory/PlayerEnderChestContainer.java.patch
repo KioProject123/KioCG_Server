@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/PlayerEnderChestContainer.java
 +++ b/net/minecraft/world/inventory/PlayerEnderChestContainer.java
-@@ -25,11 +_,18 @@
+@@ -26,11 +_,18 @@
      }
  
      public PlayerEnderChestContainer(Player owner) {
@@ -20,7 +20,7 @@
      public void setActiveChest(EnderChestBlockEntity enderChestBlockEntity) {
          this.activeChest = enderChestBlockEntity;
      }
-@@ -39,19 +_,19 @@
+@@ -40,19 +_,19 @@
      }
  
      public void fromSlots(ValueInput.TypedInputList<ItemStackWithSlot> input) {
