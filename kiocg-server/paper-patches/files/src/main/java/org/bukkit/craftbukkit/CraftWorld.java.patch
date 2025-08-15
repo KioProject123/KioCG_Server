@@ -11,6 +11,30 @@
      // Paper start - void damage configuration
      private boolean voidDamageEnabled;
      private float voidDamageAmount;
+@@ -1735,6 +_,11 @@
+         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
+ 
++        // KioCG start - more api: 允许插件设置默认值
++        if (ticksPerCategorySpawn < 0) {
++            this.world.ticksPerSpawnCategory.put(spawnCategory, this.world.getTicksPerSpawn(spawnCategory));
++        }
++        // KioCG end - more api: 允许插件设置默认值
+         this.world.ticksPerSpawnCategory.put(spawnCategory, (long) ticksPerCategorySpawn);
+     }
+ 
+@@ -1860,6 +_,11 @@
+         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
+ 
++        // KioCG start - more api: 允许插件设置默认值
++        if (limit < 0) {
++            this.spawnCategoryLimit.put(spawnCategory, this.world.paperConfig().entities.spawning.spawnLimits.getInt(CraftSpawnCategory.toNMS(spawnCategory)));
++        }
++        // KioCG end - more api: 允许插件设置默认值
+         this.spawnCategoryLimit.put(spawnCategory, limit);
+     }
+ 
 @@ -2404,6 +_,13 @@
          return this.persistentDataContainer;
      }
