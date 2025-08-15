@@ -86,7 +86,7 @@
              }
  
              attributesToSync.clear();
-@@ -435,4 +_,64 @@
+@@ -435,4 +_,65 @@
              ((ServerPlayer)this.entity).connection.send(packet);
          }
      }
@@ -140,6 +140,7 @@
 +    }
 +
 +    private void hideHealth(List<SynchedEntityData.DataValue<?>> trackedDataValues) {
++        if (!this.entity.isAlive()) return; // 修复生物死亡动画
 +        java.util.ListIterator<SynchedEntityData.DataValue<?>> iterator = trackedDataValues.listIterator();
 +        while (iterator.hasNext()) {
 +            SynchedEntityData.DataValue<?> dataValue = iterator.next();
