@@ -10,13 +10,13 @@
 +    PersistentDataType<String, org.bukkit.inventory.ItemStack> ITEM_STACK = new ItemStackPersistentDataType();
 +    PersistentDataType<String, org.bukkit.inventory.ItemStack[]> ITEM_STACK_ARRAY = new ItemStackArrayPersistentDataType();
 +    @Deprecated
-+    PersistentDataType<String, org.bukkit.entity.Entity> ENTITY = new EntityPersistentDataType(org.bukkit.Bukkit.getWorlds().getFirst(), false);
++    PersistentDataType<String, org.bukkit.entity.Entity> ENTITY = new EntityPersistentDataType();
 +    // KioCG end - more api
 +
      /*
          Complex Arrays.
       */
-@@ -224,4 +_,155 @@
+@@ -224,4 +_,161 @@
              return primitive != 0;
          }
      }
@@ -141,9 +141,12 @@
 +        org.bukkit.World world;
 +        boolean preserveUUID;
 +
-+        public EntityPersistentDataType(org.bukkit.World world, boolean preserveUUID) {
++        public EntityPersistentDataType(@NotNull org.bukkit.World world, boolean preserveUUID) {
 +            this.world = world;
 +            this.preserveUUID = preserveUUID;
++        }
++
++        private EntityPersistentDataType() {
 +        }
 +
 +        @NotNull
@@ -167,6 +170,9 @@
 +        @NotNull
 +        @Override
 +        public org.bukkit.entity.Entity fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
++            if (this.world == null) {
++                this.world = org.bukkit.Bukkit.getWorlds().getFirst();
++            }
 +            return org.bukkit.Bukkit.getUnsafe().deserializeEntity(java.util.Base64.getDecoder().decode(primitive), this.world, this.preserveUUID);
 +        }
 +    }
