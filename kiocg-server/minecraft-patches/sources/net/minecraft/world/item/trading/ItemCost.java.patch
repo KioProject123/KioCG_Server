@@ -1,5 +1,26 @@
 --- a/net/minecraft/world/item/trading/ItemCost.java
 +++ b/net/minecraft/world/item/trading/ItemCost.java
+@@ -30,7 +_,19 @@
+         ByteBufCodecs.VAR_INT,
+         ItemCost::count,
+         DataComponentExactPredicate.STREAM_CODEC,
+-        ItemCost::components,
++        // KioCG start - customize default components
++        itemCost -> {
++            DataComponentExactPredicate.Builder builder = DataComponentExactPredicate.builder();
++            net.minecraft.core.component.DataComponentPatch remoteComponentsPatch = itemCost.itemStack.getRemoteComponentsPatch();
++            remoteComponentsPatch.entrySet().forEach(entry -> {
++                // 原版村民交易判断只允许增加组件...
++                if (entry.getValue().isPresent()) {
++                    builder.expect((net.minecraft.core.component.DataComponentType) entry.getKey(), entry.getValue().get());
++                }
++            });
++            return builder.build();
++        },
++        // KioCG end - customize default components
+         ItemCost::new
+     );
+     public static final StreamCodec<RegistryFriendlyByteBuf, Optional<ItemCost>> OPTIONAL_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs::optional);
 @@ -56,6 +_,7 @@
      }
  
