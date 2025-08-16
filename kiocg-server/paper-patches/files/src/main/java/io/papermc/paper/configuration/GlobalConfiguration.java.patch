@@ -10,7 +10,7 @@
 +
 +    public class KiocgConfig extends ConfigurationPart {
 +        public String feedbackForwardingSenderName = "MOSS";
-+        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap", "challenges");
++        public java.util.List<String> advancementRegisterPath = java.util.List.of("bacap/advancement_legend");
 +        public boolean dontKillMyPet = true;
 +        public double petTeleportDistanceSqr = 256.0;
 +        public boolean petFollowKeepChunkLoaded = true;

@@ -1,0 +1,29 @@
+--- a/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java
++++ b/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java
+@@ -9,7 +_,7 @@
+ import net.minecraft.advancements.DisplayInfo;
+ 
+ public class AdvancementVisibilityEvaluator {
+-    private static final int VISIBILITY_DEPTH = 2;
++    private static final int VISIBILITY_DEPTH = 1; // KioCG - linear achievement system
+ 
+     private static AdvancementVisibilityEvaluator.VisibilityRule evaluateVisibilityRule(Advancement advancement, boolean alwaysShow) {
+         Optional<DisplayInfo> optional = advancement.display();
+@@ -23,7 +_,7 @@
+     }
+ 
+     private static boolean evaluateVisiblityForUnfinishedNode(Stack<AdvancementVisibilityEvaluator.VisibilityRule> visibilityRules) {
+-        for (int i = 0; i <= 2; i++) {
++        for (int i = 0; i <= VISIBILITY_DEPTH; i++) { // KioCG - linear achievement system
+             AdvancementVisibilityEvaluator.VisibilityRule visibilityRule = visibilityRules.peek(i);
+             if (visibilityRule == AdvancementVisibilityEvaluator.VisibilityRule.SHOW) {
+                 return true;
+@@ -62,7 +_,7 @@
+         AdvancementNode advancementNode = advancement.root();
+         Stack<AdvancementVisibilityEvaluator.VisibilityRule> stack = new ObjectArrayList<>();
+ 
+-        for (int i = 0; i <= 2; i++) {
++        for (int i = 0; i <= VISIBILITY_DEPTH; i++) { // KioCG - linear achievement system
+             stack.push(AdvancementVisibilityEvaluator.VisibilityRule.NO_CHANGE);
+         }
+ 
