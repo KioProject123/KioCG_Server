@@ -815,10 +815,10 @@ index 0000000000000000000000000000000000000000..d16c3fb08d8c2e6b326a0ccbbd92ecaf
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..bfcf84db441b886fe59944c1a594db005db1002d
+index 0000000000000000000000000000000000000000..fef8042cec699a266853089409bcd51c34988234
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/FlowerPotBlockEntity.java
-@@ -0,0 +1,206 @@
+@@ -0,0 +1,208 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
@@ -841,6 +841,7 @@ index 0000000000000000000000000000000000000000..bfcf84db441b886fe59944c1a594db00
 +import net.minecraft.world.level.storage.ValueInput;
 +import net.minecraft.world.level.storage.ValueOutput;
 +import net.minecraft.world.phys.Vec3;
++import org.joml.Vector3f;
 +
 +import java.util.Optional;
 +import java.util.function.Consumer;
@@ -910,6 +911,7 @@ index 0000000000000000000000000000000000000000..bfcf84db441b886fe59944c1a594db00
 +            consumer = consumer.andThen(display -> display.setYRot(facing.toYRot()));
 +            Display.BlockDisplay displayBlock = Display.BlockDisplay.getCustomDisplay(EntityType.BLOCK_DISPLAY, level, pos);
 +            if (displayBlock != null) {
++                displayBlock.setTranslation(new Vector3f(-0.5F, -0.5F, -0.5F)); // 重置方块展示实体的显示位置
 +                consumer.accept(displayBlock);
 +            } else {
 +                Display.BlockDisplay.createCustomDisplay(EntityType.BLOCK_DISPLAY, level, pos, consumer);
@@ -1026,7 +1028,7 @@ index 0000000000000000000000000000000000000000..bfcf84db441b886fe59944c1a594db00
 +}
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/state/BlockBehaviour.java b/net/minecraft/world/level/block/state/BlockBehaviour.java
-index 627f260b9ae640a4baae1a33e60fd98da1e60c0e..7c5bfc6738e8248bb8f6cf196b6a813eb7414b95 100644
+index 6d59db421697ceceff4428610ad460ef0f447bb9..21e1824d322fc9992501cf6d906eb48248facc01 100644
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
 @@ -1047,12 +1047,12 @@ public abstract class BlockBehaviour implements FeatureElement {
