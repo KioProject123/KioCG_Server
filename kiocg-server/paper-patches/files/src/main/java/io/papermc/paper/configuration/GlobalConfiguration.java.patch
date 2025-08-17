@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -407,4 +_,128 @@
+@@ -407,4 +_,129 @@
              }
          }
      }
@@ -125,6 +125,7 @@
 +            public int defaultTrappedChestRows = 2;
 +            public int defaultBarrelRows = 2;
 +            public int defaultShulkerBoxRows = 2;
++            public boolean lootableCompleteReplenish = true;
 +        }
 +    }
 +    // KioCG end
