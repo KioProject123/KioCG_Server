@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
+@@ -431,7 +_,7 @@
+ 
+     @Override
+     public boolean requiresCustomPersistence() {
+-        return super.requiresCustomPersistence() || this.getCarriedBlock() != null;
++        return super.requiresCustomPersistence()/* || this.getCarriedBlock() != null*/; // KioCG - optimize entity behavior
+     }
+ 
+     static class EndermanFreezeWhenLookedAt extends Goal {
 @@ -476,7 +_,7 @@
          @Override
          public boolean canUse() {
