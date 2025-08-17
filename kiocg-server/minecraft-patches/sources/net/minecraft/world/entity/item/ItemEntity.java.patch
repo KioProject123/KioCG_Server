@@ -116,13 +116,36 @@
          return !explosion.shouldAffectBlocklikeEntities() || super.ignoreExplosion(explosion);
      }
  
+@@ -436,11 +_,12 @@
+                 }
+             }
+ 
++            final boolean canPickupOwner = this.target == null || this.target.equals(entity.getUUID()); // KioCG - fix pickup item event cancelled: 提取变量
+             if (this.pickupDelay <= 0 && canHold > 0) {
+                 item.setCount(canHold);
+                 // Call legacy event
+                 org.bukkit.event.player.PlayerPickupItemEvent playerEvent = new org.bukkit.event.player.PlayerPickupItemEvent((org.bukkit.entity.Player) entity.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
+-                playerEvent.setCancelled(!playerEvent.getPlayer().getCanPickupItems());
++                playerEvent.setCancelled(!playerEvent.getPlayer().getCanPickupItems() || !canPickupOwner); // KioCG - fix pickup item event cancelled
+                 this.level().getCraftServer().getPluginManager().callEvent(playerEvent);
+                 flyAtPlayer = playerEvent.getFlyAtPlayer(); // Paper
+                 if (playerEvent.isCancelled()) {
+@@ -455,7 +_,7 @@
+ 
+                 // Call newer event afterwards
+                 org.bukkit.event.entity.EntityPickupItemEvent entityEvent = new org.bukkit.event.entity.EntityPickupItemEvent(entity.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
+-                entityEvent.setCancelled(!entityEvent.getEntity().getCanPickupItems());
++                entityEvent.setCancelled(!entityEvent.getEntity().getCanPickupItems() || !canPickupOwner); // KioCG - fix pickup item event cancelled
+                 this.level().getCraftServer().getPluginManager().callEvent(entityEvent);
+                 if (entityEvent.isCancelled()) {
+                     item.setCount(count); // SPIGOT-5294 - restore count
 @@ -478,7 +_,18 @@
              }
              // CraftBukkit end
              // Paper end - PlayerAttemptPickupItemEvent
 -            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID())) && entity.getInventory().add(item)) {
 +            // KioCG start - allow overstacked items: fix pickup animation
-+            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID()))) {
++            if (this.pickupDelay == 0 && canPickupOwner) { // KioCG - fix pickup item event cancelled: 提取变量
 +                item.tickFood(this.level().getGameTime()); // KioCG - food freshness
 +                if (!entity.getInventory().add(item) && flyAtPlayer) {
 +                    org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.position(), this.level().getWorld(), this.getYRot(), this.getXRot());
