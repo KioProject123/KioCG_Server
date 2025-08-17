@@ -1,0 +1,14 @@
+--- a/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
++++ b/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
+@@ -81,6 +_,11 @@
+             return false;
+         }
+ 
++        // KioCG start - lootable complete replenish: 他人使用时不要刷新
++        if (lootTableHolder instanceof net.minecraft.world.Container container && !container.getViewers().isEmpty()) {
++            return false;
++        }
++        // KioCG end - lootable complete replenish: 他人使用时不要刷新
+ 
+         final Player bukkitPlayer = (Player) player.getBukkitEntity();
+         final LootableInventoryReplenishEvent event = new LootableInventoryReplenishEvent(bukkitPlayer, holderInterface.getInventoryForEvent(lootTableHolder));
