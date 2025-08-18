@@ -45,7 +45,7 @@
      }
  
      // Paper start - optimise random ticking
-@@ -908,6 +_,44 @@
+@@ -908,6 +_,45 @@
              }
          }
  
@@ -55,6 +55,8 @@
 +            int daysSpent = Mth.clamp(days - chunk.chunkDays, 0, 7);
 +            chunk.chunkDays = days;
 +
++        // 放在外层循环, 防止交界处的多格作物生长两次
++        List<Pair<BlockState, BlockPos>> dayTickList = new ArrayList<>();
 +        for (int sectionIndex = 0, sectionsLen = sections.length; sectionIndex < sectionsLen; sectionIndex++) {
 +            final int offsetY = (sectionIndex + minSection) << 4;
 +            final LevelChunkSection section = sections[sectionIndex];
@@ -69,20 +71,19 @@
 +                final int tickingBlocks = tickList.size();
 +                if (tickingBlocks == 0) break;
 +
-+                List<Integer> dayTickList = new ArrayList<>(tickingBlocks);
 +                for (int index = 0; index < tickingBlocks; ++index) {
 +                    final int location = (int)tickList.getRaw(index) & 0xFFFF;
-+                    dayTickList.add(location);
-+                }
-+                for (Integer location : dayTickList) {
 +                    final BlockState state = states.get(location);
 +
 +                    // do not use a mutable pos, as some random tick implementations store the input without calling immutable()!
 +                    final BlockPos pos = new BlockPos((location & 15) | offsetX, ((location >>> (4 + 4)) & 15) | offsetY, ((location >>> 4) & 15) | offsetZ);
 +
-+                    state.dayTick((ServerLevel)(Object)this, pos, simpleRandom);
++                    dayTickList.add(Pair.of(state, pos));
 +                }
 +            }
++        }
++        for (Pair<BlockState, BlockPos> ticking : dayTickList) {
++            ticking.getFirst().dayTick((ServerLevel)(Object)this, ticking.getSecond(), simpleRandom);
 +        }
 +        }
 +        // KioCG end - crops grow every day
