@@ -25,7 +25,7 @@
  
 -            if (ageValue == 8 && this.canSurvive(this.defaultBlockState(), level, pos.above())) {
 +            // KioCG start - crops grow every day
-+            if (random.nextFloat() < (level.spigotConfig.cactusModifier / 100.0F)) return; // Spigot - SPIGOT-7159: Better modifier
++            if (random.nextFloat() >= (level.spigotConfig.cactusModifier / 100.0F)) return; // Spigot - SPIGOT-7159: Better modifier
 +            if (ageValue == 0 && this.canSurvive(this.defaultBlockState(), level, pos.above())) { // 只在ageValue == 0时生成仙人掌花
 +            // KioCG end - crops grow every day
                  double d = i >= level.paperConfig().maxGrowthHeight.cactus ? 0.25 : 0.1; // Paper - Configurable cactus/bamboo/reed growth height
