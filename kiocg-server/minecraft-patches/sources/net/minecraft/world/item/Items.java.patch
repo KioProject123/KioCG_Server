@@ -20,7 +20,7 @@
      public static final Item WEEPING_VINES = registerBlock(Blocks.WEEPING_VINES);
      public static final Item TWISTING_VINES = registerBlock(Blocks.TWISTING_VINES);
 -    public static final Item SUGAR_CANE = registerBlock(Blocks.SUGAR_CANE);
-+    public static final Item SUGAR_CANE = registerBlock(Blocks.SUGAR_CANE, new Item.Properties().initCustomize().food(Foods.SUGAR_CANE)); // KioCG - more food
++    public static final Item SUGAR_CANE = registerBlock(Blocks.SUGAR_CANE, new Item.Properties().initCustomize().food(Foods.SUGAR_CANE, Consumables.SUGAR_CANE)); // KioCG - more food
      public static final Item KELP = registerBlock(Blocks.KELP);
      public static final Item PINK_PETALS = registerBlock(Blocks.PINK_PETALS);
      public static final Item WILDFLOWERS = registerBlock(Blocks.WILDFLOWERS);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/component/Consumables.java
 +++ b/net/minecraft/world/item/component/Consumables.java
-@@ -65,6 +_,17 @@
+@@ -65,6 +_,18 @@
      public static final Consumable MILK_BUCKET = defaultDrink().onConsume(ClearAllStatusEffectsConsumeEffect.INSTANCE).build();
      public static final Consumable CHORUS_FRUIT = defaultFood().onConsume(new TeleportRandomlyConsumeEffect()).build();
  
@@ -8,6 +8,7 @@
 +    public static final Consumable POISONOUS_MUSHROOM = defaultFood()
 +            .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.POISON, 100, 0), 0.6F))
 +            .build();
++    public static final Consumable SUGAR_CANE = defaultFood().consumeSeconds(2.2F).build();
 +    public static final Consumable SLIME_BALL = defaultFood()
 +            .consumeSeconds(3.2F)
 +            .sound(net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.HONEY_BLOCK_SLIDE))
