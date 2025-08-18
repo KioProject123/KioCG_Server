@@ -79,7 +79,7 @@
 +            String world = java.util.Objects.requireNonNull(primitive.get(org.bukkit.NamespacedKey.kiocg("world"), PersistentDataType.STRING));
 +            java.util.List<Double> pos = java.util.Objects.requireNonNull(primitive.get(org.bukkit.NamespacedKey.kiocg("pos"), PersistentDataType.LIST.doubles()));
 +            java.util.List<Float> rotation = java.util.Objects.requireNonNull(primitive.get(org.bukkit.NamespacedKey.kiocg("rotation"), PersistentDataType.LIST.floats()));
-+            return new org.bukkit.Location(org.bukkit.Bukkit.getWorld(world), pos.get(1), pos.get(2), pos.get(3), rotation.get(1), rotation.get(2));
++            return new org.bukkit.Location(org.bukkit.Bukkit.getWorld(world), pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
 +        }
 +    }
 +
