@@ -1,12 +1,14 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -164,6 +_,11 @@
+@@ -164,6 +_,13 @@
          }
          randomItems = event.getLoot().stream().map(org.bukkit.craftbukkit.inventory.CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
          // CraftBukkit end
 +        // KioCG start - lootable complete replenish
 +        if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.container.lootableCompleteReplenish) {
-+            container.getContents().clear();
++            if (!(container instanceof net.minecraft.world.ticks.ContainerSingleItem)) {
++                container.getContents().clear();
++            }
 +        }
 +        // KioCG end - lootable complete replenish
          List<Integer> availableSlots = this.getAvailableSlots(container, random);
