@@ -1,5 +1,14 @@
 --- a/net/minecraft/core/component/DataComponents.java
 +++ b/net/minecraft/core/component/DataComponents.java
+@@ -147,7 +_,7 @@
+     );
+     public static final DataComponentType<Unit> INTANGIBLE_PROJECTILE = register("intangible_projectile", builder -> builder.persistent(Unit.CODEC));
+     public static final DataComponentType<FoodProperties> FOOD = register(
+-        "food", builder -> builder.persistent(FoodProperties.DIRECT_CODEC).networkSynchronized(FoodProperties.DIRECT_STREAM_CODEC).cacheEncoding()
++        "food", builder -> builder.persistent(FoodProperties.DIRECT_CODEC, FoodProperties.VANILLA_DIRECT_CODEC).networkSynchronized(FoodProperties.DIRECT_STREAM_CODEC).cacheEncoding() // KioCG - more food
+     );
+     public static final DataComponentType<Consumable> CONSUMABLE = register(
+         "consumable", builder -> builder.persistent(Consumable.CODEC).networkSynchronized(Consumable.STREAM_CODEC).cacheEncoding()
 @@ -231,13 +_,13 @@
          "debug_stick_state", builder -> builder.persistent(DebugStickState.CODEC).cacheEncoding()
      );

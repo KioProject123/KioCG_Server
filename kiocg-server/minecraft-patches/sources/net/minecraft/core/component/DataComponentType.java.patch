@@ -1,0 +1,54 @@
+--- a/net/minecraft/core/component/DataComponentType.java
++++ b/net/minecraft/core/component/DataComponentType.java
+@@ -50,6 +_,7 @@
+     public static class Builder<T> {
+         @Nullable
+         private Codec<T> codec;
++        @Nullable private Codec<T> codecVanilla; // KioCG - customize default components
+         @Nullable
+         private StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec;
+         private boolean cacheEncoding;
+@@ -59,6 +_,14 @@
+             return this;
+         }
+ 
++        // KioCG start - customize default components
++        public DataComponentType.Builder<T> persistent(Codec<T> codec, Codec<T> codecVanilla) {
++            this.codec = codec;
++            this.codecVanilla = codecVanilla;
++            return this;
++        }
++        // KioCG end - customize default components
++
+         public DataComponentType.Builder<T> networkSynchronized(StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
+             this.streamCodec = streamCodec;
+             return this;
+@@ -74,22 +_,26 @@
+                 this.streamCodec, () -> ByteBufCodecs.fromCodecWithRegistries(Objects.requireNonNull(this.codec, "Missing Codec for component"))
+             );
+             Codec<T> codec = this.cacheEncoding && this.codec != null ? DataComponents.ENCODER_CACHE.wrap(this.codec) : this.codec;
+-            return new DataComponentType.Builder.SimpleType<>(codec, streamCodec);
++            Codec<T> codecVanilla = this.cacheEncoding && this.codecVanilla != null ? DataComponents.ENCODER_CACHE.wrap(this.codecVanilla) : this.codecVanilla; // KioCG - customize default components
++            return new DataComponentType.Builder.SimpleType<>(codec, codecVanilla, streamCodec); // KioCG - customize default components
+         }
+ 
+         static class SimpleType<T> implements DataComponentType<T> {
+             @Nullable
+             private final Codec<T> codec;
++            @Nullable private final Codec<T> codecVanilla; // KioCG - customize default components
+             private final StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec;
+ 
+-            SimpleType(@Nullable Codec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
++            SimpleType(@Nullable Codec<T> codec, @Nullable Codec<T> codecVanilla, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) { // KioCG - customize default components
+                 this.codec = codec;
++                this.codecVanilla = codecVanilla; // KioCG - customize default components
+                 this.streamCodec = streamCodec;
+             }
+ 
+             @Nullable
+             @Override
+             public Codec<T> codec() {
++                if (this.codecVanilla != null && net.minecraft.world.item.ItemStack.REMOTE_HASH.get()) return this.codecVanilla; // KioCG - customize default components
+                 return this.codec;
+             }
+ 

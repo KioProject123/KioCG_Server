@@ -1,51 +1,45 @@
 --- a/net/minecraft/world/food/FoodProperties.java
 +++ b/net/minecraft/world/food/FoodProperties.java
-@@ -17,24 +_,38 @@
+@@ -17,14 +_,14 @@
  import net.minecraft.world.item.component.ConsumableListener;
  import net.minecraft.world.level.Level;
  
 -public record FoodProperties(int nutrition, float saturation, boolean canAlwaysEat) implements ConsumableListener {
+-    public static final Codec<FoodProperties> DIRECT_CODEC = RecordCodecBuilder.create(
 +public record FoodProperties(int nutrition, float saturation, boolean canAlwaysEat, int moisture, int freshness) implements ConsumableListener { // KioCG - more food
-     public static final Codec<FoodProperties> DIRECT_CODEC = RecordCodecBuilder.create(
++    public static final Codec<FoodProperties> VANILLA_DIRECT_CODEC = RecordCodecBuilder.create( // KioCG - more food: 改名防止被意外使用
          instance -> instance.group(
                  ExtraCodecs.NON_NEGATIVE_INT.fieldOf("nutrition").forGetter(FoodProperties::nutrition),
                  Codec.FLOAT.fieldOf("saturation").forGetter(FoodProperties::saturation),
--                Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat)
+                 Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat)
+             )
+-            .apply(instance, FoodProperties::new)
++            .apply(instance, ((nutrition, saturation, canAlwaysEat) -> new FoodProperties(nutrition, saturation, canAlwaysEat, 0, 0))) // KioCG - more food
+     );
+     public static final StreamCodec<RegistryFriendlyByteBuf, FoodProperties> DIRECT_STREAM_CODEC = StreamCodec.composite(
+         ByteBufCodecs.VAR_INT,
+@@ -33,8 +_,23 @@
+         FoodProperties::saturation,
+         ByteBufCodecs.BOOL,
+         FoodProperties::canAlwaysEat,
+-        FoodProperties::new
+-    );
++        (nutrition, saturation, canAlwaysEat) -> new FoodProperties(nutrition, saturation, canAlwaysEat, 0, 0) // KioCG - more food
++    );
++
++    // KioCG start - more food
++    public static final Codec<FoodProperties> DIRECT_CODEC = RecordCodecBuilder.create(
++        instance -> instance.group(
++                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("nutrition").forGetter(FoodProperties::nutrition),
++                Codec.FLOAT.fieldOf("saturation").forGetter(FoodProperties::saturation),
 +                Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat),
 +                // KioCG start - more food
 +                Codec.INT.fieldOf("moisture").forGetter(FoodProperties::moisture),
 +                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("freshness").forGetter(FoodProperties::freshness)
 +                // KioCG end - more food
-             )
-             .apply(instance, FoodProperties::new)
-     );
--    public static final StreamCodec<RegistryFriendlyByteBuf, FoodProperties> DIRECT_STREAM_CODEC = StreamCodec.composite(
--        ByteBufCodecs.VAR_INT,
--        FoodProperties::nutrition,
--        ByteBufCodecs.FLOAT,
--        FoodProperties::saturation,
--        ByteBufCodecs.BOOL,
--        FoodProperties::canAlwaysEat,
--        FoodProperties::new
--    );
-+
-+    // KioCG start - more food
-+    public static final StreamCodec<RegistryFriendlyByteBuf, FoodProperties> DIRECT_STREAM_CODEC = new StreamCodec<>() {
-+        @Override
-+        public FoodProperties decode(final RegistryFriendlyByteBuf buffer) {
-+            Integer object = ByteBufCodecs.VAR_INT.decode(buffer);
-+            Float object1 = ByteBufCodecs.FLOAT.decode(buffer);
-+            Boolean object2 = ByteBufCodecs.BOOL.decode(buffer);
-+            return new FoodProperties(object, object1, object2, 0, 0);
-+        }
-+
-+        @Override
-+        public void encode(final RegistryFriendlyByteBuf buffer, final FoodProperties value) {
-+            ByteBufCodecs.VAR_INT.encode(buffer, value.nutrition);
-+            ByteBufCodecs.FLOAT.encode(buffer, value.saturation);
-+            ByteBufCodecs.BOOL.encode(buffer, value.canAlwaysEat);
-+        }
-+    };
++            )
++            .apply(instance, FoodProperties::new)
++    );
 +    // KioCG end - more food
  
      @Override

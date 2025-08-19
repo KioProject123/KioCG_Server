@@ -1,22 +1,36 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -101,17 +_,45 @@
+@@ -101,17 +_,54 @@
          Component.translatable("item.op_warning.line3").withStyle(ChatFormatting.RED)
      );
      private static final Component UNBREAKABLE_TOOLTIP = Component.translatable("item.unbreakable").withStyle(ChatFormatting.BLUE);
 +
++    public static final ThreadLocal<Boolean> REMOTE_HASH = ThreadLocal.withInitial(() -> false); // KioCG - customize default components
      public static final MapCodec<ItemStack> MAP_CODEC = MapCodec.recursive(
          "ItemStack",
          codec -> RecordCodecBuilder.mapCodec(
              instance -> instance.group(
                      Item.CODEC.fieldOf("id").forGetter(ItemStack::getItemHolder),
 -                    ExtraCodecs.intRange(1, 99).fieldOf("count").orElse(1).forGetter(ItemStack::getCount),
+-                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
+-                )
+-                .apply(instance, ItemStack::new)
+-        )
+-    );
 +                    ExtraCodecs.POSITIVE_INT.fieldOf("count").orElse(1).forGetter(ItemStack::getCount), // KioCG - allow overstacked items
-                     DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> stack.components.asPatch())
-                 )
-                 .apply(instance, ItemStack::new)
-         )
-     );
++                    // KioCG start - customize default components
++                    DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stack -> {
++                        if (REMOTE_HASH.get()) {
++                            return stack.getRemoteComponentsPatch();
++                        } else {
++                            return stack.components.asPatch();
++                        }
++                    })
++                    // KioCG end - customize default components
++                )
++                .apply(instance, ItemStack::new)
++        )
++    );
 +    // KioCG start - customize default components
 +    public static final MapCodec<ItemStack> REMOTE_MAP_CODEC = MapCodec.recursive(
 +        "ItemStack",
