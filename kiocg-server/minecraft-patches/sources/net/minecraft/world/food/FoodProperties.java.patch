@@ -13,7 +13,7 @@
 -                Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat)
 +                Codec.BOOL.optionalFieldOf("can_always_eat", false).forGetter(FoodProperties::canAlwaysEat),
 +                // KioCG start - more food
-+                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("moisture").forGetter(FoodProperties::moisture),
++                Codec.INT.fieldOf("moisture").forGetter(FoodProperties::moisture),
 +                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("freshness").forGetter(FoodProperties::freshness)
 +                // KioCG end - more food
              )

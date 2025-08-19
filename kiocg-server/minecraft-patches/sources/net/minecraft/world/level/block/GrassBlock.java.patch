@@ -94,7 +94,7 @@
 +
 +                final net.minecraft.world.level.chunk.ChunkAccess access = getCachedBlockChunk(cachedBlockChunk, level, blockPos);
 +                final Block block = access.getBlockState(blockPos).getBlock();
-+                if (block instanceof BushBlock) {
++                if (block instanceof VegetationBlock) {
 +                    if (++bushBlockCount >= 4) {
 +                        return;
 +                    }
