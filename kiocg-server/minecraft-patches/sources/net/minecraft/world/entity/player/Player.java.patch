@@ -94,14 +94,19 @@
          this.oBob = this.bob;
          if (this.abilities.flying && !this.isPassenger()) {
              this.resetFallDistance();
-@@ -650,6 +_,25 @@
+@@ -650,6 +_,35 @@
          }
      }
  
 +    // KioCG start - food freshness
 +    protected void tickMenuFoodFreshness(AbstractContainerMenu menu) {
 +        long gameTime = this.level().getGameTime();
-+        menu.getCarried().tickFood(gameTime);
++        ItemStack carried = menu.getCarried();
++        carried.tickFood(gameTime);
++        ItemStack rotInto = net.minecraft.world.item.component.UseRemainder.mayRotInto(carried);
++        if (rotInto != null) {
++            menu.setCarried(rotInto);
++        }
 +
 +        if (menu != this.inventoryMenu) {
 +            org.bukkit.inventory.Inventory topInventory = menu.getBukkitView().getTopInventory();
@@ -110,6 +115,11 @@
 +                    ItemStack item = slot.getItem();
 +                    if (slot.mayPlace(item)) {
 +                        item.tickFood(gameTime);
++                        ItemStack rotInto1 = net.minecraft.world.item.component.UseRemainder.mayRotInto(item);
++                        if (rotInto1 != null) {
++                            item = rotInto1;
++                            slot.set(item);
++                        }
 +                    }
 +                });
 +            }

@@ -44,7 +44,7 @@
          @Nullable
          Item craftingRemainingItem;
          FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
-@@ -368,9 +_,35 @@
+@@ -368,9 +_,39 @@
              return this.food(food, Consumables.DEFAULT_FOOD);
          }
  
@@ -78,6 +78,10 @@
 +                this.loreAfter(net.kyori.adventure.text.Component.text(string, net.kyori.adventure.text.format.NamedTextColor.GRAY));
 +            }
 +            return this;
++        }
++
++        public Item.Properties rotInto(Item rotInto) {
++            return this.componentKioCG(DataComponents.ROT_INTO, new UseRemainder(new ItemStack(rotInto)));
 +        }
 +        // KioCG end - more food
  

@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentTypes.java
-@@ -396,4 +_,14 @@
+@@ -396,4 +_,15 @@
  
      private DataComponentTypes() {
      }
@@ -13,5 +13,6 @@
 +    public static final DataComponentType.Valued<@IntRange(from = 1, to = 6) Integer> CONTAINER_ROWS = valued("container_rows");
 +    public static final DataComponentType.Valued<ItemLore> EXTENDED_BEFORE_LORE = valued("extended_before_lore");
 +    public static final DataComponentType.Valued<ItemLore> EXTENDED_AFTER_LORE = valued("extended_after_lore");
++    public static final DataComponentType.Valued<UseRemainder> ROT_INTO = valued("rot_into");
 +    // KioCG end - customize default components
  }

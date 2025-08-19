@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/Foods.java
 +++ b/net/minecraft/world/food/Foods.java
-@@ -1,48 +_,61 @@
+@@ -1,48 +_,62 @@
  package net.minecraft.world.food;
  
  public class Foods {
@@ -86,7 +86,8 @@
 +    public static final FoodProperties MUSHROOM = new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).moisture(1).freshness(60).build();
 +    public static final FoodProperties SUGAR_CANE = new FoodProperties.Builder().nutrition(1).saturationModifier(0.6F).moisture(6).freshness(60).build();
 +
-+    public static final FoodProperties POTION = waterLike(10, 0).build();
++    public static final FoodProperties POTION = waterLike(10, 600).build();
++    public static final FoodProperties THROW_POTION = new FoodProperties.Builder().freshness(600).build();
 +    public static final FoodProperties OMINOUS_BOTTLE = waterLike(-5, 0).build();
 +    private static FoodProperties.Builder waterLike(int moisture, int freshness) {
 +        return new FoodProperties.Builder().alwaysEdible().moisture(moisture).freshness(freshness);
