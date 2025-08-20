@@ -26,7 +26,7 @@
      }
  
 +    // KioCG start - linear achievement system
-+    private boolean needRegisterListeners(AdvancementHolder advancement) {
++    public boolean needRegisterListeners(AdvancementHolder advancement) {
 +        if (advancement.value().display().isEmpty()) {
 +            return true;
 +        } else if (advancement.value().isRoot()) {

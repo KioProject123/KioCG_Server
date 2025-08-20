@@ -1,0 +1,17 @@
+--- a/net/minecraft/server/commands/AdvancementCommands.java
++++ b/net/minecraft/server/commands/AdvancementCommands.java
+@@ -257,6 +_,14 @@
+         int i = 0;
+ 
+         for (ServerPlayer serverPlayer : targets) {
++            // KioCG start - linear achievement system
++            if (action == Action.GRANT && advancements.size() == 1) {
++                if (!serverPlayer.getAdvancements().needRegisterListeners(advancements.iterator().next())) {
++                    continue;
++                }
++            }
++            // KioCG end - linear achievement system
++
+             i += action.perform(serverPlayer, advancements, grantEverything);
+         }
+ 
