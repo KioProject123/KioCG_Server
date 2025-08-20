@@ -65,7 +65,7 @@
                                      boolean triggerLeashUpdate = itemStack.is(Items.LEAD) && target instanceof net.minecraft.world.entity.Leashable;
  
 +                                    // KioCG start - customize default components
-+                                    if (itemInHand.has(DataComponents.CANNOT_USE)) {
++                                    if (target instanceof net.minecraft.world.entity.Mob && itemInHand.has(DataComponents.CANNOT_USE)) {
 +                                        event.setCancelled(true);
 +                                    }
 +                                    // KioCG end - customize default components
