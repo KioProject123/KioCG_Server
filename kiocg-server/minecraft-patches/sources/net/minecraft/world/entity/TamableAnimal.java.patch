@@ -33,10 +33,37 @@
      }
  
      protected void applyTamingSideEffects() {
-@@ -233,13 +_,86 @@
-         super.die(cause);
-     }
+@@ -219,27 +_,109 @@
  
+     @Override
+     public void die(DamageSource cause) {
++        this.sendDeathMessage(false); // KioCG start - dont kill my pet: 提取方法
++        super.die(cause);
++    }
++
++    // KioCG start - dont kill my pet
++    public void sendDeathMessage(boolean nearDeath) {
+         if (this.level() instanceof ServerLevel serverLevel
+             && serverLevel.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES)
+             && this.getOwner() instanceof ServerPlayer serverPlayer) {
+             // Paper start - Add TameableDeathMessageEvent
+-            io.papermc.paper.event.entity.TameableDeathMessageEvent event = new io.papermc.paper.event.entity.TameableDeathMessageEvent((org.bukkit.entity.Tameable) getBukkitEntity(), io.papermc.paper.adventure.PaperAdventure.asAdventure(this.getCombatTracker().getDeathMessage()));
++            net.kyori.adventure.text.Component deathMessage = io.papermc.paper.adventure.PaperAdventure.asAdventure(this.getCombatTracker().getDeathMessage());
++            if (nearDeath) {
++                deathMessage = deathMessage.append(net.kyori.adventure.text.Component.text(" (等待救援)"));
++            }
++            io.papermc.paper.event.entity.TameableDeathMessageEvent event = new io.papermc.paper.event.entity.TameableDeathMessageEvent((org.bukkit.entity.Tameable) getBukkitEntity(), deathMessage);
+             if (event.callEvent()) {
+                 serverPlayer.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.deathMessage()));
+             }
+             // Paper end - Add TameableDeathMessageEvent
+         }
+-
+-        super.die(cause);
+-    }
++    }
++    // KioCG end - dont kill my pet
++
 +    // KioCG start - dont kill my pet
 +    @Override
 +    public boolean nearDeath() {
@@ -96,7 +123,7 @@
 +        }
 +    }
 +    // KioCG end - dont kill my pet
-+
+ 
      public boolean isOrderedToSit() {
          return this.orderedToSit;
      }

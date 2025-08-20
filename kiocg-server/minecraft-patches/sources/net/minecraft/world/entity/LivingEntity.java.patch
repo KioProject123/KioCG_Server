@@ -257,7 +257,7 @@
          }
      }
  
-@@ -2471,7 +_,15 @@
+@@ -2471,7 +_,17 @@
                  }
                  // CraftBukkit end
                  this.getCombatTracker().recordDamage(damageSource, amount);
@@ -267,6 +267,8 @@
 +                if (health <= 0.0F && originalDamage != Float.MAX_VALUE && !damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 +                    if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.dontKillMyPet && this instanceof TamableAnimal pet && pet.isTame()) {
 +                        health = Float.MIN_VALUE;
++                        pet.makeSound(pet.getDeathSound());
++                        pet.sendDeathMessage(true);
 +                    }
 +                }
 +                this.setHealth(health);
