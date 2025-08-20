@@ -23,7 +23,7 @@
          } else {
              BlockHitResult playerPovHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
              if (playerPovHitResult.getType() == HitResult.Type.MISS) {
-@@ -56,10 +_,17 @@
+@@ -56,10 +_,18 @@
                      }
  
                      if (level.getFluidState(blockPos).is(FluidTags.WATER)) {
@@ -33,6 +33,7 @@
 +                            player.containerMenu.sendAllDataToRemote();
 +                            return InteractionResult.PASS;
 +                        }
++                        player.containerMenu.sendAllDataToRemote(); // 客户端灌水会显示虚拟物品
 +                        // KioCG end - PlayerBottleEvent
                          level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
                          level.gameEvent(player, GameEvent.FLUID_PICKUP, blockPos);
