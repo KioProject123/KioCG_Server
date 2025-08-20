@@ -30,7 +30,18 @@
      public int getDefaultMaxStackSize() {
          return this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
      }
-@@ -356,6 +_,13 @@
+@@ -352,10 +_,24 @@
+         return false;
+     }
+ 
++    // KioCG start - food freshness
++    public boolean hasFreshness(ItemStack itemStack) {
++        net.minecraft.world.food.FoodProperties foodProperties = itemStack.get(DataComponents.FOOD);
++        return foodProperties != null && foodProperties.freshness() > 0;
++    }
++    // KioCG end - food freshness
++
+     public static class Properties {
          private static final DependantName<Item, String> BLOCK_DESCRIPTION_ID = key -> Util.makeDescriptionId("block", key.location());
          private static final DependantName<Item, String> ITEM_DESCRIPTION_ID = key -> Util.makeDescriptionId("item", key.location());
          private final DataComponentMap.Builder components = DataComponentMap.builder().addAll(DataComponents.COMMON_ITEM_COMPONENTS);

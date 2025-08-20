@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -868,8 +_,179 @@
+@@ -868,8 +_,174 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -207,18 +207,13 @@
 +        if (!isSameItem(stack, other)) return false;
 +        if (stack.isEmpty() && other.isEmpty()) return true;
 +
-+        if (stack.hasFreshness()) {
++        if (stack.getItem().hasFreshness(stack)) {
 +            java.util.Set<DataComponentType<?>> set = new java.util.HashSet<>();
 +            set.add(DataComponents.DAMAGE);
 +            return isSamePatchedComponents(stack.components, other.components, set);
 +        } else {
 +            return isSamePatchedComponents(stack.components, other.components);
 +        }
-+    }
-+
-+    private boolean hasFreshness() {
-+        net.minecraft.world.food.FoodProperties foodProperties = this.get(DataComponents.FOOD);
-+        return foodProperties != null && foodProperties.freshness() > 0;
 +    }
 +
 +    public boolean deepTick(java.util.function.Function<ItemStack, Boolean> function, int maxDepth) {
@@ -302,7 +297,7 @@
 +    }
 +
 +    private boolean enableFreshness(long tickTime, boolean applyDamage) {
-+        if (hasFreshness() && !this.isBroken()) {
++        if (this.getItem().hasFreshness(this) && !this.isBroken()) {
 +            CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
 +            Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
 +            if (foodTickTime.isEmpty() || foodTickTime.get() != tickTime) {
@@ -319,7 +314,7 @@
 +    }
 +
 +    public boolean hopperEnableFreshness(long tickTime) {
-+        if (hasFreshness() && !this.isBroken()) {
++        if (this.getItem().hasFreshness(this) && !this.isBroken()) {
 +            CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
 +            if (!stackableCustomData.getUnsafe().contains("FoodTickTime")) {
 +                stackableCustomData = stackableCustomData.update(tag -> tag.putLong("FoodTickTime", tickTime));
@@ -334,7 +329,7 @@
 +        CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
 +        Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
 +        if (foodTickTime.isPresent()) {
-+            if (applyDamage && hasFreshness() && !this.isBroken()) {
++            if (applyDamage && this.getItem().hasFreshness(this) && !this.isBroken()) {
 +                tickFreshness(tickTime, foodTickTime.orElse(tickTime - 1));
 +            }
 +

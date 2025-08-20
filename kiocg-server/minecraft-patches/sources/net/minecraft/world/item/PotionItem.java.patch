@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/item/PotionItem.java
++++ b/net/minecraft/world/item/PotionItem.java
+@@ -82,4 +_,15 @@
+         PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+         return potionContents != null ? potionContents.getName(this.descriptionId + ".effect.") : super.getName(stack);
+     }
++
++    // KioCG start - food freshness
++    @Override
++    public boolean hasFreshness(ItemStack itemStack) {
++        if (super.hasFreshness(itemStack)) {
++            PotionContents potionContents = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
++            return !potionContents.is(Potions.WATER);
++        }
++        return false;
++    }
++    // KioCG end - food freshness
+ }
