@@ -12,7 +12,7 @@
 -            ActivationType.WATER.boundingBox = player.getBoundingBox().inflate(waterActivationRange, worldHeight, waterActivationRange);
 -            ActivationType.FLYING_MONSTER.boundingBox = player.getBoundingBox().inflate(flyingActivationRange, worldHeight, flyingActivationRange);
 -            ActivationType.VILLAGER.boundingBox = player.getBoundingBox().inflate(villagerActivationRange, worldHeight, villagerActivationRange);
-+            // KioCG start - optimize entity activation range
++            // KioCG start - optimize entity activation
 +            ActivationRange.maxBB = getActivationRange(player, maxRange, flyingActivationRange);
 +            ActivationType.MISC.boundingBox = getActivationRange(player, miscActivationRange, 0);
 +            ActivationType.RAIDER.boundingBox = getActivationRange(player, raiderActivationRange, 0);
@@ -21,7 +21,7 @@
 +            ActivationType.WATER.boundingBox = getActivationRange(player, waterActivationRange, 0);
 +            ActivationType.FLYING_MONSTER.boundingBox = getActivationRange(player, flyingActivationRange, flyingActivationRange);
 +            ActivationType.VILLAGER.boundingBox = getActivationRange(player, villagerActivationRange, 0);
-+            // KioCG end - optimize entity activation range
++            // KioCG end - optimize entity activation
  
              final List<Entity> entities = world.getEntities((Entity) null, ActivationRange.maxBB, e -> true);
              final boolean tickMarkers = world.paperConfig().entities.markers.tick;
@@ -29,7 +29,7 @@
          }
      }
  
-+    // KioCG start - optimize entity activation range
++    // KioCG start - optimize entity activation
 +    public static AABB getActivationRange(Player player, double xzRange, int extendSky) {
 +        Level world = player.level();
 +        if (!world.dimensionType().hasCeiling()) {
@@ -53,30 +53,26 @@
 +        double d5 = aabb.maxZ + xz;
 +        return new AABB(d, d1, d2, d3, d4, d5);
 +    }
-+    // KioCG end - optimize entity activation range
++    // KioCG end - optimize entity activation
 +
      /**
       * Tries to activate an entity.
       *
-@@ -209,11 +_,17 @@
+@@ -209,11 +_,12 @@
          if ((entity.activationType != ActivationType.WATER && entity.isInWater() && entity.isPushedByFluid())) {
              return 100;
          }
-+        if (entity instanceof ItemEntity) // KioCG - Check items only. https://github.com/PaperMC/Paper/pull/7644
++        if (entity instanceof ItemEntity) // KioCG - optimize entity activation: Check items only. https://github.com/PaperMC/Paper/pull/7644
          if (!entity.onGround() || entity.getDeltaMovement().horizontalDistanceSqr() > 9.999999747378752E-6D) {
              return 100;
          }
          if (!(entity instanceof final AbstractArrow arrow)) {
-             if ((!entity.onGround() && !isEntityThatFlies(entity))) {
-+                // KioCG start - radical optimization
-+                if (!(entity instanceof net.minecraft.world.entity.animal.WaterAnimal) && !(entity instanceof net.minecraft.world.entity.animal.axolotl.Axolotl) && !(entity instanceof net.minecraft.world.entity.animal.Turtle)
-+                    && !(entity instanceof net.minecraft.world.entity.animal.FlyingAnimal) && !(entity instanceof net.minecraft.world.entity.animal.allay.Allay)
-+                    && !(entity instanceof net.minecraft.world.entity.ambient.Bat))
-+                // KioCG end - radical optimization
+-            if ((!entity.onGround() && !isEntityThatFlies(entity))) {
++            if ((!entity.onGround() && !isEntityThatFlies(entity)) && !entity.isInWater()) { // KioCG - optimize entity activation: !entity.isInWater()
                  return 10;
              }
          } else if (!arrow.isInGround()) {
-@@ -257,7 +_,7 @@
+@@ -257,10 +_,10 @@
                  return 1;
              }
              if (entity instanceof final Animal animal) {
@@ -84,4 +80,8 @@
 +                if (animal.isInLove()) { // KioCG - breeding animals: 不再需要豁免baby
                      return 5;
                  }
-                 if (entity instanceof final Sheep sheep && sheep.isSheared()) {
+-                if (entity instanceof final Sheep sheep && sheep.isSheared()) {
++                if (false && entity instanceof final Sheep sheep && sheep.isSheared()) { // KioCG - breeding animals: 不再需要豁免羊
+                     return 1;
+                 }
+             }
