@@ -46,25 +46,58 @@
          this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
      }
  
-@@ -470,6 +_,18 @@
-                 return InteractionResult.SUCCESS;
-             }
- 
+@@ -463,12 +_,28 @@
+         Item item = itemInHand.getItem();
+         if (this.isTame()) {
+             if (this.isFood(itemInHand) && this.getHealth() < this.getMaxHealth()) {
++                this.playEatingSound(); // KioCG - dont kill my pet
++
+                 this.usePlayerItem(player, hand, itemInHand);
+                 FoodProperties foodProperties = itemInHand.get(DataComponents.FOOD);
+                 float f = foodProperties != null ? foodProperties.nutrition() : 1.0F;
+                 this.heal(2.0F * f, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
++                return InteractionResult.SUCCESS_SERVER; // KioCG - dont kill my pet
++            }
++
 +            // KioCG start - dont kill my pet
 +            if (itemInHand.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) {
++                this.playEatingSound();
++
 +                this.usePlayerItem(player, hand, itemInHand);
 +                this.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
 +                if (player.isCreative() || !this.isInvulnerable()) {
 +                    this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
 +                }
 +
-+                return InteractionResult.SUCCESS;
-+            }
+                 return InteractionResult.SUCCESS;
+             }
 +            // KioCG end - dont kill my pet
-+
+ 
              if (!(item instanceof DyeItem dyeItem && this.isOwnedBy(player))) {
                  if (this.isEquippableInSlot(itemInHand, EquipmentSlot.BODY) && !this.isWearingBodyArmor() && this.isOwnedBy(player) && !this.isBaby()) {
-                     this.setBodyArmorItem(itemInHand.copyWithCount(1));
+@@ -516,6 +_,8 @@
+                 return InteractionResult.SUCCESS;
+             }
+         } else if (!this.level().isClientSide && itemInHand.is(Items.BONE) && !this.isAngry()) {
++            this.playEatingSound(); // KioCG - dont kill my pet
++
+             itemInHand.consume(1, player);
+             this.tryToTame(player);
+             return InteractionResult.SUCCESS_SERVER;
+@@ -524,6 +_,13 @@
+         return super.mobInteract(player, hand);
+     }
+ 
++    // KioCG start - dont kill my pet
++    @Override
++    protected void playEatingSound() {
++        this.playSound(SoundEvents.CAT_EAT, 1.0F, 0.5F);
++    }
++    // KioCG end - dont kill my pet
++
+     private void tryToTame(Player player) {
+         if (this.random.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, player).isCancelled()) { // CraftBukkit - added event call and isCancelled check.
+             this.tame(player);
 @@ -690,7 +_,7 @@
  
          @Override

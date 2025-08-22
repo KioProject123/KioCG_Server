@@ -39,10 +39,11 @@
      }
  
      public Holder<CatVariant> getVariant() {
-@@ -395,6 +_,18 @@
+@@ -394,7 +_,19 @@
+                         this.playEatingSound();
                      }
  
-                     return InteractionResult.SUCCESS;
++                    return InteractionResult.SUCCESS_SERVER; // KioCG - dont kill my pet
 +                    // KioCG start - dont kill my pet
 +                } else if (itemInHand.is(net.minecraft.world.item.Items.POISONOUS_POTATO)) {
 +                    this.playEatingSound();
@@ -53,7 +54,7 @@
 +                        this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
 +                    }
 +
-+                    return InteractionResult.SUCCESS;
+                     return InteractionResult.SUCCESS;
 +                    // KioCG end - dont kill my pet
                  }
  
