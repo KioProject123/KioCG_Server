@@ -621,10 +621,23 @@ index a972c5b4141c3f267070b65bbac5937967fdb3c8..7ace060aeb7751977eac512345c41cb9
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/LayeredCauldronBlock.java b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 34495f08c3ff3d298a5f5ca9121928cf461caf82..8e63b50bb0b0b7069af18cd95bf841295e3577cf 100644
+index 34495f08c3ff3d298a5f5ca9121928cf461caf82..51114fac982a2fff6dfda9c46e9feb4d684444af 100644
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -135,6 +135,17 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+@@ -92,6 +92,12 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+                     // Paper end - cauldron level change event
+                 }
+             });
++
++            // KioCG start - custom block entity
++            if (serverLevel.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CauldronBlockEntity cauldronBlockEntity && cauldronBlockEntity.isBoiling()) {
++                entity.hurtServer(serverLevel, entity.damageSources().onFire(), 1.0F);
++            }
++            // KioCG end - custom block entity
+         }
+ 
+         // effectApplier.apply(InsideBlockEffectType.EXTINGUISH); // Paper - manually applied above - cauldron level change event - delay to not extinguish when event is cancelled
+@@ -135,6 +141,17 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
              return false;
          }
  
@@ -642,7 +655,7 @@ index 34495f08c3ff3d298a5f5ca9121928cf461caf82..8e63b50bb0b0b7069af18cd95bf84129
          newState.place(3);
          if (sendGameEvent) level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
          return true;
-@@ -171,4 +182,18 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+@@ -171,4 +188,18 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
              level.levelEvent(1047, pos, 0);
          }
      }
@@ -690,10 +703,10 @@ index 386e6a48701b4c9256e33174123381a93d61e292..cd186c9d962fa19400e30fbd6a051327
  }
 diff --git a/net/minecraft/world/level/block/entity/CauldronBlockEntity.java b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d16c3fb08d8c2e6b326a0ccbbd92ecaf819da919
+index 0000000000000000000000000000000000000000..1df27fa7a4a12c50a7917af5b1b2c0b72a4e5be2
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,120 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
@@ -783,6 +796,7 @@ index 0000000000000000000000000000000000000000..d16c3fb08d8c2e6b326a0ccbbd92ecaf
 +        }
 +        return false;
 +    }
++    // KioCG end - optimize block entity
 +
 +    public boolean isBoiling() {
 +        return this.temperature >= this.level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime;
