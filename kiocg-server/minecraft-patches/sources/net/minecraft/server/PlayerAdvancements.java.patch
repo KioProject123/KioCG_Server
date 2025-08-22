@@ -8,7 +8,11 @@
      private final Set<AdvancementHolder> progressChanged = new HashSet<>();
      private final Set<AdvancementNode> rootsToUpdate = new HashSet<>();
      private ServerPlayer player;
-@@ -86,6 +_,7 @@
+@@ -83,9 +_,11 @@
+     }
+ 
+     public void reload(ServerAdvancementManager manager) {
++        this.save(); // KioCG - fix advancements save
          this.stopListening();
          this.progress.clear();
          this.visible.clear();

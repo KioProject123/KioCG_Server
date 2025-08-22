@@ -26,11 +26,10 @@
                  }
  
                  this.isReady = true;
-@@ -1522,6 +_,17 @@
-                 return;
+@@ -1523,6 +_,17 @@
              }
          }
-+
+ 
 +        // KioCG start - chunk hot
 +        if (this.tickCount % 20 == 0) {
 +            for (ServerLevel serverLevel : this.getAllLevels()) {
@@ -41,6 +40,22 @@
 +            com.kiocg.world.ChunkHot.nextTick();
 +        }
 +        // KioCG end - chunk hot
- 
++
          this.server.spark.tickStart(); // Paper - spark
          new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
+         this.tickCount++;
+@@ -2235,9 +_,11 @@
+                     if (Thread.currentThread() != this.serverThread) return; // Paper
+                     // Paper start - we don't need to save everything, just advancements
+                     // this.getPlayerList().saveAll();
+-                    for (final ServerPlayer player : this.getPlayerList().getPlayers()) {
+-                        player.getAdvancements().save();
+-                    }
++                    // KioCG start - fix advancements save: 在PlayerAdvancements#reload()里保存
++                    // for (final ServerPlayer player : this.getPlayerList().getPlayers()) {
++                    //     player.getAdvancements().save();
++                    // }
++                    // KioCG end - fix advancements save: 在PlayerAdvancements#reload()里保存
+                     // Paper end - we don't need to save everything, just advancements
+                     this.getPlayerList().reloadResources();
+                     this.functionManager.replaceLibrary(this.resources.managers.getFunctionLibrary());
