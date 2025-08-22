@@ -1,14 +1,23 @@
 --- a/src/main/java/org/bukkit/block/data/BlockData.java
 +++ b/src/main/java/org/bukkit/block/data/BlockData.java
-@@ -279,6 +_,11 @@
+@@ -66,6 +_,8 @@
+     @NotNull
+     String getAsString(boolean hideUnspecified);
+ 
++    @NotNull java.util.Map<String, String> getAsStringMap(boolean hideUnspecified); // KioCG - more api
++
+     /**
+      * Merges all explicitly set states from the given data with this BlockData.
+      * <br>
+@@ -278,6 +_,11 @@
+      */
      @NotNull
      BlockState createBlockState();
- 
++
 +    // KioCG start - more api
 +    @NotNull
 +    BlockState createBlockState(Location location);
 +    // KioCG end - more api
-+
+ 
      // Paper start - destroy speed API
      /**
-      * Gets the speed at which this block will be destroyed by a given {@link ItemStack}

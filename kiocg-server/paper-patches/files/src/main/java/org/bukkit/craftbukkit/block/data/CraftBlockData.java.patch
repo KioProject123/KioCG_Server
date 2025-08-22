@@ -1,9 +1,24 @@
 --- a/src/main/java/org/bukkit/craftbukkit/block/data/CraftBlockData.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/data/CraftBlockData.java
-@@ -747,6 +_,16 @@
-         return CraftBlockStates.getBlockState(this.state, null);
+@@ -224,6 +_,13 @@
+         return (hideUnspecified && this.parsedStates != null) ? this.toString(this.parsedStates) : this.getAsString();
      }
  
++    // KioCG start - more api
++    @Override
++    public Map<String, String> getAsStringMap(boolean hideUnspecified) {
++        return toStates(hideUnspecified);
++    }
++    // KioCG end - more api
++
+     @Override
+     public BlockData clone() {
+         try {
+@@ -746,6 +_,16 @@
+     public BlockState createBlockState() {
+         return CraftBlockStates.getBlockState(this.state, null);
+     }
++
 +    // KioCG start - more api
 +    @NotNull
 +    @Override
@@ -13,7 +28,6 @@
 +        return CraftBlockStates.getBlockState(world, blockPosition, this.state, null);
 +    }
 +    // KioCG end - more api
-+
+ 
      // Paper start - destroy speed API
      @Override
-     public float getDestroySpeed(final ItemStack itemStack, final boolean considerEnchants) {
