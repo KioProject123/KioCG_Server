@@ -27,7 +27,7 @@
      public void stop() {
          super.stop();
 -        this.mob.level().destroyBlockProgress(this.mob.getId(), this.doorPos, -1);
-+        this.mob.serverLevel().abortDestroyBlock(this.mob.getId(), this.doorPos, -1); // KioCG - keep block destruction
++        this.mob.serverLevel().abortDestroyBlock(this.mob.getId(), this.doorPos, Integer.MAX_VALUE); // KioCG - keep block destruction: 始终保留破坏值
      }
  
      @Override

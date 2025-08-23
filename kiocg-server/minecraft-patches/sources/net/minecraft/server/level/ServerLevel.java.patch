@@ -134,14 +134,13 @@
              profilerFiller.pop();
  
              for (Entity entity : passengerEntity.getPassengers()) {
-@@ -1609,8 +_,29 @@
+@@ -1609,8 +_,28 @@
      }
      // CraftBukkit end
  
 +    // KioCG start - keep block destruction
-+    public void abortDestroyBlock(int breakerId, BlockPos pos, int progress) {
-+        progress = this.destroyingBlocks.get(pos).getProgress();
-+        if (progress > -1 && progress < 3) {
++    public void abortDestroyBlock(int breakerId, BlockPos pos, int destroyTick) {
++        if (this.destroyingBlocks.containsKey(pos) && destroyTick < 20 * 1.5) {
 +            this.destroyBlockProgress(breakerId, pos, -1);
 +        }
 +    }

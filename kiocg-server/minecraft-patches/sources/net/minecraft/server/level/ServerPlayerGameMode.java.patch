@@ -83,7 +83,7 @@
                      BlockState type = this.level.getBlockStateIfLoaded(this.destroyPos); // Don't load unloaded chunks for stale records here
                      if (type != null) {
 -                    this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
-+                    this.level.abortDestroyBlock(this.player.getId(), this.destroyPos, -1); // KioCG - keep block destruction
++                    this.level.abortDestroyBlock(this.player.getId(), this.destroyPos, this.gameTicks - this.destroyProgressStart); // KioCG - keep block destruction
                      this.debugLogging(pos, true, sequence, "aborted mismatched destroying");
                      }
                      this.destroyPos = BlockPos.ZERO;
@@ -91,7 +91,7 @@
                  }
  
 -                this.level.destroyBlockProgress(this.player.getId(), pos, -1);
-+                this.level.abortDestroyBlock(this.player.getId(), pos, -1); // KioCG - keep block destruction
++                this.level.abortDestroyBlock(this.player.getId(), pos, this.gameTicks - this.destroyProgressStart); // KioCG - keep block destruction
                  this.debugLogging(pos, true, sequence, "aborted destroying");
  
                  org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageAbortEvent(this.player, pos, this.player.getInventory().getSelectedItem()); // CraftBukkit
