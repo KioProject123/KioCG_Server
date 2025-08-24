@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Inventory.java
 +++ b/net/minecraft/world/entity/player/Inventory.java
-@@ -342,11 +_,21 @@
+@@ -342,11 +_,12 @@
          }
      }
  
@@ -10,16 +10,7 @@
              ItemStack item = this.getItem(i);
              if (!item.isEmpty()) {
                  item.inventoryTick(this.player.level(), this.player, i == this.selected ? EquipmentSlot.MAINHAND : null);
-+                // KioCG start - food freshness
-+                if (tickFood) {
-+                    item.tickFood(this.player.level().getGameTime());
-+                    ItemStack rotInto = net.minecraft.world.item.component.UseRemainder.mayRotInto(item);
-+                    if (rotInto != null) {
-+                        item = rotInto;
-+                        this.setItem(i, item);
-+                    }
-+                }
-+                // KioCG end - food freshness
++                if (tickFood) item.tickFood(this.player.level().getGameTime()); // KioCG - food freshness
              }
          }
      }

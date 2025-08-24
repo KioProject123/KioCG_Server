@@ -24,20 +24,11 @@
      public static final Item KELP = registerBlock(Blocks.KELP);
      public static final Item PINK_PETALS = registerBlock(Blocks.PINK_PETALS);
      public static final Item WILDFLOWERS = registerBlock(Blocks.WILDFLOWERS);
-@@ -1197,7 +_,7 @@
-         "netherite_hoe", properties -> new HoeItem(ToolMaterial.NETHERITE, -4.0F, 0.0F, properties), new Item.Properties().fireResistant()
-     );
-     public static final Item STICK = registerItem("stick");
--    public static final Item MUSHROOM_STEW = registerItem("mushroom_stew", new Item.Properties().stacksTo(1).food(Foods.MUSHROOM_STEW).usingConvertsTo(BOWL));
-+    public static final Item MUSHROOM_STEW = registerItem("mushroom_stew", new Item.Properties().stacksTo(1).food(Foods.MUSHROOM_STEW).usingConvertsTo(BOWL).initCustomize().rotInto(BOWL)); // KioCG - food freshness
-     public static final Item STRING = registerItem("string", createBlockItemWithCustomItemName(Blocks.TRIPWIRE));
-     public static final Item FEATHER = registerItem("feather");
-     public static final Item GUNPOWDER = registerItem("gunpowder");
 @@ -1379,6 +_,7 @@
      public static final Item MILK_BUCKET = registerItem(
          "milk_bucket",
          new Item.Properties().craftRemainder(BUCKET).component(DataComponents.CONSUMABLE, Consumables.MILK_BUCKET).usingConvertsTo(BUCKET).stacksTo(1)
-+        .initCustomize().food(Foods.MILK_BUCKET, null).rotInto(BUCKET) // KioCG - more food
++        .initCustomize().food(Foods.MILK_BUCKET, null) // KioCG - more food
      );
      public static final Item PUFFERFISH_BUCKET = registerItem(
          "pufferfish_bucket",
@@ -66,30 +57,16 @@
              .component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK)
              .usingConvertsTo(GLASS_BOTTLE)
 +            .initCustomize().component(DataComponents.MAX_STACK_SIZE, 16) // KioCG - default max stack size
-+            .food(Foods.POTION, null).rotInto(GLASS_BOTTLE) // KioCG - more food
++            .food(Foods.POTION, null) // KioCG - more food
      );
      public static final Item SPIDER_EYE = registerItem("spider_eye", new Item.Properties().food(Foods.SPIDER_EYE, Consumables.SPIDER_EYE));
      public static final Item FERMENTED_SPIDER_EYE = registerItem("fermented_spider_eye");
-@@ -1773,7 +_,7 @@
-     public static final Item PRISMARINE_CRYSTALS = registerItem("prismarine_crystals");
-     public static final Item RABBIT = registerItem("rabbit", new Item.Properties().food(Foods.RABBIT));
-     public static final Item COOKED_RABBIT = registerItem("cooked_rabbit", new Item.Properties().food(Foods.COOKED_RABBIT));
--    public static final Item RABBIT_STEW = registerItem("rabbit_stew", new Item.Properties().stacksTo(1).food(Foods.RABBIT_STEW).usingConvertsTo(BOWL));
-+    public static final Item RABBIT_STEW = registerItem("rabbit_stew", new Item.Properties().stacksTo(1).food(Foods.RABBIT_STEW).usingConvertsTo(BOWL).initCustomize().rotInto(BOWL)); // KioCG - food freshness
-     public static final Item RABBIT_FOOT = registerItem("rabbit_foot");
-     public static final Item RABBIT_HIDE = registerItem("rabbit_hide");
-     public static final Item ARMOR_STAND = registerItem("armor_stand", ArmorStandItem::new, new Item.Properties().stacksTo(16));
-@@ -1881,10 +_,12 @@
-     public static final Item PITCHER_POD = registerItem("pitcher_pod", createBlockItemWithCustomItemName(Blocks.PITCHER_CROP));
-     public static final Item BEETROOT = registerItem("beetroot", new Item.Properties().food(Foods.BEETROOT));
-     public static final Item BEETROOT_SEEDS = registerItem("beetroot_seeds", createBlockItemWithCustomItemName(Blocks.BEETROOTS));
--    public static final Item BEETROOT_SOUP = registerItem("beetroot_soup", new Item.Properties().stacksTo(1).food(Foods.BEETROOT_SOUP).usingConvertsTo(BOWL));
-+    public static final Item BEETROOT_SOUP = registerItem("beetroot_soup", new Item.Properties().stacksTo(1).food(Foods.BEETROOT_SOUP).usingConvertsTo(BOWL).initCustomize().rotInto(BOWL)); // KioCG - food freshness
+@@ -1885,6 +_,8 @@
      public static final Item DRAGON_BREATH = registerItem("dragon_breath", new Item.Properties().craftRemainder(GLASS_BOTTLE).rarity(Rarity.UNCOMMON));
      public static final Item SPLASH_POTION = registerItem(
          "splash_potion", SplashPotionItem::new, new Item.Properties().stacksTo(1).component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
 +        .initCustomize().component(DataComponents.MAX_STACK_SIZE, 16) // KioCG - default max stack size
-+        .food(Foods.THROW_POTION, null).rotInto(GLASS_BOTTLE) // KioCG - more food
++        .food(Foods.THROW_POTION, null) // KioCG - more food
      );
      public static final Item SPECTRAL_ARROW = registerItem("spectral_arrow", SpectralArrowItem::new);
      public static final Item TIPPED_ARROW = registerItem(
@@ -98,26 +75,10 @@
              .component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
              .component(DataComponents.POTION_DURATION_SCALE, 0.25F)
 +            .initCustomize().component(DataComponents.MAX_STACK_SIZE, 16) // KioCG - default max stack size
-+            .food(Foods.THROW_POTION, null).rotInto(GLASS_BOTTLE) // KioCG - more food
++            .food(Foods.THROW_POTION, null) // KioCG - more food
      );
      public static final Item SHIELD = registerItem(
          "shield",
-@@ -2029,6 +_,7 @@
-             .food(Foods.SUSPICIOUS_STEW)
-             .component(DataComponents.SUSPICIOUS_STEW_EFFECTS, SuspiciousStewEffects.EMPTY)
-             .usingConvertsTo(BOWL)
-+            .initCustomize().rotInto(BOWL) // KioCG - food freshness
-     );
-     public static final Item LOOM = registerBlock(Blocks.LOOM);
-     public static final Item FLOWER_BANNER_PATTERN = registerItem(
-@@ -2117,6 +_,7 @@
-     public static final Item HONEY_BOTTLE = registerItem(
-         "honey_bottle",
-         new Item.Properties().craftRemainder(GLASS_BOTTLE).food(Foods.HONEY_BOTTLE, Consumables.HONEY_BOTTLE).usingConvertsTo(GLASS_BOTTLE).stacksTo(16)
-+            .initCustomize().rotInto(GLASS_BOTTLE) // KioCG - food freshness
-     );
-     public static final Item HONEYCOMB_BLOCK = registerBlock(Blocks.HONEYCOMB_BLOCK);
-     public static final Item LODESTONE = registerBlock(Blocks.LODESTONE);
 @@ -2268,6 +_,7 @@
              .rarity(Rarity.UNCOMMON)
              .component(DataComponents.CONSUMABLE, Consumables.OMINOUS_BOTTLE)

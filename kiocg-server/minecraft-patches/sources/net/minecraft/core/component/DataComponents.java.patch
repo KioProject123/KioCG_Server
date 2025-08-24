@@ -25,7 +25,7 @@
      );
      public static final DataComponentType<InstrumentComponent> INSTRUMENT = register(
          "instrument", builder -> builder.persistent(InstrumentComponent.CODEC).networkSynchronized(InstrumentComponent.STREAM_CODEC).cacheEncoding()
-@@ -393,4 +_,27 @@
+@@ -393,4 +_,25 @@
      private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
          return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, name, builder.apply(DataComponentType.builder()).build());
      }
@@ -39,7 +39,6 @@
 +    public static final DataComponentType<ItemLore> EXTENDED_BEFORE_LORE = register("extended_before_lore", builder -> builder.persistent(ItemLore.CODEC));
 +    public static final DataComponentType<ItemLore> EXTENDED_AFTER_LORE = register("extended_after_lore", builder -> builder.persistent(ItemLore.CODEC));
 +    public static final DataComponentType<CustomData> STACKABLE_CUSTOM_DATA = register("stackable_custom_data", builder -> builder.persistent(CustomData.CODEC));
-+    public static final DataComponentType<UseRemainder> ROT_INTO = register("rot_into", builder -> builder.persistent(UseRemainder.CODEC));
 +
 +    public static final java.util.Set<DataComponentType<?>> UNABLE_SEND_TO_CLIENT = java.util.Set.of(
 +            CANNOT_PLACE,
@@ -49,7 +48,6 @@
 +            CONTAINER_ROWS,
 +            EXTENDED_BEFORE_LORE,
 +            EXTENDED_AFTER_LORE,
-+            STACKABLE_CUSTOM_DATA,
-+            ROT_INTO);
++            STACKABLE_CUSTOM_DATA);
 +    // KioCG end - customize default components: 确保最后一个注册以免影响数据包
  }

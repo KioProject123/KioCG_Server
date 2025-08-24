@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -868,8 +_,174 @@
+@@ -868,8 +_,162 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -230,12 +230,6 @@
 +                    if (itemStack.deepTick(function, maxDepth - 1)) {
 +                        changed1 = true;
 +                    }
-+                    ItemStack rotInto = UseRemainder.mayRotInto(itemStack);
-+                    if (rotInto != null) {
-+                        itemStack = rotInto;
-+                        result.set(result.size() - 1, itemStack);
-+                        changed1 = true;
-+                    }
 +                }
 +                if (changed1) {
 +                    this.set(DataComponents.BUNDLE_CONTENTS, new net.minecraft.world.item.component.BundleContents(List.copyOf(result)));
@@ -251,12 +245,6 @@
 +                    // 如果不进行克隆, 保存时可能丢失数据
 +                    result.add(itemStack = itemStack.copy());
 +                    if (itemStack.deepTick(function, maxDepth - 1)) {
-+                        changed1 = true;
-+                    }
-+                    ItemStack rotInto = UseRemainder.mayRotInto(itemStack);
-+                    if (rotInto != null) {
-+                        itemStack = rotInto;
-+                        result.set(result.size() - 1, itemStack);
 +                        changed1 = true;
 +                    }
 +                }
