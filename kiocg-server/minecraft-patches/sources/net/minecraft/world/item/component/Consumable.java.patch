@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/item/component/Consumable.java
++++ b/net/minecraft/world/item/component/Consumable.java
+@@ -84,24 +_,30 @@
+ 
+         stack.getAllOfType(ConsumableListener.class).forEach(consumableListener -> consumableListener.onConsume(level, entity, stack, this));
+         if (!level.isClientSide) {
+-            // CraftBukkit start
+-            org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause;
+-            if (stack.is(net.minecraft.world.item.Items.MILK_BUCKET)) {
+-                cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.MILK;
+-            } else if (stack.is(net.minecraft.world.item.Items.POTION)) {
+-                cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_DRINK;
+-            } else {
+-                cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD;
+-            }
+-
+-            this.onConsumeEffects.forEach(consumeEffect -> consumeEffect.apply(level, stack, entity, cause));
+-            // CraftBukkit end
++            onConsumeEffects(level, entity, stack); // KioCG - more food: 提取方法
+         }
+ 
+         entity.gameEvent(this.animation == ItemUseAnimation.DRINK ? GameEvent.DRINK : GameEvent.EAT);
+         stack.consume(1, entity);
+         return stack;
+     }
++
++    // KioCG start - more food: 提取方法
++    public void onConsumeEffects(Level level, LivingEntity entity, ItemStack stack) {
++        // CraftBukkit start
++        org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause;
++        if (stack.is(net.minecraft.world.item.Items.MILK_BUCKET)) {
++            cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.MILK;
++        } else if (stack.is(net.minecraft.world.item.Items.POTION)) {
++            cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_DRINK;
++        } else {
++            cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD;
++        }
++
++        this.onConsumeEffects.forEach(consumeEffect -> consumeEffect.apply(level, stack, entity, cause));
++        // CraftBukkit end
++    }
++    // KioCG end - more food: 提取方法
+ 
+     // CraftBukkit start
+     public void cancelUsingItem(ServerPlayer player, ItemStack stack) {
