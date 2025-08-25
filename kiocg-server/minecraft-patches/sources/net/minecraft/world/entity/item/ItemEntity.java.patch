@@ -139,14 +139,22 @@
                  this.level().getCraftServer().getPluginManager().callEvent(entityEvent);
                  if (entityEvent.isCancelled()) {
                      item.setCount(count); // SPIGOT-5294 - restore count
-@@ -478,7 +_,18 @@
+@@ -478,7 +_,26 @@
              }
              // CraftBukkit end
              // Paper end - PlayerAttemptPickupItemEvent
 -            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(entity.getUUID())) && entity.getInventory().add(item)) {
 +            // KioCG start - allow overstacked items: fix pickup animation
 +            if (this.pickupDelay == 0 && canPickupOwner) { // KioCG - fix pickup item event cancelled: 提取变量
-+                item.tickFood(this.level().getGameTime()); // KioCG - food freshness
++                // KioCG start - food freshness
++                if (item.tickFood(this.level().getGameTime())) {
++                    ItemStack rotInto = item.mayRotInto();
++                    if (rotInto != null) {
++                        item = rotInto;
++                        this.setItem(item);
++                    }
++                }
++                // KioCG end - food freshness
 +                if (!entity.getInventory().add(item) && flyAtPlayer) {
 +                    org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.position(), this.level().getWorld(), this.getYRot(), this.getXRot());
 +                    org.bukkit.entity.Item fakeItem = this.level().getWorld().createEntity(location, org.bukkit.entity.Item.class);

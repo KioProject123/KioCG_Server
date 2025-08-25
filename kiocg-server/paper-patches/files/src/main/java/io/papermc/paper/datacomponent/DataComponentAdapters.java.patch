@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/datacomponent/DataComponentAdapters.java
 +++ b/src/main/java/io/papermc/paper/datacomponent/DataComponentAdapters.java
-@@ -195,6 +_,16 @@
+@@ -195,6 +_,17 @@
          register(DataComponents.SHEEP_COLOR, nms -> DyeColor.getByWoolData((byte) nms.getId()), api -> net.minecraft.world.item.DyeColor.byId(api.getWoolData()));
          register(DataComponents.SHULKER_COLOR, nms -> DyeColor.getByWoolData((byte) nms.getId()), api -> net.minecraft.world.item.DyeColor.byId(api.getWoolData()));
  
@@ -12,6 +12,7 @@
 +        registerIdentity(DataComponents.CONTAINER_ROWS);
 +        register(DataComponents.EXTENDED_BEFORE_LORE, PaperItemLore::new);
 +        register(DataComponents.EXTENDED_AFTER_LORE, PaperItemLore::new);
++        register(DataComponents.ROT_INTO, PaperUseRemainder::new);
 +        // KioCG end - customize default components
 +
          for (final ResourceKey<DataComponentType<?>> key : BuiltInRegistries.DATA_COMPONENT_TYPE.registryKeySet()) {

@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -868,8 +_,185 @@
+@@ -868,8 +_,208 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -229,6 +229,12 @@
 +                    result.add(itemStack = itemStack.copy());
 +                    if (itemStack.deepTick(function, maxDepth - 1)) {
 +                        changed1 = true;
++
++                        ItemStack rotInto = itemStack.mayRotInto();
++                        if (rotInto != null) {
++                            itemStack = rotInto;
++                            result.set(result.size() - 1, itemStack);
++                        }
 +                    }
 +                }
 +                if (changed1) {
@@ -246,6 +252,12 @@
 +                    result.add(itemStack = itemStack.copy());
 +                    if (itemStack.deepTick(function, maxDepth - 1)) {
 +                        changed1 = true;
++
++                        ItemStack rotInto = itemStack.mayRotInto();
++                        if (rotInto != null) {
++                            itemStack = rotInto;
++                            result.set(result.size() - 1, itemStack);
++                        }
 +                    }
 +                }
 +                if (changed1) {
@@ -346,6 +358,17 @@
 +            return true;
 +        }
 +        return false;
++    }
++
++    @org.jetbrains.annotations.Nullable
++    public ItemStack mayRotInto() {
++        if (this.isBroken()) {
++            UseRemainder rotInto = this.get(DataComponents.ROT_INTO);
++            if (rotInto != null) {
++                return rotInto.convertInto().copyWithCount(this.getCount());
++            }
++        }
++        return null;
 +    }
 +
 +    private void tickFreshness(long tickTime, long prevTickTime) {
