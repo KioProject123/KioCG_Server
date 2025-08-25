@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/inventory/Slot.java
 +++ b/net/minecraft/world/inventory/Slot.java
+@@ -42,6 +_,7 @@
+     }
+ 
+     public boolean mayPlace(ItemStack stack) {
++        if (container instanceof net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity) return stack.getItem().canFitInsideContainerItems(); // KioCG - expand container rows: 修复潜影盒嵌套
+         return true;
+     }
+ 
 @@ -134,7 +_,7 @@
              } else {
                  if (item.isEmpty()) {
