@@ -181,7 +181,7 @@
      }
  
      public boolean isDamageableItem() {
-@@ -868,8 +_,162 @@
+@@ -868,8 +_,185 @@
      }
  
      public static boolean isSameItemSameComponents(ItemStack stack, ItemStack other) {
@@ -285,7 +285,11 @@
 +    }
 +
 +    private boolean enableFreshness(long tickTime, boolean applyDamage) {
-+        if (this.getItem().hasFreshness(this) && !this.isBroken()) {
++        if (this.getItem().hasFreshness(this)) {
++            if (this.isBroken()) {
++                return this.setBrokenModel();
++            }
++
 +            CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
 +            Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
 +            if (foodTickTime.isEmpty() || foodTickTime.get() != tickTime) {
@@ -314,15 +318,31 @@
 +    }
 +
 +    private boolean disableFreshness(long tickTime, boolean applyDamage) {
-+        CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
-+        Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
-+        if (foodTickTime.isPresent()) {
-+            if (applyDamage && this.getItem().hasFreshness(this) && !this.isBroken()) {
-+                tickFreshness(tickTime, foodTickTime.orElse(tickTime - 1));
++        if (this.getItem().hasFreshness(this)) {
++            if (this.isBroken()) {
++                return this.setBrokenModel();
 +            }
 +
-+            stackableCustomData = stackableCustomData.update(tag -> tag.remove("FoodTickTime"));
-+            this.set(DataComponents.STACKABLE_CUSTOM_DATA, stackableCustomData);
++            CustomData stackableCustomData = this.getOrDefault(DataComponents.STACKABLE_CUSTOM_DATA, CustomData.EMPTY);
++            Optional<Long> foodTickTime = stackableCustomData.getUnsafe().getLong("FoodTickTime");
++            if (foodTickTime.isPresent()) {
++                if (applyDamage) {
++                    tickFreshness(tickTime, foodTickTime.orElse(tickTime - 1));
++                }
++
++                stackableCustomData = stackableCustomData.update(tag -> tag.remove("FoodTickTime"));
++                this.set(DataComponents.STACKABLE_CUSTOM_DATA, stackableCustomData);
++                return true;
++            }
++        }
++        return false;
++    }
++
++    private static final net.minecraft.resources.ResourceLocation ROTTEN_FLESH_MODEL = net.minecraft.resources.ResourceLocation.withDefaultNamespace("rotten_flesh");
++    private boolean setBrokenModel() {
++        final net.minecraft.resources.ResourceLocation model = this.get(DataComponents.ITEM_MODEL);
++        if (model == null || !model.equals(ROTTEN_FLESH_MODEL)) {
++            this.set(DataComponents.ITEM_MODEL, ROTTEN_FLESH_MODEL);
 +            return true;
 +        }
 +        return false;
@@ -333,6 +353,9 @@
 +            int spend = spendFreshness(prevTickTime + 1, tickTime, io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshnessTickInterval);
 +            if (spend != 0) {
 +                this.setDamageValue(this.getDamageValue() + spend);
++                if (this.isBroken()) {
++                    this.setBrokenModel();
++                }
 +            }
 +        }
 +    }
