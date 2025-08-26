@@ -96,7 +96,7 @@
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
          populateFields(victim, event); // Paper - make cancellable
          Bukkit.getServer().getPluginManager().callEvent(event);
-@@ -1298,6 +_,21 @@
+@@ -1298,6 +_,26 @@
  
          return com.mojang.datafixers.util.Pair.of(event.titleOverride(), container); // Paper - Add titleOverride to InventoryOpenEvent
      }
@@ -112,7 +112,12 @@
 +            return true;
 +        }
 +
-+        return new com.kiocg.event.inventory.InventoryExchangeItemEvent(view, sourceInventory, itemStack, destinationInventory).callEvent();
++        com.kiocg.event.inventory.InventoryExchangeItemEvent event = new com.kiocg.event.inventory.InventoryExchangeItemEvent(view, sourceInventory, itemStack, destinationInventory);
++        // KioCG start - expand inventory holder
++        com.kiocg.inventory.LockedInventoryHolder.onInventoryExchangeItem(event);
++        com.kiocg.inventory.LootableInventoryHolder.onInventoryExchangeItem(event);
++        // KioCG end - expand inventory holder
++        return event.callEvent();
 +    }
 +    // KioCG end - InventoryExchangeItemEvent
  
