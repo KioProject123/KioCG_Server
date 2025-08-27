@@ -1,0 +1,69 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: KioProject <1105919949@qq.com>
+Date: Thu, 28 Aug 2025 05:57:22 +0800
+Subject: [PATCH] Fix plugman reload
+
+
+diff --git a/src/main/java/org/bukkit/command/Command.java b/src/main/java/org/bukkit/command/Command.java
+index 27a7c69f23084e821d945d5e97e51a94ddd94e58..1efac85048bf8d31b6fa5c832d109b87c73de828 100644
+--- a/src/main/java/org/bukkit/command/Command.java
++++ b/src/main/java/org/bukkit/command/Command.java
+@@ -31,6 +31,7 @@ public abstract class Command {
+     protected String description;
+     protected String usageMessage;
+     private String permission;
++    private String fallbackPrefix; // KioCG - fix plugman reload
+     private net.kyori.adventure.text.Component permissionMessage; // Paper
+     /**
+      * @deprecated Timings will be removed in the future
+@@ -257,6 +258,16 @@ public abstract class Command {
+         return false;
+     }
+ 
++    // KioCG start - fix plugman reload
++    public boolean setFallbackPrefix(@NotNull String fallbackPrefix) {
++        if (!isRegistered()) {
++            this.fallbackPrefix = fallbackPrefix;
++            return true;
++        }
++        return false;
++    }
++    // KioCG end - fix plugman reload
++
+     /**
+      * Registers this command to a CommandMap.
+      * Once called it only allows changes the registered CommandMap
+@@ -285,6 +296,12 @@ public abstract class Command {
+      */
+     public boolean unregister(@NotNull CommandMap commandMap) {
+         if (allowChangesFrom(commandMap)) {
++            // KioCG start - fix plugman reload
++            if (this.commandMap != null) {
++                this.commandMap.getKnownCommands().remove(fallbackPrefix + ":" + label);
++                this.commandMap.getKnownCommands().remove(label);
++            }
++            // KioCG end - fix plugman reload
+             this.commandMap = null;
+             this.activeAliases = new ArrayList<String>(this.aliases);
+             this.label = this.nextLabel;
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index ad1330d87223dfcf3c9da40aa5ece8c21141f0d6..f635c254bea58a0a4b3c215127426609fa767998 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -101,6 +101,7 @@ public class SimpleCommandMap implements CommandMap {
+      * @return true if command was registered, false otherwise.
+      */
+     private synchronized boolean register(@NotNull String label, @NotNull Command command, boolean isAlias, @NotNull String fallbackPrefix) {
++        if (!isAlias) command.setFallbackPrefix(fallbackPrefix); // KioCG - fix plugman reload
+         knownCommands.put(fallbackPrefix + ":" + label, command);
+         // Paper start
+         Command known = knownCommands.get(label);
+@@ -176,7 +177,7 @@ public class SimpleCommandMap implements CommandMap {
+ 
+     @Override
+     public synchronized void clearCommands() {
+-        for (Map.Entry<String, Command> entry : knownCommands.entrySet()) {
++        for (Map.Entry<String, Command> entry : new java.util.HashMap<>(knownCommands).entrySet()) { // KioCG - fix plugman reload
+             entry.getValue().unregister(this);
+         }
+         knownCommands.clear();
