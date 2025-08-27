@@ -79,6 +79,24 @@
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
+@@ -341,6 +_,17 @@
+ 
+             if (!this.isSleeping()) {
+                 this.awardStat(Stats.TIME_SINCE_REST);
++
++                // KioCG start - sleep progress: 睡眠提醒
++                if (this.tickCount % (20 * 60 * 10) == 0) {
++                    Stat<ResourceLocation> stat = Stats.CUSTOM.get(Stats.TIME_SINCE_REST);
++                    int timeSinceRest = serverPlayer.getStats().getValue(stat);
++                    int playerInsomniaStartTicks = serverPlayer.level().paperConfig().entities.behavior.playerInsomniaStartTicks;
++                    if (timeSinceRest >= playerInsomniaStartTicks) {
++                        serverPlayer.sendSleepMessage(playerInsomniaStartTicks, playerInsomniaStartTicks);
++                    }
++                }
++                // KioCG end - sleep progress: 睡眠提醒
+             }
+         }
+ 
 @@ -600,7 +_,13 @@
          }
  
