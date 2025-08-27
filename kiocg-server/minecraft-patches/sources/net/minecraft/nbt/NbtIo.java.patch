@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/NbtIo.java
++++ b/net/minecraft/nbt/NbtIo.java
+@@ -25,7 +_,7 @@
+ 
+ public class NbtIo {
+     private static final OpenOption[] SYNC_OUTPUT_OPTIONS = new OpenOption[]{
+-        StandardOpenOption.SYNC, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
++        StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING // KioCG - fix saving lag: 不要同步写入
+     };
+ 
+     public static CompoundTag readCompressed(Path path, NbtAccounter accounter) throws IOException {
