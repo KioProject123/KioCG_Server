@@ -112,7 +112,7 @@
 +            }
 +
 +            changed |= saveAdditional(builder);
-+            if (changed) {
++            if (changed && !patch.isEmpty()) {
 +                net.minecraft.nbt.CompoundTag compoundTag = new net.minecraft.nbt.CompoundTag();
 +                RegistryOps<net.minecraft.nbt.Tag> registryOps = net.minecraft.server.MinecraftServer.getServer().registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
 +                compoundTag.store("KioCG.OriginalComponents", DataComponentPatch.CODEC, registryOps, patch);
