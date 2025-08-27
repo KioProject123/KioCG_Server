@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/entity/projectile/Arrow.java
++++ b/net/minecraft/world/entity/projectile/Arrow.java
+@@ -71,13 +_,15 @@
+     }
+ 
+     // Paper start - EAR 2
+-    @Override
+-    public void inactiveTick() {
+-        if (this.isInGround()) {
+-            this.life++;
+-        }
+-        super.inactiveTick();
+-    }
++    // KioCG start - optimize entity activation: 移动到AbstractArrow
++    // @Override
++    // public void inactiveTick() {
++    //     if (this.isInGround()) {
++    //         this.life++;
++    //     }
++    //     super.inactiveTick();
++    // }
++    // KioCG end - optimize entity activation: 移动到AbstractArrow
+     // Paper end
+ 
+     @Override

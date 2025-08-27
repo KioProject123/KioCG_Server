@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -171,6 +_,16 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity activation: 从Arrow移动
++    @Override
++    public void inactiveTick() {
++        if (this.isInGround()) {
++            this.life++;
++        }
++        super.inactiveTick();
++    }
++    // KioCG end - optimize entity activation: 从Arrow移动
++
+     @Override
+     public void tick() {
+         boolean flag = !this.isNoPhysics();
 @@ -461,6 +_,14 @@
          if (this.isOnFire() && !flag) {
              // CraftBukkit start

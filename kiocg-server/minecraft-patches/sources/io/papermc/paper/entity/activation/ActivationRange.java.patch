@@ -1,5 +1,17 @@
 --- a/io/papermc/paper/entity/activation/ActivationRange.java
 +++ b/io/papermc/paper/entity/activation/ActivationRange.java
+@@ -97,6 +_,11 @@
+             || (entity.activationType == ActivationType.VILLAGER && config.villagerActivationRange <= 0)
+             || (entity.activationType == ActivationType.WATER && config.waterActivationRange <= 0)
+             || (entity.activationType == ActivationType.FLYING_MONSTER && config.flyingMonsterActivationRange <= 0)
++               // KioCG start - optimize entity activation
++               // SPIGOT-6644: Otherwise the target refresh tick will be missed
++               || entity instanceof ExperienceOrb
++               || entity instanceof net.minecraft.world.entity.monster.warden.Warden
++               // KioCG end - optimize entity activation
+             || entity instanceof EyeOfEnder
+             || entity instanceof Player
+             || entity instanceof ThrowableProjectile
 @@ -148,14 +_,16 @@
              }
  
@@ -58,13 +70,26 @@
      /**
       * Tries to activate an entity.
       *
-@@ -209,11 +_,12 @@
+@@ -200,20 +_,21 @@
+             return inactiveWakeUpImmunity;
+         }
+         if (entity.getRemainingFireTicks() > 0) {
+-            return 2;
++            return entity.getRemainingFireTicks(); // KioCG - optimize entity activation
+         }
+         if (entity.activatedImmunityTick >= MinecraftServer.currentTick) {
+-            return 1;
++            return (int) entity.activatedImmunityTick - MinecraftServer.currentTick; // KioCG - optimize entity activation
+         }
+         final long inactiveFor = MinecraftServer.currentTick - entity.activatedTick;
          if ((entity.activationType != ActivationType.WATER && entity.isInWater() && entity.isPushedByFluid())) {
-             return 100;
+-            return 100;
++            return 20; // KioCG - optimize entity activation
          }
 +        if (entity instanceof ItemEntity) // KioCG - optimize entity activation: Check items only. https://github.com/PaperMC/Paper/pull/7644
          if (!entity.onGround() || entity.getDeltaMovement().horizontalDistanceSqr() > 9.999999747378752E-6D) {
-             return 100;
+-            return 100;
++            return 20; // KioCG - optimize entity activation
          }
          if (!(entity instanceof final AbstractArrow arrow)) {
 -            if ((!entity.onGround() && !isEntityThatFlies(entity))) {
@@ -72,6 +97,17 @@
                  return 10;
              }
          } else if (!arrow.isInGround()) {
+@@ -230,8 +_,8 @@
+             if (entity instanceof final Bee bee) {
+                 final BlockPos movingTarget = bee.getMovingTarget();
+                 if (bee.isAngry() ||
+-                    (bee.getHivePos() != null && bee.getHivePos().equals(movingTarget)) ||
+-                    (bee.getSavedFlowerPos() != null && bee.getSavedFlowerPos().equals(movingTarget))
++                    (false && bee.getHivePos() != null && bee.getHivePos().equals(movingTarget)) || // KioCG - breeding animals: 不再需要豁免蜜蜂
++                    (false && bee.getSavedFlowerPos() != null && bee.getSavedFlowerPos().equals(movingTarget)) // KioCG - breeding animals: 不再需要豁免蜜蜂
+                 ) {
+                     return 20;
+                 }
 @@ -257,10 +_,10 @@
                  return 1;
              }
@@ -85,3 +121,33 @@
                      return 1;
                  }
              }
+@@ -275,9 +_,11 @@
+             }
+         }
+         // SPIGOT-6644: Otherwise the target refresh tick will be missed
+-        if (entity instanceof ExperienceOrb) {
+-            return 20;
+-        }
++        // KioCG start - optimize entity activation: 移动到initializeEntityActivationState()
++        // if (entity instanceof ExperienceOrb) {
++        //     return 20;
++        // }
++        // KioCG end - optimize entity activation: 移动到initializeEntityActivationState()
+         return -1;
+     }
+ 
+@@ -289,12 +_,12 @@
+      */
+     public static boolean checkIfActive(final Entity entity) {
+         // Never safe to skip fireworks or item gravity
+-        if (entity instanceof FireworkRocketEntity || (entity instanceof ItemEntity && (entity.tickCount + entity.getId()) % 4 == 0)) { // Needed for item gravity, see ItemEntity tick
++        if ((entity instanceof ItemEntity && (entity.tickCount + entity.getId()) % 4 == 0)) { // Needed for item gravity, see ItemEntity tick // KioCG - optimize entity activation
+             return true;
+         }
+         // special case always immunities
+         // immunize brand-new entities, dead entities, and portal scenarios
+-        if (entity.defaultActivationState || entity.tickCount < 20 * 10 || !entity.isAlive() || (entity.portalProcess != null && !entity.portalProcess.hasExpired()) || entity.portalCooldown > 0) {
++        if (entity.tickCount <= 20 || !entity.isAlive() || (entity.portalProcess != null && !entity.portalProcess.hasExpired()) || entity.portalCooldown > 0) { // KioCG - optimize entity activation: 降低出生豁免时间
+             return true;
+         }
+         // immunize leashed entities
