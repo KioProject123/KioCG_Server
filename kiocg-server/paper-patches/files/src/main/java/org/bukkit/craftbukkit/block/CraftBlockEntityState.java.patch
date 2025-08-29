@@ -14,3 +14,51 @@
      @Nullable
      public Packet<ClientGamePacketListener> getUpdatePacket(@NotNull Location location) {
          return new ClientboundBlockEntityDataPacket(CraftLocation.toBlockPosition(location), this.snapshot.getType(), this.getUpdateNBT());
+@@ -234,4 +_,47 @@
+         return !this.snapshotDisabled;
+     }
+     // Paper end
++
++    // KioCG start - data component API: 从物品复制
++    @Override
++    public <T> T getData(final io.papermc.paper.datacomponent.DataComponentType.Valued<T> type) {
++        return io.papermc.paper.datacomponent.PaperDataComponentType.convertDataComponentValue(this.snapshot.components(), (io.papermc.paper.datacomponent.PaperDataComponentType.ValuedImpl<T, ?>) type);
++    }
++
++    @Override
++    public boolean hasData(final io.papermc.paper.datacomponent.DataComponentType type) {
++        return this.snapshot.components().has(io.papermc.paper.datacomponent.PaperDataComponentType.bukkitToMinecraft(type));
++    }
++
++    @Override
++    public java.util.Set<io.papermc.paper.datacomponent.DataComponentType> getDataTypes() {
++        return io.papermc.paper.datacomponent.PaperDataComponentType.minecraftToBukkit(this.snapshot.components().keySet());
++    }
++
++    @Override
++    public <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.Valued<T> type, final T value) {
++        com.google.common.base.Preconditions.checkArgument(value != null, "value cannot be null");
++        this.setDataInternal((io.papermc.paper.datacomponent.PaperDataComponentType.ValuedImpl<T, ?>) type, value);
++    }
++
++    @Override
++    public void setData(final io.papermc.paper.datacomponent.DataComponentType.NonValued type) {
++        this.setDataInternal((io.papermc.paper.datacomponent.PaperDataComponentType.NonValuedImpl<?, ?>) type, null);
++    }
++
++    private <A, V> void setDataInternal(final io.papermc.paper.datacomponent.PaperDataComponentType<A, V> type, final A value) {
++        final DataComponentMap.Builder builder = DataComponentMap.builder();
++        builder.addAll(this.snapshot.components());
++        builder.set(type.getHandle(), type.getAdapter().toVanilla(value, type.getHolder()));
++        this.snapshot.setComponents(builder.build());
++    }
++
++    @Override
++    public void unsetData(final io.papermc.paper.datacomponent.DataComponentType type) {
++        final DataComponentMap.Builder builder = DataComponentMap.builder();
++        builder.addAll(this.snapshot.components());
++        builder.set(io.papermc.paper.datacomponent.PaperDataComponentType.bukkitToMinecraft(type), null);
++        this.snapshot.setComponents(builder.build());
++    }
++    // KioCG end - data component API: 从物品复制
+ }

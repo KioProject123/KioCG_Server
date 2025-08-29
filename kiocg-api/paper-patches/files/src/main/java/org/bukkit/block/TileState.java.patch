@@ -9,3 +9,97 @@
  
      /**
       * Returns a custom tag container capable of storing tags on the object.
+@@ -50,4 +_,93 @@
+      */
+     boolean isSnapshot();
+     // Paper end
++
++    // KioCG start - data component API: 从物品复制
++    /**
++     * Gets the value for the data component type on this tilestate.
++     *
++     * @param type the data component type
++     * @param <T> the value type
++     * @return the value for the data component type, or {@code null} if not set or marked as removed
++     * @see #hasData(io.papermc.paper.datacomponent.DataComponentType) for DataComponentType.NonValued
++     */
++    @org.jetbrains.annotations.Contract(pure = true)
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public <T> @org.jetbrains.annotations.Nullable T getData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type);
++
++    /**
++     * Gets the value for the data component type on this tilestate with
++     * a fallback value.
++     *
++     * @param type the data component type
++     * @param fallback the fallback value if the value isn't present
++     * @param <T> the value type
++     * @return the value for the data component type or the fallback value
++     */
++    @org.bukkit.Utility
++    @org.jetbrains.annotations.Contract(value = "_, !null -> !null", pure = true)
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public default <T> @org.jetbrains.annotations.Nullable T getDataOrDefault(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<? extends T> type, final @org.jetbrains.annotations.Nullable T fallback) {
++        final T object = this.getData(type);
++        return object != null ? object : fallback;
++    }
++
++    /**
++     * Checks if the data component type is set on the tilestate.
++     *
++     * @param type the data component type
++     * @return {@code true} if set, {@code false} otherwise
++     */
++    @org.jetbrains.annotations.Contract(pure = true)
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public boolean hasData(final io.papermc.paper.datacomponent.@NotNull DataComponentType type);
++
++    /**
++     * Gets all the data component types set on this tilestate.
++     *
++     * @return an immutable set of data component types
++     */
++    @org.jetbrains.annotations.Contract("-> new")
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public java.util.@org.jetbrains.annotations.Unmodifiable Set<io.papermc.paper.datacomponent.@NotNull DataComponentType> getDataTypes();
++
++    /**
++     * Sets the value of the data component type for this tilestate.
++     *
++     * @param type the data component type
++     * @param valueBuilder value builder
++     * @param <T> value type
++     */
++    @org.bukkit.Utility
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public default <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type, final @NotNull io.papermc.paper.datacomponent.DataComponentBuilder<T> valueBuilder) {
++        this.setData(type, valueBuilder.build());
++    }
++
++    /**
++     * Sets the value of the data component type for this tilestate.
++     *
++     * @param type the data component type
++     * @param value value to set
++     * @param <T> value type
++     */
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public <T> void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull Valued<T> type, final @NotNull T value);
++
++    /**
++     * Marks this non-valued data component type as present in this tilestate.
++     *
++     * @param type the data component type
++     */
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public void setData(final io.papermc.paper.datacomponent.DataComponentType.@NotNull NonValued type);
++
++    /**
++     * Marks this data component as removed for this tilestate.
++     *
++     * @param type the data component type
++     */
++    // @org.jetbrains.annotations.ApiStatus.Experimental // KioCG
++    public void unsetData(final io.papermc.paper.datacomponent.@NotNull DataComponentType type);
++    // KioCG end - data component API: 从物品复制
+ }
