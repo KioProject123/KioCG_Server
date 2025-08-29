@@ -107,7 +107,7 @@
          }
          return removed;
          // Paper end - resend recipes on successful removal
-@@ -3186,4 +_,24 @@
+@@ -3186,4 +_,33 @@
      public void allowPausing(final Plugin plugin, final boolean value) {
          this.console.addPluginAllowingSleep(plugin.getName(), value);
      }
@@ -128,7 +128,16 @@
 +
 +    @Override
 +    public @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey, int amount) {
-+        return this.registerItems.get(namespacedKey).asQuantity(amount);
++        final ItemStack itemStack = this.registerItems.get(namespacedKey);
++        if (itemStack == null) {
++            return null;
++        }
++        return itemStack.asQuantity(amount);
++    }
++
++    @Override
++    public String formatStatistic(@NotNull org.bukkit.Statistic statistic, int value) {
++        return CraftStatistic.getNMSStatistic(statistic).format(value);
 +    }
 +    // KioCG end - more api
  }

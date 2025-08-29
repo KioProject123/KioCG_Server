@@ -36,7 +36,7 @@
      // Paper start - method to resend recipes
      /**
       * Remove a recipe from the server.
-@@ -2723,4 +_,13 @@
+@@ -2723,4 +_,15 @@
       */
      void allowPausing(@NotNull org.bukkit.plugin.Plugin plugin, boolean value);
      // Paper end - API to check if the server is sleeping
@@ -48,5 +48,7 @@
 +        return getRegisterItem(namespacedKey, 1);
 +    }
 +    @Nullable ItemStack getRegisterItem(@NotNull NamespacedKey namespacedKey, int amount);
++
++    String formatStatistic(@NotNull Statistic statistic, int value);
 +    // KioCG end - more api
  }
