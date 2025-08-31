@@ -8,7 +8,7 @@
  
      public BeehiveBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.BEEHIVE, pos, blockState);
-@@ -341,16 +_,69 @@
+@@ -341,16 +_,81 @@
  
      public static void serverTick(Level level, BlockPos pos, BlockState state, BeehiveBlockEntity beehive) {
          tickOccupants(level, pos, state, beehive.stored, beehive.savedFlowerPos);
@@ -22,24 +22,13 @@
  
 +        // KioCG start - beehive refill every night
 +        if (state.is(BlockTags.BEEHIVES, blockStateBase -> blockStateBase.hasProperty(BeehiveBlock.HONEY_LEVEL))) {
-+            int days = level.getDays();
-+            if (days != beehive.honeyDays) {
-+                int daysSpent = days - beehive.honeyDays;
-+                beehive.honeyDays = days;
-+
-+                // 只在傍晚产生蜂蜜, 因此如果现在是白天则需要减少一天
-+                if (level.isBrightOutside()) {
-+                    --daysSpent;
-+                    --beehive.honeyDays;
-+                }
-+
-+                if (daysSpent > 0) {
-+                    int honeyLevel = getHoneyLevel(state);
-+                    if (honeyLevel < BeehiveBlock.MAX_HONEY_LEVELS) {
-+                        int newHoneyLevel = calculateNewHoneyLevel(level, pos, honeyLevel, daysSpent);
-+                        if (newHoneyLevel != honeyLevel) {
-+                            level.setBlockAndUpdate(pos, state.setValue(BeehiveBlock.HONEY_LEVEL, newHoneyLevel));
-+                        }
++            int daysSpent = daysSpent(level, beehive);
++            if (daysSpent > 0) {
++                int honeyLevel = getHoneyLevel(state);
++                if (honeyLevel < BeehiveBlock.MAX_HONEY_LEVELS) {
++                    int newHoneyLevel = calculateNewHoneyLevel(level, pos, honeyLevel, daysSpent);
++                    if (newHoneyLevel != honeyLevel) {
++                        level.setBlockAndUpdate(pos, state.setValue(BeehiveBlock.HONEY_LEVEL, newHoneyLevel));
 +                    }
 +                }
 +            }
@@ -50,6 +39,29 @@
      }
  
 +    // KioCG start - beehive refill every night
++    @Override
++    public void setLevel(Level level) {
++        super.setLevel(level);
++        daysSpent(level, this);
++    }
++
++    private static int daysSpent(Level level, BeehiveBlockEntity beehive) {
++        int days = level.getDays();
++        if (days != beehive.honeyDays) {
++            int daysSpent = days - beehive.honeyDays;
++            beehive.honeyDays = days;
++
++            // 只在傍晚产生蜂蜜, 因此如果现在是白天则需要减少一天
++            if (level.isBrightOutside()) {
++                --daysSpent;
++                --beehive.honeyDays;
++            }
++
++            return daysSpent;
++        }
++        return 0;
++    }
++
 +    private static int calculateNewHoneyLevel(Level level, BlockPos pos, int honeyLevel, int added) {
 +        int xOff = pos.getX();
 +        int yOff = pos.getY();
