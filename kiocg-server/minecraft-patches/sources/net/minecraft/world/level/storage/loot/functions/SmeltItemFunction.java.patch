@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
++++ b/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
+@@ -35,9 +_,17 @@
+             return stack;
+         } else {
+             SingleRecipeInput singleRecipeInput = new SingleRecipeInput(stack);
+-            Optional<RecipeHolder<SmeltingRecipe>> recipeFor = context.getLevel()
++            // KioCG start - fix smelt item enchantment
++            List<RecipeHolder<net.minecraft.world.item.crafting.AbstractCookingRecipe>> list = context.getLevel()
+                 .recipeAccess()
+-                .getRecipeFor(RecipeType.SMELTING, singleRecipeInput, context.getLevel());
++                .recipes.byType.entries().stream()
++                .filter(entry -> entry.getKey() == RecipeType.SMELTING || entry.getKey() == RecipeType.BLASTING || entry.getKey() == RecipeType.SMOKING || entry.getKey() == RecipeType.CAMPFIRE_COOKING)
++                .map(java.util.Map.Entry::getValue)
++                .map(recipeHolder -> ((RecipeHolder<net.minecraft.world.item.crafting.AbstractCookingRecipe>) recipeHolder))
++                .filter(recipeHolder -> recipeHolder.value().matches(singleRecipeInput, context.getLevel()))
++                .toList();
++            Optional<RecipeHolder<net.minecraft.world.item.crafting.AbstractCookingRecipe>> recipeFor = (list.isEmpty()) ? Optional.empty() : Optional.of(list.getLast());
++            // KioCG end - fix smelt item enchantment
+             if (recipeFor.isPresent()) {
+                 ItemStack itemStack = recipeFor.get().value().assemble(singleRecipeInput, context.getLevel().registryAccess());
+                 if (!itemStack.isEmpty()) {
