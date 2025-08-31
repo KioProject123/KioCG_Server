@@ -1061,14 +1061,23 @@ index 6d59db421697ceceff4428610ad460ef0f447bb9..21e1824d322fc9992501cf6d906eb482
  
          public boolean is(Block block) {
 diff --git a/net/minecraft/world/level/storage/loot/functions/CopyComponentsFunction.java b/net/minecraft/world/level/storage/loot/functions/CopyComponentsFunction.java
-index 6bd92fd72c37bd6010ef4322ac27e1310f50bde0..a803172ecc86597bb4755830319e90703745f739 100644
+index 6bd92fd72c37bd6010ef4322ac27e1310f50bde0..b5ab2f200b81f39b700b2fa425ceba8ff95c3584 100644
 --- a/net/minecraft/world/level/storage/loot/functions/CopyComponentsFunction.java
 +++ b/net/minecraft/world/level/storage/loot/functions/CopyComponentsFunction.java
-@@ -44,6 +44,7 @@ public class CopyComponentsFunction extends LootItemConditionalFunction {
+@@ -44,6 +44,16 @@ public class CopyComponentsFunction extends LootItemConditionalFunction {
          Optional<List<DataComponentType<?>>> exclude
      ) {
          super(predicates);
-+        include = Optional.empty(); // KioCG - custom block entity: 保留所有物品组件
++        // KioCG start - custom block entity: 保留所有物品组件
++        List<DataComponentType<?>> newList = new ArrayList<>(exclude.orElseGet(List::of));
++        newList.add(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA);
++        newList.add(net.minecraft.core.component.DataComponents.CONTAINER);
++        newList.add(net.minecraft.core.component.DataComponents.CONTAINER_LOOT);
++        newList.add(net.minecraft.core.component.DataComponents.ENTITY_DATA);
++        newList.removeAll(include.orElseGet(List::of));
++        exclude = Optional.of(newList);
++        include = Optional.empty();
++        // KioCG end - custom block entity: 保留所有物品组件
          this.source = source;
          this.include = include.map(List::copyOf);
          this.exclude = exclude.map(List::copyOf);
