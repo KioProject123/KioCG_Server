@@ -1,0 +1,61 @@
+--- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
+@@ -76,6 +_,7 @@
+     @Nullable
+     public Component name;
+     public LockCode lockKey = LockCode.NO_LOCK;
++    public boolean teleportPortal = false; // KioCG - teleport portal
+     private final ContainerData dataAccess = new ContainerData() {
+         @Override
+         public int get(int index) {
+@@ -168,6 +_,18 @@
+     }
+ 
+     public static void tick(Level level, BlockPos pos, BlockState state, BeaconBlockEntity blockEntity) {
++        // KioCG start - teleport portal
++        if (blockEntity.teleportPortal) {
++            if (level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.OVERWORLD) {
++                BlockPos above = pos.above();
++                if (level.getBlockState(above).isAir()) {
++                    level.setBlockAndUpdate(above, Blocks.END_GATEWAY.defaultBlockState());
++                }
++            }
++            return;
++        }
++        // KioCG end - teleport portal
++
+         int x = pos.getX();
+         int y = pos.getY();
+         int z = pos.getZ();
+@@ -418,6 +_,7 @@
+         this.name = parseCustomNameSafe(input, "CustomName");
+         this.lockKey = LockCode.fromTag(input);
+         this.effectRange = input.getDoubleOr(PAPER_RANGE_TAG, -1); // Paper - Custom beacon ranges
++        this.teleportPortal = input.getBooleanOr("KioCG.TeleportPortal", false); // KioCG - teleport portal
+     }
+ 
+     @Override
+@@ -429,6 +_,7 @@
+         output.storeNullable("CustomName", ComponentSerialization.CODEC, this.name);
+         this.lockKey.addToTag(output);
+         output.putDouble(PAPER_RANGE_TAG, this.effectRange); // Paper - Custom beacon ranges
++        output.putBoolean("KioCG.TeleportPortal", this.teleportPortal); // KioCG - teleport portal
+     }
+ 
+     public void setCustomName(@Nullable Component name) {
+@@ -464,6 +_,7 @@
+         super.applyImplicitComponents(componentGetter);
+         this.name = componentGetter.get(DataComponents.CUSTOM_NAME);
+         this.lockKey = componentGetter.getOrDefault(DataComponents.LOCK, LockCode.NO_LOCK);
++        this.teleportPortal = componentGetter.getOrDefault(DataComponents.TELEPORT_PORTAL, false); // KioCG - teleport portal
+     }
+ 
+     @Override
+@@ -473,6 +_,7 @@
+         if (!this.lockKey.equals(LockCode.NO_LOCK)) {
+             components.set(DataComponents.LOCK, this.lockKey);
+         }
++        if (this.teleportPortal) components.set(DataComponents.TELEPORT_PORTAL, true); // KioCG - teleport portal
+     }
+ 
+     @Override

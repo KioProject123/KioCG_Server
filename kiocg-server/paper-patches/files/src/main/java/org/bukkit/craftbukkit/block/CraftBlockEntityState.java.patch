@@ -14,7 +14,7 @@
      @Nullable
      public Packet<ClientGamePacketListener> getUpdatePacket(@NotNull Location location) {
          return new ClientboundBlockEntityDataPacket(CraftLocation.toBlockPosition(location), this.snapshot.getType(), this.getUpdateNBT());
-@@ -234,4 +_,47 @@
+@@ -234,4 +_,41 @@
          return !this.snapshotDisabled;
      }
      // Paper end
@@ -47,18 +47,12 @@
 +    }
 +
 +    private <A, V> void setDataInternal(final io.papermc.paper.datacomponent.PaperDataComponentType<A, V> type, final A value) {
-+        final DataComponentMap.Builder builder = DataComponentMap.builder();
-+        builder.addAll(this.snapshot.components());
-+        builder.set(type.getHandle(), type.getAdapter().toVanilla(value, type.getHolder()));
-+        this.snapshot.setComponents(builder.build());
++        this.snapshot.setComponent(type.getHandle(), type.getAdapter().toVanilla(value, type.getHolder()));
 +    }
 +
 +    @Override
 +    public void unsetData(final io.papermc.paper.datacomponent.DataComponentType type) {
-+        final DataComponentMap.Builder builder = DataComponentMap.builder();
-+        builder.addAll(this.snapshot.components());
-+        builder.set(io.papermc.paper.datacomponent.PaperDataComponentType.bukkitToMinecraft(type), null);
-+        this.snapshot.setComponents(builder.build());
++        this.snapshot.setComponent(io.papermc.paper.datacomponent.PaperDataComponentType.bukkitToMinecraft(type), null);
 +    }
 +    // KioCG end - data component API: 从物品复制
  }

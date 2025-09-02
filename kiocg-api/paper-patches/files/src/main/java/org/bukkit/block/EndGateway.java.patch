@@ -1,0 +1,12 @@
+--- a/src/main/java/org/bukkit/block/EndGateway.java
++++ b/src/main/java/org/bukkit/block/EndGateway.java
+@@ -65,4 +_,9 @@
+      * @param age new age in ticks
+      */
+     void setAge(long age);
++
++    // KioCG start - more api
++    int getTeleportCooldown();
++    void setTeleportCooldown(int cooldown);
++    // KioCG end - more api
+ }

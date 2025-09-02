@@ -1,0 +1,21 @@
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftEndGateway.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftEndGateway.java
+@@ -55,6 +_,18 @@
+         this.getSnapshot().age = age;
+     }
+ 
++    // KioCG start - more api
++    @Override
++    public int getTeleportCooldown() {
++        return this.getSnapshot().teleportCooldown;
++    }
++
++    @Override
++    public void setTeleportCooldown(int cooldown) {
++        this.getSnapshot().teleportCooldown = cooldown;
++    }
++    // KioCG end - more api
++
+     @Override
+     public void applyTo(TheEndGatewayBlockEntity blockEntity) {
+         super.applyTo(blockEntity);

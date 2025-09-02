@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/block/EndGatewayBlock.java
++++ b/net/minecraft/world/level/block/EndGatewayBlock.java
+@@ -88,6 +_,24 @@
+         return false;
+     }
+ 
++    // KioCG start - teleport portal
++    @Override
++    protected BlockState updateShape(
++        BlockState state,
++        LevelReader level,
++        net.minecraft.world.level.ScheduledTickAccess scheduledTickAccess,
++        BlockPos pos,
++        net.minecraft.core.Direction direction,
++        BlockPos neighborPos,
++        BlockState neighborState,
++        RandomSource random
++    ) {
++        return direction == net.minecraft.core.Direction.DOWN
++            ? Blocks.AIR.defaultBlockState()
++            : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
++    }
++    // KioCG end - teleport portal
++
+     @Override
+     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent

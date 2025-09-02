@@ -1,0 +1,14 @@
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBeacon.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBeacon.java
+@@ -161,4 +_,11 @@
+         this.getSnapshot().resetEffectRange();
+     }
+     // Paper end
++
++    // KioCG start - teleport portal
++    @Override
++    public boolean isTeleportPortal() {
++        return this.getSnapshot().teleportPortal;
++    }
++    // KioCG end - teleport portal
+ }

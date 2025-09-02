@@ -8,6 +8,19 @@
              this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
          }
          // Paper start - Prevent causing expired keys from impacting new joins
+@@ -1086,6 +_,12 @@
+             }
+ 
+             anvilMenu.setItemName(packet.getName());
++            // KioCG start - more api
++        } else if (this.player.containerMenu instanceof org.bukkit.craftbukkit.inventory.CraftContainer craftContainer) {
++            if (craftContainer.getBukkitView().getTopInventory() instanceof org.bukkit.craftbukkit.inventory.CraftInventoryCustom custom && custom.getType() == org.bukkit.event.inventory.InventoryType.ANVIL) {
++                new com.kiocg.event.inventory.FakeAnvilRenameEvent(this.player.containerMenu.getBukkitView(), packet.getName()).callEvent();
++            }
++            // KioCG end - more api
+         }
+     }
+ 
 @@ -1868,6 +_,7 @@
          }
  

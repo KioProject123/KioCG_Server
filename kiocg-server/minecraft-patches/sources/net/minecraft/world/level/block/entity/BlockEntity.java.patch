@@ -46,3 +46,19 @@
          this.components = dataComponentPatch.split().added();
          // CraftBukkit start
          set.remove(DataComponents.BLOCK_ENTITY_DATA); // Remove as never actually added by applyImplicitComponents
+@@ -365,6 +_,15 @@
+     public void setComponents(DataComponentMap components) {
+         this.components = components;
+     }
++
++    // KioCG start - data component API
++    public <T> void setComponent(DataComponentType<T> dataComponentType, @Nullable T value) {
++        DataComponentMap.Builder builder = DataComponentMap.builder();
++        builder.addAll(this.components());
++        builder.set(dataComponentType, value);
++        this.setComponents(builder.build());
++    }
++    // KioCG end - data component API
+ 
+     @Nullable
+     public static Component parseCustomNameSafe(ValueInput input, String customName) {

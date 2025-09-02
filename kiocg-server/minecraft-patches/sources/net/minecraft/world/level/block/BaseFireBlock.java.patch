@@ -1,0 +1,64 @@
+--- a/net/minecraft/world/level/block/BaseFireBlock.java
++++ b/net/minecraft/world/level/block/BaseFireBlock.java
+@@ -169,6 +_,8 @@
+                     optional.get().createPortalBlocks(level, (context == null) ? null : context.getPlayer()); // CraftBukkit - player
+                     return;
+                 }
++
++                if (level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.OVERWORLD && tryTeleportPortalCreate(level, pos)) return; // KioCG - teleport portal
+             }
+ 
+             if (!state.canSurvive(level, pos)) {
+@@ -176,6 +_,52 @@
+             }
+         }
+     }
++
++    // KioCG start - teleport portal
++    private boolean tryTeleportPortalCreate(Level level, BlockPos pos) {
++        net.minecraft.world.level.block.state.pattern.BlockPattern.BlockPatternMatch blockPatternMatch = this.getOrCreateTeleportPortal().find(level, pos);
++        if (blockPatternMatch == null) {
++            return false;
++        }
++
++        final net.minecraft.world.level.block.state.pattern.BlockInWorld netheriteBlock = blockPatternMatch.getBlock(0, 1, 0);
++        final net.minecraft.world.level.block.state.pattern.BlockInWorld beaconBlock = blockPatternMatch.getBlock(0, 2, 0);
++        final BlockPos netheriteBlockPos = netheriteBlock.getPos();
++        final BlockPos beaconBlockPos = beaconBlock.getPos();
++        if (!netheriteBlockPos.below().equals(beaconBlockPos) || !(level.getBlockEntity(beaconBlockPos) instanceof net.minecraft.world.level.block.entity.BeaconBlockEntity beacon)) {
++            return false;
++        }
++
++        beacon.setComponent(net.minecraft.core.component.DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.translatable("block.minecraft.beacon").append(net.minecraft.network.chat.Component.literal("折跃门")));
++        beacon.teleportPortal = true;
++
++        net.minecraft.world.entity.LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(level, net.minecraft.world.entity.EntitySpawnReason.EVENT);
++        if (lightning != null) {
++            lightning.snapTo(netheriteBlockPos.getX() + 0.5, netheriteBlockPos.getY() + 0.5, netheriteBlockPos.getZ() + 0.5);
++            lightning.isEffect = true; // Paper - Properly handle lightning effects api
++            ((net.minecraft.server.level.ServerLevel) level).strikeLightning(lightning, org.bukkit.event.weather.LightningStrikeEvent.Cause.CUSTOM);
++        }
++
++        level.setBlockAndUpdate(netheriteBlockPos, Blocks.END_GATEWAY.defaultBlockState());
++        level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, netheriteBlockPos, Block.getId(netheriteBlock.getState()));
++        return true;
++    }
++
++    @org.jetbrains.annotations.Nullable
++    private net.minecraft.world.level.block.state.pattern.BlockPattern teleportPortal;
++    private net.minecraft.world.level.block.state.pattern.BlockPattern getOrCreateTeleportPortal() {
++        if (this.teleportPortal == null) {
++            this.teleportPortal = net.minecraft.world.level.block.state.pattern.BlockPatternBuilder.start()
++                .aisle("F", "N", "B")
++                .where('F', net.minecraft.world.level.block.state.pattern.BlockInWorld.hasState(net.minecraft.world.level.block.state.predicate.BlockStatePredicate.forBlock(Blocks.FIRE)))
++                .where('N', net.minecraft.world.level.block.state.pattern.BlockInWorld.hasState(net.minecraft.world.level.block.state.predicate.BlockStatePredicate.forBlock(Blocks.NETHERITE_BLOCK)))
++                .where('B', net.minecraft.world.level.block.state.pattern.BlockInWorld.hasState(net.minecraft.world.level.block.state.predicate.BlockStatePredicate.forBlock(Blocks.BEACON)))
++                .build();
++        }
++
++        return this.teleportPortal;
++    }
++    // KioCG end - teleport portal
+ 
+     private static boolean inPortalDimension(Level level) {
+         return level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.OVERWORLD || level.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER; // CraftBukkit - getTypeKey()

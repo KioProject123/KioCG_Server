@@ -1,0 +1,9 @@
+--- a/src/main/java/org/bukkit/block/Beacon.java
++++ b/src/main/java/org/bukkit/block/Beacon.java
+@@ -86,4 +_,6 @@
+      */
+     void resetEffectRange();
+     // Paper end
++
++    boolean isTeleportPortal(); // KioCG - teleport portal
+ }
