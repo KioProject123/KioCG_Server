@@ -209,6 +209,22 @@
      }
  
      public float getHealth() {
+@@ -1457,6 +_,7 @@
+                 if (!this.actuallyHurt(level, damageSource, (float) event.getFinalDamage(), event)) { // Paper - fix invulnerability reduction in EntityDamageEvent - no longer subtract lastHurt, that is part of the damage event calc now
+                     return false;
+                 }
++                if (false) // KioCG - snowball knockback
+                 if (this instanceof ServerPlayer && event.getDamage() == 0 && originAmount == 0) return false; // Paper - revert to vanilla damage - players are not affected by damage that is 0 - skip damage if the vanilla damage is 0 and was not modified by plugins in the event.
+                 // CraftBukkit end
+                 this.lastHurt = amount;
+@@ -1470,6 +_,7 @@
+                 if (!this.actuallyHurt(level, damageSource, (float) event.getFinalDamage(), event)) {
+                     return false;
+                 }
++                if (false) // KioCG - snowball knockback
+                 if (this instanceof ServerPlayer && event.getDamage() == 0 && originAmount == 0) return false; // Paper - revert to vanilla damage - players are not affected by damage that is 0 - skip damage if the vanilla damage is 0 and was not modified by plugins in the event.
+                 this.lastHurt = amount;
+                 this.invulnerableTime = this.invulnerableDuration; // CraftBukkit - restore use of maxNoDamageTicks
 @@ -1477,11 +_,12 @@
                  // CraftBukkit end
                  this.hurtDuration = 10;
