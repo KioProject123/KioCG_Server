@@ -90,11 +90,10 @@
              return InteractionResult.SUCCESS;
          } else {
              return InteractionResult.PASS;
-@@ -164,6 +_,25 @@
-     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+@@ -165,6 +_,25 @@
          return new DecoratedPotBlockEntity(pos, state);
      }
-+
+ 
 +    // KioCG start - infinite decorated pot
 +    // @Nullable
 +    // @Override
@@ -113,6 +112,25 @@
 +        }
 +    }
 +    // KioCG end - infinite decorated pot
- 
++
      @Override
      protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+         Containers.updateNeighboursAfterDestroy(state, level, pos);
+@@ -192,6 +_,17 @@
+             blockState = state.setValue(CRACKED, true);
+             level.setBlock(pos, blockState, 260);
+         }
++
++        // KioCG start - infinite decorated pot: 掉落保留物品
++        if (!blockState.getValue(CRACKED)) {
++            BlockEntity blockEntity = level.getBlockEntity(pos);
++            if (blockEntity instanceof DecoratedPotBlockEntity decoratedPotBlockEntity) {
++                if (!level.isClientSide && player.preventsBlockDrops() && !decoratedPotBlockEntity.isEmpty()) {
++                    Containers.dropContents(level, pos, decoratedPotBlockEntity);
++                }
++            }
++        }
++        // KioCG end - infinite decorated pot: 掉落保留物品
+ 
+         return super.playerWillDestroy(level, pos, blockState, player);
+     }

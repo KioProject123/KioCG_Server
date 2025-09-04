@@ -54,3 +54,19 @@
          this.item = item;
      }
  
+@@ -205,6 +_,15 @@
+     public BlockEntity getContainerBlockEntity() {
+         return this;
+     }
++
++    // KioCG start - infinite decorated pot: 掉落保留物品
++    @Override
++    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
++        if (state.getValue(net.minecraft.world.level.block.DecoratedPotBlock.CRACKED)) {
++            super.preRemoveSideEffects(pos, state);
++        }
++    }
++    // KioCG end - infinite decorated pot: 掉落保留物品
+ 
+     public void wobble(DecoratedPotBlockEntity.WobbleStyle style) {
+         if (this.level != null && !this.level.isClientSide()) {

@@ -1,0 +1,12 @@
+--- a/data/minecraft/loot_table/blocks/decorated_pot.json
++++ b/data/minecraft/loot_table/blocks/decorated_pot.json
+@@ -26,7 +_,8 @@
+                 {
+                   "function": "minecraft:copy_components",
+                   "include": [
+-                    "minecraft:pot_decorations"
++                    "minecraft:pot_decorations",
++                    "minecraft:container"
+                   ],
+                   "source": "block_entity"
+                 }
