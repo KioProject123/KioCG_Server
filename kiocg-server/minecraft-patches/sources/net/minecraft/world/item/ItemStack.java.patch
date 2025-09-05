@@ -244,7 +244,7 @@
 +            }
 +
 +            ItemContainerContents container = this.get(DataComponents.CONTAINER);
-+            if (container != null) {
++            if (container != null && !this.is(Items.DECORATED_POT)) {
 +                boolean changed1 = false;
 +                List<ItemStack> result = new java.util.ArrayList<>(container.items.size());
 +                for (ItemStack itemStack : container.items) {
