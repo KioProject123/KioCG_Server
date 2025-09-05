@@ -186,7 +186,7 @@
          output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
          this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
          if (!this.getShoulderEntityLeft().isEmpty()) {
-@@ -915,6 +_,28 @@
+@@ -915,6 +_,17 @@
          }
      }
  
@@ -195,19 +195,8 @@
 +    public void campfireHealing() {
 +        if (!campfireHealed && this.isHurt()) {
 +            campfireHealed = true;
-+            final float health = this.getHealth();
-+            this.heal(1.0F);
++            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
 +            this.causeFoodExhaustion(this.level().spigotConfig.regenExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
-+            if (this.getHealth() > health) {
-+                this.serverLevel().sendParticlesSource(
-+                        (net.minecraft.server.level.ServerPlayer) this,
-+                        net.minecraft.core.particles.ParticleTypes.HEART,
-+                        false, false,
-+                        this.getX(), this.getY(), this.getZ(),
-+                        5,
-+                        0.3, 0.3, 0.3,
-+                        1.0);
-+            }
 +        }
 +    }
 +    // KioCG end - campfire healing

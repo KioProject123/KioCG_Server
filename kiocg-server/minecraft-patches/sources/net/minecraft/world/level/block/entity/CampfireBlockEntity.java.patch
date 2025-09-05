@@ -5,7 +5,7 @@
      public final boolean[] stopCooking = new boolean[4]; // Paper - Add more Campfire API
  
 +    // KioCG start - campfire healing
-+    private int healingTime;
++    private int fiercelyTime;
 +    private static final FuelValues fuelValues;
 +
 +    static {
@@ -37,7 +37,7 @@
 -                campfire.cookingProgress[i]++;
 +                    // KioCG start - optimize block entity
 +                    if (campfire.cookingProgress[i] < campfire.cookingTime[i]) {
-+                        campfire.cookingProgress[i]++;
++                        campfire.cookingProgress[i] += campfire.fiercelyTime > 0 ? 2 : 1; // KioCG start - campfire healing: 加速食物烹饪
 +                        flag = true;
 +                    }
 +                    // KioCG end - optimize block entity
@@ -94,25 +94,35 @@
                          level.sendBlockUpdated(pos, state, state, 3);
                          level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
                      }
-@@ -110,10 +_,81 @@
+@@ -110,10 +_,91 @@
              }
          }
  
 +        // KioCG start - campfire healing
-+        if (campfire.healingTime > 0) {
-+            --campfire.healingTime;
++        if (campfire.fiercelyTime > 0) {
++            --campfire.fiercelyTime;
 +            if (level.getGameTime() % 20L == 0L) {
 +                CampfireBlockEntity.healingNearbyPlayers(level, pos);
 +            }
 +            if (level.getGameTime() % 5L == 0L) {
 +                double x = (double) pos.getX() + 0.5;
-+                double y = (double) pos.getY() + 1.0;
++                double y = (double) pos.getY() + 0.5;
 +                double z = (double) pos.getZ() + 0.5;
-+                level.sendParticles(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION).getParticleOptions(),
++                double percent = campfire.fiercelyTime / (20.0 * 60.0);
++                int count = (int) (percent * 30);
++                double offset = percent * 0.25;
++                level.sendParticles(ParticleTypes.FLAME,
 +                                    x, y, z,
-+                                    2,
-+                                    0.25, 0.1, 0.25,
-+                                    1.0);
++                                    count,
++                                    offset, offset * 2.0, offset,
++                                    0.0);
++                if (level.random.nextFloat() < percent) {
++                    level.playSound(null, x, y, z,
++                                    net.minecraft.sounds.SoundEvents.CAMPFIRE_CRACKLE,
++                                    net.minecraft.sounds.SoundSource.BLOCKS,
++                                    0.5F + level.random.nextFloat(),
++                                    level.random.nextFloat() * 0.7F + 0.6F);
++                }
 +            }
 +        }
 +        // KioCG end - campfire healing
@@ -128,7 +138,7 @@
 +    @Override
 +    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
 +        if (state.getValue(CampfireBlock.LIT)) {
-+            if (this.healingTime > 0) return true; // KioCG - campfire healing
++            if (this.fiercelyTime > 0) return true; // KioCG - campfire healing
 +            for (int i = 0; i < this.items.size(); i++) {
 +                ItemStack itemStack = this.items.get(i);
 +                if (!itemStack.isEmpty()) {
@@ -164,7 +174,7 @@
 +            ItemStack item = itemEntity.getItem();
 +            int burnDuration = CampfireBlockEntity.fuelValues.burnDuration(item);
 +            if (burnDuration > 0) {
-+                blockEntity.healingTime = Math.min(blockEntity.healingTime + burnDuration * item.getCount(), 20 * 60);
++                blockEntity.fiercelyTime = Math.min(blockEntity.fiercelyTime + burnDuration * item.getCount(), 20 * 60);
 +                blockEntity.updateBlockEntityTicker(); // KioCG - optimize block entity
 +                itemEntity.discard();
 +
@@ -181,7 +191,7 @@
                  blockEntity.cookingProgress[i] = Mth.clamp(blockEntity.cookingProgress[i] - 2, 0, blockEntity.cookingTime[i]);
              }
          }
-+        blockEntity.healingTime = 0; // KioCG - campfire healing
++        blockEntity.fiercelyTime = 0; // KioCG - campfire healing
  
          if (flag) {
              setChanged(level, pos, state);

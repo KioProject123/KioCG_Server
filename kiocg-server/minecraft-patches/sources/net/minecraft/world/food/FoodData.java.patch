@@ -27,7 +27,7 @@
 +                final float health = player.getHealth();
 +                player.heal(1.0F);
 +                if (player.getHealth() > health) {
-+                    ((net.minecraft.server.level.ServerLevel) player.level()).sendParticlesSource(
++                    (player.level()).sendParticlesSource(
 +                            player,
 +                            net.minecraft.core.particles.ParticleTypes.HEART,
 +                            false, false,
