@@ -36,7 +36,22 @@
          if (this.isSleeping()) {
              this.sleepCounter++;
              // Paper start - Add PlayerDeepSleepEvent
-@@ -307,9 +_,32 @@
+@@ -303,13 +_,47 @@
+                 if (!new io.papermc.paper.event.player.PlayerDeepSleepEvent((org.bukkit.entity.Player) getBukkitEntity()).callEvent()) {
+                     this.sleepCounter = Integer.MIN_VALUE;
+                 }
++
++                // KioCG start - sweet dreams
++                if (!this.level().dimensionType().bedWorks()) {
++                    this.getSleepingPos().ifPresent(pos -> {
++                        final BlockState blockState = this.level().getBlockState(pos);
++                        if (blockState.getBlock() instanceof net.minecraft.world.level.block.BedBlock bedBlock) {
++                            bedBlock.explodeBed(blockState, this.level(), pos);
++                        }
++                    });
++                }
++                // KioCG end - sweet dreams
+             }
              // Paper end - Add PlayerDeepSleepEvent
              if (this.sleepCounter > 100) {
                  this.sleepCounter = 100;

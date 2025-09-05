@@ -260,9 +260,24 @@
          }
      }
  
-@@ -1541,7 +_,7 @@
+@@ -1533,15 +_,21 @@
+     private Either<Player.BedSleepingProblem, Unit> getBedResult(BlockPos at, Direction direction) {
+         if (this.isSleeping() || !this.isAlive()) {
+             return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
+-        } else if (!this.level().dimensionType().natural() && !this.level().dimensionType().bedWorks()) { // CraftBukkit - moved bed result checks from below into separate method
++        } else if (false && !this.level().dimensionType().natural() && !this.level().dimensionType().bedWorks()) { // CraftBukkit - moved bed result checks from below into separate method // KioCG - sweet dreams
+             return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
+         } else if (!this.bedInRange(at, direction)) {
+             return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
+         } else if (this.bedBlocked(at, direction)) {
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
++            // KioCG start - sweet dreams
++            if (!this.level().dimensionType().bedWorks()) {
++                this.level().playSound(null, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, net.minecraft.sounds.SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
++                this.sendSystemMessage(Component.literal("????????????????????").withStyle(ChatFormatting.RED, ChatFormatting.OBFUSCATED), true);
++            } else
++            // KioCG end - sweet dreams
              this.setRespawnPosition(new ServerPlayer.RespawnConfig(this.level().dimension(), at, this.getYRot(), false), true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED); // Paper - Add PlayerSetSpawnEvent
 -            if (this.level().isBrightOutside()) {
 +            if (false && this.level().isBrightOutside()) { // KioCG - sleep any time

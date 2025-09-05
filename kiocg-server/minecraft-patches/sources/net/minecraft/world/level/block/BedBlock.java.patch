@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/BedBlock.java
++++ b/net/minecraft/world/level/block/BedBlock.java
+@@ -101,7 +_,7 @@
+                 level.explode(null, level.damageSources().badRespawnPointExplosion(center), null, center, 5.0F, true, Level.ExplosionInteraction.BLOCK);
+                 return InteractionResult.SUCCESS_SERVER;
+             } else if (state.getValue(OCCUPIED)) {
+-                if (!BedBlock.canSetSpawn(level)) return this.explodeBed(state, level, pos); // Paper - check explode first
++                // if (!BedBlock.canSetSpawn(level)) return this.explodeBed(state, level, pos); // Paper - check explode first // KioCG - sweet dreams
+                 if (!this.kickVillagerOutOfBed(level, pos)) {
+                     player.displayClientMessage(Component.translatable("block.minecraft.bed.occupied"), true);
+                 }
+@@ -115,7 +_,7 @@
+                 player.startSleepInBed(pos).ifLeft(bedSleepingProblem -> {
+                     // Paper start - PlayerBedFailEnterEvent
+                     if (bedSleepingProblem != null) {
+-                        io.papermc.paper.event.player.PlayerBedFailEnterEvent event = new io.papermc.paper.event.player.PlayerBedFailEnterEvent((org.bukkit.entity.Player) player.getBukkitEntity(), io.papermc.paper.event.player.PlayerBedFailEnterEvent.FailReason.values()[bedSleepingProblem.ordinal()], org.bukkit.craftbukkit.block.CraftBlock.at(level, finalBlockPos), !level.dimensionType().bedWorks(), io.papermc.paper.adventure.PaperAdventure.asAdventure(bedSleepingProblem.getMessage()));
++                        io.papermc.paper.event.player.PlayerBedFailEnterEvent event = new io.papermc.paper.event.player.PlayerBedFailEnterEvent((org.bukkit.entity.Player) player.getBukkitEntity(), io.papermc.paper.event.player.PlayerBedFailEnterEvent.FailReason.values()[bedSleepingProblem.ordinal()], org.bukkit.craftbukkit.block.CraftBlock.at(level, finalBlockPos), false, io.papermc.paper.adventure.PaperAdventure.asAdventure(bedSleepingProblem.getMessage())); // KioCG - sweet dreams
+                         if (!event.callEvent()) {
+                             return;
+                         }
