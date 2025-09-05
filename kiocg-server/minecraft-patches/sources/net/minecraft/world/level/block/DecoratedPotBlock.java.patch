@@ -41,7 +41,7 @@
 +    public static InteractionResult putItem(ItemStack stack, Level level, BlockPos pos, @Nullable Player player, DecoratedPotBlockEntity decoratedPotBlockEntity) {
 +        ItemStack theItem = decoratedPotBlockEntity.getTheItem();
 +        if (!stack.isEmpty()
-+            && (theItem.isEmpty() || ItemStack.isSameItemSameComponentsForFoodFreshness(theItem, stack) && theItem.getCount() < theItem.getMaxStackSize() * 1024)) { // KioCG - food freshness
++            && (theItem.isEmpty() || ItemStack.isSameItemSameComponentsForFoodFreshness(theItem, stack) && theItem.getCount() < theItem.getMaxStackSize() * 1024 && stack.canFitInsideContainerItems())) { // KioCG - food freshness // KioCG - prevent stacking containers
 +            decoratedPotBlockEntity.wobble(DecoratedPotBlockEntity.WobbleStyle.POSITIVE);
 +            if (player != null) player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 +            ItemStack itemStack = stack.consumeAndReturn(1, player);
@@ -116,7 +116,7 @@
      @Override
      protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
          Containers.updateNeighboursAfterDestroy(state, level, pos);
-@@ -192,6 +_,17 @@
+@@ -192,6 +_,23 @@
              blockState = state.setValue(CRACKED, true);
              level.setBlock(pos, blockState, 260);
          }
@@ -125,6 +125,12 @@
 +        if (!blockState.getValue(CRACKED)) {
 +            BlockEntity blockEntity = level.getBlockEntity(pos);
 +            if (blockEntity instanceof DecoratedPotBlockEntity decoratedPotBlockEntity) {
++                if (!decoratedPotBlockEntity.getTheItem().isEmpty()) {
++                    decoratedPotBlockEntity.setComponent(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 1);
++                } else {
++                    decoratedPotBlockEntity.setComponent(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, null);
++                }
++
 +                if (!level.isClientSide && player.preventsBlockDrops() && !decoratedPotBlockEntity.isEmpty()) {
 +                    Containers.dropContents(level, pos, decoratedPotBlockEntity);
 +                }

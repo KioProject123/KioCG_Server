@@ -4,7 +4,7 @@
      }
  
      public boolean mayPlace(ItemStack stack) {
-+        if (container instanceof net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity) return stack.getItem().canFitInsideContainerItems(); // KioCG - expand container rows: 修复潜影盒嵌套
++        if (container instanceof net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity) return stack.canFitInsideContainerItems(); // KioCG - expand container rows: 修复潜影盒嵌套 // KioCG - prevent stacking containers
          return true;
      }
  

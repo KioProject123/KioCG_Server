@@ -155,7 +155,19 @@
              return DataResult.error(() -> "Item cannot be both damageable and stackable");
          } else {
              ItemContainerContents itemContainerContents = components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-@@ -372,6 +_,16 @@
+@@ -366,12 +_,28 @@
+         return this.getItem().builtInRegistryHolder().tags();
+     }
+ 
++    // KioCG start - prevent stacking containers
++    public boolean canFitInsideContainerItems() {
++        return this.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).items.isEmpty() && this.getItem().canFitInsideContainerItems();
++    }
++    // KioCG end - prevent stacking containers
++
+     public InteractionResult useOn(UseOnContext context) {
+         Player player = context.getPlayer();
+         BlockPos clickedPos = context.getClickedPos();
          if (player != null && !player.getAbilities().mayBuild && !this.canPlaceOnBlockInAdventureMode(new BlockInWorld(context.getLevel(), clickedPos, false))) {
              return InteractionResult.PASS;
          } else {

@@ -49,6 +49,15 @@
          if (!this.tryLoadLootTable(input)) {
              ContainerHelper.loadAllItems(input, this.itemStacks);
          }
+@@ -274,7 +_,7 @@
+ 
+     @Override
+     public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+-        return !(Block.byItem(itemStack.getItem()) instanceof ShulkerBoxBlock);
++        return itemStack.canFitInsideContainerItems(); // KioCG - prevent stacking containers
+     }
+ 
+     @Override
 @@ -291,10 +_,12 @@
          return this.color;
      }

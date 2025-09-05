@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/component/BundleContents.java
++++ b/net/minecraft/world/item/component/BundleContents.java
+@@ -74,7 +_,7 @@
+     }
+ 
+     public static boolean canItemBeInBundle(ItemStack stack) {
+-        return !stack.isEmpty() && stack.getItem().canFitInsideContainerItems();
++        return !stack.isEmpty() && stack.canFitInsideContainerItems(); // KioCG - prevent stacking containers
+     }
+ 
+     // Paper start - correct bundle inventory action
