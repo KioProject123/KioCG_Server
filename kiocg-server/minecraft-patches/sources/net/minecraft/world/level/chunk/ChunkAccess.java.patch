@@ -4,7 +4,7 @@
      private volatile boolean isLightCorrect;
      protected final ChunkPos chunkPos; public final long coordinateKey; public final int locX; public final int locZ; // Paper - cache coordinate key
      private long inhabitedTime;
-+    public int chunkDays; // KioCG - crops grow every day
++    public com.kiocg.world.ChunkDays chunkDays = new com.kiocg.world.ChunkDays(); // KioCG - crops grow every day
      @Nullable
      @Deprecated
      private BiomeGenerationSettings carverBiomeSettings;

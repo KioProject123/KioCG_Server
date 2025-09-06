@@ -31,7 +31,7 @@
          }
  
          profilerFiller.push("tickPending");
-@@ -857,7 +_,12 @@
+@@ -857,13 +_,18 @@
  
      private void wakeUpAllPlayers() {
          this.sleepStatus.removeAllSleepers();
@@ -45,16 +45,19 @@
      }
  
      // Paper start - optimise random ticking
-@@ -908,6 +_,43 @@
+     private final ca.spottedleaf.moonrise.common.util.SimpleThreadUnsafeRandom simpleRandom = new ca.spottedleaf.moonrise.common.util.SimpleThreadUnsafeRandom(net.minecraft.world.level.levelgen.RandomSupport.generateUniqueSeed());
+ 
+-    private void optimiseRandomTick(final LevelChunk chunk, final int tickSpeed) {
++    private void optimiseRandomTick(final LevelChunk chunk, final int tickSpeed, final int daysSpent) { // KioCG - crops grow every day
+         final LevelChunkSection[] sections = chunk.getSections();
+         final int minSection = ca.spottedleaf.moonrise.common.util.WorldUtil.getMinSection((ServerLevel)(Object)this);
+         final ca.spottedleaf.moonrise.common.util.SimpleThreadUnsafeRandom simpleRandom = this.simpleRandom;
+@@ -908,6 +_,38 @@
              }
          }
  
 +        // KioCG start - crops grow every day
-+        int days = this.getDays();
-+        if (chunk.chunkDays != days) {
-+            int daysSpent = Mth.clamp(days - chunk.chunkDays, 0, 7);
-+            chunk.chunkDays = days;
-+
++        if (daysSpent > 0)
 +        for (int i = 0; i < daysSpent; ++i) {
 +        // 放在外层循环, 防止交界处的多格作物生长两次
 +        List<Pair<BlockState, BlockPos>> dayTickList = new ArrayList<>();
@@ -83,12 +86,48 @@
 +            ticking.getFirst().dayTick((ServerLevel)(Object)this, ticking.getSecond(), simpleRandom);
 +        }
 +        }
-+        }
 +        // KioCG end - crops grow every day
 +
          return;
      }
      // Paper end - optimise random ticking
+@@ -928,9 +_,35 @@
+         }
+         } // Paper - Option to disable ice and snow
+ 
++        // KioCG start - crops grow every day
++        int daysSpent = 0;
++        int days = this.getDays();
++        if (chunk.chunkDays.getDays() != days) {
++            daysSpent = Mth.clamp(days - chunk.chunkDays.getDays(), 0, 7);
++            chunk.chunkDays.setDays(days);
++        }
++        // KioCG end - crops grow every day
++
++        // KioCG start - mobs disappear every day
++        if (chunk.chunkDays.getNights() != days && (int)(this.getDayTime() % 24000L) > 13800) {
++            chunk.chunkDays.setNights(days);
++
++            final int chunkX = chunk.getPos().x;
++            final int chunkZ = chunk.getPos().z;
++            ca.spottedleaf.moonrise.patches.chunk_system.level.entity.ChunkEntitySlices slices = this.moonrise$getEntityLookup().getChunk(chunkX, chunkZ);
++            if (slices != null) {
++                slices.getAllEntities().forEach(entity -> {
++                    if (entity instanceof Mob mob) {
++                        mob.checkDespawn(true);
++                    }
++                });
++            }
++        }
++        // KioCG end - mobs disappear every day
++
+         profilerFiller.popPush("tickBlocks");
+         if (randomTickSpeed > 0) {
+-            this.optimiseRandomTick(chunk, randomTickSpeed); // Paper - optimise random ticking
++            this.optimiseRandomTick(chunk, randomTickSpeed, daysSpent); // Paper - optimise random ticking // KioCG - crops grow every day
+         }
+ 
+         profilerFiller.pop();
 @@ -1055,6 +_,7 @@
      }
  

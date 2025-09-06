@@ -4,15 +4,26 @@
      int minSectionY,
      long lastUpdateTime,
      long inhabitedTime,
-+    int chunkDays, // KioCG - crops grow every day
++    com.kiocg.world.ChunkDays chunkDays, // KioCG - crops grow every day
      ChunkStatus chunkStatus,
      @Nullable BlendingData.Packed blendingData,
      @Nullable BelowZeroRetrogen belowZeroRetrogen,
-@@ -256,6 +_,7 @@
+@@ -250,12 +_,18 @@
+                 }
+             }
+ 
++            // KioCG start - crops grow every day
++            int days = tag.getIntOr("ChunkDays", serverLevel.getDays());
++            int nights = tag.getIntOr("ChunkNights", serverLevel.getDays()); // KioCG - mobs disappear every day
++            com.kiocg.world.ChunkDays chunkDays = new com.kiocg.world.ChunkDays(days, nights);
++            // KioCG end - crops grow every day
+             return new SerializableChunkData(
+                 registry,
+                 chunkPos,
                  levelHeightAccessor.getMinSectionY(),
                  longOr,
                  longOr1,
-+                tag.getIntOr("ChunkDays", serverLevel.getDays()), // KioCG - crops grow every day
++                chunkDays, // KioCG - crops grow every day
                  chunkStatus,
                  packed,
                  belowZeroRetrogen,
@@ -32,11 +43,12 @@
                  chunk.getPersistedStatus(),
                  Optionull.map(chunk.getBlendingData(), BlendingData::pack),
                  chunk.getBelowZeroRetrogen(),
-@@ -587,6 +_,7 @@
+@@ -587,6 +_,8 @@
          compoundTag.putInt("zPos", this.chunkPos.z);
          compoundTag.putLong("LastUpdate", this.lastUpdateTime); // Paper - Diff on change
          compoundTag.putLong("InhabitedTime", this.inhabitedTime);
-+        compoundTag.putInt("ChunkDays", this.chunkDays); // KioCG - crops grow every day
++        compoundTag.putInt("ChunkDays", this.chunkDays.getDays()); // KioCG - crops grow every day
++        compoundTag.putInt("ChunkNights", this.chunkDays.getNights()); // KioCG - mobs disappear every day
          compoundTag.putString("Status", BuiltInRegistries.CHUNK_STATUS.getKey(this.chunkStatus).toString());
          compoundTag.storeNullable("blending_data", BlendingData.Packed.CODEC, this.blendingData);
          compoundTag.storeNullable("below_zero_retrogen", BelowZeroRetrogen.CODEC, this.belowZeroRetrogen);
