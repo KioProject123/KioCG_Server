@@ -117,14 +117,18 @@
          this.persistenceRequired = true;
      }
  
-@@ -711,6 +_,7 @@
+@@ -711,9 +_,10 @@
      @Override
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldActuallyDespawnInPeaceful()) { //Paper - allow changing despawnInPeaceful
 +            this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
-             Entity nearestPlayer = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+-            Entity nearestPlayer = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
++            Entity nearestPlayer = this.level().findNearbyPlayer(this, this.serverLevel().chunkSource.chunkMap.serverViewDistance * 16 + 16, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API // KioCG - fix mobs disappearing when player disconnects
+             if (nearestPlayer != null) {
+                 // Paper start - Configurable despawn distances
+                 final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
 @@ -725,11 +_,13 @@
                  final double distanceSquared = dxSqr + dzSqr + dySqr;
                  // Despawn if hard/soft limit is exceeded
