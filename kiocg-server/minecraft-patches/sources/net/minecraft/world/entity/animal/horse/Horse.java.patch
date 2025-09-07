@@ -1,0 +1,66 @@
+--- a/net/minecraft/world/entity/animal/horse/Horse.java
++++ b/net/minecraft/world/entity/animal/horse/Horse.java
+@@ -144,6 +_,7 @@
+ 
+     @Override
+     public SoundEvent getHurtSound(DamageSource damageSource) {
++        if (this.canArmorAbsorb(damageSource)) return SoundEvents.WOLF_ARMOR_DAMAGE; // KioCG - modern horse armor
+         return SoundEvents.HORSE_HURT;
+     }
+ 
+@@ -233,6 +_,55 @@
+     protected void hurtArmor(DamageSource damageSource, float damageAmount) {
+         this.doHurtEquipment(damageSource, damageAmount, new EquipmentSlot[]{EquipmentSlot.BODY});
+     }
++
++    // KioCG start - modern horse armor
++    @Override
++    public boolean actuallyHurt(ServerLevel level, DamageSource damageSource, float amount, org.bukkit.event.entity.EntityDamageEvent event) { // CraftBukkit - void -> boolean
++        if (!this.canArmorAbsorb(damageSource)) {
++            return super.actuallyHurt(level, damageSource, amount, event); // CraftBukkit
++        } else {
++            if (event.isCancelled()) return false; // CraftBukkit - SPIGOT-7815: if the damage was cancelled, no need to run the wolf armor behaviour
++            ItemStack bodyArmorItem = this.getBodyArmorItem();
++            int damageValue = bodyArmorItem.getDamageValue();
++            int maxDamage = bodyArmorItem.getMaxDamage();
++            bodyArmorItem.hurtAndBreak(net.minecraft.util.Mth.ceil(amount), this, EquipmentSlot.BODY);
++            if (net.minecraft.world.entity.Crackiness.WOLF_ARMOR.byDamage(damageValue, maxDamage) != net.minecraft.world.entity.Crackiness.WOLF_ARMOR.byDamage(this.getBodyArmorItem())) {
++                this.playSound(SoundEvents.WOLF_ARMOR_CRACK);
++                level.sendParticles(
++                    new net.minecraft.core.particles.ItemParticleOption(net.minecraft.core.particles.ParticleTypes.ITEM, this.getArmorParticle(bodyArmorItem)),
++                    this.getX(),
++                    this.getY() + 1.0,
++                    this.getZ(),
++                    20,
++                    0.2,
++                    0.1,
++                    0.2,
++                    0.1
++                );
++            }
++        }
++        return true; // CraftBukkit // Paper - return false ONLY if event was cancelled
++    }
++
++    protected boolean canArmorAbsorb(DamageSource damageSource) {
++        return this.getArmorParticle(this.getBodyArmorItem()) != null && !damageSource.is(net.minecraft.tags.DamageTypeTags.BYPASSES_WOLF_ARMOR);
++    }
++
++    @Nullable
++    private ItemStack getArmorParticle(ItemStack itemStack) {
++        net.minecraft.world.item.Item item = itemStack.getItem();
++        if (item == net.minecraft.world.item.Items.LEATHER_HORSE_ARMOR) {
++            return net.minecraft.world.item.Items.LEATHER.getDefaultInstance();
++        } else if (item == net.minecraft.world.item.Items.IRON_HORSE_ARMOR) {
++            return net.minecraft.world.item.Items.IRON_INGOT.getDefaultInstance();
++        } else if (item == net.minecraft.world.item.Items.GOLDEN_HORSE_ARMOR) {
++            return net.minecraft.world.item.Items.GOLD_INGOT.getDefaultInstance();
++        } else if (item == net.minecraft.world.item.Items.DIAMOND_HORSE_ARMOR) {
++            return net.minecraft.world.item.Items.DIAMOND.getDefaultInstance();
++        }
++        return null;
++    }
++    // KioCG end - modern horse armor
+ 
+     @Nullable
+     @Override

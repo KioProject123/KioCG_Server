@@ -98,7 +98,40 @@
  
          public Item.Properties usingConvertsTo(Item usingConvertsTo) {
              return this.component(DataComponents.USE_REMAINDER, new UseRemainder(new ItemStack(usingConvertsTo)));
-@@ -535,16 +_,60 @@
+@@ -483,19 +_,30 @@
+ 
+         public Item.Properties horseArmor(ArmorMaterial material) {
+             HolderGetter<EntityType<?>> holderGetter = BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ENTITY_TYPE);
+-            return this.attributes(material.createAttributes(ArmorType.BODY))
++            Item.Properties properties = // KioCG - modern horse armor
++            this.attributes(material.createAttributes(ArmorType.BODY))
+                 .component(
+                     DataComponents.EQUIPPABLE,
+                     Equippable.builder(EquipmentSlot.BODY)
+                         .setEquipSound(SoundEvents.HORSE_ARMOR)
+                         .setAsset(material.assetId())
+                         .setAllowedEntities(holderGetter.getOrThrow(EntityTypeTags.CAN_WEAR_HORSE_ARMOR))
+-                        .setDamageOnHurt(false)
++                        .setDamageOnHurt(false) // KioCG - modern horse armor: 未修改, 为了客户端同步, 实际上物品能正常损伤
+                         .setCanBeSheared(true)
+                         .setShearingSound(SoundEvents.HORSE_ARMOR_UNEQUIP)
+                         .build()
+                 )
+                 .stacksTo(1);
++
++            // KioCG start - modern horse armor
++            properties.initCustomize()
++                .durability(ArmorType.BODY.getDurability(material.durability()))
++                .component(DataComponents.BREAK_SOUND, SoundEvents.WOLF_ARMOR_BREAK);
++            if (material == net.minecraft.world.item.equipment.ArmorMaterials.LEATHER) {
++                properties.repairable(material.repairIngredient());
++            }
++            return properties;
++            // KioCG end - modern horse armor
+         }
+ 
+         public Item.Properties trimMaterial(ResourceKey<TrimMaterial> trimMaterial) {
+@@ -535,16 +_,63 @@
              return this.model.get(Objects.requireNonNull(this.id, "Item id not set"));
          }
  
@@ -121,6 +154,9 @@
 +        }
 +
 +        public <T> Item.Properties componentKioCG(DataComponentType<T> component, @Nullable T value) {
++            final T exist = this.components.build().get(component);
++            if (Objects.equals(exist, value)) return this;
++
 +            this.components.set(component, value);
 +            if (!DataComponents.UNABLE_SEND_TO_CLIENT.contains(component)) {
 +                if (value != null) {

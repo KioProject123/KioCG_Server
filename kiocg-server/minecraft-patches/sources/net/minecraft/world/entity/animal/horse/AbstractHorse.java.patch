@@ -26,3 +26,23 @@
                  flag = true;
              }
          }
+@@ -672,6 +_,19 @@
+                     this.equipBodyArmor(player, itemInHand);
+                     return InteractionResult.SUCCESS;
+                 }
++
++                // KioCG start - modern horse armor
++                if (this.isWearingBodyArmor()
++                    && this.getBodyArmorItem().isDamaged()
++                    && this.getBodyArmorItem().isValidRepairItem(itemInHand)) {
++                    itemInHand.shrink(1);
++                    this.playSound(SoundEvents.WOLF_ARMOR_REPAIR);
++                    ItemStack bodyArmorItem = this.getBodyArmorItem();
++                    int i = (int)(bodyArmorItem.getMaxDamage() * 0.125F);
++                    bodyArmorItem.setDamageValue(Math.max(0, bodyArmorItem.getDamageValue() - i));
++                    return InteractionResult.SUCCESS;
++                }
++                // KioCG end - modern horse armor
+             }
+ 
+             this.doPlayerRide(player);
