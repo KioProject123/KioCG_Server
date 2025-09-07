@@ -9,3 +9,15 @@
              creeper.increaseDroppedSkulls();
              this.spawnAtLocation(level, Items.WITHER_SKELETON_SKULL);
          }
+@@ -96,6 +_,11 @@
+         SpawnGroupData spawnGroupData1 = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
+         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
+         this.reassessWeaponGoal();
++        // KioCG start - anti mob farm
++        if (level.getBlockState(this.blockPosition()).is(net.minecraft.world.level.block.Blocks.WITHER_ROSE)) {
++            level.removeBlock(this.blockPosition(), false);
++        }
++        // KioCG end - anti mob farm
+         return spawnGroupData1;
+     }
+ 
