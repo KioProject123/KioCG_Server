@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/level/block/entity/BellBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BellBlockEntity.java
+@@ -68,7 +_,14 @@
+             blockEntity.ticks = 0;
+         }
+ 
+-        if (blockEntity.ticks >= 5 && blockEntity.resonationTicks == 0 && areRaidersNearby(pos, blockEntity.nearbyEntities)) {
++        // KioCG start - better raids bell
++        java.util.Set<net.minecraft.world.entity.raid.Raider> allRaiders = java.util.Set.of();
++        net.minecraft.world.entity.raid.Raid raidAt = ((net.minecraft.server.level.ServerLevel) level).getRaidAt(pos);
++        if (raidAt != null) {
++            allRaiders = raidAt.getAllRaiders();
++        }
++        // KioCG end - better raids bell
++        if (blockEntity.ticks >= 5 && blockEntity.resonationTicks == 0 && !allRaiders.isEmpty()) { // KioCG - better raids bell
+             blockEntity.resonating = true;
+             level.playSound(null, pos, SoundEvents.BELL_RESONATE, SoundSource.BLOCKS, 1.0F, 1.0F);
+         }
+@@ -77,7 +_,7 @@
+             if (blockEntity.resonationTicks < 40) {
+                 blockEntity.resonationTicks++;
+             } else {
+-                resonationEndAction.run(level, pos, blockEntity.nearbyEntities);
++                resonationEndAction.run(level, pos, List.copyOf(allRaiders)); // KioCG - better raids bell
+                 blockEntity.nearbyEntities.clear(); // Paper - Fix bell block entity memory leak
+                 blockEntity.resonating = false;
+             }
+@@ -138,7 +_,7 @@
+ 
+     private static void makeRaidersGlow(Level level, BlockPos pos, List<LivingEntity> raiders) {
+         // Paper start - call bell resonate event and bell reveal raider event
+-        final List<org.bukkit.entity.LivingEntity> inRangeRaiders = raiders.stream().filter(raider -> isRaiderWithinRange(pos, raider)).map(e -> (org.bukkit.entity.LivingEntity) e.getBukkitEntity()).toList();
++        final List<org.bukkit.entity.LivingEntity> inRangeRaiders = raiders.stream().filter(raider -> true || isRaiderWithinRange(pos, raider)).map(e -> (org.bukkit.entity.LivingEntity) e.getBukkitEntity()).toList(); // KioCG - better raids bell
+         org.bukkit.craftbukkit.event.CraftEventFactory.handleBellResonateEvent(level, pos, inRangeRaiders).forEach(e -> glow(e, pos));
+         // Paper end - call bell resonate event and bell reveal raider event
+     }
