@@ -14,7 +14,7 @@
  
 +            // KioCG start - crops grow every day
 +            int days = tag.getIntOr("ChunkDays", serverLevel.getDays());
-+            int nights = tag.getIntOr("ChunkNights", serverLevel.getDays()); // KioCG - mobs disappear every day
++            int nights = tag.getIntOr("ChunkNights", serverLevel.getNights()); // KioCG - mobs disappear every day
 +            com.kiocg.world.ChunkDays chunkDays = new com.kiocg.world.ChunkDays(days, nights);
 +            // KioCG end - crops grow every day
              return new SerializableChunkData(

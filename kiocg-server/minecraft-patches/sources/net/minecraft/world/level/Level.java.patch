@@ -40,7 +40,7 @@
          // CraftBukkit start - tree generation
          if (this.captureTreeGeneration) {
              // Paper start - Protect Bedrock and End Portal/Frames from being destroyed
-@@ -1871,6 +_,12 @@
+@@ -1871,6 +_,16 @@
      public long getDayTime() {
          return this.levelData.getDayTime();
      }
@@ -48,6 +48,10 @@
 +    // KioCG start - world data synchronization
 +    public int getDays() {
 +        return ((net.minecraft.world.level.storage.PrimaryLevelData) this.levelData).getDays();
++    }
++
++    public int getNights() {
++        return ((net.minecraft.world.level.storage.PrimaryLevelData) this.levelData).getNights();
 +    }
 +    // KioCG end - world data synchronization
  

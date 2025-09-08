@@ -8,7 +8,7 @@
  
      public BeehiveBlockEntity(BlockPos pos, BlockState blockState) {
          super(BlockEntityType.BEEHIVE, pos, blockState);
-@@ -341,16 +_,81 @@
+@@ -341,16 +_,74 @@
  
      public static void serverTick(Level level, BlockPos pos, BlockState state, BeehiveBlockEntity beehive) {
          tickOccupants(level, pos, state, beehive.stored, beehive.savedFlowerPos);
@@ -46,17 +46,10 @@
 +    }
 +
 +    private static int daysSpent(Level level, BeehiveBlockEntity beehive) {
-+        int days = level.getDays();
++        int days = level.getNights();
 +        if (days != beehive.honeyDays) {
 +            int daysSpent = days - beehive.honeyDays;
 +            beehive.honeyDays = days;
-+
-+            // 只在傍晚产生蜂蜜, 因此如果现在是白天则需要减少一天
-+            if (level.isBrightOutside()) {
-+                --daysSpent;
-+                --beehive.honeyDays;
-+            }
-+
 +            return daysSpent;
 +        }
 +        return 0;

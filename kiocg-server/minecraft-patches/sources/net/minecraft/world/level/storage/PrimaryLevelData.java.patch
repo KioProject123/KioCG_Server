@@ -1,22 +1,24 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -51,6 +_,7 @@
+@@ -51,6 +_,8 @@
      private float spawnAngle;
      private long gameTime;
      private long dayTime;
 +    private int days; // KioCG - world data synchronization
++    private int nights; // KioCG - world data synchronization
      @Nullable
      private final CompoundTag loadedPlayerTag;
      private final int version;
-@@ -123,6 +_,7 @@
+@@ -123,6 +_,8 @@
          this.spawnAngle = spawnAngle;
          this.gameTime = gameTime;
          this.dayTime = dayTime;
 +        this.days = (int) (this.dayTime / 24000L); // KioCG - world data synchronization
++        this.nights = (int) ((this.dayTime - 13800L) / 24000L); // KioCG - world data synchronization
          this.version = version;
          this.clearWeatherTime = clearWeatherTime;
          this.rainTime = rainTime;
-@@ -318,9 +_,23 @@
+@@ -318,9 +_,30 @@
  
      @Override
      public long getDayTime() {
@@ -35,16 +37,24 @@
 +        }
 +        return this.days;
 +    }
++
++    public int getNights() {
++        if (this != MinecraftServer.getServer().getWorldData()) { // 始终同步天数
++            return ((PrimaryLevelData) MinecraftServer.getServer().getWorldData()).getNights();
++        }
++        return this.nights;
++    }
 +    // KioCG end - world data synchronization
 +
      @Nullable
      @Override
      public CompoundTag getLoadedPlayerTag() {
-@@ -335,6 +_,7 @@
+@@ -335,6 +_,8 @@
      @Override
      public void setDayTime(long time) {
          this.dayTime = time;
 +        this.days = (int) (this.dayTime / 24000L); // KioCG - world data synchronization
++        this.nights = (int) ((this.dayTime - 13800L) / 24000L); // KioCG - world data synchronization
      }
  
      @Override

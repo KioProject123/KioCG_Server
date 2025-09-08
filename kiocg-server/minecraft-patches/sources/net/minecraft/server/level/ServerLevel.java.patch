@@ -91,7 +91,7 @@
          return;
      }
      // Paper end - optimise random ticking
-@@ -928,9 +_,35 @@
+@@ -928,9 +_,36 @@
          }
          } // Paper - Option to disable ice and snow
  
@@ -105,8 +105,9 @@
 +        // KioCG end - crops grow every day
 +
 +        // KioCG start - mobs disappear every day
-+        if (chunk.chunkDays.getNights() != days && (int)(this.getDayTime() % 24000L) > 13800) {
-+            chunk.chunkDays.setNights(days);
++        int nights = this.getNights();
++        if (chunk.chunkDays.getNights() != nights) {
++            chunk.chunkDays.setNights(nights);
 +
 +            final int chunkX = chunk.getPos().x;
 +            final int chunkZ = chunk.getPos().z;
