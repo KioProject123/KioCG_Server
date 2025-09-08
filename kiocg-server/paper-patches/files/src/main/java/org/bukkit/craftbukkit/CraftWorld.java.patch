@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -172,8 +_,9 @@
+@@ -173,8 +_,9 @@
      private final @Nullable BiomeProvider biomeProvider;
      private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
      private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
@@ -11,7 +11,7 @@
      // Paper start - void damage configuration
      private boolean voidDamageEnabled;
      private float voidDamageAmount;
-@@ -1735,6 +_,11 @@
+@@ -1736,6 +_,11 @@
          Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
          Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
  
@@ -23,7 +23,7 @@
          this.world.ticksPerSpawnCategory.put(spawnCategory, (long) ticksPerCategorySpawn);
      }
  
-@@ -1860,6 +_,11 @@
+@@ -1861,6 +_,11 @@
          Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
          Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
  
@@ -35,7 +35,7 @@
          this.spawnCategoryLimit.put(spawnCategory, limit);
      }
  
-@@ -2404,6 +_,13 @@
+@@ -2405,6 +_,13 @@
          return this.persistentDataContainer;
      }
  
@@ -49,7 +49,7 @@
      // Paper - replace feature flag API
  
      public void storeBukkitValues(CompoundTag c) {
-@@ -2489,4 +_,42 @@
+@@ -2490,4 +_,42 @@
          return POINTERS_SUPPLIER.view(this);
      }
      // Paper end

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
-@@ -63,11 +_,12 @@
+@@ -58,11 +_,12 @@
      @Override
      public void tick() {
          this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
@@ -14,7 +14,7 @@
                      this.level.destroyBlock(blockPos, false);
                  }
  
-@@ -75,7 +_,7 @@
+@@ -70,7 +_,7 @@
              } else {
                  BlockPos blockPos1 = blockPos.below();
                  if (this.level.getBlockState(blockPos1).is(Blocks.GRASS_BLOCK)) {

@@ -96,7 +96,7 @@
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
          populateFields(victim, event); // Paper - make cancellable
          Bukkit.getServer().getPluginManager().callEvent(event);
-@@ -1298,6 +_,26 @@
+@@ -1295,6 +_,26 @@
  
          return com.mojang.datafixers.util.Pair.of(event.titleOverride(), container); // Paper - Add titleOverride to InventoryOpenEvent
      }

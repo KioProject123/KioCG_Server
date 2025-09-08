@@ -8,7 +8,7 @@
          this.isRestarting = isRestarting;
          this.hasLoggedStop = true; // Paper - Debugging
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
-@@ -1245,7 +_,7 @@
+@@ -1246,7 +_,7 @@
                  lastTick = currentTime;
                  this.nextTickTimeNanos += l;
  
@@ -17,7 +17,7 @@
                      ProfilerFiller profilerFiller = Profiler.get();
                      profilerFiller.push("tick");
                      this.tickFrame.start();
-@@ -1271,7 +_,7 @@
+@@ -1272,7 +_,7 @@
                      profilerFiller.pop();
                      this.logFullTickTime();
                  } finally {
@@ -26,7 +26,7 @@
                  }
  
                  this.isReady = true;
-@@ -1523,6 +_,17 @@
+@@ -1524,6 +_,17 @@
              }
          }
  
@@ -44,7 +44,7 @@
          this.server.spark.tickStart(); // Paper - spark
          new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
-@@ -2235,9 +_,11 @@
+@@ -2236,9 +_,11 @@
                      if (Thread.currentThread() != this.serverThread) return; // Paper
                      // Paper start - we don't need to save everything, just advancements
                      // this.getPlayerList().saveAll();

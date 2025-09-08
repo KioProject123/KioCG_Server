@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/World.java
 +++ b/src/main/java/org/bukkit/World.java
-@@ -49,7 +_,7 @@
+@@ -50,7 +_,7 @@
  /**
   * Represents a world, which may contain entities, chunks and blocks
   */
@@ -9,7 +9,7 @@
  
      // Paper start - void damage configuration
      /**
-@@ -4402,6 +_,78 @@
+@@ -4413,6 +_,78 @@
       */
      @NotNull
      public Collection<GeneratedStructure> getStructures(int x, int z, @NotNull Structure structure);

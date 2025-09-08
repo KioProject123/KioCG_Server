@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/net/minecraft/world/level/block/PowderSnowBlock.java
-@@ -89,7 +_,7 @@
+@@ -94,7 +_,7 @@
                          // CraftBukkit - move down
                      && entity1.mayInteract(serverLevel, blockPos)) {
                      // CraftBukkit start
