@@ -117,7 +117,7 @@
          this.persistenceRequired = true;
      }
  
-@@ -710,7 +_,13 @@
+@@ -710,11 +_,19 @@
  
      @Override
      public void checkDespawn() {
@@ -131,6 +131,12 @@
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity nearestPlayer = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+             if (nearestPlayer != null) {
++                if (net.minecraft.server.level.ChunkMap.euclideanDistanceSquared(this.chunkPosition(), nearestPlayer.position()) > 16384.0D) return; // KioCG - fix mobs disappearing when player disconnects
++
+                 // Paper start - Configurable despawn distances
+                 final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
+                 final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
 @@ -725,11 +_,13 @@
                  final double distanceSquared = dxSqr + dzSqr + dySqr;
                  // Despawn if hard/soft limit is exceeded
