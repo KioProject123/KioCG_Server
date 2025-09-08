@@ -69,7 +69,7 @@
 +            public KiocgConfig.Entity.Monster monster;
 +            public class Monster extends ConfigurationPart {
 +                public boolean spawnInLightAtNight = true;
-+                public int darkEnoughToSprint = 7;
++                public int darkEnoughToSprint = 0;
 +                public double zombiesSkinnedChance = 0.25;
 +                public boolean babyZombieJockey = true;
 +                public boolean persistentWhenPickedUpItems = false;
