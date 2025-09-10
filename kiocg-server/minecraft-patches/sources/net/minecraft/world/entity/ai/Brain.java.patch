@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/ai/Brain.java
++++ b/net/minecraft/world/entity/ai/Brain.java
+@@ -408,9 +_,11 @@
+     }
+ 
+     public void tick(ServerLevel level, E entity) {
++        if (!(entity instanceof net.minecraft.world.entity.Mob mob) || !mob.tickRunningGoalsOnly) { // KioCG - optimize entity behavior
+         this.forgetOutdatedMemories();
+         this.tickSensors(level, entity);
+         this.startEachNonRunningBehavior(level, entity);
++        } // KioCG - optimize entity behavior
+         this.tickEachRunningBehavior(level, entity);
+     }
+ 

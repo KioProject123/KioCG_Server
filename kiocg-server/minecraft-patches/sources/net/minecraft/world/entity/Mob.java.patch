@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -125,6 +_,7 @@
+@@ -125,6 +_,8 @@
      public GoalSelector goalSelector;
      public @Nullable net.minecraft.world.entity.ai.goal.FloatGoal goalFloat; // Paper - Allow nerfed mobs to jump and float
      public GoalSelector targetSelector;
 +    public com.kiocg.entity.GoalRegister<Mob> goalRegister = new com.kiocg.entity.GoalRegister<>(this); // KioCG - optimize entity behavior
++    public boolean tickRunningGoalsOnly; // KioCG - optimize entity behavior
      @Nullable
      private LivingEntity target;
      private final Sensing sensing;
@@ -170,6 +171,15 @@
      @Override
      protected final void serverAiStep() {
          this.noActionTime++;
+@@ -759,7 +_,7 @@
+         this.sensing.tick();
+         profilerFiller.pop();
+         int i = this.tickCount + this.getId();
+-        if (i % 2 != 0 && this.tickCount > 1) {
++        if (tickRunningGoalsOnly = (i % 2 != 0 && this.tickCount > 1)) { // KioCG - optimize entity behavior
+             profilerFiller.push("targetSelector");
+             this.targetSelector.tickRunningGoals(false);
+             profilerFiller.pop();
 @@ -1201,6 +_,11 @@
              );
          }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/LongJumpToRandomPos.java
++++ b/net/minecraft/world/entity/ai/behavior/LongJumpToRandomPos.java
+@@ -162,7 +_,7 @@
+                     if (vec31 != null) {
+                         entity.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(blockPos));
+                         PathNavigation navigation = entity.getNavigation();
+-                        Path path = navigation.createPath(blockPos, 0, 8);
++                        Path path = null; // KioCG - optimize entity behavior
+                         if (path == null || !path.canReach()) {
+                             this.chosenJump = vec31;
+                             this.prepareJumpStart = prepareJumpStart;

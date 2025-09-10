@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/LongJumpToPreferredBlock.java
++++ b/net/minecraft/world/entity/ai/behavior/LongJumpToPreferredBlock.java
+@@ -44,7 +_,7 @@
+ 
+     @Override
+     protected Optional<LongJumpToRandomPos.PossibleJump> getJumpCandidate(ServerLevel level) {
+-        if (!this.currentlyWantingPreferredOnes) {
++        if (true || !this.currentlyWantingPreferredOnes) { // KioCG - optimize entity behavior
+             return super.getJumpCandidate(level);
+         } else {
+             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
