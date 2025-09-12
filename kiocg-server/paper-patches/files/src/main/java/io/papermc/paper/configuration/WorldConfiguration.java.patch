@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,4 +_,107 @@
+@@ -587,4 +_,108 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -10,6 +10,7 @@
 +
 +    public class KiocgConfig extends ConfigurationPart {
 +        public boolean deathKeepHotbarAndArmorItems = true;
++        public double deathKeepLevelPercent = 0.7;
 +        public boolean deathItemsOnlyPickupByOneself = true;
 +        public int sleepHealingRegenRate = 10;
 +

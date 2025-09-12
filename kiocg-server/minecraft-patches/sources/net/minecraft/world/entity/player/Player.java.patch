@@ -219,6 +219,15 @@
          if (this.abilities.mayBuild) {
              return true;
          } else {
+@@ -1822,7 +_,7 @@
+ 
+     @Override
+     protected int getBaseExperienceReward(ServerLevel level) {
+-        return !level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !this.isSpectator() ? Math.min(this.experienceLevel * 7, 100) : 0;
++        return !level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !this.isSpectator() ? this.experienceLevel * 7 : 0; // KioCG - death drop protect
+     }
+ 
+     @Override
 @@ -2323,6 +_,13 @@
      public boolean onClimbable() {
          return !this.abilities.flying && super.onClimbable();

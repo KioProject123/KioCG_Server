@@ -79,7 +79,7 @@
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, net.minecraft.world.entity.LivingEntity coverted, EntityTransformEvent.TransformReason transformReason) {
          return CraftEventFactory.callEntityTransformEvent(original, Collections.singletonList(coverted), transformReason);
      }
-@@ -890,10 +_,16 @@
+@@ -890,11 +_,18 @@
      }
  
      public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
@@ -94,8 +94,10 @@
          event.setKeepInventory(keepInventory);
 +        event.getItemsToKeep().addAll(keeps); // KioCG - death drop protect
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
++        event.setNewLevel((int) (victim.experienceLevel * victim.level().paperConfig().kiocgConfig.deathKeepLevelPercent)); // KioCG - death drop protect
          populateFields(victim, event); // Paper - make cancellable
          Bukkit.getServer().getPluginManager().callEvent(event);
+         // Paper start - make cancellable
 @@ -1295,6 +_,26 @@
  
          return com.mojang.datafixers.util.Pair.of(event.titleOverride(), container); // Paper - Add titleOverride to InventoryOpenEvent
