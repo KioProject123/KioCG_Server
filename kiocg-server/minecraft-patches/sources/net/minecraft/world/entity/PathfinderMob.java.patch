@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/PathfinderMob.java
++++ b/net/minecraft/world/entity/PathfinderMob.java
+@@ -60,7 +_,10 @@
+         if (this.shouldStayCloseToLeashHolder() && !this.isPanicking()) {
+             this.goalSelector.enableControlFlag(Goal.Flag.MOVE);
+             float f = 2.0F;
+-            float f1 = this.distanceTo(entity);
++            // KioCG start - optimize distanceTo
++            float f1 = (float) this.distanceToSqr(entity);
++            f1 = f1 < 2.0F * 2.0F ? net.minecraft.util.Mth.sqrt(f1) : 2.0F;
++            // KioCG end - optimize distanceTo
+             Vec3 vec3 = new Vec3(entity.getX() - this.getX(), entity.getY() - this.getY(), entity.getZ() - this.getZ())
+                 .normalize()
+                 .scale(Math.max(f1 - 2.0F, 0.0F));

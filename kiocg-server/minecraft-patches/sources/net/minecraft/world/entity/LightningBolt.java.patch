@@ -8,7 +8,12 @@
  
      public LightningBolt(EntityType<? extends LightningBolt> entityType, Level level) {
          super(entityType, level);
-@@ -131,6 +_,21 @@
+@@ -127,10 +_,25 @@
+                             entity1 -> entity1.isAlive() && !this.hitEntities.contains(entity1)
+                         );
+ 
+-                    for (ServerPlayer serverPlayer : ((ServerLevel)this.level()).getPlayers(player -> player.distanceTo(this) < 256.0F)) {
++                    for (ServerPlayer serverPlayer : ((ServerLevel)this.level()).getPlayers(player -> player.distanceToSqr(this) < 256.0F * 256.0F)) { // KioCG - optimize distanceTo
                          CriteriaTriggers.LIGHTNING_STRIKE.trigger(serverPlayer, this, entities);
                      }
                  }

@@ -1,11 +1,34 @@
 --- a/net/minecraft/world/level/pathfinder/PathFinder.java
 +++ b/net/minecraft/world/level/pathfinder/PathFinder.java
+@@ -71,6 +_,7 @@
+         List<Map.Entry<Target, BlockPos>> entryList = Lists.newArrayListWithExpectedSize(positions.size()); // Paper - optimize collection
+         int i1 = (int)(this.maxVisitedNodes * searchDepthMultiplier);
+ 
++        float maxRangeSqr = maxRange * maxRange; // KioCG - optimize distanceTo
+         while (!this.openSet.isEmpty()) {
+             if (++i >= i1) {
+                 break;
 @@ -94,7 +_,7 @@
                  break;
              }
  
 -            if (!(node1.distanceTo(node) >= maxRange)) {
-+            if (!((node1 == node ? 0 : node1.distanceTo(node)) >= maxRange)) { // KioCG - optimize distanceTo
++            if (!((node1 == node ? 0 : node1.distanceToSqr(node)) >= maxRangeSqr)) { // KioCG - optimize distanceTo
                  int neighbors = this.nodeEvaluator.getNeighbors(this.neighbors, node1);
  
                  for (int i2 = 0; i2 < neighbors; i2++) {
+@@ -145,12 +_,12 @@
+         for (int i = 0, targetsSize = targets.size(); i < targetsSize; i++) {
+             final Target target = targets.get(i).getKey();
+             // Paper end - Perf: remove streams and optimize collection
+-            float f1 = node.distanceTo(target);
++            float f1 = node.distanceToSqr(target); // KioCG - optimize distanceTo
+             target.updateBest(f1, node);
+             f = Math.min(f1, f);
+         }
+ 
+-        return f;
++        return net.minecraft.util.Mth.sqrt(f); // KioCG - optimize distanceTo
+     }
+ 
+     private Path reconstructPath(Node point, BlockPos targetPos, boolean reachesTarget) {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/waypoints/WaypointTransmitter.java
++++ b/net/minecraft/world/waypoints/WaypointTransmitter.java
+@@ -25,7 +_,7 @@
+             return false;
+         } else if (!entity.isSpectator() && !entity.hasIndirectPassenger(player)) {
+             double min = Math.min(entity.getAttributeValue(Attributes.WAYPOINT_TRANSMIT_RANGE), player.getAttributeValue(Attributes.WAYPOINT_RECEIVE_RANGE));
+-            return entity.distanceTo(player) >= min;
++            return entity.distanceToSqr(player) >= min * min; // KioCG - optimize distanceTo
+         } else {
+             return true;
+         }
+@@ -39,7 +_,7 @@
+     }
+ 
+     static boolean isReallyFar(LivingEntity entity, ServerPlayer player) {
+-        return entity.distanceTo(player) > 332.0F;
++        return entity.distanceToSqr(player) > 332.0F * 332.0F; // KioCG - optimize distanceTo
+     }
+ 
+     public interface BlockConnection extends WaypointTransmitter.Connection {

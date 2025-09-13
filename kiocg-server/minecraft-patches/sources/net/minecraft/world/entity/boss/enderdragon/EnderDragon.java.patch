@@ -9,3 +9,12 @@
                              // CraftBukkit start - Add blocks to list rather than destroying them
                              //flag1 = level.removeBlock(blockPos, false) || flag1;
                              flag1 = true;
+@@ -785,7 +_,7 @@
+                 return this.reconstructPath(node1, node);
+             }
+ 
+-            if (node3.distanceTo(node) < node2.distanceTo(node)) {
++            if (node3.distanceToSqr(node) < node2.distanceToSqr(node)) { // KioCG - optimize distanceTo
+                 node2 = node3;
+             }
+ 

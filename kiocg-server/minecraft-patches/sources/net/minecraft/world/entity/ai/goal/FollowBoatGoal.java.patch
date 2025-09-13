@@ -14,3 +14,21 @@
      @Override
      public boolean isInterruptable() {
          return true;
+@@ -79,7 +_,7 @@
+                 BlockPos blockPos = this.following.blockPosition().relative(this.following.getDirection().getOpposite());
+                 blockPos = blockPos.offset(0, -1, 0);
+                 this.mob.getNavigation().moveTo(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1.0);
+-                if (this.mob.distanceTo(this.following) < 4.0F) {
++                if (this.mob.distanceToSqr(this.following) < 4.0F * 4.0F) { // KioCG - optimize distanceTo
+                     this.timeToRecalcPath = 0;
+                     this.currentGoal = BoatGoals.GO_IN_BOAT_DIRECTION;
+                 }
+@@ -87,7 +_,7 @@
+                 Direction motionDirection = this.following.getMotionDirection();
+                 BlockPos blockPos1 = this.following.blockPosition().relative(motionDirection, 10);
+                 this.mob.getNavigation().moveTo(blockPos1.getX(), blockPos1.getY() - 1, blockPos1.getZ(), 1.0);
+-                if (this.mob.distanceTo(this.following) > 12.0F) {
++                if (this.mob.distanceToSqr(this.following) > 12.0F * 12.0F) { // KioCG - optimize distanceTo
+                     this.timeToRecalcPath = 0;
+                     this.currentGoal = BoatGoals.GO_TO_BOAT;
+                 }

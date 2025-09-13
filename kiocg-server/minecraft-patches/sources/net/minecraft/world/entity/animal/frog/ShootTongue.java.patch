@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/frog/ShootTongue.java
++++ b/net/minecraft/world/entity/animal/frog/ShootTongue.java
+@@ -108,7 +_,7 @@
+         owner.setTongueTarget(livingEntity);
+         switch (this.state) {
+             case MOVE_TO_TARGET:
+-                if (livingEntity.distanceTo(owner) < 1.75F) {
++                if (livingEntity.distanceToSqr(owner) < 1.75F * 1.75F) { // KioCG - optimize distanceTo
+                     level.playSound(null, owner, this.tongueSound, SoundSource.NEUTRAL, 2.0F, 1.0F);
+                     owner.setPose(Pose.USING_TONGUE);
+                     livingEntity.setDeltaMovement(livingEntity.position().vectorTo(owner.position()).normalize().scale(0.75));

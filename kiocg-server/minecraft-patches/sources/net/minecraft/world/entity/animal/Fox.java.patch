@@ -36,6 +36,15 @@
          @Override
          public boolean canContinueToUse() {
              LivingEntity target = Fox.this.getTarget();
+@@ -1238,7 +_,7 @@
+                 }
+             }
+ 
+-            if (target != null && Fox.this.distanceTo(target) <= 2.0F) {
++            if (target != null && Fox.this.distanceToSqr(target) <= 2.0F * 2.0F) { // KioCG - optimize distanceTo
+                 Fox.this.doHurtTarget(getServerLevel(Fox.this.level()), target);
+             } else if (Fox.this.getXRot() > 0.0F
+                 && Fox.this.onGround()
 @@ -1426,6 +_,13 @@
          public boolean canUse() {
              return Fox.this.xxa == 0.0F && Fox.this.yya == 0.0F && Fox.this.zza == 0.0F && (this.canSleep() || Fox.this.isSleeping());

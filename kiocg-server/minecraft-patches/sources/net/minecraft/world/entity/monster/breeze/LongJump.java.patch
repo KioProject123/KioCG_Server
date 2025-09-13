@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/breeze/LongJump.java
++++ b/net/minecraft/world/entity/monster/breeze/LongJump.java
+@@ -204,7 +_,7 @@
+     }
+ 
+     private static boolean tooCloseForJump(Breeze breeze, LivingEntity target) {
+-        return target.distanceTo(breeze) - 4.0F <= 0.0F;
++        return target.distanceToSqr(breeze) - 4.0F * 4.0F <= 0.0F; // KioCG - optimize distanceTo
+     }
+ 
+     private static boolean canJumpFromCurrentPosition(ServerLevel level, Breeze breeze) {
