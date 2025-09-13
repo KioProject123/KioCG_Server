@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/PanicGoal.java
++++ b/net/minecraft/world/entity/ai/goal/PanicGoal.java
+@@ -80,7 +_,7 @@
+ 
+     @Override
+     public void start() {
+-        this.mob.getNavigation().moveTo(this.posX, this.posY, this.posZ, this.speedModifier);
++        this.mob.getNavigation().moveToLightweight(this.posX, this.posY, this.posZ, this.speedModifier); // KioCG - optimize entity behavior
+         this.isRunning = true;
+     }
+ 

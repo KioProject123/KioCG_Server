@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/FleeSunGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FleeSunGoal.java
+@@ -53,7 +_,7 @@
+ 
+     @Override
+     public void start() {
+-        this.mob.getNavigation().moveTo(this.wantedX, this.wantedY, this.wantedZ, this.speedModifier);
++        this.mob.getNavigation().moveToLightweight(this.wantedX, this.wantedY, this.wantedZ, this.speedModifier); // KioCG - optimize entity behavior
+     }
+ 
+     @Nullable

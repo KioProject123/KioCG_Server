@@ -15,7 +15,7 @@
      }
  
      default boolean canBeLeashed() {
-@@ -168,12 +_,13 @@
+@@ -168,16 +_,17 @@
              }
  
              Entity leashHolder = entity.getLeashHolder();
@@ -32,6 +32,11 @@
                      && entity.checkElasticInteractions(leashHolder, leashData)) {
                      entity.onElasticLeashPull();
                  } else {
+-                    entity.closeRangeLeashBehaviour(leashHolder);
++                    // entity.closeRangeLeashBehaviour(leashHolder); // KioCG - optimize entity behavior
+                 }
+ 
+                 entity.setYRot((float)(entity.getYRot() - leashData.angularMomentum));
 @@ -290,10 +_,11 @@
      private static Optional<Leashable.Wrench> computeDampenedSpringInteraction(
          Vec3 entityAttachmentPoint, Vec3 leasherAttachmentPoint, double elasticDistance, Vec3 knownMovement, Vec3 relativeAttachmentPoint

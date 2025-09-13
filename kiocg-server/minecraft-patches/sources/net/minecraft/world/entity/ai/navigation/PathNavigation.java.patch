@@ -1,32 +1,91 @@
 --- a/net/minecraft/world/entity/ai/navigation/PathNavigation.java
 +++ b/net/minecraft/world/entity/ai/navigation/PathNavigation.java
-@@ -210,16 +_,52 @@
-     private int lastFailure = 0;
-     private int pathfindFailures = 0;
-     // Paper end - Perf: Optimise pathfinding
+@@ -59,11 +_,11 @@
+     public PathNavigation(Mob mob, Level level) {
+         this.mob = mob;
+         this.level = level;
+-        this.pathFinder = this.createPathFinder(Mth.floor(mob.getAttributeBaseValue(Attributes.FOLLOW_RANGE) * 16.0));
++        this.pathFinder = this.createPathFinder(Mth.floor(mob.getAttributeBaseValue(Attributes.FOLLOW_RANGE) * 4.0)); // KioCG - optimize entity behavior
+     }
+ 
+     public void updatePathfinderMaxVisitedNodes() {
+-        int floor = Mth.floor(this.getMaxPathLength() * 16.0F);
++        int floor = Mth.floor(this.getMaxPathLength() * 4.0F); // KioCG - optimize entity behavior
+         this.pathFinder.setMaxVisitedNodes(floor);
+     }
+ 
+@@ -123,6 +_,23 @@
+         return this.createPath(positions, 8, false, distance);
+     }
+ 
 +    // KioCG start - optimize entity behavior
-+    private double xo = 0.0;
-+    private double yo = 0.0;
-+    private double zo = 0.0;
++    @Nullable
++    public Path createPathLightweight(BlockPos pos, int accuracy) {
++        BlockPos blockPos = this.mob.blockPosition();
++        int i = Math.abs(blockPos.getX() - pos.getX());
++        int i1 = Math.abs(blockPos.getY() - pos.getY());
++        int i2 = Math.abs(blockPos.getZ() - pos.getZ());
++        int distManhattan = i + i1 + i2;
++        int distChessboard = Math.max(Math.max(i, i1), i2);
++        int maxVisitedNodes = this.pathFinder.maxVisitedNodes;
++        this.pathFinder.maxVisitedNodes = distManhattan + 4;
++        Path path = this.createPath(ImmutableSet.of(pos), null, 2, false, accuracy, distChessboard);
++        this.pathFinder.maxVisitedNodes = maxVisitedNodes;
++        return path;
++    }
 +    // KioCG end - optimize entity behavior
++
+     @Nullable
+     public Path createPath(BlockPos pos, int accuracy) {
+         // Paper start - EntityPathfindEvent
+@@ -200,6 +_,7 @@
+                 this.targetPos = path.getTarget();
+                 this.reachRange = accuracy;
+                 this.resetStuckTimeout();
++                this.prevEntity = new java.lang.ref.WeakReference<>(target); // KioCG - optimize entity behavior
+             }
+ 
+             return path;
+@@ -212,20 +_,87 @@
+     // Paper end - Perf: Optimise pathfinding
  
      public boolean moveTo(double x, double y, double z, double speed) {
 -        return this.moveTo(this.createPath(x, y, z, 1), speed);
+-    }
 +        return this.moveTo(x, y, z, 1, speed); // KioCG - optimize entity behavior
-     }
++    }
++
++    // KioCG start - optimize entity behavior
++    public boolean moveToLightweight(double x, double y, double z, double speed) {
++        BlockPos blockPos = this.mob.blockPosition();
++        int i = Math.abs(blockPos.getX() - Mth.floor(x));
++        int i1 = Math.abs(blockPos.getY() - Mth.floor(y));
++        int i2 = Math.abs(blockPos.getZ() - Mth.floor(z));
++        int distManhattan = i + i1 + i2;
++        int distChessboard = Math.max(Math.max(i, i1), i2);
++        int maxVisitedNodes = this.pathFinder.maxVisitedNodes;
++        this.pathFinder.maxVisitedNodes = distManhattan + 4;
++        boolean moveTo = this.moveTo(x, y, z, 1, speed, 2, distChessboard);
++        this.pathFinder.maxVisitedNodes = maxVisitedNodes;
++        return moveTo;
++    }
++    // KioCG end - optimize entity behavior
  
      public boolean moveTo(double x, double y, double z, int accuracy, double speed) {
 -        return this.moveTo(this.createPath(x, y, z, accuracy), speed);
+-    }
+-
 +        // KioCG start - optimize entity behavior
-+        // 能够缓解特定情况下拴着的马匹运算量爆炸的问题https://github.com/PaperMC/Paper/issues/8587
-+        if (this.pathfindFailures > 0 && this.xo == x && this.yo == y && this.zo == z && net.minecraft.server.MinecraftServer.currentTick < this.lastFailure + 40) {
++        return this.moveTo(x, y, z, accuracy, speed, 8, this.getMaxPathLength());
++    }
++    public boolean moveTo(double x, double y, double z, int accuracy, double speed, int regionOffset, float followRange) {
++        if (this.pathfindFailures > 10 && this.path == null && net.minecraft.server.MinecraftServer.currentTick < this.lastFailure + 40) {
 +            return false;
 +        }
-+        this.xo = x;
-+        this.yo = y;
-+        this.zo = z;
 +
-+        if (this.moveTo(this.createPath(x, y, z, accuracy), speed)) {
++        Set<BlockPos> blockPos = ImmutableSet.of(BlockPos.containing(x, y, z));
++        Path path = this.createPath(blockPos, null, regionOffset, false, accuracy, followRange);
++        if (this.moveTo(path, speed)) {
 +            this.lastFailure = 0;
 +            this.pathfindFailures = 0;
 +            return true;
@@ -36,22 +95,48 @@
 +            return false;
 +        }
 +        // KioCG end - optimize entity behavior
-     }
++    }
 +
 +    // KioCG start - optimize entity behavior
-+    private Entity prevEntity = null;
-+    private int tickPause;
++    public boolean moveToLightweight(Entity entity, double speed) {
++        BlockPos blockPos = this.mob.blockPosition();
++        BlockPos blockPos1 = entity.blockPosition();
++        int i = Math.abs(blockPos.getX() - blockPos1.getX());
++        int i1 = Math.abs(blockPos.getY() - blockPos1.getY());
++        int i2 = Math.abs(blockPos.getZ() - blockPos1.getZ());
++        int distManhattan = i + i1 + i2;
++        int distChessboard = Math.max(Math.max(i, i1), i2);
++        int maxVisitedNodes = this.pathFinder.maxVisitedNodes;
++        this.pathFinder.maxVisitedNodes = distManhattan + 4;
++        boolean moveTo = this.moveTo(entity, speed, 2, distChessboard);
++        this.pathFinder.maxVisitedNodes = maxVisitedNodes;
++        return moveTo;
++    }
 +    // KioCG end - optimize entity behavior
- 
++
++    // KioCG start - optimize entity behavior
++    private java.lang.ref.WeakReference<Entity> prevEntity = new java.lang.ref.WeakReference<>(null);
++    private int tickPause = 0;
++    // KioCG end - optimize entity behavior
      public boolean moveTo(Entity entity, double speed) {
 +        // KioCG start - optimize entity behavior
-+        if (prevEntity == entity && entity.tickCount <= tickPause) {
++        return this.moveTo(entity, speed, 16, this.getMaxPathLength());
++    }
++    public boolean moveTo(Entity entity, double speed, int regionOffset, float followRange) {
++        if (prevEntity.refersTo(entity) && entity.tickCount <= this.tickPause) {
 +            return true;
 +        }
-+        prevEntity = entity;
-+        tickPause = entity.tickCount + 8 + this.mob.numCollisions * 2;
-+        // KioCG end - optimize entity behavior
-+
++        this.tickPause = entity.tickCount + (this.mob.numCollisions > 0 ? (8 + this.mob.numCollisions * 2) : 4);
          // Paper start - Perf: Optimise pathfinding
          if (this.pathfindFailures > 10 && this.path == null && net.minecraft.server.MinecraftServer.currentTick < this.lastFailure + 40) {
              return false;
+         }
+         // Paper end - Perf: Optimise pathfinding
+-        Path path = this.createPath(entity, 1);
++        // KioCG start - optimize entity behavior
++        Set<BlockPos> blockPos = ImmutableSet.of(entity.blockPosition());
++        Path path = this.createPath(blockPos, entity, regionOffset, true, 1, followRange);
++        // KioCG end - optimize entity behavior
+         // Paper start - Perf: Optimise pathfinding
+         if (path != null && this.moveTo(path, speed)) {
+             this.lastFailure = 0;

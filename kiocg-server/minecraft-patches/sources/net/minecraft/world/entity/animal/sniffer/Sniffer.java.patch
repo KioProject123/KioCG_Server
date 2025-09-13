@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 +++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -269,7 +_,7 @@
+     private boolean canDig(BlockPos pos) {
+         return this.level().getBlockState(pos).is(BlockTags.SNIFFER_DIGGABLE_BLOCK)
+             && this.getExploredPositions().noneMatch(globalPos -> GlobalPos.of(this.level().dimension(), pos).equals(globalPos))
+-            && Optional.ofNullable(this.getNavigation().createPath(pos, 1)).map(Path::canReach).orElse(false);
++            && Optional.ofNullable(this.getNavigation().createPathLightweight(pos, 1)).map(Path::canReach).orElse(false); // KioCG - optimize entity behavior
+     }
+ 
+     private void dropSeed() {
 @@ -424,7 +_,10 @@
      }
  

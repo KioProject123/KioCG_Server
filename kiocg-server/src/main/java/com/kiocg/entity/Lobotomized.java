@@ -3,6 +3,7 @@ package com.kiocg.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.LinkedHashSet;
@@ -35,7 +36,11 @@ public class Lobotomized {
             list[index = index + length] = relative.below();
         }
 
-        Path path = mob.getNavigation().createPath(new LinkedHashSet<>(List.of(list)), null, 0, false, 0, 2);
+        PathNavigation navigation = mob.getNavigation();
+        int maxVisitedNodes = navigation.pathFinder.maxVisitedNodes;
+        navigation.pathFinder.maxVisitedNodes = 4;
+        Path path = navigation.createPath(new LinkedHashSet<>(List.of(list)), null, 0, false, 0, 2);
+        navigation.pathFinder.maxVisitedNodes = maxVisitedNodes;
         return path != null && path.canReach();
     }
 }

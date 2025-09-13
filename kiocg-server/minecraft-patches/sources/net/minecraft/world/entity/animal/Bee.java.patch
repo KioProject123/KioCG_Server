@@ -1,5 +1,32 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
+@@ -315,7 +_,7 @@
+         Vec3 posTowards = AirRandomPos.getPosTowards(this, i2, i3, i, vec3, (float) (Math.PI / 10));
+         if (posTowards != null) {
+             this.navigation.setMaxVisitedNodesMultiplier(0.5F);
+-            this.navigation.moveTo(posTowards.x, posTowards.y, posTowards.z, 1.0);
++            this.navigation.moveToLightweight(posTowards.x, posTowards.y, posTowards.z, 1.0); // KioCG - optimize entity behavior
+         }
+     }
+ 
+@@ -877,7 +_,7 @@
+ 
+         private boolean pathfindDirectlyTowards(BlockPos pos) {
+             int i = Bee.this.closerThan(pos, 3) ? 1 : 2;
+-            Bee.this.navigation.setMaxVisitedNodesMultiplier(10.0F);
++            // Bee.this.navigation.setMaxVisitedNodesMultiplier(10.0F); // KioCG - optimize entity behavior
+             Bee.this.navigation.moveTo(pos.getX(), pos.getY(), pos.getZ(), i, 1.0);
+             return Bee.this.navigation.getPath() != null && Bee.this.navigation.getPath().canReach();
+         }
+@@ -1132,7 +_,7 @@
+                 if (optional.isPresent()) {
+                     Bee.this.savedFlowerPos = optional.get();
+                     Bee.this.navigation
+-                        .moveTo(Bee.this.savedFlowerPos.getX() + 0.5, Bee.this.savedFlowerPos.getY() + 0.5, Bee.this.savedFlowerPos.getZ() + 0.5, 1.2F);
++                        .moveToLightweight(Bee.this.savedFlowerPos.getX() + 0.5, Bee.this.savedFlowerPos.getY() + 0.5, Bee.this.savedFlowerPos.getZ() + 0.5, 1.2F); // KioCG - optimize entity behavior
+                     return true;
+                 } else {
+                     Bee.this.remainingCooldownBeforeLocatingNewFlower = Mth.nextInt(Bee.this.random, 20, 60);
 @@ -1196,7 +_,7 @@
                      Bee.this.remainingCooldownBeforeLocatingNewFlower = 200;
                  } else if (Bee.this.savedFlowerPos != null) { // Paper - add null check since API can manipulate this
@@ -18,3 +45,21 @@
                          boolean flag1 = true;
                          if (!flag && this.pollinatingTicks > 600) {
                              Bee.this.dropFlower();
+@@ -1253,7 +_,7 @@
+                 if (Bee.this.level().getGameTime() < orDefault) {
+                     map.put(blockPos.asLong(), orDefault);
+                 } else if (Bee.attractsBees(Bee.this.level().getBlockState(blockPos))) {
+-                    Path path = Bee.this.navigation.createPath(blockPos, 1);
++                    Path path = Bee.this.navigation.createPathLightweight(blockPos, 1); // KioCG - optimize entity behavior
+                     if (path != null && path.canReach()) {
+                         return Optional.of(blockPos);
+                     }
+@@ -1286,7 +_,7 @@
+         public void start() {
+             Vec3 vec3 = this.findPos();
+             if (vec3 != null) {
+-                Bee.this.navigation.moveTo(Bee.this.navigation.createPath(BlockPos.containing(vec3), 1), 1.0);
++                Bee.this.navigation.moveToLightweight(vec3.x, vec3.y, vec3.z, 1.0); // KioCG - optimize entity behavior
+             }
+         }
+ 

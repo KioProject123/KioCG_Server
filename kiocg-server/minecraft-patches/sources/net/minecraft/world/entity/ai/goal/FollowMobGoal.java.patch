@@ -14,3 +14,21 @@
      @Override
      public boolean canContinueToUse() {
          return this.followingMob != null && !this.navigation.isDone() && this.mob.distanceToSqr(this.followingMob) > this.stopDistance * this.stopDistance;
+@@ -81,7 +_,7 @@
+                 double d2 = this.mob.getZ() - this.followingMob.getZ();
+                 double d3 = d * d + d1 * d1 + d2 * d2;
+                 if (!(d3 <= this.stopDistance * this.stopDistance)) {
+-                    this.navigation.moveTo(this.followingMob, this.speedModifier);
++                    this.navigation.moveToLightweight(this.followingMob, this.speedModifier); // KioCG - optimize entity behavior
+                 } else {
+                     this.navigation.stop();
+                     LookControl lookControl = this.followingMob.getLookControl();
+@@ -91,7 +_,7 @@
+                             && lookControl.getWantedZ() == this.mob.getZ()) {
+                         double d4 = this.followingMob.getX() - this.mob.getX();
+                         double d5 = this.followingMob.getZ() - this.mob.getZ();
+-                        this.navigation.moveTo(this.mob.getX() - d4, this.mob.getY(), this.mob.getZ() - d5, this.speedModifier);
++                        this.navigation.moveToLightweight(this.mob.getX() - d4, this.mob.getY(), this.mob.getZ() - d5, this.speedModifier); // KioCG - optimize entity behavior
+                     }
+                 }
+             }

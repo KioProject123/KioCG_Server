@@ -50,3 +50,21 @@
              this.animal.resetLove();
              this.partner.resetLove();
              RandomSource random = this.animal.getRandom();
+@@ -400,7 +_,7 @@
+                     return;
+                 }
+ 
+-                this.turtle.getNavigation().moveTo(posTowards.x, posTowards.y, posTowards.z, this.speedModifier);
++                this.turtle.getNavigation().moveToLightweight(posTowards.x, posTowards.y, posTowards.z, this.speedModifier); // KioCG - optimize entity behavior
+             }
+         }
+     }
+@@ -648,7 +_,7 @@
+                         return;
+                     }
+ 
+-                    this.turtle.getNavigation().moveTo(posTowards.x, posTowards.y, posTowards.z, this.speedModifier);
++                    this.turtle.getNavigation().moveToLightweight(posTowards.x, posTowards.y, posTowards.z, this.speedModifier); // KioCG - optimize entity behavior
+                 }
+             }
+         }

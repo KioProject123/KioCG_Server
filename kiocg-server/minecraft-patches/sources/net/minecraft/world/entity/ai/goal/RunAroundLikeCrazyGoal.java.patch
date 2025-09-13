@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/RunAroundLikeCrazyGoal.java
++++ b/net/minecraft/world/entity/ai/goal/RunAroundLikeCrazyGoal.java
+@@ -39,7 +_,7 @@
+ 
+     @Override
+     public void start() {
+-        this.horse.getNavigation().moveTo(this.posX, this.posY, this.posZ, this.speedModifier);
++        this.horse.getNavigation().moveToLightweight(this.posX, this.posY, this.posZ, this.speedModifier); // KioCG - optimize entity behavior
+     }
+ 
+     @Override

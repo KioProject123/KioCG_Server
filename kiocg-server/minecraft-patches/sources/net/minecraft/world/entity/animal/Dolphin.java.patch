@@ -9,6 +9,15 @@
              } else {
                  this.setGotFish(true);
                  itemInHand.consume(1, player);
+@@ -464,7 +_,7 @@
+                     this.dolphin
+                         .getLookControl()
+                         .setLookAt(posTowards.x, posTowards.y, posTowards.z, this.dolphin.getMaxHeadYRot() + 20, this.dolphin.getMaxHeadXRot());
+-                    this.dolphin.getNavigation().moveTo(posTowards.x, posTowards.y, posTowards.z, 1.3);
++                    this.dolphin.getNavigation().moveToLightweight(posTowards.x, posTowards.y, posTowards.z, 1.3); // KioCG - optimize entity behavior
+                     if (level.random.nextInt(this.adjustedTickDelay(80)) == 0) {
+                         level.broadcastEntityEvent(this.dolphin, (byte)38);
+                     }
 @@ -491,6 +_,13 @@
              return this.player != null && this.player.isSwimming() && this.dolphin.getTarget() != this.player;
          }
@@ -23,17 +32,42 @@
          @Override
          public boolean canContinueToUse() {
              return this.player != null && this.player.isSwimming() && this.dolphin.distanceToSqr(this.player) < 256.0;
-@@ -535,6 +_,13 @@
-                 return !entitiesOfClass.isEmpty() || !Dolphin.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
+@@ -513,7 +_,7 @@
+             if (this.dolphin.distanceToSqr(this.player) < 6.25) {
+                 this.dolphin.getNavigation().stop();
+             } else {
+-                this.dolphin.getNavigation().moveTo(this.player, this.speedModifier);
++                this.dolphin.getNavigation().moveToLightweight(this.player, this.speedModifier); // KioCG - optimize entity behavior
+             }
+ 
+             if (this.player.isSwimming() && this.player.level().random.nextInt(6) == 0) {
+@@ -536,12 +_,19 @@
              }
          }
-+
+ 
 +        // KioCG start - optimize entity behavior
 +        @Override
 +        protected int canUseDelay() {
 +            return 20;
 +        }
 +        // KioCG end - optimize entity behavior
- 
++
          @Override
          public void start() {
+             List<ItemEntity> entitiesOfClass = Dolphin.this.level()
+                 .getEntitiesOfClass(ItemEntity.class, Dolphin.this.getBoundingBox().inflate(8.0, 8.0, 8.0), Dolphin.ALLOWED_ITEMS);
+             if (!entitiesOfClass.isEmpty()) {
+-                Dolphin.this.getNavigation().moveTo(entitiesOfClass.get(0), 1.2F);
++                Dolphin.this.getNavigation().moveToLightweight(entitiesOfClass.get(0), 1.2F); // KioCG - optimize entity behavior
+                 Dolphin.this.playSound(SoundEvents.DOLPHIN_PLAY, 1.0F, 1.0F);
+             }
+ 
+@@ -567,7 +_,7 @@
+                 this.drop(itemBySlot);
+                 Dolphin.this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+             } else if (!entitiesOfClass.isEmpty()) {
+-                Dolphin.this.getNavigation().moveTo(entitiesOfClass.get(0), 1.2F);
++                Dolphin.this.getNavigation().moveToLightweight(entitiesOfClass.get(0), 1.2F); // KioCG - optimize entity behavior
+             }
+         }
+ 

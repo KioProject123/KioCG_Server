@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/YieldJobSite.java
++++ b/net/minecraft/world/entity/ai/behavior/YieldJobSite.java
+@@ -79,7 +_,7 @@
+     }
+ 
+     private static boolean canReachPos(PathfinderMob mob, BlockPos pos, PoiType poi) {
+-        Path path = mob.getNavigation().createPath(pos, poi.validRange());
++        Path path = mob.getNavigation().createPathLightweight(pos, poi.validRange()); // KioCG - optimize entity behavior
+         return path != null && path.canReach();
+     }
+ }

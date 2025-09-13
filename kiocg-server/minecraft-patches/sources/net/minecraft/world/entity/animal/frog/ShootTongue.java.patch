@@ -9,3 +9,12 @@
                      level.playSound(null, owner, this.tongueSound, SoundSource.NEUTRAL, 2.0F, 1.0F);
                      owner.setPose(Pose.USING_TONGUE);
                      livingEntity.setDeltaMovement(livingEntity.position().vectorTo(owner.position()).normalize().scale(0.75));
+@@ -139,7 +_,7 @@
+     }
+ 
+     private boolean canPathfindToTarget(Frog frog, LivingEntity target) {
+-        Path path = frog.getNavigation().createPath(target, 0);
++        Path path = frog.getNavigation().createPath(com.google.common.collect.ImmutableSet.of(target.blockPosition()), target, 2, true, 0, 2); // KioCG - optimize entity behavior
+         return path != null && path.getDistToTarget() < 1.75F;
+     }
+ 

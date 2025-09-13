@@ -14,3 +14,12 @@
      @Override
      public boolean canContinueToUse() {
          return this.partner.isAlive() && this.partner.isInLove() && this.loveTime < 60 && !this.partner.isPanicking();
+@@ -53,7 +_,7 @@
+     @Override
+     public void tick() {
+         this.animal.getLookControl().setLookAt(this.partner, 10.0F, this.animal.getMaxHeadXRot());
+-        this.animal.getNavigation().moveTo(this.partner, this.speedModifier);
++        this.animal.getNavigation().moveToLightweight(this.partner, this.speedModifier); // KioCG - optimize entity behavior
+         this.loveTime++;
+         if (this.loveTime >= this.adjustedTickDelay(60) && this.animal.distanceToSqr(this.partner) < 9.0) {
+             this.breed();

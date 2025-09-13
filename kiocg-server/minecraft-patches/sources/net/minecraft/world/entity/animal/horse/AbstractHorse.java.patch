@@ -26,6 +26,15 @@
                  flag = true;
              }
          }
+@@ -568,7 +_,7 @@
+                 AbstractHorse.class, MOMMY_TARGETING, this, this.getX(), this.getY(), this.getZ(), this.getBoundingBox().inflate(16.0)
+             );
+             if (nearestEntity != null && this.distanceToSqr(nearestEntity) > 4.0) {
+-                this.navigation.createPath(nearestEntity, 0);
++                // this.navigation.createPath(nearestEntity, 0); // KioCG - optimize entity behavior: 未使用?
+             }
+         }
+     }
 @@ -672,6 +_,19 @@
                      this.equipBodyArmor(player, itemInHand);
                      return InteractionResult.SUCCESS;

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/goal/MoveToBlockGoal.java
++++ b/net/minecraft/world/entity/ai/goal/MoveToBlockGoal.java
+@@ -69,7 +_,7 @@
+     }
+ 
+     protected void moveMobToBlock() {
+-        this.mob.getNavigation().moveTo(this.blockPos.getX() + 0.5, this.blockPos.getY() + 1, this.blockPos.getZ() + 0.5, this.speedModifier);
++        this.mob.getNavigation().moveToLightweight(this.blockPos.getX() + 0.5, this.blockPos.getY() + 1, this.blockPos.getZ() + 0.5, this.speedModifier); // KioCG - optimize entity behavior
+     }
+ 
+     public double acceptedDistance() {
+@@ -92,7 +_,7 @@
+             this.reachedTarget = false;
+             this.tryTicks++;
+             if (this.shouldRecalculatePath()) {
+-                this.mob.getNavigation().moveTo(moveToTarget.getX() + 0.5, moveToTarget.getY(), moveToTarget.getZ() + 0.5, this.speedModifier);
++                this.mob.getNavigation().moveToLightweight(moveToTarget.getX() + 0.5, moveToTarget.getY(), moveToTarget.getZ() + 0.5, this.speedModifier); // KioCG - optimize entity behavior
+             }
+         } else {
+             this.reachedTarget = true;

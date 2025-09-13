@@ -9,17 +9,26 @@
              } else if (!this.level().isClientSide && this.getAge() == 0 && this.canFallInLove()) {
                  final ItemStack breedCopy = itemInHand.copy(); // Paper - Fix EntityBreedEvent copying
                  this.usePlayerItem(player, hand, itemInHand);
-@@ -1062,6 +_,13 @@
-                             .isEmpty()
+@@ -1063,6 +_,13 @@
                  );
          }
-+
+ 
 +        // KioCG start - optimize entity behavior
 +        @Override
 +        protected int canUseDelay() {
 +            return 20;
 +        }
 +        // KioCG end - optimize entity behavior
- 
++
          @Override
          public boolean canContinueToUse() {
+             return !Panda.this.isInWater()
+@@ -1083,7 +_,7 @@
+                 List<ItemEntity> entitiesOfClass = Panda.this.level()
+                     .getEntitiesOfClass(ItemEntity.class, Panda.this.getBoundingBox().inflate(8.0, 8.0, 8.0), Panda::canPickUpAndEat);
+                 if (!entitiesOfClass.isEmpty()) {
+-                    Panda.this.getNavigation().moveTo(entitiesOfClass.getFirst(), 1.2F);
++                    Panda.this.getNavigation().moveToLightweight(entitiesOfClass.getFirst(), 1.2F); // KioCG - optimize entity behavior
+                 }
+             } else {
+                 Panda.this.tryToSit();

@@ -16,4 +16,5 @@ public net.minecraft.world.level.block.CandleCakeBlock candleBlock
 public net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity teleportCooldown
 public net.minecraft.world.level.chunk.LevelChunk removeBlockEntityTicker(Lnet/minecraft/core/BlockPos;)V
 public net.minecraft.world.level.chunk.LevelChunk updateBlockEntityTicker(Lnet/minecraft/world/level/block/entity/BlockEntity;)V
+public net.minecraft.world.level.pathfinder.PathFinder maxVisitedNodes
 public-f net.minecraft.world.level.biome.Biome generationSettings

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/AbstractSchoolingFish.java
++++ b/net/minecraft/world/entity/animal/AbstractSchoolingFish.java
+@@ -90,7 +_,7 @@
+ 
+     public void pathToLeader() {
+         if (this.isFollower()) {
+-            this.getNavigation().moveTo(this.leader, 1.0);
++            this.getNavigation().moveToLightweight(this.leader, 1.0); // KioCG - optimize entity behavior
+         }
+     }
+ 

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/VillagerMakeLove.java
++++ b/net/minecraft/world/entity/ai/behavior/VillagerMakeLove.java
+@@ -102,7 +_,7 @@
+     }
+ 
+     private boolean canReach(Villager villager, BlockPos pos, Holder<PoiType> poiType) {
+-        Path path = villager.getNavigation().createPath(pos, poiType.value().validRange());
++        Path path = villager.getNavigation().createPathLightweight(pos, poiType.value().validRange()); // KioCG - optimize entity behavior
+         return path != null && path.canReach();
+     }
+ 

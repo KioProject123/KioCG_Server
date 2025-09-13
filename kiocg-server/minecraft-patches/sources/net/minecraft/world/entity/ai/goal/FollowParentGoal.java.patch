@@ -14,3 +14,12 @@
      @Override
      public boolean canContinueToUse() {
          if (this.animal.getAge() >= 0) {
+@@ -77,7 +_,7 @@
+     public void tick() {
+         if (--this.timeToRecalcPath <= 0) {
+             this.timeToRecalcPath = this.adjustedTickDelay(10);
+-            this.animal.getNavigation().moveTo(this.parent, this.speedModifier);
++            this.animal.getNavigation().moveToLightweight(this.parent, this.speedModifier); // KioCG - optimize entity behavior
+         }
+     }
+ }

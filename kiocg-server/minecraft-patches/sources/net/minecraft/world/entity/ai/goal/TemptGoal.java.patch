@@ -14,3 +14,12 @@
      private boolean shouldFollow(LivingEntity entity) {
          return this.items.test(entity.getMainHandItem()) || this.items.test(entity.getOffhandItem());
      }
+@@ -133,7 +_,7 @@
+     }
+ 
+     protected void navigateTowards(LivingEntity player) { // Paper
+-        this.mob.getNavigation().moveTo(player, this.speedModifier);
++        this.mob.getNavigation().moveToLightweight(player, this.speedModifier); // KioCG - optimize entity behavior
+     }
+ 
+     public boolean isRunning() {

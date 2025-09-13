@@ -22,6 +22,15 @@
                  BlockState blockState = Fox.this.level().getBlockState(this.blockPos);
                  if (blockState.is(Blocks.SWEET_BERRY_BUSH)) {
                      this.pickSweetBerries(blockState);
+@@ -1167,7 +_,7 @@
+                     } else {
+                         boolean isPathClear = Fox.isPathClear(Fox.this, target);
+                         if (!isPathClear) {
+-                            Fox.this.getNavigation().createPath(target, 0);
++                            // Fox.this.getNavigation().createPath(target, 0); // KioCG - optimize entity behavior: 未使用?
+                             Fox.this.setIsCrouching(false);
+                             Fox.this.setIsInterested(false);
+                         }
 @@ -1180,6 +_,13 @@
              }
          }
@@ -45,17 +54,44 @@
                  Fox.this.doHurtTarget(getServerLevel(Fox.this.level()), target);
              } else if (Fox.this.getXRot() > 0.0F
                  && Fox.this.onGround()
-@@ -1426,6 +_,13 @@
-         public boolean canUse() {
+@@ -1279,7 +_,7 @@
+                 .getEntitiesOfClass(ItemEntity.class, Fox.this.getBoundingBox().inflate(8.0, 8.0, 8.0), Fox.ALLOWED_ITEMS);
+             ItemStack itemBySlot = Fox.this.getItemBySlot(EquipmentSlot.MAINHAND);
+             if (itemBySlot.isEmpty() && !entitiesOfClass.isEmpty()) {
+-                Fox.this.getNavigation().moveTo(entitiesOfClass.get(0), 1.2F);
++                Fox.this.getNavigation().moveToLightweight(entitiesOfClass.get(0), 1.2F); // KioCG - optimize entity behavior
+             }
+         }
+ 
+@@ -1288,7 +_,7 @@
+             List<ItemEntity> entitiesOfClass = Fox.this.level()
+                 .getEntitiesOfClass(ItemEntity.class, Fox.this.getBoundingBox().inflate(8.0, 8.0, 8.0), Fox.ALLOWED_ITEMS);
+             if (!entitiesOfClass.isEmpty()) {
+-                Fox.this.getNavigation().moveTo(entitiesOfClass.get(0), 1.2F);
++                Fox.this.getNavigation().moveToLightweight(entitiesOfClass.get(0), 1.2F); // KioCG - optimize entity behavior
+             }
+         }
+     }
+@@ -1427,6 +_,13 @@
              return Fox.this.xxa == 0.0F && Fox.this.yya == 0.0F && Fox.this.zza == 0.0F && (this.canSleep() || Fox.this.isSleeping());
          }
-+
+ 
 +        // KioCG start - optimize entity behavior
 +        @Override
 +        protected int canUseDelay() {
 +            return this.countdown > 0 ? 1 : 20;
 +        }
 +        // KioCG end - optimize entity behavior
- 
++
          @Override
          public boolean canContinueToUse() {
+             return this.canSleep();
+@@ -1510,7 +_,7 @@
+                     Fox.this.setIsCrouching(true);
+                     Fox.this.getNavigation().stop();
+                 } else {
+-                    Fox.this.getNavigation().moveTo(target, 1.5);
++                    Fox.this.getNavigation().moveToLightweight(target, 1.5); // KioCG - optimize entity behavior
+                 }
+             }
+         }

@@ -1,6 +1,16 @@
 --- a/net/minecraft/world/entity/ai/goal/AvoidEntityGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/AvoidEntityGoal.java
-@@ -91,6 +_,13 @@
+@@ -85,12 +_,21 @@
+             } else if (this.toAvoid.distanceToSqr(posAway.x, posAway.y, posAway.z) < this.toAvoid.distanceToSqr(this.mob)) {
+                 return false;
+             } else {
+-                this.path = this.pathNav.createPath(posAway.x, posAway.y, posAway.z, 0);
+-                return this.path != null;
++                // KioCG start - optimize entity behavior
++                // this.path = this.pathNav.createPath(posAway.x, posAway.y, posAway.z, 0);
++                return this.pathNav.moveTo(posAway.x, posAway.y, posAway.z, 0, this.walkSpeedModifier, 2, 16);
++                // KioCG end - optimize entity behavior
+             }
          }
      }
  
@@ -14,3 +24,12 @@
      @Override
      public boolean canContinueToUse() {
          return !this.pathNav.isDone();
+@@ -98,7 +_,7 @@
+ 
+     @Override
+     public void start() {
+-        this.pathNav.moveTo(this.path, this.walkSpeedModifier);
++        // this.pathNav.moveTo(this.path, this.walkSpeedModifier); // KioCG - optimize entity behavior
+     }
+ 
+     @Override

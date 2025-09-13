@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/npc/WanderingTrader.java
++++ b/net/minecraft/world/entity/npc/WanderingTrader.java
+@@ -267,9 +_,9 @@
+                         )
+                         .normalize();
+                     Vec3 vec31 = vec3.scale(10.0).add(this.trader.getX(), this.trader.getY(), this.trader.getZ());
+-                    WanderingTrader.this.navigation.moveTo(vec31.x, vec31.y, vec31.z, this.speedModifier);
++                    WanderingTrader.this.navigation.moveToLightweight(vec31.x, vec31.y, vec31.z, this.speedModifier); // KioCG - optimize entity behavior
+                 } else {
+-                    WanderingTrader.this.navigation.moveTo(wanderTarget.getX(), wanderTarget.getY(), wanderTarget.getZ(), this.speedModifier);
++                    WanderingTrader.this.navigation.moveToLightweight(wanderTarget.getX(), wanderTarget.getY(), wanderTarget.getZ(), this.speedModifier); // KioCG - optimize entity behavior
+                 }
+             }
+         }

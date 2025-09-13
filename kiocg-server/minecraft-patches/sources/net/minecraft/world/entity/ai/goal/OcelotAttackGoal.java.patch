@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/OcelotAttackGoal.java
++++ b/net/minecraft/world/entity/ai/goal/OcelotAttackGoal.java
+@@ -53,7 +_,7 @@
+             d2 = 0.6;
+         }
+ 
+-        this.mob.getNavigation().moveTo(this.target, d2);
++        this.mob.getNavigation().moveToLightweight(this.target, d2); // KioCG - optimize entity behavior
+         this.attackTime = Math.max(this.attackTime - 1, 0);
+         if (!(d1 > d)) {
+             if (this.attackTime <= 0) {

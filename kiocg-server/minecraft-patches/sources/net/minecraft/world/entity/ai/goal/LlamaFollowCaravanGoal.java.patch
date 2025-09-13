@@ -14,15 +14,22 @@
      @Override
      public boolean canContinueToUse() {
          if (this.llama.inCaravan() && this.llama.getCaravanHead().isAlive() && this.firstIsLeashed(this.llama, 0)) {
-@@ -106,7 +_,10 @@
+@@ -106,12 +_,16 @@
          if (this.llama.inCaravan()) {
              if (!(this.llama.getLeashHolder() instanceof LeashFenceKnotEntity)) {
                  Llama caravanHead = this.llama.getCaravanHead();
 -                double d = this.llama.distanceTo(caravanHead);
 +                // KioCG start - optimize distanceTo
 +                double d = this.llama.distanceToSqr(caravanHead);
-+                d = d < 2.0 * 2.0 ? net.minecraft.util.Mth.sqrt((float) d) : 2.0;
++                if (d <= 2.0 * 2.0) return;
++                d = net.minecraft.util.Mth.sqrt((float) d);
 +                // KioCG end - optimize distanceTo
                  float f = 2.0F;
                  Vec3 vec3 = new Vec3(caravanHead.getX() - this.llama.getX(), caravanHead.getY() - this.llama.getY(), caravanHead.getZ() - this.llama.getZ())
                      .normalize()
+                     .scale(Math.max(d - 2.0, 0.0));
+-                this.llama.getNavigation().moveTo(this.llama.getX() + vec3.x, this.llama.getY() + vec3.y, this.llama.getZ() + vec3.z, this.speedModifier);
++                this.llama.getNavigation().moveToLightweight(this.llama.getX() + vec3.x, this.llama.getY() + vec3.y, this.llama.getZ() + vec3.z, this.speedModifier); // KioCG - optimize distanceTo
+             }
+         }
+     }
