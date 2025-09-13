@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/ai/behavior/GoAndGiveItemsToTarget.java
++++ b/net/minecraft/world/entity/ai/behavior/GoAndGiveItemsToTarget.java
+@@ -62,8 +_,8 @@
+         Optional<PositionTracker> optional = this.targetPositionGetter.apply(owner);
+         if (!optional.isEmpty()) {
+             PositionTracker positionTracker = optional.get();
+-            double d = positionTracker.currentPosition().distanceTo(owner.getEyePosition());
+-            if (d < 3.0) {
++            double d = positionTracker.currentPosition().distanceToSqr(owner.getEyePosition()); // KioCG - optimize distanceToSqr
++            if (d < 3.0 * 3.0) { // KioCG - optimize distanceToSqr
+                 ItemStack itemStack = owner.getInventory().removeItem(0, 1);
+                 if (!itemStack.isEmpty()) {
+                     throwItem(owner, itemStack, getThrowPosition(positionTracker));

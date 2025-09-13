@@ -47,6 +47,15 @@
          if (i > 0 && (this.dealtDamage || this.isNoPhysics()) && owner != null) {
              if (!this.isAcceptibleReturnOwner()) {
                  if (this.level() instanceof ServerLevel serverLevel && this.pickup == AbstractArrow.Pickup.ALLOWED) {
+@@ -74,7 +_,7 @@
+ 
+                 this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DROP); // CraftBukkit - add Bukkit remove cause
+             } else {
+-                if (!(owner instanceof Player) && this.position().distanceTo(owner.getEyePosition()) < owner.getBbWidth() + 1.0) {
++                if (!(owner instanceof Player) && this.position().distanceToSqr(owner.getEyePosition()) < Math.pow(owner.getBbWidth() + 1.0, 2)) { // KioCG - optimize distanceToSqr
+                     this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                     return;
+                 }
 @@ -93,7 +_,57 @@
          }
  

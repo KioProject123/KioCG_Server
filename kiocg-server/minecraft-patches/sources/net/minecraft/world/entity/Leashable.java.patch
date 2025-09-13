@@ -1,13 +1,51 @@
 --- a/net/minecraft/world/entity/Leashable.java
 +++ b/net/minecraft/world/entity/Leashable.java
-@@ -168,6 +_,7 @@
+@@ -54,11 +_,11 @@
+     }
+ 
+     default boolean canHaveALeashAttachedTo(Entity entity) {
+-        return this != entity && !(this.leashDistanceTo(entity) > this.leashSnapDistance()) && this.canBeLeashed();
++        return this != entity && !(this.leashDistanceToSqr(entity) > Math.pow(this.leashSnapDistance(), 2)) && this.canBeLeashed(); // KioCG - optimize distanceToSqr
+     }
+ 
+-    default double leashDistanceTo(Entity entity) {
+-        return entity.getBoundingBox().getCenter().distanceTo(((Entity)this).getBoundingBox().getCenter());
++    default double leashDistanceToSqr(Entity entity) { // KioCG - optimize distanceToSqr
++        return entity.getBoundingBox().getCenter().distanceToSqr(((Entity)this).getBoundingBox().getCenter()); // KioCG - optimize distanceToSqr
+     }
+ 
+     default boolean canBeLeashed() {
+@@ -168,12 +_,13 @@
              }
  
              Entity leashHolder = entity.getLeashHolder();
 +            if (!(entity instanceof LeashFenceKnotEntity && leashHolder instanceof LeashFenceKnotEntity)) // KioCG - leash fence
              if (leashHolder != null && leashHolder.level() == entity.level()) {
-                 double d = entity.leashDistanceTo(leashHolder);
+-                double d = entity.leashDistanceTo(leashHolder);
++                double d = entity.leashDistanceToSqr(leashHolder); // KioCG - optimize distanceToSqr
                  entity.whenLeashedTo(leashHolder);
+-                if (d > entity.leashSnapDistanceOrConfig()) { // Paper - Configurable max leash distance
++                if (d > Math.pow(entity.leashSnapDistanceOrConfig(), 2)) { // Paper - Configurable max leash distance // KioCG - optimize distanceToSqr
+                     entity.leashTooFarBehaviour();
+-                } else if (d > entity.leashElasticDistance() - leashHolder.getBbWidth() - entity.getBbWidth()
++                } else if (d > Math.pow(entity.leashElasticDistance() - leashHolder.getBbWidth() - entity.getBbWidth(), 2) // KioCG - optimize distanceToSqr
+                     && entity.checkElasticInteractions(leashHolder, leashData)) {
+                     entity.onElasticLeashPull();
+                 } else {
+@@ -290,10 +_,11 @@
+     private static Optional<Leashable.Wrench> computeDampenedSpringInteraction(
+         Vec3 entityAttachmentPoint, Vec3 leasherAttachmentPoint, double elasticDistance, Vec3 knownMovement, Vec3 relativeAttachmentPoint
+     ) {
+-        double d = leasherAttachmentPoint.distanceTo(entityAttachmentPoint);
+-        if (d < elasticDistance) {
++        double d = leasherAttachmentPoint.distanceToSqr(entityAttachmentPoint); // KioCG - optimize distanceToSqr
++        if (d < elasticDistance * elasticDistance) { // KioCG - optimize distanceToSqr
+             return Optional.empty();
+         } else {
++            d = Math.sqrt(d); // KioCG - optimize distanceToSqr
+             Vec3 vec3 = entityAttachmentPoint.subtract(leasherAttachmentPoint).normalize().scale(d - elasticDistance);
+             double d1 = Leashable.Wrench.torqueFromForce(relativeAttachmentPoint, vec3);
+             boolean flag = knownMovement.dot(vec3) >= 0.0;
 @@ -331,6 +_,15 @@
          return new Vec3(0.0, entity.getEyeHeight(), entity.getBbWidth() * 0.4F);
      }
