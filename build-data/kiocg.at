@@ -7,6 +7,7 @@ public net.minecraft.world.entity.Entity DATA_AIR_SUPPLY_ID
 public net.minecraft.world.entity.Entity numCollisions
 public net.minecraft.world.entity.ai.navigation.PathNavigation createPath(Ljava/util/Set;Lnet/minecraft/world/entity/Entity;IZIF)Lnet/minecraft/world/level/pathfinder/Path;
 public net.minecraft.world.entity.ai.sensing.NearestBedSensor doTick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Mob;)V
+public net.minecraft.world.entity.ai.sensing.Sensor updateTargetingConditionRanges(Lnet/minecraft/world/entity/LivingEntity;)V
 public net.minecraft.world.entity.player.Player sendSoundEffect(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V
 public net.minecraft.world.entity.projectile.FishingHook biting
 public net.minecraft.world.level.Level getTicksPerSpawn(Lorg/bukkit/entity/SpawnCategory;)I

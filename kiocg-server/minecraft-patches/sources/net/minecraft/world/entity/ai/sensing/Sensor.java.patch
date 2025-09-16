@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/sensing/Sensor.java
++++ b/net/minecraft/world/entity/ai/sensing/Sensor.java
+@@ -51,7 +_,7 @@
+     public final void tick(ServerLevel level, E entity) {
+         if (--this.timeToTick <= 0L) {
+             this.timeToTick = java.util.Objects.requireNonNullElse(level.paperConfig().tickRates.sensor.get(entity.getType(), this.configKey), this.scanRate); // Paper - configurable sensor tick rate and timings
+-            this.updateTargetingConditionRanges(entity);
++            // this.updateTargetingConditionRanges(entity); // KioCG - optimize entity behavior: 在属性修改时更新
+             this.doTick(level, entity);
+         }
+     }

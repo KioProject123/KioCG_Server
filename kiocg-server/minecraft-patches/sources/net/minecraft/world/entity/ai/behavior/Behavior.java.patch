@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/ai/behavior/Behavior.java
++++ b/net/minecraft/world/entity/ai/behavior/Behavior.java
+@@ -53,6 +_,7 @@
+         // Paper end - configurable behavior tick rate and timings
+         if (this.hasRequiredMemories(owner) && this.checkExtraStartConditions(level, owner)) {
+             this.status = Behavior.Status.RUNNING;
++            owner.getBrain().starting(((BehaviorControl)this)); // KioCG - optimize entity behavior
+             int i = this.minDuration + level.getRandom().nextInt(this.maxDuration + 1 - this.minDuration);
+             this.endTimestamp = gameTime + i;
+             this.start(level, owner, gameTime);
+@@ -80,6 +_,7 @@
+     @Override
+     public final void doStop(ServerLevel level, E entity, long gameTime) {
+         this.status = Behavior.Status.STOPPED;
++        entity.getBrain().stopped((BehaviorControl)this); // KioCG - optimize entity behavior
+         this.stop(level, entity, gameTime);
+     }
+ 

@@ -11,3 +11,19 @@
      }
  
      @Override
+@@ -22,6 +_,7 @@
+     @Override
+     public final boolean tryStart(ServerLevel level, LivingEntity entity, long gameTime) {
+         this.status = Behavior.Status.RUNNING;
++        entity.getBrain().starting(this); // KioCG - optimize entity behavior
+         int i = this.minDuration + level.getRandom().nextInt(this.maxDuration + 1 - this.minDuration);
+         this.endTimestamp = gameTime + i;
+         return true;
+@@ -37,6 +_,7 @@
+     @Override
+     public final void doStop(ServerLevel level, LivingEntity entity, long gameTime) {
+         this.status = Behavior.Status.STOPPED;
++        entity.getBrain().stopped(this); // KioCG - optimize entity behavior
+     }
+ 
+     @Override

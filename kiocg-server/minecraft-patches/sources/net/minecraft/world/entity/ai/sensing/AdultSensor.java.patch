@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/ai/sensing/AdultSensor.java
++++ b/net/minecraft/world/entity/ai/sensing/AdultSensor.java
+@@ -16,6 +_,7 @@
+ 
+     @Override
+     protected void doTick(ServerLevel level, LivingEntity entity) {
++        if (!entity.isBaby()) return; // KioCG - optimize entity behavior
+         entity.getBrain()
+             .getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES)
+             .ifPresent(nearestVisibleLivingEntities -> this.setNearestVisibleAdult(entity, nearestVisibleLivingEntities));

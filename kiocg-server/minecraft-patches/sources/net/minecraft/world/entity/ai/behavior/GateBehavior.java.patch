@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/entity/ai/behavior/GateBehavior.java
++++ b/net/minecraft/world/entity/ai/behavior/GateBehavior.java
+@@ -56,6 +_,7 @@
+     public final boolean tryStart(ServerLevel level, E entity, long gameTime) {
+         if (this.hasRequiredMemories(entity)) {
+             this.status = Behavior.Status.RUNNING;
++            entity.getBrain().starting((BehaviorControl)this); // KioCG - optimize entity behavior
+             this.orderPolicy.apply(this.behaviors);
+             this.runningPolicy.apply(this.behaviors, level, entity, gameTime); // Paper - Perf: Remove streams from hot code
+             return true;
+@@ -74,13 +_,14 @@
+         }
+         // Paper end - Perf: Remove streams from hot code
+         if (this.behaviors.stream().noneMatch(behavior -> behavior.getStatus() == Behavior.Status.RUNNING)) {
+-            this.doStop(level, entity, gameTime);
++            this.doStopFast(level, entity, gameTime); // KioCG - optimize entity behavior
+         }
+     }
+ 
+     @Override
+     public final void doStop(ServerLevel level, E entity, long gameTime) {
+         this.status = Behavior.Status.STOPPED;
++        entity.getBrain().stopped((BehaviorControl)this); // KioCG - optimize entity behavior
+         // Paper start - Perf: Remove streams from hot code
+         for (final BehaviorControl<? super E> behavior : this.behaviors) {
+             if (behavior.getStatus() == Behavior.Status.RUNNING) {
+@@ -92,6 +_,18 @@
+         }
+         // Paper end - Perf: Remove streams from hot code
+     }
++
++    // KioCG start - optimize entity behavior
++    private void doStopFast(ServerLevel level, E entity, long gameTime) {
++        this.status = Behavior.Status.STOPPED;
++        entity.getBrain().stopped((BehaviorControl)this);
++        // Paper start - Perf: Remove streams from hot code
++        for (final MemoryModuleType<?> exitErasedMemory : this.exitErasedMemories) {
++            entity.getBrain().eraseMemory(exitErasedMemory);
++        }
++        // Paper end - Perf: Remove streams from hot code
++    }
++    // KioCG end - optimize entity behavior
+ 
+     @Override
+     public String debugString() {

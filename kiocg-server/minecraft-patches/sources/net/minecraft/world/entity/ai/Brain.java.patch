@@ -1,5 +1,74 @@
 --- a/net/minecraft/world/entity/ai/Brain.java
 +++ b/net/minecraft/world/entity/ai/Brain.java
+@@ -48,6 +_,11 @@
+     private final Map<MemoryModuleType<?>, Optional<? extends ExpirableValue<?>>> memories = Maps.newHashMap();
+     private final Map<SensorType<? extends Sensor<? super E>>, Sensor<? super E>> sensors = Maps.newLinkedHashMap();
+     private final Map<Integer, Map<Activity, Set<BehaviorControl<? super E>>>> availableBehaviorsByPriority = Maps.newTreeMap();
++    // KioCG start - optimize entity behavior
++    private final Set<BehaviorControl<? super E>> runningBehaviors = new it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet<>();
++    private final com.google.common.collect.Multimap<Activity, BehaviorControl<? super E>> stoppedBehaviors = com.google.common.collect.LinkedHashMultimap.create();
++    private final Map<BehaviorControl<? super E>, Activity> behaviorActivity = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>();
++    // KioCG end - optimize entity behavior
+     private Schedule schedule = Schedule.EMPTY;
+     private final Map<Activity, Set<Pair<MemoryModuleType<?>, MemoryStatus>>> activityRequirements = Maps.newHashMap();
+     private final Map<Activity, Set<MemoryModuleType<?>>> activityMemoriesToEraseWhenStopped = Maps.newHashMap();
+@@ -250,21 +_,11 @@
+ 
+     @Deprecated
+     @VisibleForDebug
+-    public List<BehaviorControl<? super E>> getRunningBehaviors() {
+-        List<BehaviorControl<? super E>> list = new ObjectArrayList<>();
+-
+-        for (Map<Activity, Set<BehaviorControl<? super E>>> map : this.availableBehaviorsByPriority.values()) {
+-            for (Set<BehaviorControl<? super E>> set : map.values()) {
+-                for (BehaviorControl<? super E> behaviorControl : set) {
+-                    if (behaviorControl.getStatus() == Behavior.Status.RUNNING) {
+-                        list.add(behaviorControl);
+-                    }
+-                }
+-            }
+-        }
+-
+-        return list;
++    // KioCG start - optimize entity behavior
++    public BehaviorControl<? super E>[] getRunningBehaviors() {
++        return this.runningBehaviors.toArray(new BehaviorControl[0]);
+     }
++    // KioCG end - optimize entity behavior
+ 
+     public void useDefaultActivity() {
+         this.setActiveActivity(this.defaultActivity);
+@@ -382,8 +_,28 @@
+                 .computeIfAbsent(pair.getFirst(), integer -> Maps.newHashMap())
+                 .computeIfAbsent(activity, activity1 -> Sets.newLinkedHashSet())
+                 .add((BehaviorControl<? super E>)pair.getSecond());
+-        }
+-    }
++            // KioCG start - optimize entity behavior
++            this.stoppedBehaviors.put(activity, pair.getSecond());
++            if (this.behaviorActivity.put(pair.getSecond(), activity) != null) {
++                throw new IllegalStateException("Behavior 拥有多个 Activity");
++            }
++            // KioCG end - optimize entity behavior
++        }
++    }
++
++    // KioCG start - optimize entity behavior
++    public void starting(BehaviorControl<? super E> behaviorControl) {
++        if (this.stoppedBehaviors.remove(this.behaviorActivity.get(behaviorControl), behaviorControl)) {
++            this.runningBehaviors.add(behaviorControl);
++        }
++    }
++
++    public void stopped(BehaviorControl<? super E> behaviorControl) {
++        if (this.runningBehaviors.remove(behaviorControl)) {
++            this.stoppedBehaviors.put(this.behaviorActivity.get(behaviorControl), behaviorControl);
++        }
++    }
++    // KioCG end - optimize entity behavior
+ 
+     @VisibleForTesting
+     public void removeAllBehaviors() {
 @@ -408,9 +_,11 @@
      }
  
@@ -12,3 +81,43 @@
          this.tickEachRunningBehavior(level, entity);
      }
  
+@@ -420,6 +_,14 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior: 在属性修改时更新
++    public void updateSensors(E entity) {
++        for (Sensor<? super E> sensor : this.sensors.values()) {
++            sensor.updateTargetingConditionRanges(entity);
++        }
++    }
++    // KioCG end - optimize entity behavior: 在属性修改时更新
++
+     private void forgetOutdatedMemories() {
+         for (Entry<MemoryModuleType<?>, Optional<? extends ExpirableValue<?>>> entry : this.memories.entrySet()) {
+             if (entry.getValue().isPresent()) {
+@@ -444,18 +_,14 @@
+     private void startEachNonRunningBehavior(ServerLevel level, E entity) {
+         long gameTime = level.getGameTime();
+ 
+-        for (Map<Activity, Set<BehaviorControl<? super E>>> map : this.availableBehaviorsByPriority.values()) {
+-            for (Entry<Activity, Set<BehaviorControl<? super E>>> entry : map.entrySet()) {
+-                Activity activity = entry.getKey();
+-                if (this.activeActivities.contains(activity)) {
+-                    for (BehaviorControl<? super E> behaviorControl : entry.getValue()) {
+-                        if (behaviorControl.getStatus() == Behavior.Status.STOPPED) {
+-                            behaviorControl.tryStart(level, entity, gameTime);
+-                        }
+-                    }
+-                }
++        // KioCG start - optimize entity behavior
++        for (Entry<Activity, BehaviorControl<? super E>> entry : this.stoppedBehaviors.entries()) {
++            Activity activity = entry.getKey();
++            if (this.activeActivities.contains(activity)) {
++                entry.getValue().tryStart(level, entity, gameTime);
+             }
+         }
++        // KioCG end - optimize entity behavior
+     }
+ 
+     private void tickEachRunningBehavior(ServerLevel level, E entity) {

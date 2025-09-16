@@ -226,11 +226,10 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1568,6 +_,58 @@
-             this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.3, 0.0));
+@@ -1569,6 +_,58 @@
          }
      }
-+
+ 
 +    // KioCG start - entity bossbar api
 +    @Nullable
 +    public net.minecraft.server.level.ServerBossEvent getBossBar() {
@@ -282,6 +281,18 @@
 +        return super.shouldTickHot() && (this.isPersistenceRequired() || this.requiresCustomPersistence() || !this.removeWhenFarAway(0.0));
 +    }
 +    // KioCG end - chunk hot
- 
++
      @VisibleForTesting
      public void removeFreeWill() {
+         this.removeAllGoals(goal -> true);
+@@ -1601,8 +_,9 @@
+     @Override
+     protected void onAttributeUpdated(Holder<Attribute> attribute) {
+         super.onAttributeUpdated(attribute);
+-        if (attribute.is(Attributes.FOLLOW_RANGE) || attribute.is(Attributes.TEMPT_RANGE)) {
++        if (attribute.is(Attributes.FOLLOW_RANGE) /*|| attribute.is(Attributes.TEMPT_RANGE)*/) { // KioCG - optimize entity behavior
+             this.getNavigation().updatePathfinderMaxVisitedNodes();
++            ((net.minecraft.world.entity.ai.Brain<Mob>) this.getBrain()).updateSensors(this); // KioCG - optimize entity behavior: 在属性修改时更新
+         }
+     }
+ }

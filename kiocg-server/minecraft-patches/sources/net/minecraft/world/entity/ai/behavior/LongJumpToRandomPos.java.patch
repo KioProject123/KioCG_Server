@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/ai/behavior/LongJumpToRandomPos.java
 +++ b/net/minecraft/world/entity/ai/behavior/LongJumpToRandomPos.java
+@@ -151,7 +_,7 @@
+     }
+ 
+     protected void pickCandidate(ServerLevel level, E entity, long prepareJumpStart) {
+-        while (!this.jumpCandidates.isEmpty()) {
++        if (!this.jumpCandidates.isEmpty()) { // KioCG - optimize entity behavior
+             Optional<LongJumpToRandomPos.PossibleJump> jumpCandidate = this.getJumpCandidate(level);
+             if (!jumpCandidate.isEmpty()) {
+                 LongJumpToRandomPos.PossibleJump possibleJump = jumpCandidate.get();
 @@ -162,7 +_,7 @@
                      if (vec31 != null) {
                          entity.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(blockPos));
