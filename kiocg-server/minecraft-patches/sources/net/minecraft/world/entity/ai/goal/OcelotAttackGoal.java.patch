@@ -1,5 +1,19 @@
 --- a/net/minecraft/world/entity/ai/goal/OcelotAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/OcelotAttackGoal.java
+@@ -14,6 +_,13 @@
+         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.mob.getTarget() != null;
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canUse() {
+         LivingEntity target = this.mob.getTarget();
 @@ -53,7 +_,7 @@
              d2 = 0.6;
          }

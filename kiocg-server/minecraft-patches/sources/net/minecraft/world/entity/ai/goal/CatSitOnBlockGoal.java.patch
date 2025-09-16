@@ -1,7 +1,16 @@
 --- a/net/minecraft/world/entity/ai/goal/CatSitOnBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/CatSitOnBlockGoal.java
-@@ -21,7 +_,7 @@
+@@ -19,9 +_,16 @@
+         this.cat = cat;
+     }
  
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.cat.isTame() && !this.cat.isOrderedToSit();
++    }
++    // KioCG end - optimize entity behavior
++
      @Override
      public boolean canUse() {
 -        return this.cat.isTame() && !this.cat.isOrderedToSit() && super.canUse();

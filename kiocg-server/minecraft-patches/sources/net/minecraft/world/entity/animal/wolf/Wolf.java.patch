@@ -12,12 +12,12 @@
 -        this.goalSelector.addGoal(7, new BreedGoal(this, 1.0));
 -        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
 +        // KioCG start - optimize entity behavior
-+        this.goalRegister.addGoal(2, new SitWhenOrderedToGoal(this), wolf -> ((Wolf) wolf).isOrderedToSit());
-+        this.goalRegister.addGoal(3, new Wolf.WolfAvoidEntityGoal<>(this, Llama.class, 24.0F, 1.5, 1.5), wolf -> !((Wolf) wolf).isTame());
-+        this.goalRegister.addGoal(4, new LeapAtTargetGoal(this, 0.4F), wolf -> !((Wolf) wolf).isOrderedToSit());
-+        this.goalRegister.addGoal(5, new MeleeAttackGoal(this, 1.0, true), wolf -> !((Wolf) wolf).isOrderedToSit());
-+        this.goalRegister.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F), wolf -> ((Wolf) wolf).isTame() && !((Wolf) wolf).isOrderedToSit() && ((Wolf) wolf).isFollowOwner());
-+        this.goalRegister.addGoal(7, new BreedGoal(this, 1.0), wolf -> ((Wolf) wolf).isTame());
++        this.goalRegister.addGoal(this.goalSelector, 2, new SitWhenOrderedToGoal(this));
++        this.goalRegister.addGoal(this.goalSelector, 3, new Wolf.WolfAvoidEntityGoal<>(this, Llama.class, 24.0F, 1.5, 1.5));
++        this.goalRegister.addGoal(this.goalSelector, 4, new LeapAtTargetGoal(this, 0.4F));
++        this.goalRegister.addGoal(this.goalSelector, 5, new MeleeAttackGoal(this, 1.0, true));
++        this.goalRegister.addGoal(this.goalSelector, 6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F));
++        this.goalRegister.addGoal(this.goalSelector, 7, new BreedGoal(this, 1.0), this::isTame);
 +        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0) {
 +            @Override
 +            public boolean canUse() {
@@ -31,17 +31,17 @@
 -        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
 -        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
 +        // KioCG start - optimize entity behavior
-+        this.goalRegister.addGoal(1, new OwnerHurtByTargetGoal(this), wolf -> ((Wolf) wolf).isTame() && !((Wolf) wolf).isOrderedToSit());
-+        this.goalRegister.addGoal(2, new OwnerHurtTargetGoal(this), wolf -> ((Wolf) wolf).isTame() && !((Wolf) wolf).isOrderedToSit());
++        this.goalRegister.addGoal(this.targetSelector, 1, new OwnerHurtByTargetGoal(this));
++        this.goalRegister.addGoal(this.targetSelector, 2, new OwnerHurtTargetGoal(this));
          this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
 -        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
 -        this.targetSelector.addGoal(5, new NonTameRandomTargetGoal<>(this, Animal.class, false, PREY_SELECTOR));
 -        this.targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
 -        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false));
-+        this.goalRegister.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt), wolf -> !((Wolf) wolf).isOrderedToSit());
-+        this.goalRegister.addGoal(5, new NonTameRandomTargetGoal<>(this, Animal.class, false, PREY_SELECTOR), wolf -> !((Wolf) wolf).isTame());
-+        this.goalRegister.addGoal(6, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR), wolf -> !((Wolf) wolf).isTame());
-+        this.goalRegister.addGoal(7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false), wolf -> !((Wolf) wolf).isOrderedToSit());
++        this.goalRegister.addGoal(this.targetSelector, 4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt), () -> !isOrderedToSit());
++        this.goalRegister.addGoal(this.targetSelector, 5, new NonTameRandomTargetGoal<>(this, Animal.class, false, PREY_SELECTOR));
++        this.goalRegister.addGoal(this.targetSelector, 6, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
++        this.goalRegister.addGoal(this.targetSelector, 7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false), () -> !isOrderedToSit());
 +        // KioCG end - optimize entity behavior
          this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
      }
@@ -98,8 +98,17 @@
      private void tryToTame(Player player) {
          if (this.random.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, player).isCancelled()) { // CraftBukkit - added event call and isCancelled check.
              this.tame(player);
-@@ -690,7 +_,7 @@
+@@ -688,9 +_,16 @@
+             this.wolf = wolf;
+         }
  
++        // KioCG start - optimize entity behavior
++        @Override
++        public boolean registerWhen() {
++            return !this.wolf.isTame();
++        }
++        // KioCG end - optimize entity behavior
++
          @Override
          public boolean canUse() {
 -            return super.canUse() && this.toAvoid instanceof Llama && !this.wolf.isTame() && this.avoidLlama((Llama)this.toAvoid);

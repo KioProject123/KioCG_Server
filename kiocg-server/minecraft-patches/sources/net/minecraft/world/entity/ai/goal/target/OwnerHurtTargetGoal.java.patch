@@ -1,7 +1,16 @@
 --- a/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
-@@ -19,7 +_,7 @@
+@@ -17,9 +_,16 @@
+         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+     }
  
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit();
++    }
++    // KioCG end - optimize entity behavior
++
      @Override
      public boolean canUse() {
 -        if (this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit()) {

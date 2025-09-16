@@ -10,16 +10,16 @@
 -        this.goalSelector.addGoal(3, new LandOnOwnersShoulderGoal(this));
 -        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F));
 +        // KioCG start - optimize entity behavior
-+        this.goalRegister.addGoal(2, new SitWhenOrderedToGoal(this), parrot -> ((Parrot) parrot).isOrderedToSit());
-+        this.goalRegister.addGoal(2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F), parrot -> ((Parrot) parrot).isTame() && !((Parrot) parrot).isOrderedToSit() && ((Parrot) parrot).isFollowOwner());
++        this.goalRegister.addGoal(this.goalSelector, 2, new SitWhenOrderedToGoal(this));
++        this.goalRegister.addGoal(this.goalSelector, 2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
 +        this.goalSelector.addGoal(2, new Parrot.ParrotWanderGoal(this, 1.0) {
 +            @Override
 +            public boolean canUse() {
 +                return !((TamableAnimal) this.mob).isInSittingPose() && super.canUse();
 +            }
 +        });
-+        this.goalRegister.addGoal(3, new LandOnOwnersShoulderGoal(this), parrot -> ((Parrot) parrot).isTame() && !((Parrot) parrot).isOrderedToSit());
-+        this.goalRegister.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F), parrot -> !((Parrot) parrot).isOrderedToSit());
++        this.goalRegister.addGoal(this.goalSelector, 3, new LandOnOwnersShoulderGoal(this));
++        this.goalRegister.addGoal(this.goalSelector, 3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F), () -> !this.isOrderedToSit());
 +        // KioCG end - optimize entity behavior
      }
  

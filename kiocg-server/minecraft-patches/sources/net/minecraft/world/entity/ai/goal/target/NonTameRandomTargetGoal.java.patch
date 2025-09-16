@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/goal/target/NonTameRandomTargetGoal.java
++++ b/net/minecraft/world/entity/ai/goal/target/NonTameRandomTargetGoal.java
+@@ -13,9 +_,16 @@
+         this.tamableMob = tamableMob;
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return !this.tamableMob.isTame();
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canUse() {
+-        return !this.tamableMob.isTame() && super.canUse();
++        return super.canUse(); // KioCG - optimize entity behavior
+     }
+ 
+     @Override

@@ -4,7 +4,7 @@
      public GoalSelector goalSelector;
      public @Nullable net.minecraft.world.entity.ai.goal.FloatGoal goalFloat; // Paper - Allow nerfed mobs to jump and float
      public GoalSelector targetSelector;
-+    public com.kiocg.entity.GoalRegister<Mob> goalRegister = new com.kiocg.entity.GoalRegister<>(this); // KioCG - optimize entity behavior
++    public com.kiocg.entity.GoalRegister goalRegister = new com.kiocg.entity.GoalRegister(); // KioCG - optimize entity behavior
 +    public boolean tickRunningGoalsOnly; // KioCG - optimize entity behavior
      @Nullable
      private LivingEntity target;
@@ -23,6 +23,14 @@
  
      protected Mob(EntityType<? extends Mob> entityType, Level level) {
          super(entityType, level);
+@@ -286,6 +_,7 @@
+             }
+         }
+         this.target = target;
++        this.goalRegister.reassess(); // KioCG - optimize entity behavior
+         return true;
+         // CraftBukkit end
+     }
 @@ -319,6 +_,12 @@
  
      @Override

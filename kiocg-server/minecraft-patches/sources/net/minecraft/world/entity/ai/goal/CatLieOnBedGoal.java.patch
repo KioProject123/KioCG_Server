@@ -1,7 +1,16 @@
 --- a/net/minecraft/world/entity/ai/goal/CatLieOnBedGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/CatLieOnBedGoal.java
-@@ -19,7 +_,7 @@
+@@ -17,9 +_,16 @@
+         this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
+     }
  
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.cat.isTame() && !this.cat.isOrderedToSit();
++    }
++    // KioCG end - optimize entity behavior
++
      @Override
      public boolean canUse() {
 -        return this.cat.isTame() && !this.cat.isOrderedToSit() && !this.cat.isLying() && super.canUse();

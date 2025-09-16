@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
+@@ -32,6 +_,13 @@
+         }
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.tamable.isTame() && !this.tamable.isOrderedToSit() && this.tamable.isFollowOwner();
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canUse() {
+         LivingEntity owner = this.tamable.getOwner();

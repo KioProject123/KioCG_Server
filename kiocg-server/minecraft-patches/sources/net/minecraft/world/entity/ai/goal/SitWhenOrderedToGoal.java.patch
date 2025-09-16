@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/SitWhenOrderedToGoal.java
++++ b/net/minecraft/world/entity/ai/goal/SitWhenOrderedToGoal.java
+@@ -12,6 +_,13 @@
+         this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
+     }
+ 
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.mob.isOrderedToSit();
++    }
++    // KioCG end - optimize entity behavior
++
+     @Override
+     public boolean canContinueToUse() {
+         return this.mob.isOrderedToSit();

@@ -1,16 +1,43 @@
 --- a/net/minecraft/world/entity/ai/goal/MoveThroughVillageGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/MoveThroughVillageGoal.java
-@@ -116,6 +_,13 @@
+@@ -83,7 +_,7 @@
+                             this.poiPos = optional.get().immutable();
+                             PathNavigation navigation = this.mob.getNavigation();
+                             navigation.setCanOpenDoors(this.canDealWithDoors.getAsBoolean());
+-                            this.path = navigation.createPath(this.poiPos, 0);
++                            this.path = navigation.createPathLightweight(this.poiPos, 0); // KioCG - optimize entity behavior
+                             navigation.setCanOpenDoors(true);
+                             if (this.path == null) {
+                                 Vec3 posTowards = DefaultRandomPos.getPosTowards(this.mob, 10, 7, Vec3.atBottomCenterOf(this.poiPos), (float) (Math.PI / 2));
+@@ -92,7 +_,7 @@
+                                 }
+ 
+                                 navigation.setCanOpenDoors(this.canDealWithDoors.getAsBoolean());
+-                                this.path = this.mob.getNavigation().createPath(posTowards.x, posTowards.y, posTowards.z, 0);
++                                this.path = this.mob.getNavigation().createPathLightweight(BlockPos.containing(posTowards), 0); // KioCG - optimize entity behavior
+                                 navigation.setCanOpenDoors(true);
+                                 if (this.path == null) {
+                                     return false;
+@@ -103,7 +_,7 @@
+                                 Node node = this.path.getNode(i);
+                                 BlockPos blockPos1 = new BlockPos(node.x, node.y + 1, node.z);
+                                 if (DoorBlock.isWoodenDoor(this.mob.level(), blockPos1)) {
+-                                    this.path = this.mob.getNavigation().createPath(node.x, node.y, node.z, 0);
++                                    this.path = this.mob.getNavigation().createPathLightweight(node.asBlockPos(), 0); // KioCG - optimize entity behavior
+                                     break;
+                                 }
+                             }
+@@ -115,6 +_,13 @@
+             }
          }
      }
- 
++
 +    // KioCG start - optimize entity behavior
 +    @Override
 +    protected int canUseDelay() {
 +        return 20;
 +    }
 +    // KioCG end - optimize entity behavior
-+
+ 
      @Override
      public boolean canContinueToUse() {
-         return !this.mob.getNavigation().isDone() && !this.poiPos.closerToCenterThan(this.mob.position(), this.mob.getBbWidth() + this.distanceToPoi);

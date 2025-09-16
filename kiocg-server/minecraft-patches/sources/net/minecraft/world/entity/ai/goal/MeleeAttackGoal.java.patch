@@ -1,7 +1,16 @@
 --- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
-@@ -31,20 +_,26 @@
+@@ -29,22 +_,35 @@
+         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+     }
  
++    // KioCG start - optimize entity behavior
++    @Override
++    public boolean registerWhen() {
++        return this.mob.getTarget() != null;
++    }
++    // KioCG end - optimize entity behavior
++
      @Override
      public boolean canUse() {
 +        // KioCG start - fix nod bug
