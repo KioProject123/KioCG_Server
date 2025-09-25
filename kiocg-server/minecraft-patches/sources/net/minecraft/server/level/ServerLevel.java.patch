@@ -9,10 +9,11 @@
              // Paper start - create time skip event - move up calculations
              final long newDayTime = this.levelData.getDayTime() + 24000L;
              org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(
-@@ -749,6 +_,21 @@
+@@ -749,6 +_,22 @@
          this.updateSkyBrightness();
          if (runsNormally) {
              this.tickTime();
++            this.gameEventDispatcher.tick(this.getGameTime()); // KioCG - optimize game event
 +
 +            // KioCG start - keep block destruction
 +            // 客户端会清理400刻之后的方块破坏纹理

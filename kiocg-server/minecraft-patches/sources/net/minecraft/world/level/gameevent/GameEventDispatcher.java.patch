@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/gameevent/GameEventDispatcher.java
++++ b/net/minecraft/world/level/gameevent/GameEventDispatcher.java
+@@ -13,6 +_,12 @@
+ 
+ public class GameEventDispatcher {
+     private final ServerLevel level;
++    // KioCG start - optimize game event
++    private final it.unimi.dsi.fastutil.objects.Object2LongMap<BlockPos> cooldown = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
++    public void tick(long gameTime) {
++        this.cooldown.values().removeIf(integer -> gameTime > integer);
++    }
++    // KioCG end - optimize game event
+ 
+     public GameEventDispatcher(ServerLevel level) {
+         this.level = level;
+@@ -21,6 +_,9 @@
+     public void post(Holder<GameEvent> gameEvent, Vec3 pos, GameEvent.Context context) {
+         int notificationRadius = gameEvent.value().notificationRadius();
+         BlockPos blockPos = BlockPos.containing(pos);
++
++        if (this.cooldown.putIfAbsent(blockPos, level.getGameTime() + 10) != 0) return; // KioCG - optimize game event
++
+         // CraftBukkit start
+         org.bukkit.event.world.GenericGameEvent apiEvent = new org.bukkit.event.world.GenericGameEvent(
+             org.bukkit.craftbukkit.CraftGameEvent.minecraftToBukkit(gameEvent.value()), org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockPos, this.level.getWorld()),
