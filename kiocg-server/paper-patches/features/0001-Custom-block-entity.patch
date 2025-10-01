@@ -5,7 +5,7 @@ Subject: [PATCH] Custom block entity
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
-index 2338e7c115037430cefae26a571ded71f77983c4..1bad4bf8622674f355619cb854a4f50db402b9fc 100644
+index 3c9131ac3cfb4f758e76830ca48813feb321e4c6..2e541a7fbc3012570dab40573c54d58d9246007f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockStates.java
 @@ -134,6 +134,10 @@ public final class CraftBlockStates {
@@ -21,10 +21,10 @@ index 2338e7c115037430cefae26a571ded71f77983c4..1bad4bf8622674f355619cb854a4f50d
      private static void register(Material blockType, BlockStateFactory<?> factory) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java b/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e5f7eaefb7f9de34d0b72699ea822111cf7829e7
+index 0000000000000000000000000000000000000000..4c237f3d5fe57c3751ce6fa26c594e31e3a64786
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftCauldron.java
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,29 @@
 +package org.bukkit.craftbukkit.block;
 +
 +import net.minecraft.world.level.block.entity.CauldronBlockEntity;
@@ -41,16 +41,6 @@ index 0000000000000000000000000000000000000000..e5f7eaefb7f9de34d0b72699ea822111
 +
 +    protected CraftCauldron(CraftCauldron state, Location location) {
 +        super(state, location);
-+    }
-+
-+    @Override
-+    public boolean isBoiling() {
-+        return getSnapshot().isBoiling();
-+    }
-+
-+    @Override
-+    public boolean isCleanWater() {
-+        return getSnapshot().cleanWater;
 +    }
 +
 +    @Override

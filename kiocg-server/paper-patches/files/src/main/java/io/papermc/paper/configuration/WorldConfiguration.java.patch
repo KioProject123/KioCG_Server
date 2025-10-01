@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,4 +_,108 @@
+@@ -587,4 +_,106 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -40,8 +40,6 @@
 +                public double thirstRegainMultiplierFood = 6.0;
 +                public double lowDownfallBiomeMultiplier = 1.5;
 +            }
-+
-+            public int campfireBoilingWaterTime = 600;
 +        }
 +
 +        public Block block;

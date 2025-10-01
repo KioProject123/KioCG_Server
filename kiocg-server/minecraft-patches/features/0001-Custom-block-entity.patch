@@ -621,56 +621,19 @@ index a972c5b4141c3f267070b65bbac5937967fdb3c8..7ace060aeb7751977eac512345c41cb9
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/LayeredCauldronBlock.java b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 34495f08c3ff3d298a5f5ca9121928cf461caf82..51114fac982a2fff6dfda9c46e9feb4d684444af 100644
+index 34495f08c3ff3d298a5f5ca9121928cf461caf82..992b54ecfe280d2c050af7b8c76fd2581e311b8b 100644
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -92,6 +92,12 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
-                     // Paper end - cauldron level change event
-                 }
-             });
-+
-+            // KioCG start - custom block entity
-+            if (serverLevel.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CauldronBlockEntity cauldronBlockEntity && cauldronBlockEntity.isBoiling()) {
-+                entity.hurtServer(serverLevel, entity.damageSources().onFire(), 1.0F);
-+            }
-+            // KioCG end - custom block entity
-         }
- 
-         // effectApplier.apply(InsideBlockEffectType.EXTINGUISH); // Paper - manually applied above - cauldron level change event - delay to not extinguish when event is cancelled
-@@ -135,6 +141,17 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
-             return false;
-         }
- 
-+        // KioCG start - custom block entity: campfire boiling water
-+        BlockState oldState = level.getBlockState(pos);
-+        if (oldState.is(newBlock.getBlock())) {
-+            if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CauldronBlockEntity cauldronBlockEntity) {
-+                int oldLevel = oldState.getValue(LayeredCauldronBlock.LEVEL);
-+                int newLevel = newBlock.getValue(LayeredCauldronBlock.LEVEL);
-+                cauldronBlockEntity.levelChanged(oldLevel, newLevel);
-+            }
-+        }
-+        // KioCG end - custom block entity: campfire boiling water
-+
-         newState.place(3);
-         if (sendGameEvent) level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(newBlock)); // Paper - Call CauldronLevelChangeEvent
-         return true;
-@@ -171,4 +188,18 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+@@ -171,4 +171,12 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
              level.levelEvent(1047, pos, 0);
          }
      }
 +
 +    // KioCG start - custom block entity
-+    @Override
-+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @org.jetbrains.annotations.Nullable net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
-+        if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CauldronBlockEntity cauldron) cauldron.updateBlockEntityTicker(); // KioCG - optimize block entity
-+    }
-+
 +    @javax.annotation.Nullable
 +    @Override
 +    public <T extends net.minecraft.world.level.block.entity.BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> blockEntityType) {
-+        return createTickerHelper(blockEntityType, net.minecraft.world.level.block.entity.BlockEntityType.CAULDRON,
-+                                  (level1, pos, state1, blockEntity) -> net.minecraft.world.level.block.entity.CauldronBlockEntity.serverTickLayered((ServerLevel) level1, pos, state1, blockEntity));
++        return null;
 +    }
 +    // KioCG end - custom block entity
  }
@@ -703,127 +666,19 @@ index 386e6a48701b4c9256e33174123381a93d61e292..cd186c9d962fa19400e30fbd6a051327
  }
 diff --git a/net/minecraft/world/level/block/entity/CauldronBlockEntity.java b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1df27fa7a4a12c50a7917af5b1b2c0b72a4e5be2
+index 0000000000000000000000000000000000000000..7a8921fb12ee1f4376bf5f592e1d805e8d1c4c2a
 --- /dev/null
 +++ b/net/minecraft/world/level/block/entity/CauldronBlockEntity.java
-@@ -0,0 +1,120 @@
+@@ -0,0 +1,12 @@
 +package net.minecraft.world.level.block.entity;
 +
 +import net.minecraft.core.BlockPos;
-+import net.minecraft.core.particles.ParticleTypes;
-+import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.sounds.SoundEvents;
-+import net.minecraft.sounds.SoundSource;
-+import net.minecraft.tags.BlockTags;
-+import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.block.Blocks;
-+import net.minecraft.world.level.block.CampfireBlock;
-+import net.minecraft.world.level.block.LayeredCauldronBlock;
 +import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.storage.ValueInput;
-+import net.minecraft.world.level.storage.ValueOutput;
 +
 +// KioCG start - custom block entity: all class
 +public class CauldronBlockEntity extends BlockEntity {
-+    private boolean heating = false;
-+    private int temperature = 0;
-+    public boolean cleanWater = false;
-+
 +    public CauldronBlockEntity(BlockPos pos, BlockState blockState) {
 +        super(BlockEntityType.CAULDRON, pos, blockState);
-+    }
-+
-+    public static void serverTickLayered(ServerLevel level, BlockPos pos, BlockState state, CauldronBlockEntity cauldron) {
-+        boolean flag = false;
-+        boolean hasVisualEffect = false;
-+
-+        if (cauldron.heating) {
-+            if (!cauldron.isBoiling()) {
-+                int per = LayeredCauldronBlock.MAX_FILL_LEVEL - state.getValue(LayeredCauldronBlock.LEVEL) + 1;
-+                cauldron.temperature = Math.min(cauldron.temperature + per, level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime);
-+
-+                if (cauldron.isBoiling() && state.is(Blocks.POWDER_SNOW_CAULDRON)) {
-+                    if (LayeredCauldronBlock.changeLevel(level, pos, Blocks.WATER_CAULDRON.defaultBlockState(), null, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.EVAPORATE, false)) { // avoid duplicate game event
-+                        level.setBlockAndUpdate(pos, Blocks.WATER_CAULDRON.defaultBlockState());
-+                        level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
-+                        return;
-+                    }
-+                }
-+
-+                flag = true;
-+            } else {
-+                if (!cauldron.cleanWater) {
-+                    cauldron.cleanWater = true;
-+                    flag = true;
-+                }
-+
-+                if (level.getGameTime() % 4 == 0 && level.getRandom().nextFloat() < 0.25F) {
-+                    level.playSound(null, pos, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER_INTO_CAULDRON, SoundSource.BLOCKS, 1.0F, 0.1F);
-+                }
-+
-+                double x = (double) pos.getX() + 0.5;
-+                double y = (double) pos.getY() + 1.0;
-+                double z = (double) pos.getZ() + 0.5;
-+                level.sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 10, 0.2, 0.1, 0.2, 1.0);
-+                hasVisualEffect = true;
-+            }
-+        } else if (cauldron.temperature > 0) {
-+            int per = LayeredCauldronBlock.MAX_FILL_LEVEL - state.getValue(LayeredCauldronBlock.LEVEL) + 1;
-+            cauldron.temperature = Math.max(cauldron.temperature - per, 0);
-+            flag = true;
-+        }
-+
-+        if (flag) {
-+            setChanged(level, pos, state);
-+        } else if (!hasVisualEffect) {
-+            cauldron.updateBlockEntityTicker();
-+        }
-+    }
-+
-+    // KioCG start - optimize block entity
-+    @Override
-+    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
-+        if (state.getBlock() instanceof LayeredCauldronBlock) {
-+            this.heating = false;
-+            BlockState belowState = level.getBlockState(pos.below());
-+            if (belowState.is(BlockTags.CAMPFIRES, blockStateBase -> blockStateBase.getValueOrElse(CampfireBlock.LIT, false)) || belowState.is(Blocks.FIRE) || belowState.is(Blocks.LAVA)) {
-+                this.heating = true;
-+                return true;
-+            } else {
-+                return this.temperature > 0;
-+            }
-+        }
-+        return false;
-+    }
-+    // KioCG end - optimize block entity
-+
-+    public boolean isBoiling() {
-+        return this.temperature >= this.level.paperConfig().kiocgConfig.theLongDark.campfireBoilingWaterTime;
-+    }
-+
-+    public void setTemperature(int temperature) {
-+        this.temperature = temperature;
-+        this.setChanged();
-+    }
-+
-+    public void levelChanged(int oldLevel, int newLevel) {
-+        if (newLevel > oldLevel) {
-+            setTemperature(this.temperature * oldLevel / newLevel);
-+            this.cleanWater = false;
-+        }
-+    }
-+
-+    @Override
-+    protected void loadAdditional(ValueInput input) {
-+        this.temperature = input.getIntOr("KioCG.Temperature", 0);
-+        this.cleanWater = input.getBooleanOr("KioCG.CleanWater", false);
-+    }
-+
-+    @Override
-+    protected void saveAdditional(ValueOutput output) {
-+        output.putInt("KioCG.Temperature", this.temperature);
-+        output.putBoolean("KioCG.CleanWater", this.cleanWater);
 +    }
 +}
 +// KioCG end - custom block entity: all class

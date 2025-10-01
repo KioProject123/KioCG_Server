@@ -6,10 +6,10 @@ Subject: [PATCH] Custom block entity
 
 diff --git a/src/main/java/org/bukkit/block/Cauldron.java b/src/main/java/org/bukkit/block/Cauldron.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f2bc55b11dbbc87d095ce4c709bb21016ec13d59
+index 0000000000000000000000000000000000000000..8f27b7077c02119cc0c54c054a7daee946a6a56b
 --- /dev/null
 +++ b/src/main/java/org/bukkit/block/Cauldron.java
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,10 @@
 +package org.bukkit.block;
 +
 +/**
@@ -18,8 +18,6 @@ index 0000000000000000000000000000000000000000..f2bc55b11dbbc87d095ce4c709bb2101
 +// KioCG start - custom block entity: all class
 +public interface Cauldron extends TileState {
 +
-+    boolean isBoiling();
-+    boolean isCleanWater();
 +}
 +// KioCG end - custom block entity: all class
 diff --git a/src/main/java/org/bukkit/block/FlowerPot.java b/src/main/java/org/bukkit/block/FlowerPot.java
