@@ -17,11 +17,11 @@ import java.util.Collections;
 
 public class ChunkHotCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("chunksan")
-                                    .requires(listener -> listener.hasPermission(2, "bukkit.command.chunksan"))
+        dispatcher.register(Commands.literal("acl")
+                                    .requires(listener -> listener.hasPermission(2, "bukkit.command.acl"))
                                     .executes(context -> execute(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException())))
                                     .then(Commands.argument("targets", EntityArgument.players())
-                                                  .requires(listener -> listener.hasPermission(2, "bukkit.command.chunksan.other"))
+                                                  .requires(listener -> listener.hasPermission(2, "bukkit.command.acl.other"))
                                                   .executes(context -> execute(context.getSource(), EntityArgument.getPlayers(context, "targets")))
                                          )
                            );
@@ -31,7 +31,7 @@ public class ChunkHotCommand {
         for (ServerPlayer player : targets) {
             LevelChunk chunk = player.level().getChunkIfLoaded(player.blockPosition());
             long chunkhot = chunk != null ? chunk.getChunkHot().getAverage() : 0L;
-            Component component = MiniMessage.miniMessage().deserialize("<green>[<aqua>豆渣子<green>] <gold>玩家 <target> 的区域SAN: <totalhot>, 所处区块SAN: <white><chunkhot>",
+            Component component = MiniMessage.miniMessage().deserialize("<green>[<aqua>豆渣子<green>] <gold>玩家 <target> 的区域负载: <totalhot>, 所处区块负载: <white><chunkhot>",
                                                                         Placeholder.parsed("target", player.getGameProfile().getName()),
                                                                         Placeholder.component("totalhot", TPSBarTask.instance().getChunkHotColor(player, false)),
                                                                         Placeholder.parsed("chunkhot", String.valueOf(chunkhot)));
