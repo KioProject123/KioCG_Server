@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/MangrovePropaguleBlock.java
 +++ b/net/minecraft/world/level/block/MangrovePropaguleBlock.java
-@@ -103,7 +_,12 @@
-     @Override
+@@ -104,6 +_,11 @@
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
          if (!isHanging(state)) {
--            if (random.nextFloat() < (level.spigotConfig.saplingModifier / (100.0F * 7))) { // Paper - Fix Spigot growth modifiers
-+            if (random.nextFloat() < (level.spigotConfig.saplingModifier / 100.0F)) { // Paper - Fix Spigot growth modifiers // KioCG - crops grow every day
+             if (random.nextFloat() < (level.spigotConfig.saplingModifier / (100.0F * 7))) { // Paper - Fix Spigot growth modifiers
 +                // KioCG start - saplings withered
 +                if (random.nextFloat() < (float) level.paperConfig().kiocgConfig.block.saplingsWitheredChance) {
 +                    level.setBlockAndUpdate(pos, Blocks.DEAD_BUSH.defaultBlockState());

@@ -126,15 +126,9 @@
          this.persistenceRequired = true;
      }
  
-@@ -710,11 +_,19 @@
- 
+@@ -711,10 +_,13 @@
      @Override
      public void checkDespawn() {
-+        // KioCG start - mobs disappear every day
-+        this.checkDespawn(false);
-+    }
-+    public void checkDespawn(boolean softDespawn) {
-+        // KioCG end - mobs disappear every day
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldActuallyDespawnInPeaceful()) { //Paper - allow changing despawnInPeaceful
 +            this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -152,12 +146,10 @@
                  if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
 +                    this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
--                 }
-+                } else // KioCG - mobs disappear every day: 不用检测软范围
+                  }
  
                  if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
--                    if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
-+                    if (softDespawn && this.noActionTime > 600 && this.removeWhenFarAway(distanceSquared)) { // KioCG - mobs disappear every day
+                     if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
 +                        this.dropPickedUpItems(); // KioCG - drop picked up items when despawn
                          this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
                      }

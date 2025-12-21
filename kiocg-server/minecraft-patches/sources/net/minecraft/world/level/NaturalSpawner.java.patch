@@ -5,13 +5,13 @@
                      Player nearestPlayer = level.getNearestPlayer(d, y, d1, -1.0, false);
                      if (nearestPlayer != null) {
 -                        double d2 = nearestPlayer.distanceToSqr(d, y, d1);
-+                        // KioCG start - mobs disappear every day: 不要在硬消失范围外生成
++                        // KioCG start - optimize mobs disappear: 不要在硬消失范围外生成
 +                        final double dy = Math.abs(nearestPlayer.getY() - y);
 +                        final double dySqr = Mth.square(dy);
 +                        final double dxSqr = Mth.square(nearestPlayer.getX() - d);
 +                        final double dzSqr = Mth.square(nearestPlayer.getZ() - d1);
 +                        double d2 = dxSqr + dzSqr + dySqr;
-+                        // KioCG end - mobs disappear every day: 不要在硬消失范围外生成
++                        // KioCG end - optimize mobs disappear: 不要在硬消失范围外生成
                          if (level.isLoadedAndInBounds(mutableBlockPos) && isRightDistanceToPlayerAndSpawnPoint(level, chunk, mutableBlockPos, d2)) { // Paper - don't load chunks for mob spawn
                              if (spawnerData == null) {
                                  Optional<MobSpawnSettings.SpawnerData> randomSpawnMobAt = getRandomSpawnMobAt(
@@ -20,7 +20,7 @@
  
                                  mobForSpawn.snapTo(d, y, d1, level.random.nextFloat() * 360.0F, 0.0F);
 -                                if (isValidPositionForMob(level, mobForSpawn, d2)) {
-+                                if (isValidPositionForMob(level, mobForSpawn, d2, dxSqr, dySqr, dzSqr, dy)) { // KioCG - mobs disappear every day: 不要在硬消失范围外生成
++                                if (isValidPositionForMob(level, mobForSpawn, d2, dxSqr, dySqr, dzSqr, dy)) { // KioCG - optimize mobs disappear: 不要在硬消失范围外生成
                                      spawnGroupData = mobForSpawn.finalizeSpawn(
                                          level, level.getCurrentDifficultyAt(mobForSpawn.blockPosition()), EntitySpawnReason.NATURAL, spawnGroupData
                                      );
@@ -29,10 +29,10 @@
      }
  
 -    private static boolean isValidPositionForMob(ServerLevel level, Mob mob, double distance) {
-+    private static boolean isValidPositionForMob(ServerLevel level, Mob mob, double distance, double dxSqr, double dySqr, double dzSqr, double dy) { // KioCG - mobs disappear every day: 不要在硬消失范围外生成
++    private static boolean isValidPositionForMob(ServerLevel level, Mob mob, double distance, double dxSqr, double dySqr, double dzSqr, double dy) { // KioCG - optimize mobs disappear: 不要在硬消失范围外生成
          return (
 -                !(distance > mob.getType().getCategory().getDespawnDistance() * mob.getType().getCategory().getDespawnDistance())
-+                !mob.getType().getCategory().shouldDespawn(level, dxSqr, dySqr, dzSqr, dy) // KioCG - mobs disappear every day: 不要在硬消失范围外生成
++                !mob.getType().getCategory().shouldDespawn(level, dxSqr, dySqr, dzSqr, dy) // KioCG - optimize mobs disappear: 不要在硬消失范围外生成
                      || !mob.removeWhenFarAway(distance)
              )
              && mob.checkSpawnRules(level, EntitySpawnReason.NATURAL)

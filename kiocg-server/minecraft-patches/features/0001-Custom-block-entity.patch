@@ -897,10 +897,10 @@ index 0000000000000000000000000000000000000000..fef8042cec699a266853089409bcd51c
 +}
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/state/BlockBehaviour.java b/net/minecraft/world/level/block/state/BlockBehaviour.java
-index 6d59db421697ceceff4428610ad460ef0f447bb9..21e1824d322fc9992501cf6d906eb48248facc01 100644
+index c3c97bd29f3646fc936d57afa5a0e9b23b40a1ea..41b06692164f67c2f040f33737f0e2a03a8b8c7b 100644
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -1047,12 +1047,12 @@ public abstract class BlockBehaviour implements FeatureElement {
+@@ -1027,12 +1027,12 @@ public abstract class BlockBehaviour implements FeatureElement {
          }
  
          public boolean hasBlockEntity() {

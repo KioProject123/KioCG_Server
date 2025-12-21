@@ -5,11 +5,11 @@
          return 32;
      }
 +
-+    // KioCG start - mobs disappear every day
++    // KioCG start - optimize mobs disappear
 +    public boolean shouldDespawn(final net.minecraft.world.level.Level level, final double dxSqr, final double dySqr, final double dzSqr, final double dy) {
 +        final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = level.paperConfig().entities.spawning.despawnRanges.get(this);
 +        final io.papermc.paper.configuration.type.DespawnRange.Shape shape = level.paperConfig().entities.spawning.despawnRangeShape;
 +        return despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy);
 +    }
-+    // KioCG end - mobs disappear every day
++    // KioCG end - optimize mobs disappear
  }

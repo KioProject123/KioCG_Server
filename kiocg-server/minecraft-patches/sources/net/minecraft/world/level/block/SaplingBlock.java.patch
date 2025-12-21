@@ -1,26 +1,12 @@
 --- a/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/net/minecraft/world/level/block/SaplingBlock.java
-@@ -43,9 +_,26 @@
-         return SHAPE;
-     }
+@@ -45,7 +_,12 @@
  
-+    // KioCG start - crops grow every day
-+    @Override
-+    protected boolean isRandomlyTicking(BlockState state) {
-+        return false;
-+    }
-+
-+    @Override
-+    protected boolean isDailyTicking(BlockState state) {
-+        return true;
-+    }
-+    // KioCG end - crops grow every day
-+
      @Override
      protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 -        if (level.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextFloat() < (level.spigotConfig.saplingModifier / (100.0F * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +        // KioCG start - saplings withered
-+        if (random.nextFloat() < (level.spigotConfig.saplingModifier / 100.0F)) { // Spigot - SPIGOT-7159: Better modifier resolution // KioCG - crops grow every day
++        if (random.nextFloat() < (level.spigotConfig.saplingModifier / (100.0F * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
 +            if (random.nextFloat() < (float) level.paperConfig().kiocgConfig.block.saplingsWitheredChance) {
 +                level.setBlockAndUpdate(pos, Blocks.DEAD_BUSH.defaultBlockState());
 +            } else if (level.getMaxLocalRawBrightness(pos.above()) >= 9)

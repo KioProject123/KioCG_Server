@@ -46,19 +46,6 @@
      protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
          return state.isCollisionShapeFullBlock(level, pos) ? 0.2F : 1.0F;
      }
-@@ -344,6 +_,12 @@
-     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-     }
- 
-+    // KioCG start - crops grow every day
-+    protected void dayTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-+        this.randomTick(state, level, pos, random);
-+    }
-+    // KioCG end - crops grow every day
-+
-     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-     }
- 
 @@ -370,6 +_,11 @@
      protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
      }
@@ -71,46 +58,7 @@
      protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
          return 0;
      }
-@@ -393,6 +_,12 @@
-         return this.isRandomlyTicking;
-     }
- 
-+    // KioCG start - crops grow every day
-+    protected boolean isDailyTicking(BlockState state) {
-+        return false;
-+    }
-+    // KioCG end - crops grow every day
-+
-     protected SoundType getSoundType(BlockState state) {
-         return this.soundType;
-     }
-@@ -446,6 +_,7 @@
-         private BlockBehaviour.BlockStateBase.Cache cache;
-         private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
-         private boolean isRandomlyTicking;
-+        private boolean isDailyTicking; // KioCG - crops grow every day
-         private boolean solidRender;
-         private VoxelShape occlusionShape;
-         private VoxelShape[] occlusionShapesByFace;
-@@ -578,6 +_,7 @@
-         public void initCache() {
-             this.fluidState = this.owner.getFluidState(this.asState());
-             this.isRandomlyTicking = this.owner.isRandomlyTicking(this.asState());
-+            this.isDailyTicking = this.owner.isDailyTicking(this.asState()); // KioCG - crops grow every day
-             if (!this.getBlock().hasDynamicShape()) {
-                 this.cache = new BlockBehaviour.BlockStateBase.Cache(this.asState());
-             }
-@@ -883,10 +_,22 @@
-             this.getBlock().randomTick(this.asState(), level, pos, random);
-         }
- 
-+        // KioCG start - crops grow every day
-+        public void dayTick(ServerLevel level, BlockPos pos, RandomSource random) {
-+            this.getBlock().dayTick(this.asState(), level, pos, random);
-+        }
-+        // KioCG end - crops grow every day
-+
-         public void entityInside(Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+@@ -887,6 +_,12 @@
              this.getBlock().entityInside(this.asState(), level, pos, entity, effectApplier);
          }
  
@@ -136,16 +84,3 @@
              return this.getBlock().useItemOn(stack, this.asState(), level, hitResult.getBlockPos(), player, hand, hitResult);
          }
  
-@@ -1001,6 +_,12 @@
-         public final boolean isRandomlyTicking() { // Paper - Perf: Final for inlining
-             return this.isRandomlyTicking;
-         }
-+
-+        // KioCG start - crops grow every day
-+        public final boolean isDailyTicking() { // Paper - Perf: Final for inlining
-+            return this.isDailyTicking;
-+        }
-+        // KioCG end - crops grow every day
- 
-         public long getSeed(BlockPos pos) {
-             return this.getBlock().getSeed(this.asState(), pos);

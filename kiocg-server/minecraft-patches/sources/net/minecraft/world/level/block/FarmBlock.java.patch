@@ -1,17 +1,6 @@
 --- a/net/minecraft/world/level/block/FarmBlock.java
 +++ b/net/minecraft/world/level/block/FarmBlock.java
-@@ -108,13 +_,20 @@
-         }
-     }
- 
-+    // KioCG start - crops grow every day
-+    public static boolean isMoisture(ServerLevel level, BlockPos pos, RandomSource random) {
-+        BlockState iblockdata = level.getBlockState(pos);
-+        return iblockdata.is(Blocks.FARMLAND) && iblockdata.getValue(FarmBlock.MOISTURE) > 0;
-+    }
-+    // KioCG end - crops grow every day
-+
-     @Override
+@@ -112,9 +_,9 @@
      public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
          super.fallOn(level, state, pos, entity, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
          if (level instanceof ServerLevel serverLevel
