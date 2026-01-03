@@ -112,58 +112,6 @@
              }
          }
  
-@@ -600,7 +_,13 @@
-         }
- 
-         this.tickRegeneration();
--        this.inventory.tick();
-+        // KioCG start - food freshness
-+        boolean tickFood = this.level().getGameTime() % io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.foodFreshnessTickInterval == 0;
-+        if (tickFood) {
-+            this.tickMenuFoodFreshness(this.containerMenu);
-+        }
-+        this.inventory.tick(tickFood);
-+        // KioCG end - food freshness
-         this.oBob = this.bob;
-         if (this.abilities.flying && !this.isPassenger()) {
-             this.resetFallDistance();
-@@ -650,6 +_,36 @@
-         }
-     }
- 
-+    // KioCG start - food freshness
-+    protected void tickMenuFoodFreshness(AbstractContainerMenu menu) {
-+        long gameTime = this.level().getGameTime();
-+        ItemStack carried = menu.getCarried();
-+        if (carried.tickFood(gameTime)) {
-+            ItemStack rotInto = carried.mayRotInto();
-+            if (rotInto != null) {
-+                carried = rotInto;
-+                menu.setCarried(carried);
-+            }
-+        }
-+
-+        if (menu != this.inventoryMenu) {
-+            org.bukkit.inventory.Inventory topInventory = menu.getBukkitView().getTopInventory();
-+            if (!(((org.bukkit.craftbukkit.inventory.CraftInventory) topInventory).getInventory() instanceof net.minecraft.world.entity.player.Inventory) && topInventory.getLocation() != null) {
-+                menu.slots.forEach(slot -> {
-+                    ItemStack item = slot.getItem();
-+                    if (slot.mayPlace(item) && item.tickFood(gameTime)) {
-+                        ItemStack rotInto = item.mayRotInto();
-+                        if (rotInto != null) {
-+                            item = rotInto;
-+                            slot.set(item);
-+                        }
-+                    }
-+                });
-+            }
-+        }
-+    }
-+    // KioCG end - food freshness
-+
-     protected void tickRegeneration() {
-     }
- 
 @@ -822,6 +_,10 @@
  
          this.setScore(input.getIntOr("Score", 0));

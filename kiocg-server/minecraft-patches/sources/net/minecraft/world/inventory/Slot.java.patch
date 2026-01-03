@@ -8,12 +8,3 @@
          return true;
      }
  
-@@ -134,7 +_,7 @@
-             } else {
-                 if (item.isEmpty()) {
-                     this.setByPlayer(stack.split(min));
--                } else if (ItemStack.isSameItemSameComponents(item, stack)) {
-+                } else if (ItemStack.isSameItemSameComponentsForFoodFreshness(item, stack)) { // KioCG - food freshness
-                     stack.shrink(min);
-                     item.grow(min);
-                     this.setByPlayer(item);

@@ -50,23 +50,6 @@
                          }
                      }
  
-@@ -555,14 +_,14 @@
-                                 slot.onTake(player, itemStack2);
-                             });
-                         } else if (slot.mayPlace(carried2)) {
--                            if (ItemStack.isSameItemSameComponents(carried, carried2)) {
-+                            if (ItemStack.isSameItemSameComponentsForFoodFreshness(carried, carried2)) { // KioCG - food freshness
-                                 int i3 = clickAction == ClickAction.PRIMARY ? carried2.getCount() : 1;
-                                 this.setCarried(slot.safeInsert(carried2, i3));
-                             } else if (carried2.getCount() <= slot.getMaxStackSize(carried2)) {
-                                 this.setCarried(carried);
-                                 slot.setByPlayer(carried2);
-                             }
--                        } else if (ItemStack.isSameItemSameComponents(carried, carried2)) {
-+                        } else if (ItemStack.isSameItemSameComponentsForFoodFreshness(carried, carried2)) { // KioCG - food freshness
-                             Optional<ItemStack> optional1 = slot.tryRemove(carried.getCount(), carried2.getMaxStackSize() - carried2.getCount(), player);
-                             optional1.ifPresent(itemStack2 -> {
-                                 carried2.grow(itemStack2.getCount());
 @@ -591,33 +_,64 @@
              if (!item.isEmpty() || !carried.isEmpty()) {
                  if (item.isEmpty()) {

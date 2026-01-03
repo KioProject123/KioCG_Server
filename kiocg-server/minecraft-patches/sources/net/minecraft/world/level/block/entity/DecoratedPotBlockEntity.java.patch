@@ -39,21 +39,6 @@
      @Override
      public ClientboundBlockEntityDataPacket getUpdatePacket() {
          return ClientboundBlockEntityDataPacket.create(this);
-@@ -198,6 +_,14 @@
-     @Override
-     public void setTheItem(ItemStack item) {
-         this.unpackLootTable(null);
-+        // KioCG start - food freshness
-+        if (this.hasLevel() && item.tickFoodFreeze(this.getLevel().getGameTime())) {
-+            ItemStack rotInto = item.mayRotInto();
-+            if (rotInto != null) {
-+                item = rotInto;
-+            }
-+        }
-+        // KioCG end - food freshness
-         this.item = item;
-     }
- 
 @@ -205,6 +_,15 @@
      public BlockEntity getContainerBlockEntity() {
          return this;

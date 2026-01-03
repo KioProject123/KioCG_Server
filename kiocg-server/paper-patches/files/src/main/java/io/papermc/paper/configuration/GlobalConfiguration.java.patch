@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -407,4 +_,129 @@
+@@ -407,4 +_,128 @@
              }
          }
      }
@@ -21,7 +21,6 @@
 +        public Component sleepProgressLeft = Component.text("☽", NamedTextColor.BLUE);
 +        public Component sleepProgressRight = Component.text("☀", NamedTextColor.YELLOW);
 +        public String sleepProgressContent = "                              ";
-+        public int foodFreshnessTickInterval = 1800;
 +
 +        public ModelItems modelItems;
 +        public class ModelItems extends ConfigurationPart {

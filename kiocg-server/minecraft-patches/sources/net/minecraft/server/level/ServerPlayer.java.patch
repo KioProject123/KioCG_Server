@@ -36,14 +36,6 @@
          this.saveParentVehicle(output);
          output.store("recipeBook", ServerRecipeBook.Packed.CODEC, this.recipeBook.pack());
          output.putString("Dimension", this.level().dimension().location().toString());
-@@ -707,6 +_,7 @@
-     }
- 
-     public void initMenu(AbstractContainerMenu menu) {
-+        this.tickMenuFoodFreshness(menu); // KioCG - food freshness
-         menu.addSlotListener(this.containerListener);
-         menu.setSynchronizer(this.containerSynchronizer);
-     }
 @@ -729,6 +_,7 @@
  
      @Override

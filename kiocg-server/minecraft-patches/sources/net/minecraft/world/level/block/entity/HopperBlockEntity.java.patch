@@ -381,7 +381,7 @@
          boolean flag = false;
          // CraftBukkit start
          if (org.bukkit.event.inventory.InventoryPickupItemEvent.getHandlerList().getRegisteredListeners().length > 0) { // Paper - optimize hoppers
-@@ -628,20 +_,33 @@
+@@ -628,20 +_,32 @@
          }
          // CraftBukkit end
          } // Paper - Perf: Optimize Hoppers
@@ -390,7 +390,6 @@
 +        final ItemStack origItemStack = item.getItem();
 +        ItemStack itemStack = origItemStack.split(origItemStack.getMaxStackSize());
 +        // KioCG end - allow overstacked items: fix hopper
-+        itemStack.hopperEnableFreshness(item.level().getGameTime()); // KioCG - food freshness
          ItemStack itemStack1 = addItem(null, container, itemStack, null);
          if (itemStack1.isEmpty()) {
              flag = true;

@@ -93,15 +93,6 @@
  
                      switch (packet.clickType()) {
                          case PICKUP:
-@@ -2985,7 +_,7 @@
-                                                     action = packet.buttonNum() == 0 ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF;
-                                                 }
-                                             } else if (slot.mayPlace(cursor)) {
--                                                if (ItemStack.isSameItemSameComponents(clickedItem, cursor)) {
-+                                                if (ItemStack.isSameItemSameComponentsForFoodFreshness(clickedItem, cursor)) { // KioCG - food freshness
-                                                     int toPlace = packet.buttonNum() == 0 ? cursor.getCount() : 1;
-                                                     toPlace = Math.min(toPlace, clickedItem.getMaxStackSize() - clickedItem.getCount());
-                                                     toPlace = Math.min(toPlace, slot.container.getMaxStackSize() - clickedItem.getCount());
 @@ -2994,9 +_,10 @@
                                                      } else if (toPlace == cursor.getCount()) {
                                                          action = InventoryAction.PLACE_ALL;
@@ -122,7 +113,7 @@
                                                          }
                                                      } else if (slot.getItem().getItem() instanceof net.minecraft.world.item.BundleItem && slot.getItem().has(DataComponents.BUNDLE_CONTENTS) && packet.buttonNum() == 0) {
                                                          int toPickup = slot.getItem().get(DataComponents.BUNDLE_CONTENTS).getMaxAmountToAdd(cursor);
-@@ -3016,12 +_,13 @@
+@@ -3016,6 +_,7 @@
                                                              action = InventoryAction.NOTHING;
                                                          } else {
                                                              action = InventoryAction.PLACE_SOME_INTO_BUNDLE;
@@ -130,13 +121,6 @@
                                                          }
                                                      } else {
                                                          action = InventoryAction.SWAP_WITH_CURSOR;
-                                                     }
-                                                 }
--                                            } else if (ItemStack.isSameItemSameComponents(cursor, clickedItem)) {
-+                                            } else if (ItemStack.isSameItemSameComponentsForFoodFreshness(cursor, clickedItem)) { // KioCG - food freshness
-                                                 if (clickedItem.getCount() >= 0) {
-                                                     if (clickedItem.getCount() + cursor.getCount() <= cursor.getMaxStackSize()) {
-                                                         // As of 1.5, this is result slots only
 @@ -3161,6 +_,15 @@
                      }
  
