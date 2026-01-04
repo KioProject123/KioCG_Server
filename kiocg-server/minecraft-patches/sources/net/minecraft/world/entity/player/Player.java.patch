@@ -6,7 +6,7 @@
      public AbstractContainerMenu containerMenu;
 +    @Nullable public org.bukkit.inventory.Inventory carriedFrom = null; // KioCG - InventoryExchangeItemEvent
      protected FoodData foodData = new FoodData();
-+    public com.kiocg.entity.player.ThirstData thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - the long dark
++    public com.kiocg.entity.player.ThirstData thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - player thirsty
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
      protected int clientLoadedTimeoutTimer = 60;
@@ -80,7 +80,7 @@
          this.moveCloak();
          if (this instanceof ServerPlayer serverPlayer) {
              this.foodData.tick(serverPlayer);
-+            this.thirstData.tick(); // KioCG - the long dark
++            this.thirstData.tick(); // KioCG - player thirsty
              this.awardStat(Stats.PLAY_TIME);
              this.awardStat(Stats.TOTAL_WORLD_TIME);
              if (this.isAlive()) {
@@ -106,7 +106,7 @@
  
          this.setScore(input.getIntOr("Score", 0));
          this.foodData.readAdditionalSaveData(input);
-+        this.thirstData.readAdditionalSaveData(input); // KioCG - the long dark
++        this.thirstData.readAdditionalSaveData(input); // KioCG - player thirsty
          input.read("abilities", Abilities.Packed.CODEC).ifPresent(this.abilities::apply);
          this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.abilities.getWalkingSpeed());
          this.enderChestInventory.fromSlots(input.listOrEmpty("EnderItems", ItemStackWithSlot.CODEC));
@@ -114,7 +114,7 @@
          output.putInt("XpSeed", this.enchantmentSeed);
          output.putInt("Score", this.getScore());
          this.foodData.addAdditionalSaveData(output);
-+        this.thirstData.addAdditionalSaveData(output); // KioCG - the long dark
++        this.thirstData.addAdditionalSaveData(output); // KioCG - player thirsty
          output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
          this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
          if (!this.getShoulderEntityLeft().isEmpty()) {

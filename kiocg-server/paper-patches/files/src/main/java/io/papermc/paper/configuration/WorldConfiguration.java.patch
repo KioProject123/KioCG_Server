@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,4 +_,106 @@
+@@ -587,4 +_,85 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -14,32 +14,11 @@
 +        public boolean deathItemsOnlyPickupByOneself = true;
 +        public int sleepHealingRegenRate = 10;
 +
-+        public TheLongDark theLongDark;
-+        public class TheLongDark extends ConfigurationPart {
-+
-+            public ColdValue coldValue;
-+            public class ColdValue extends ConfigurationPart {
-+                public double ambientTemperatureBase = 0.0;
-+                public double ambientSkyDarkenMultiplier = -0.15;
-+                public double biomeTemperatureOffset = -0.65;
-+                public double biomeTemperatureMultiplier = 30.0;
-+
-+                public double playerTemperatureBase = 0.0;
-+                public double playerLightBlockMultiplier = 5.0;
-+                public double isInWater = -35.0;
-+                public double isInRain = -15.0;
-+                public double isInLava = 300.0;
-+                public double isOnFire = 10.0;
-+
-+                public double finalTemperatureMultiplier = 1.0;
-+            }
-+
-+            public ThirstValue thirstValue;
-+            public class ThirstValue extends ConfigurationPart {
-+                public double thirstRegainMultiplierHealth = 2.0;
-+                public double thirstRegainMultiplierFood = 6.0;
-+                public double lowDownfallBiomeMultiplier = 1.5;
-+            }
++        public PlayerThirsty playerThirsty;
++        public class PlayerThirsty extends ConfigurationPart {
++            public double thirstRegainMultiplierHealth = 2.0;
++            public double thirstRegainMultiplierFood = 6.0;
++            public double lowDownfallBiomeMultiplier = 2.0;
 +        }
 +
 +        public Block block;

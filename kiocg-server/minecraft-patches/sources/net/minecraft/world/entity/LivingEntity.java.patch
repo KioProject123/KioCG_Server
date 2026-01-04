@@ -18,7 +18,7 @@
                  }
              }
  
-+            if (this instanceof ServerPlayer serverPlayer) serverPlayer.thirstData.underWater = false; // KioCG - the long dark
++            if (this instanceof ServerPlayer serverPlayer) serverPlayer.thirstData.underWater = false; // KioCG - player thirsty
              if (this.isEyeInFluid(FluidTags.WATER)
                  && !serverLevel1.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
                  boolean flag1 = !this.canBreatheUnderwater()
@@ -26,19 +26,19 @@
                          serverLevel1.broadcastEntityEvent(this, (byte)67);
                          this.hurtServer(serverLevel1, this.damageSources().drown(), 2.0F);
                      }
-+                    // KioCG start - the long dark
++                    // KioCG start - player thirsty
 +                    if (this instanceof ServerPlayer serverPlayer) {
 +                        serverPlayer.thirstData.underWater = true;
 +                        serverPlayer.sendAirMessage(Math.max(this.getAirSupply(), 0), this.getMaxAirSupply());
 +                    }
-+                    // KioCG end - the long dark
++                    // KioCG end - player thirsty
                  } else if (this.getAirSupply() < this.getMaxAirSupply()) {
                      this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
-+                    // KioCG start - the long dark
++                    // KioCG start - player thirsty
 +                    if (this instanceof ServerPlayer serverPlayer) {
 +                        serverPlayer.sendAirMessage(Math.max(this.getAirSupply(), 0), this.getMaxAirSupply());
 +                    }
-+                    // KioCG end - the long dark
++                    // KioCG end - player thirsty
                  }
  
                  if (this.isPassenger() && this.getVehicle() != null && this.getVehicle().dismountsUnderwater()) {
@@ -46,23 +46,14 @@
                  }
              } else if (this.getAirSupply() < this.getMaxAirSupply()) {
                  this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
-+                // KioCG start - the long dark
++                // KioCG start - player thirsty
 +                if (this instanceof ServerPlayer serverPlayer) {
 +                    serverPlayer.sendAirMessage(Math.max(this.getAirSupply(), 0), this.getMaxAirSupply());
 +                }
-+                // KioCG end - the long dark
++                // KioCG end - player thirsty
              }
  
              BlockPos blockPos = this.blockPosition();
-@@ -537,7 +_,7 @@
-     }
- 
-     protected void tryAddFrost() {
--        if (!this.getBlockStateOnLegacy().isAir()) {
-+        if (true || !this.getBlockStateOnLegacy().isAir()) { // KioCG - the long dark
-             int ticksFrozen = this.getTicksFrozen();
-             if (ticksFrozen > 0) {
-                 AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
 @@ -559,6 +_,70 @@
          return false;
      }
@@ -193,7 +184,7 @@
  
      public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason, boolean isFastRegen) {
          // Paper end - Forward
-+        if (!(this instanceof net.minecraft.world.entity.player.Player player) || !player.thirstData.isThirsty(player)) { // KioCG - the long dark
++        if (!(this instanceof net.minecraft.world.entity.player.Player player) || !player.thirstData.isThirsty(player)) { // KioCG - player thirsty
          float health = this.getHealth();
          if (health > 0.0F) {
              EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), healAmount, regainReason, isFastRegen); // Paper
@@ -201,11 +192,11 @@
  
              if (!event.isCancelled()) {
                  this.setHealth((float) (this.getHealth() + event.getAmount()));
-+                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain((float) (Math.max(this.getHealth() - health, 0) * this.level().paperConfig().kiocgConfig.theLongDark.thirstValue.thirstRegainMultiplierHealth)); // KioCG - the long dark
++                if (this instanceof net.minecraft.world.entity.player.Player player) player.thirstData.addThirstRegain((float) (Math.max(this.getHealth() - health, 0) * this.level().paperConfig().kiocgConfig.playerThirsty.thirstRegainMultiplierHealth)); // KioCG - player thirsty
              }
              // CraftBukkit end
          }
-+        } // KioCG - the long dark
++        } // KioCG - player thirsty
      }
  
      public float getHealth() {
@@ -301,15 +292,6 @@
              ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.5F
              : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F;
      }
-@@ -3375,6 +_,8 @@
-                 ItemStack itemBySlot = entry.getValue();
-                 if (!itemBySlot.isEmpty() && !itemBySlot.isBroken()) {
-                     itemBySlot.forEachModifier(equipmentSlot1, (holder, attributeModifier) -> {
-+                        if (this instanceof net.minecraft.world.entity.monster.Zombie && holder == Attributes.SPAWN_REINFORCEMENTS_CHANCE) return; // KioCG - the long dark: 属性用于玩家温度
-+
-                         AttributeInstance instance = this.attributes.getInstance(holder);
-                         if (instance != null) {
-                             instance.removeModifier(attributeModifier.id());
 @@ -3568,11 +_,12 @@
              this.checkAutoSpinAttack(boundingBox, this.getBoundingBox());
          }

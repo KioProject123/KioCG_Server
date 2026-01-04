@@ -4,7 +4,7 @@
      private double health = 20;
      private boolean scaledHealth = false;
      private double healthScale = 20;
-+    public int realAir; // KioCG - the long dark
++    public int realAir; // KioCG - player thirsty
      private CraftWorldBorder clientWorldBorder = null;
      private BorderChangeListener clientWorldBorderListener = this.createWorldBorderListener();
      private long lastSaveTime; // Paper - getLastPlayed replacement API
@@ -49,7 +49,7 @@
 +    }
 +    // KioCG end - player in structure api
 +
-+    // KioCG start - the long dark
++    // KioCG start - player thirsty
 +    @Override
 +    public int getThirstValue() {
 +        return this.getHandle().thirstData.getThirstValue();
@@ -75,7 +75,7 @@
 +    public void addThirstRegain(float add) {
 +        this.getHandle().thirstData.addThirstRegain(add);
 +    }
-+    // KioCG end - the long dark
++    // KioCG end - player thirsty
 +
      public Player.Spigot spigot() {
          return this.spigot;

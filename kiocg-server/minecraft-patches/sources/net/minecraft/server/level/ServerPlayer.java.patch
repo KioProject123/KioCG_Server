@@ -131,15 +131,15 @@
 -        }
 -    }
 +
-+            // kioCG start - the long dark
++            // kioCG start - player thirsty
 +            if (this.tickCount % 10 == 0 && this.thirstData.needsWater()) {
 +                this.thirstData.setThirstValue(this.thirstData.getThirstValue() + 1);
 +            }
-+            // kioCG end - the long dark
++            // kioCG end - player thirsty
 +        }
 +    }
 +
-+    // KioCG start - the long dark
++    // KioCG start - player thirsty
 +    public void sendAirMessage(int value, int maxValue) {
 +        net.kyori.adventure.text.Component bubbles = io.papermc.paper.configuration.GlobalConfiguration.get().kiocgConfig.airProgressO2;
 +        int air = (int) Math.ceil(value / (maxValue / 10.0));
@@ -152,7 +152,7 @@
 +        }
 +        this.getBukkitEntity().sendActionBar(bubbles);
 +    }
-+    // KioCG end - the long dark
++    // KioCG end - player thirsty
  
      @Override
      public void resetFallDistance() {
@@ -352,7 +352,7 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
              this.foodData = that.foodData;
-+            this.thirstData = that.thirstData; // KioCG - the long dark
++            this.thirstData = that.thirstData; // KioCG - player thirsty
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
                  // this.addEffect(new MobEffectInstance(mobEffectInstance)); // CraftBukkit
@@ -429,7 +429,7 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();
-+        this.thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - the long dark
++        this.thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - player thirsty
          this.experienceLevel = this.newLevel;
          this.totalExperience = this.newTotalExp;
          this.experienceProgress = 0;

@@ -6,7 +6,7 @@
  
 +    boolean isInStructure(); // KioCG - player in structure api
 +
-+    // KioCG start - the long dark
++    // KioCG start - player thirsty
 +    int getThirstValue();
 +    void setThirstValue(int value);
 +    void addThirstValue(int add);
@@ -14,7 +14,7 @@
 +    float getThirstRegain();
 +    void setThirstRegain(float value);
 +    void addThirstRegain(float add);
-+    // KioCG end - the long dark
++    // KioCG end - player thirsty
 +
      @Override
      Spigot spigot();

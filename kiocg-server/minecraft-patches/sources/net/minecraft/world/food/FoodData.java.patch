@@ -4,13 +4,13 @@
              if (this.saturationLevel > 0.0F) {
                  this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
              } else if (difficulty != Difficulty.PEACEFUL) {
-+                int oldFoodLevel = this.foodLevel; // KioCG - the long dark
++                int oldFoodLevel = this.foodLevel; // KioCG - player thirsty
                  // CraftBukkit start
                  org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(player, Math.max(this.foodLevel - 1, 0));
  
                  if (!event.isCancelled()) {
                      this.foodLevel = event.getFoodLevel();
-+                    player.thirstData.addThirstRegain((float) (Math.max(oldFoodLevel - this.foodLevel, 0) * player.level().paperConfig().kiocgConfig.theLongDark.thirstValue.thirstRegainMultiplierFood)); // KioCG - the long dark
++                    player.thirstData.addThirstRegain((float) (Math.max(oldFoodLevel - this.foodLevel, 0) * player.level().paperConfig().kiocgConfig.playerThirsty.thirstRegainMultiplierFood)); // KioCG - player thirsty
                  }
  
                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetHealthPacket(player.getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));

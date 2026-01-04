@@ -58,7 +58,7 @@ public class ThirstData {
     public void addThirstRegain(float add) {
         final Level world = player.level();
         if (world.getBiome(player.blockPosition()).value().climateSettings.downfall() <= 0.0) {
-            thirstRegain += (float) (add * world.paperConfig().kiocgConfig.theLongDark.thirstValue.lowDownfallBiomeMultiplier);
+            thirstRegain += (float) (add * world.paperConfig().kiocgConfig.playerThirsty.lowDownfallBiomeMultiplier);
             return;
         }
 

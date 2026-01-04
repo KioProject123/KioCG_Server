@@ -60,7 +60,7 @@
      }
  
      public int getAirSupply() {
-+        if (this instanceof ServerPlayer player) return player.getBukkitEntity().realAir; // KioCG - the long dark
++        if (this instanceof ServerPlayer player) return player.getBukkitEntity().realAir; // KioCG - player thirsty
          return this.entityData.get(DATA_AIR_SUPPLY_ID);
      }
  
@@ -68,7 +68,7 @@
              this.entityData.markDirty(Entity.DATA_AIR_SUPPLY_ID);
              return;
          }
-+        if (this instanceof ServerPlayer player) { player.getBukkitEntity().realAir = event.getAmount(); } else // KioCG - the long dark
++        if (this instanceof ServerPlayer player) { player.getBukkitEntity().realAir = event.getAmount(); } else // KioCG - player thirsty
          this.entityData.set(Entity.DATA_AIR_SUPPLY_ID, event.getAmount());
          // CraftBukkit end
      }
