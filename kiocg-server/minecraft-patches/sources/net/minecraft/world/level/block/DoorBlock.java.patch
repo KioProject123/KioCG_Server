@@ -47,10 +47,11 @@
      public boolean isOpen(BlockState state) {
          return state.getValue(OPEN);
      }
-@@ -220,6 +_,15 @@
+@@ -219,6 +_,15 @@
+             level.gameEvent(entity, _open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
          }
      }
- 
++
 +    // KioCG start - double door opening
 +    public void setOpenWithoutSound(@Nullable Entity entity, Level level, BlockState state, BlockPos pos, boolean _open) {
 +        if (state.is(this) && state.getValue(OPEN) != _open) {
@@ -59,39 +60,6 @@
 +        }
 +    }
 +    // KioCG end - double door opening
-+
-     @Override
-     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
-         // CraftBukkit start
-@@ -246,6 +_,31 @@
-             level.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
-         }
-     }
-+
-+    // KioCG start - automatic door closing
-+    @Override
-+    protected boolean isRandomlyTicking(BlockState state) {
-+        return state.getValue(OPEN) != state.getValue(DoorBlock.POWERED);
-+    }
-+
-+    @Override
-+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-+        if (state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER && state.getValue(OPEN) != state.getValue(DoorBlock.POWERED)) {
-+            if (random.nextFloat() < 0.05688889F * 0.1F) {
-+                boolean open = state.getValue(OPEN);
-+                setOpenWithoutSound(null, level, state, pos, !open);
-+
-+                BlockPos relativeDoorPos = getRelativeDoor(state, level, pos);
-+                if (relativeDoorPos != null) {
-+                    BlockState relativeDoorState = level.getBlockState(relativeDoorPos);
-+                    if (open == relativeDoorState.getValue(OPEN) && open != relativeDoorState.getValue(DoorBlock.POWERED)) {
-+                        setOpenWithoutSound(null, level, relativeDoorState, relativeDoorPos, !open);
-+                    }
-+                }
-+            }
-+        }
-+    }
-+    // KioCG end - automatic door closing
  
      @Override
-     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
