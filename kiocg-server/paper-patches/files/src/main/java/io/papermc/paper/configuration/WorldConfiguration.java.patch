@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -587,4 +_,85 @@
+@@ -587,4 +_,82 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -29,7 +29,6 @@
 +            public boolean hopperRailsOptimize = true;
 +            public boolean hopperMinecartPullsHopperOnly = true;
 +            public double saplingsWitheredChance = 0.025;
-+            public double flowersAndGrassesSpreadChance = 0.01;
 +            public boolean rainExtinguishesFlames = true;
 +        }
 +
@@ -72,8 +71,6 @@
 +            public double turretRangeDefault = 8.0;
 +            public double turretDamageDefault = 1.0;
 +            public boolean itemEntityExplosionKnockback = true;
-+            public boolean mobSpawningAnimation = true;
-+            public boolean mobDyingAnimation = true;
 +        }
 +
 +        public ChunkHot chunkHot;

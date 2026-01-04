@@ -9,17 +9,12 @@
      @Nullable
      private LivingEntity target;
      private final Sensing sensing;
-@@ -140,6 +_,13 @@
+@@ -140,6 +_,8 @@
      private int homeRadius = -1;
      public boolean aware = true; // CraftBukkit
      public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful
 +    @Nullable private net.minecraft.server.level.ServerBossEvent bossbar; // KioCG - entity bossbar api
 +    private int ticksSinceLastPlayerScan = 21; // KioCG - entity bossbar api
-+    // KioCG start - mob spawning or dying animation
-+    private static final ResourceLocation ANIMATION_SCALE_MODIFIER_ID = ResourceLocation.withDefaultNamespace("animation_scale");
-+    public boolean spawningAnimation = this.level().paperConfig().kiocgConfig.entity.mobSpawningAnimation;
-+    public boolean dyingAnimation = this.level().paperConfig().kiocgConfig.entity.mobDyingAnimation;
-+    // KioCG end - mob spawning or dying animation
  
      protected Mob(EntityType<? extends Mob> entityType, Level level) {
          super(entityType, level);
@@ -44,11 +39,10 @@
          super.baseTick();
          ProfilerFiller profilerFiller = Profiler.get();
          profilerFiller.push("mobBaseTick");
-@@ -383,7 +_,37 @@
+@@ -383,6 +_,16 @@
          if (!this.level().isClientSide && this.tickCount % 5 == 0) {
              this.updateControlFlags();
          }
--    }
 +
 +        // KioCG start - entity bossbar api
 +        if (this.bossbar != null) {
@@ -59,30 +53,9 @@
 +            }
 +        }
 +        // KioCG end - entity bossbar api
-+
-+        // KioCG start - mob spawning or dying animation
-+        if (this.spawningAnimation && this.tickCount <= 10) {
-+            AttributeInstance scale = this.getAttribute(Attributes.SCALE);
-+            if (scale.hasModifier(ANIMATION_SCALE_MODIFIER_ID)) {
-+                scale.addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, (this.tickCount / 10.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-+            }
-+        }
-+        // KioCG end - mob spawning or dying animation
-+    }
-+
-+    // KioCG start - mob spawning or dying animation
-+    @Override
-+    protected void tickDeath() {
-+        super.tickDeath();
-+        if (this.dyingAnimation && this.deathTime > 20 && this.deathTime <= 30) {
-+            int reventDeathTime = 30 - this.deathTime;
-+            this.getAttribute(Attributes.SCALE).addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, (reventDeathTime / 10.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-+        }
-+    }
-+    // KioCG end - mob spawning or dying animation
+     }
  
      protected void updateControlFlags() {
-         boolean flag = !(this.getControllingPassenger() instanceof Mob);
 @@ -433,6 +_,12 @@
              output.putString("Paper.DespawnInPeacefulOverride", this.despawnInPeacefulOverride.name());
          }
@@ -180,18 +153,6 @@
              profilerFiller.push("targetSelector");
              this.targetSelector.tickRunningGoals(false);
              profilerFiller.pop();
-@@ -1201,6 +_,11 @@
-             );
-         }
- 
-+        // KioCG start - mob spawning or dying animation
-+        if (this.spawningAnimation && this.tickCount <= 10) {
-+            this.getAttribute(Attributes.SCALE).addOrUpdateTransientModifier(new AttributeModifier(ANIMATION_SCALE_MODIFIER_ID, (this.tickCount / 10.0) - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-+        }
-+        // KioCG end - mob spawning or dying animation
-         this.setLeftHanded(random.nextFloat() < 0.05F);
-         return spawnGroupData;
-     }
 @@ -1479,8 +_,23 @@
          return (this.entityData.get(DATA_MOB_FLAGS_ID) & 4) != 0;
      }
