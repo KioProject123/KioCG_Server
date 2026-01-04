@@ -112,13 +112,7 @@
  
      private void updatePlayerAttributes() {
          AttributeInstance attribute = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
-@@ -879,11 +_,16 @@
- 
-             if (this.totalExperience != this.lastSentExp) {
-                 this.lastSentExp = this.totalExperience;
--                this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
-+                // this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel)); // KioCG - the long dark
-             }
+@@ -884,6 +_,11 @@
  
              if (this.tickCount % 20 == 0) {
                  CriteriaTriggers.LOCATION.trigger(this);
@@ -342,7 +336,7 @@
      }
  
      @Override
-@@ -2020,13 +_,18 @@
+@@ -2020,13 +_,17 @@
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
          this.wardenSpawnTracker = that.wardenSpawnTracker;
          this.chatSession = that.chatSession;
@@ -358,7 +352,6 @@
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
              this.foodData = that.foodData;
-+            this.coldData = that.coldData; // KioCG - the long dark
 +            this.thirstData = that.thirstData; // KioCG - the long dark
  
              for (MobEffectInstance mobEffectInstance : that.getActiveEffects()) {
@@ -432,11 +425,10 @@
          if (vehicle != null) {
              this.connection.send(new ClientboundSetPassengersPacket(vehicle));
          }
-@@ -2949,6 +_,8 @@
+@@ -2949,6 +_,7 @@
          this.setRemainingFireTicks(0);
          this.fallDistance = 0;
          this.foodData = new net.minecraft.world.food.FoodData();
-+        this.coldData = new com.kiocg.entity.player.ColdData(this); // KioCG - the long dark
 +        this.thirstData = new com.kiocg.entity.player.ThirstData(this); // KioCG - the long dark
          this.experienceLevel = this.newLevel;
          this.totalExperience = this.newTotalExp;

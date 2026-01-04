@@ -310,19 +310,6 @@
                          AttributeInstance instance = this.attributes.getInstance(holder);
                          if (instance != null) {
                              instance.removeModifier(attributeModifier.id());
-@@ -3550,7 +_,11 @@
-         if (this.level() instanceof ServerLevel serverLevel) {
-             profilerFiller.push("freezing");
-             if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
--                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
-+                // KioCG start - the long dark
-+                if (this instanceof net.minecraft.world.entity.player.Player player && player.coldData.isFrozen(player)) {
-+                    player.setTicksFrozen(Math.min(player.getTicksRequiredToFreeze(), player.getTicksFrozen() + 1));
-+                } else this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
-+                // KioCG end - the long dark
-             }
- 
-             this.removeFrost();
 @@ -3568,11 +_,12 @@
              this.checkAutoSpinAttack(boundingBox, this.getBoundingBox());
          }

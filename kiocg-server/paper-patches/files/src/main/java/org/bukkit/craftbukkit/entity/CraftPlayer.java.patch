@@ -38,16 +38,7 @@
      @Override
      public boolean isOp() {
          return this.server.getHandle().isOp(this.getProfile());
-@@ -2196,7 +_,7 @@
-         playerList.sendAllPlayerInfo(handle);
- 
-         // Resend their XP and effects because the respawn packet resets it
--        connection.send(new net.minecraft.network.protocol.game.ClientboundSetExperiencePacket(handle.experienceProgress, handle.totalExperience, handle.experienceLevel));
-+        connection.send(new net.minecraft.network.protocol.game.ClientboundSetExperiencePacket(handle.coldData.getColdProgress(), handle.totalExperience, handle.experienceLevel)); // KioCG - the long dark
-         for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
-             connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
-         }
-@@ -3415,6 +_,54 @@
+@@ -3415,6 +_,41 @@
      }
      // Paper end
  
@@ -59,19 +50,6 @@
 +    // KioCG end - player in structure api
 +
 +    // KioCG start - the long dark
-+    @Override
-+    public int getColdValue() {
-+        return this.getHandle().coldData.getColdValue();
-+    }
-+    @Override
-+    public void setColdValue(int value) {
-+        this.getHandle().coldData.setColdValue(value);
-+    }
-+    @Override
-+    public void addColdValue(int add) {
-+        this.getHandle().coldData.addColdValue(add);
-+    }
-+
 +    @Override
 +    public int getThirstValue() {
 +        return this.getHandle().thirstData.getThirstValue();

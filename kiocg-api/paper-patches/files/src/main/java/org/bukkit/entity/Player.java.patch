@@ -1,16 +1,12 @@
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -3859,6 +_,22 @@
+@@ -3859,6 +_,18 @@
      boolean isChunkSent(long chunkKey);
      // Paper end
  
 +    boolean isInStructure(); // KioCG - player in structure api
 +
 +    // KioCG start - the long dark
-+    int getColdValue();
-+    void setColdValue(int value);
-+    void addColdValue(int add);
-+
 +    int getThirstValue();
 +    void setThirstValue(int value);
 +    void addThirstValue(int add);

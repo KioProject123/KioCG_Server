@@ -18,15 +18,6 @@
          ServerLevel serverLevel = player.level();
          player.awardStat(Stats.LEAVE_GAME);
          // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
-@@ -746,7 +_,7 @@
-         serverPlayer.connection.send(new ClientboundSetDefaultSpawnPositionPacket(level.getSharedSpawnPos(), level.getSharedSpawnAngle()));
-         serverPlayer.connection.send(new ClientboundChangeDifficultyPacket(levelData.getDifficulty(), levelData.isDifficultyLocked()));
-         serverPlayer.connection
--            .send(new ClientboundSetExperiencePacket(serverPlayer.experienceProgress, serverPlayer.totalExperience, serverPlayer.experienceLevel));
-+            .send(new ClientboundSetExperiencePacket(serverPlayer.coldData.getColdProgress(), serverPlayer.totalExperience, serverPlayer.experienceLevel)); // KioCG - the long dark
-         this.sendActivePlayerEffects(serverPlayer);
-         this.sendLevelInfo(serverPlayer, level);
-         this.sendPlayerPermissionLevel(serverPlayer);
 @@ -802,6 +_,12 @@
  
          // Don't fire on respawn
