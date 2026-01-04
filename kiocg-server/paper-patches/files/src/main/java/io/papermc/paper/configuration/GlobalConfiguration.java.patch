@@ -120,10 +120,10 @@
 +
 +        public Container container;
 +        public class Container extends ConfigurationPart {
-+            public int defaultChestRows = 2;
-+            public int defaultTrappedChestRows = 2;
-+            public int defaultBarrelRows = 2;
-+            public int defaultShulkerBoxRows = 2;
++            public int defaultChestRows = 3;
++            public int defaultTrappedChestRows = 3;
++            public int defaultBarrelRows = 3;
++            public int defaultShulkerBoxRows = 3;
 +            public boolean lootableCompleteReplenish = true;
 +        }
 +    }
