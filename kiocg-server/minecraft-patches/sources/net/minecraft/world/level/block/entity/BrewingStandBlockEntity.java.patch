@@ -1,30 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -26,6 +_,7 @@
- 
- public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
-     private static final int INGREDIENT_SLOT = 3;
-+    private static final int[] INGREDIENT_SLOTS = {INGREDIENT_SLOT, 10, 11, 12, 13, 14, 15, 16, 17}; // KioCG - change container behavior
-     private static final int FUEL_SLOT = 4;
-     private static final int[] SLOTS_FOR_UP = new int[]{3};
-     private static final int[] SLOTS_FOR_DOWN = new int[]{0, 1, 2, 3};
-@@ -36,7 +_,7 @@
-     public static final int NUM_DATA_VALUES = 2;
-     private static final short DEFAULT_BREW_TIME = 0;
-     private static final byte DEFAULT_FUEL = 0;
--    private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
-+    private NonNullList<ItemStack> items = NonNullList.withSize(18, ItemStack.EMPTY); // KioCG - change container behavior
-     public int brewTime;
-     public int recipeBrewTime = 400; // Paper - Add recipeBrewTime
-     private boolean[] lastPotionCount;
-@@ -135,8 +_,10 @@
+@@ -135,8 +_,9 @@
      }
  
      public static void serverTick(Level level, BlockPos pos, BlockState state, BrewingStandBlockEntity blockEntity) {
 +        boolean changed = false; // KioCG - optimize block entity
          ItemStack itemStack = blockEntity.items.get(4);
 -        if (blockEntity.fuel <= 0 && itemStack.is(ItemTags.BREWING_FUEL)) {
-+        blockEntity.fuel = 20; // KioCG - change container behavior: 总是最大燃料值
 +        if (blockEntity.fuel <= 0 && PotionBrewing.isFuel(itemStack)) { // KioCG - vanilla recipe excludes model items: 提取方法
              // CraftBukkit start
              org.bukkit.event.inventory.BrewingStandFuelEvent event = new org.bukkit.event.inventory.BrewingStandFuelEvent(
@@ -76,7 +58,7 @@
          boolean[] potionBits = blockEntity.getPotionBits();
          if (!Arrays.equals(potionBits, blockEntity.lastPotionCount)) {
              blockEntity.lastPotionCount = potionBits;
-@@ -198,12 +_,42 @@
+@@ -198,12 +_,41 @@
          }
      }
  
@@ -85,7 +67,6 @@
 +    public boolean needTicking(Level level, BlockPos pos, BlockState state) {
 +        BrewingStandBlockEntity.refreshBottleDisplay(level, pos, state, this); // 没有很好的地方放置这个...
 +
-+        this.fuel = 20; // KioCG - change container behavior: 总是最大燃料值
 +        if (this.brewTime > 0) {
 +            return true;
 +        } else if (this.fuel <= 0 && PotionBrewing.isFuel(this.items.get(FUEL_SLOT))) {
@@ -120,77 +101,6 @@
              }
          }
  
-@@ -239,6 +_,8 @@
-             brewResults.add(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(potionBrewing.mix(itemStack, items.get(i))));
-         }
- 
-+        ItemStack craftingRemainder = itemStack.getItem().getCraftingRemainder(); // KioCG - fix MC-259583: Glass bottle is lost after brewing the last Dragon's Breath
-+
-         if (owner != null) {
-             org.bukkit.event.inventory.BrewEvent event = new org.bukkit.event.inventory.BrewEvent(
-                 org.bukkit.craftbukkit.block.CraftBlock.at(level, pos),
-@@ -250,9 +_,19 @@
-                 return;
-             }
- 
-+            // KioCG start - change container behavior
-+            itemStack.shrink(1);
-+            boolean autoBrewing = tryFillNextIngredient(items);
-+            // KioCG end - change container behavior
-+
-             for (int i = 0; i < 3; i++) {
-                 if (i < brewResults.size()) {
-                     items.set(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(brewResults.get(i)));
-+                    // KioCG start - change container behavior
-+                    if (!autoBrewing) {
-+                        net.minecraft.world.level.block.Block.popResource(level, pos, items.set(i, ItemStack.EMPTY));
-+                    }
-+                    // KioCG end - change container behavior
-                 } else {
-                     items.set(i, ItemStack.EMPTY);
-                 }
-@@ -260,20 +_,37 @@
-         }
-         // CraftBukkit end
- 
--        itemStack.shrink(1);
--        ItemStack craftingRemainder = itemStack.getItem().getCraftingRemainder();
-+        // itemStack.shrink(1); // KioCG - change container behavior: 上移
-+        // ItemStack craftingRemainder = itemStack.getItem().getCraftingRemainder(); // KioCG - fix MC-259583: 上移
-         if (!craftingRemainder.isEmpty()) {
--            if (itemStack.isEmpty()) {
-+            if (false && itemStack.isEmpty()) { // KioCG - change container behavior: 始终掉落玻璃瓶
-                 itemStack = craftingRemainder;
-             } else {
-                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
-             }
-         }
- 
--        items.set(3, itemStack);
-+        // items.set(3, itemStack); // KioCG - change container behavior
-         level.levelEvent(1035, pos, 0);
-     }
- 
-+    // KioCG start - change container behavior
-+    private static boolean tryFillNextIngredient(NonNullList<ItemStack> items) {
-+        if (items.get(INGREDIENT_SLOT).isEmpty()) {
-+            int index = 0;
-+            for (int i = 1; i < INGREDIENT_SLOTS.length; ++i) {
-+                final ItemStack itemStack = items.get(INGREDIENT_SLOTS[i]);
-+                if (!itemStack.isEmpty()) {
-+                    items.set(INGREDIENT_SLOTS[index++], itemStack);
-+                    items.set(INGREDIENT_SLOTS[i], ItemStack.EMPTY);
-+                }
-+            }
-+            return index != 0;
-+        }
-+        return false;
-+    }
-+    // KioCG end - change container behavior
-+
-     @Override
-     protected void loadAdditional(ValueInput input) {
-         super.loadAdditional(input);
 @@ -302,14 +_,15 @@
              return potionBrewing.isIngredient(stack);
          } else {
