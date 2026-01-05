@@ -18,15 +18,6 @@
  
      // CraftBukkit start
      public boolean fauxSleeping;
-@@ -296,6 +_,8 @@
-             this.takeXpDelay--;
-         }
- 
-+        this.campfireHealed = false; // KioCG - campfire healing
-+
-         if (this.isSleeping()) {
-             this.sleepCounter++;
-             // Paper start - Add PlayerDeepSleepEvent
 @@ -303,13 +_,47 @@
                  if (!new io.papermc.paper.event.player.PlayerDeepSleepEvent((org.bukkit.entity.Player) getBukkitEntity()).callEvent()) {
                      this.sleepCounter = Integer.MIN_VALUE;
@@ -118,24 +109,6 @@
          output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
          this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
          if (!this.getShoulderEntityLeft().isEmpty()) {
-@@ -915,6 +_,17 @@
-         }
-     }
- 
-+    // KioCG start - campfire healing
-+    private boolean campfireHealed;
-+    public void campfireHealing() {
-+        if (!campfireHealed && this.isHurt()) {
-+            campfireHealed = true;
-+            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-+            this.causeFoodExhaustion(this.level().spigotConfig.regenExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
-+        }
-+    }
-+    // KioCG end - campfire healing
-+
-     @Override
-     protected void blockUsingItem(ServerLevel level, LivingEntity entity) {
-         super.blockUsingItem(level, entity);
 @@ -1703,9 +_,13 @@
  
      public void giveExperiencePoints(int xpPoints) {

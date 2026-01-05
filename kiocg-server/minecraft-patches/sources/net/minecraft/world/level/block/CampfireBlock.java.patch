@@ -1,26 +1,9 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
-@@ -112,6 +_,15 @@
-             entity.hurt(level.damageSources().campfire().eventBlockDamager(level, pos), (float) this.fireDamage); // CraftBukkit
-         }
- 
-+        // KioCG start - campfire healing
-+        if (state.getValue(LIT)) {
-+            BlockEntity blockEntity = level.getBlockEntity(pos);
-+            if (blockEntity instanceof CampfireBlockEntity) {
-+                CampfireBlockEntity.entityInside(level, pos, state, entity, (CampfireBlockEntity) blockEntity);
-+            }
-+        }
-+        // KioCG end - campfire healing
-+
-         super.entityInside(state, level, pos, entity, effectApplier);
-     }
- 
-@@ -182,6 +_,22 @@
-             }
+@@ -183,6 +_,22 @@
          }
      }
-+
+ 
 +    // KioCG start - rain extinguishes flames
 +    @Override
 +    protected boolean isRandomlyTicking(BlockState state) {
@@ -36,6 +19,7 @@
 +        }
 +    }
 +    // KioCG end - rain extinguishes flames
- 
++
      public static void dowse(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state) {
          if (level.isClientSide()) {
+             for (int i = 0; i < 20; i++) {
