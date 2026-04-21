@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -82,8 +_,9 @@
-         if (!new io.papermc.paper.event.entity.EntityInsideBlockEvent(entity.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, pos)).callEvent()) { return; } // Paper - Add EntityInsideBlockEvent
-         if (level instanceof ServerLevel serverLevel) {
-             BlockPos blockPos = pos.immutable();
-+            effectApplier.apply(InsideBlockEffectType.EXTINGUISH); // KioCG - better mob griefing setting: 始终允许熄灭火焰
-             effectApplier.runBefore(InsideBlockEffectType.EXTINGUISH, entity1 -> {
--                if (entity1.isOnFire() && (entity instanceof net.minecraft.world.entity.player.Player || serverLevel.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) && entity1.mayInteract(serverLevel, blockPos)) { // Paper - Fixes MC-248588
-+                if (entity1.isOnFire() && (false || serverLevel.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING1)) && entity1.mayInteract(serverLevel, blockPos)) { // Paper - Fixes MC-248588 // KioCG - better mob griefing setting
-                     // Paper start - cauldron level change event
-                     if (this.handleEntityOnFireInside(state, level, blockPos, entity1)) { // Paper - track entity
-                         InsideBlockEffectType.EXTINGUISH.effect().affect(entity1, blockPos); // apply extinguishing if event was not cancelled.
 @@ -133,6 +_,7 @@
          if (!event.callEvent()) {
              return false;

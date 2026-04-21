@@ -16,12 +16,3 @@
      @Override
      protected void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
          Player player1 = projectile.getOwner() instanceof Player player ? player : null;
-@@ -212,7 +_,7 @@
- 
-     @Override
-     protected void onExplosionHit(BlockState state, ServerLevel level, BlockPos pos, Explosion explosion, BiConsumer<ItemStack, BlockPos> dropConsumer) {
--        if (explosion.canTriggerBlocks()) {
-+        if (explosion.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK) { // KioCG - better mob griefing setting: 始终允许敲钟
-             this.attemptToRing(level, pos, null);
-         }
- 

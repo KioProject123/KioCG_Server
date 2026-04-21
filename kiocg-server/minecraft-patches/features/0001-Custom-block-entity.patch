@@ -621,10 +621,10 @@ index a972c5b4141c3f267070b65bbac5937967fdb3c8..7ace060aeb7751977eac512345c41cb9
 +    // KioCG end - custom block entity
  }
 diff --git a/net/minecraft/world/level/block/LayeredCauldronBlock.java b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-index 34495f08c3ff3d298a5f5ca9121928cf461caf82..992b54ecfe280d2c050af7b8c76fd2581e311b8b 100644
+index 7ac997852fc5a38bf98d5880f0ec26798999ba30..6002ccdc6f67c989ff27b2a121dc3b2edbda91c0 100644
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -171,4 +171,12 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+@@ -170,4 +170,12 @@ public class LayeredCauldronBlock extends AbstractCauldronBlock {
              level.levelEvent(1047, pos, 0);
          }
      }
@@ -897,10 +897,10 @@ index 0000000000000000000000000000000000000000..fef8042cec699a266853089409bcd51c
 +}
 +// KioCG end - custom block entity: all class
 diff --git a/net/minecraft/world/level/block/state/BlockBehaviour.java b/net/minecraft/world/level/block/state/BlockBehaviour.java
-index c3c97bd29f3646fc936d57afa5a0e9b23b40a1ea..41b06692164f67c2f040f33737f0e2a03a8b8c7b 100644
+index a77e2111a38def61a0940f1354530e107df412e8..bddc7f811ec730d35a5510d2c7c79d0c9d0ab567 100644
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -1027,12 +1027,12 @@ public abstract class BlockBehaviour implements FeatureElement {
+@@ -1014,12 +1014,12 @@ public abstract class BlockBehaviour implements FeatureElement {
          }
  
          public boolean hasBlockEntity() {

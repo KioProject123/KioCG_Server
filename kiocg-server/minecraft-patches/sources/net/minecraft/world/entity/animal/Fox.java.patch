@@ -13,15 +13,6 @@
                  this.animal.resetLove();
                  this.partner.resetLove();
                  serverLevel.addFreshEntityWithPassengers(fox, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
-@@ -972,7 +_,7 @@
-         }
- 
-         protected void onReachedTarget() {
--            if (getServerLevel(Fox.this.level()).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+            if (getServerLevel(Fox.this.level()).getGameRules().getInt(GameRules.RULE_RANDOMTICKING) > 0) { // KioCG - better mob griefing setting
-                 BlockState blockState = Fox.this.level().getBlockState(this.blockPos);
-                 if (blockState.is(Blocks.SWEET_BERRY_BUSH)) {
-                     this.pickSweetBerries(blockState);
 @@ -1167,7 +_,7 @@
                      } else {
                          boolean isPathClear = Fox.isPathClear(Fox.this, target);

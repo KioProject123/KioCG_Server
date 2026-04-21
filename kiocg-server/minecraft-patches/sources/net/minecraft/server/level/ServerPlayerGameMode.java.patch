@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -36,6 +_,7 @@
-     private boolean isDestroyingBlock;
-     private int destroyProgressStart;
-     private BlockPos destroyPos = BlockPos.ZERO;
-+    private BlockPos restoredDestroyPos = BlockPos.ZERO; // KioCG - keep block destruction: 修复连续破坏时速度变快的问题
-     private int gameTicks;
-     private boolean hasDelayedDestroy;
-     private BlockPos delayedDestroyPos = BlockPos.ZERO;
 @@ -73,7 +_,7 @@
                  return event; // Paper - Expand PlayerGameModeChangeEvent
              }
@@ -52,58 +44,6 @@
      public GameType getGameModeForPlayer() {
          return this.gameModeForPlayer;
      }
-@@ -138,6 +_,15 @@
-                 this.lastSentState = -1;
-                 this.isDestroyingBlock = false;
-             } else {
-+                // KioCG start - keep block destruction
-+                if (restoredDestroyPos == destroyPos && this.level.destroyingBlocks.get(this.destroyPos).getProgress() >= 10) {
-+                    this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
-+                    this.lastSentState = -1;
-+                    this.isDestroyingBlock = false;
-+                    this.destroyBlock(this.destroyPos);
-+                    this.player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(net.minecraft.world.level.block.LevelEvent.PARTICLES_DESTROY_BLOCK, this.destroyPos, net.minecraft.world.level.block.Block.getId(blockState), false));
-+                } else
-+                // KioCG end - keep block destruction
-                 this.incrementDestroyProgress(blockState, this.destroyPos, this.destroyProgressStart);
-             }
-         }
-@@ -248,7 +_,16 @@
- 
-                     this.isDestroyingBlock = true;
-                     this.destroyPos = pos.immutable();
--                    int i = (int)(f * 10.0F);
-+
-+                    // KioCG start - keep block destruction
-+                    int progress = this.level.destroyingBlocks.get(pos).getProgress();
-+                    if (progress > 0) {
-+                        this.restoredDestroyPos = this.destroyPos;
-+                        this.destroyProgressStart -= (int) (progress / 10.0F / f);
-+                    }
-+                    // KioCG end - keep block destruction
-+
-+                    int i = (int)(f * 10.0F) + Math.max(progress, 0); // KioCG - keep block destruction
-                     this.level.destroyBlockProgress(this.player.getId(), pos, i);
-                     this.debugLogging(pos, true, sequence, "actual start of destroying");
-                     this.lastSentState = i;
-@@ -283,14 +_,15 @@
-                     ServerPlayerGameMode.LOGGER.debug("Mismatch in destroy block pos: {} {}", this.destroyPos, pos); // CraftBukkit - SPIGOT-5457 sent by client when interact event cancelled
-                     BlockState type = this.level.getBlockStateIfLoaded(this.destroyPos); // Don't load unloaded chunks for stale records here
-                     if (type != null) {
--                    this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
-+                    this.level.abortDestroyBlock(this.player.getId(), this.destroyPos, this.gameTicks - this.destroyProgressStart); // KioCG - keep block destruction
-                     this.debugLogging(pos, true, sequence, "aborted mismatched destroying");
-                     }
-                     this.destroyPos = BlockPos.ZERO;
-+                    this.restoredDestroyPos = this.destroyPos;
-                     // Paper end - Don't allow digging into unloaded chunks
-                 }
- 
--                this.level.destroyBlockProgress(this.player.getId(), pos, -1);
-+                this.level.abortDestroyBlock(this.player.getId(), pos, this.gameTicks - this.destroyProgressStart); // KioCG - keep block destruction
-                 this.debugLogging(pos, true, sequence, "aborted destroying");
- 
-                 org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageAbortEvent(this.player, pos, this.player.getInventory().getSelectedItem()); // CraftBukkit
 @@ -417,11 +_,49 @@
      }
  

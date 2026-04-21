@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
-@@ -58,11 +_,12 @@
+@@ -58,6 +_,7 @@
      @Override
      public void tick() {
          this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
@@ -8,18 +8,3 @@
          if (this.eatAnimationTick == this.adjustedTickDelay(4)) {
              BlockPos blockPos = this.mob.blockPosition();
              final BlockState blockState = this.level.getBlockState(blockPos); // Paper - fix wrong block state
-             if (IS_EDIBLE.test(blockState)) { // Paper - fix wrong block state
--                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockPos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit // Paper - fix wrong block state
-+                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockPos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1))) { // CraftBukkit // Paper - fix wrong block state // KioCG - better mob griefing setting
-                     this.level.destroyBlock(blockPos, false);
-                 }
- 
-@@ -70,7 +_,7 @@
-             } else {
-                 BlockPos blockPos1 = blockPos.below();
-                 if (this.level.getBlockState(blockPos1).is(Blocks.GRASS_BLOCK)) {
--                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockPos1, Blocks.DIRT.defaultBlockState(), !getServerLevel(this.level).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit // Paper - Fix wrong block state
-+                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockPos1, Blocks.DIRT.defaultBlockState(), !getServerLevel(this.level).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1))) { // CraftBukkit // Paper - Fix wrong block state // KioCG - better mob griefing setting
-                         this.level.levelEvent(2001, blockPos1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
-                         this.level.setBlock(blockPos1, Blocks.DIRT.defaultBlockState(), 2);
-                     }

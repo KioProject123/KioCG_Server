@@ -219,7 +219,7 @@
                  BlocksAttacks blocksAttacks = this.getUseItem().get(DataComponents.BLOCKS_ATTACKS);
                  if (flag && blocksAttacks != null) {
                      blocksAttacks.onBlocked(level, this);
-@@ -1873,11 +_,17 @@
+@@ -1873,6 +_,12 @@
          }
      }
  
@@ -232,12 +232,6 @@
      protected void createWitherRose(@Nullable LivingEntity entitySource) {
          if (this.level() instanceof ServerLevel serverLevel) {
              boolean var6 = false;
-             if (this.dead && entitySource instanceof WitherBoss) { // Paper
--                if (serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+                if (serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)) { // KioCG - better mob griefing setting
-                     BlockPos blockPos = this.blockPosition();
-                     BlockState blockState = Blocks.WITHER_ROSE.defaultBlockState();
-                     if (this.level().getBlockState(blockPos).isAir() && blockState.canSurvive(this.level(), blockPos)) {
 @@ -2062,9 +_,14 @@
                  return;
              }

@@ -9,12 +9,3 @@
          if (!this.level().paperConfig().entities.armorStands.doCollisionEntityLookups) return; // Paper - Option to prevent armor stands from doing entity lookups
          for (Entity entity : this.level().getEntitiesOfClass(AbstractMinecart.class, this.getBoundingBox(), RIDABLE_MINECARTS)) { // Paper - optimise collisions
              if (this.distanceToSqr(entity) <= 0.2) {
-@@ -313,7 +_,7 @@
-     public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
-         if (this.isRemoved()) {
-             return false;
--        } else if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && damageSource.getEntity() instanceof Mob) {
-+        } else if (true && damageSource.getEntity() instanceof Mob) { // KioCG - better mob griefing setting
-             return false;
-         } else if (damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-             // CraftBukkit start

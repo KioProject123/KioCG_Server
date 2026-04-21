@@ -1,44 +1,5 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -142,7 +_,7 @@
-         }
- 
-         // Paper start - detect running as root
--        if (io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) {
-+        if (false && io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) { // KioCG - clean console
-             LOGGER.warn("****************************");
-             LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
-             LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
-@@ -171,6 +_,20 @@
-         this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
-         this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
-         // Paper end - initialize global and world-defaults configuration
-+
-+        // KioCG start - automatically set configuration when proxy is enabled
-+        boolean proxyEnable = org.spigotmc.SpigotConfig.bungee || io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled;
-+        if (proxyEnable) {
-+            this.setUsesAuthentication(false);
-+            this.setLocalIp(properties.serverIp.isEmpty() ? "127.0.0.1" : properties.serverIp);
-+            LOGGER.warn("**** 正在使用Velocity/BungeeCord代理!");
-+            LOGGER.warn("将自动调整以下设置:");
-+            LOGGER.warn("network-compression-threshold={}", this.getCompressionThreshold());
-+            LOGGER.warn("online-mode={}", this.usesAuthentication());
-+            LOGGER.warn("server-ip={}", this.getLocalIp());
-+        }
-+        // KioCG end - automatically set configuration when proxy is enabled
-+
-         this.server.spark.enableEarlyIfRequested(); // Paper - spark
-         // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
-         if (this.convertOldUsers()) {
-@@ -241,7 +_,7 @@
-         String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
-         String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
-         // Paper end - Add Velocity IP Forwarding Support
--        if (!this.usesAuthentication()) {
-+        if (false && !this.usesAuthentication()) { // KioCG - clean console
-             LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-             LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
-             // Spigot start
 @@ -308,6 +_,7 @@
                  LOGGER.info("JMX monitoring enabled");
              }
@@ -47,18 +8,6 @@
              return true;
          }
      }
-@@ -559,6 +_,11 @@
- 
-     @Override
-     public int getCompressionThreshold() {
-+        // KioCG start - automatically set configuration when proxy is enabled
-+        if (org.spigotmc.SpigotConfig.bungee || io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) {
-+            return -1;
-+        }
-+        // KioCG end - automatically set configuration when proxy is enabled
-         return this.getProperties().networkCompressionThreshold;
-     }
- 
 @@ -693,6 +_,7 @@
          this.executeBlocking(() -> {
              CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();

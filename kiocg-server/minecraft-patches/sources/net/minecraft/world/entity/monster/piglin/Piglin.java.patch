@@ -21,12 +21,3 @@
          this.getEntityData().set(DATA_BABY_ID, childZombie);
          if (!this.level().isClientSide) {
              AttributeInstance attribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
-@@ -424,7 +_,7 @@
- 
-     @Override
-     public boolean wantsToPickUp(ServerLevel level, ItemStack stack) {
--        return level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && this.canPickUpLoot() && PiglinAi.wantsToPickup(this, stack);
-+        return true && this.canPickUpLoot() && PiglinAi.wantsToPickup(this, stack); // KioCG - better mob griefing setting
-     }
- 
-     protected boolean canReplaceCurrentItem(ItemStack candidate) {

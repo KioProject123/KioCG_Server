@@ -16,21 +16,3 @@
                          float knockbackMultiplier = this.damageCalculator.getKnockbackMultiplier(entity);
                          float f1 = !shouldDamageEntity && knockbackMultiplier == 0.0F ? 0.0F : this.getBlockDensity(this.center, entity); // Paper - Optimize explosions
                          if (shouldDamageEntity) {
-@@ -720,14 +_,14 @@
-         return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK
-             && (
-                 this.source == null
--                    || this.source.getType() != EntityType.BREEZE_WIND_CHARGE
--                    || this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
-+                    // || this.source.getType() != EntityType.BREEZE_WIND_CHARGE // KioCG - better mob griefing setting: 包括玩家丢出的风弹
-+                    || this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1) // KioCG - better mob griefing setting
-             );
-     }
- 
-     @Override
-     public boolean shouldAffectBlocklikeEntities() {
--        boolean _boolean = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-+        boolean _boolean = false; // KioCG - better mob griefing setting
-         boolean flag = this.source == null || this.source.getType() != EntityType.BREEZE_WIND_CHARGE && this.source.getType() != EntityType.WIND_CHARGE;
-         return _boolean ? flag : this.blockInteraction.shouldAffectBlocklikeEntities() && flag;
-     }

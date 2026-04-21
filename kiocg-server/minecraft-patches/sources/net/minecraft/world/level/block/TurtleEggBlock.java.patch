@@ -5,6 +5,6 @@
              && !(entity instanceof Bat)
              && entity instanceof LivingEntity
 -            && (entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING));
-+            && (false || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING1)); // KioCG - better mob griefing setting
++                && (entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING));
      }
  }
