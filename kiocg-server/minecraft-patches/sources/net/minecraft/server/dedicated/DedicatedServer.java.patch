@@ -8,11 +8,3 @@
              return true;
          }
      }
-@@ -693,6 +_,7 @@
-         this.executeBlocking(() -> {
-             CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
-             org.bukkit.event.server.RemoteServerCommandEvent event = new org.bukkit.event.server.RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), s);
-+            event.setCancelled(true); // KioCG - rcon: default cancelled
-             this.server.getPluginManager().callEvent(event);
-             if (event.isCancelled()) {
-                 return;

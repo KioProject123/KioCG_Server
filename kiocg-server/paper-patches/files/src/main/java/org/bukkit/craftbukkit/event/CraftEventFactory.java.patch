@@ -79,25 +79,6 @@
      public static EntityTransformEvent callEntityTransformEvent(net.minecraft.world.entity.LivingEntity original, net.minecraft.world.entity.LivingEntity coverted, EntityTransformEvent.TransformReason transformReason) {
          return CraftEventFactory.callEntityTransformEvent(original, Collections.singletonList(coverted), transformReason);
      }
-@@ -890,11 +_,18 @@
-     }
- 
-     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
-+        // KioCG start - death drop protect
-+        return callPlayerDeathEvent(victim, damageSource, drops, List.of(), deathMessage, showDeathMessages, keepInventory);
-+    }
-+    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, List<org.bukkit.inventory.ItemStack> keeps, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
-+        // KioCG end - death drop protect
-         CraftPlayer entity = victim.getBukkitEntity();
-         CraftDamageSource bukkitDamageSource = new CraftDamageSource(damageSource);
-         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(victim.level(), damageSource.getEntity()), 0, deathMessage, showDeathMessages);
-         event.setKeepInventory(keepInventory);
-+        event.getItemsToKeep().addAll(keeps); // KioCG - death drop protect
-         event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
-+        event.setNewLevel((int) (victim.experienceLevel * victim.level().paperConfig().kiocgConfig.deathKeepLevelPercent)); // KioCG - death drop protect
-         populateFields(victim, event); // Paper - make cancellable
-         Bukkit.getServer().getPluginManager().callEvent(event);
-         // Paper start - make cancellable
 @@ -1295,6 +_,26 @@
  
          return com.mojang.datafixers.util.Pair.of(event.titleOverride(), container); // Paper - Add titleOverride to InventoryOpenEvent
