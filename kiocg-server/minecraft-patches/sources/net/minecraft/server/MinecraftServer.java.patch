@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -1094,6 +_,7 @@
-         this.safeShutdown(waitForServer, false);
-     }
-     public void safeShutdown(boolean waitForServer, boolean isRestarting) {
-+        com.kiocg.task.BossBarTask.stopAll(); // KioCG - bossbar task
-         this.isRestarting = isRestarting;
-         this.hasLoggedStop = true; // Paper - Debugging
-         if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
 @@ -1246,7 +_,7 @@
                  lastTick = currentTime;
                  this.nextTickTimeNanos += l;
@@ -26,24 +18,6 @@
                  }
  
                  this.isReady = true;
-@@ -1524,6 +_,17 @@
-             }
-         }
- 
-+        // KioCG start - chunk hot
-+        if (this.tickCount % 20 == 0) {
-+            for (ServerLevel serverLevel : this.getAllLevels()) {
-+                for (net.minecraft.world.level.chunk.LevelChunk chunk : serverLevel.moonrise$getTickingChunks()) {
-+                    chunk.getChunkHot().newTick();
-+                }
-+            }
-+            com.kiocg.world.ChunkHot.nextTick();
-+        }
-+        // KioCG end - chunk hot
-+
-         this.server.spark.tickStart(); // Paper - spark
-         new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
-         this.tickCount++;
 @@ -2236,9 +_,11 @@
                      if (Thread.currentThread() != this.serverThread) return; // Paper
                      // Paper start - we don't need to save everything, just advancements

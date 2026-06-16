@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -508,6 +_,8 @@
-     }
-     public @Nullable net.kyori.adventure.text.Component remove(ServerPlayer player, net.kyori.adventure.text.Component leaveMessage) {
-         // Paper end - Fix kick event leave message not being sent
-+        com.kiocg.task.BossBarTask.removeFromAll(player.getBukkitEntity()); // KioCG - bossbar task
-+        com.kiocg.command.TickerViewCommand.onPlayerQuit(player); // KioCG - ticker view
-         ServerLevel serverLevel = player.level();
-         player.awardStat(Stats.LEAVE_GAME);
-         // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
 @@ -802,6 +_,12 @@
  
          // Don't fire on respawn

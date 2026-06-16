@@ -170,7 +170,7 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1569,6 +_,58 @@
+@@ -1569,6 +_,51 @@
          }
      }
  
@@ -218,13 +218,6 @@
 +        }
 +    }
 +    // KioCG end - entity bossbar api
-+
-+    // KioCG start - chunk hot
-+    @Override
-+    public boolean shouldTickHot() {
-+        return super.shouldTickHot() && (this.isPersistenceRequired() || this.requiresCustomPersistence() || !this.removeWhenFarAway(0.0));
-+    }
-+    // KioCG end - chunk hot
 +
      @VisibleForTesting
      public void removeFreeWill() {

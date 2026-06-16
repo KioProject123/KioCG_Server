@@ -157,17 +157,3 @@
          if (this.abilities.mayBuild) {
              return true;
          } else {
-@@ -2323,6 +_,13 @@
-     public boolean onClimbable() {
-         return !this.abilities.flying && super.onClimbable();
-     }
-+
-+    // KioCG start - chunk hot
-+    @Override
-+    public boolean shouldTickHot() {
-+        return false;
-+    }
-+    // KioCG end - chunk hot
- 
-     public String debugInfo() {
-         return MoreObjects.toStringHelper(this)

@@ -90,27 +90,16 @@
          event.callEvent();
          if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !entity.isAlive()) {
              return null;
-@@ -5199,6 +_,12 @@
+@@ -5198,6 +_,12 @@
+     public Level level() {
          return this.level;
      }
- 
++
 +    // KioCG start
 +    public ServerLevel serverLevel() {
 +        return (ServerLevel)this.level();
 +    }
 +    // KioCG end
-+
+ 
      public void setLevel(Level level) {
          this.level = level;
-     }
-@@ -5364,4 +_,10 @@
-         return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
-     }
-     // Paper end - Expose entity id counter
-+
-+    // KioCG start - chunk hot
-+    public boolean shouldTickHot() {
-+        return this.tickCount > 20 && this.isAlive();
-+    }
-+    // KioCG end - chunk hot
- }

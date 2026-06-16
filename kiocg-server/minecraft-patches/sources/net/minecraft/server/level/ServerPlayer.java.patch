@@ -11,12 +11,11 @@
      @Nullable
      private Vec3 enteredLavaOnVehiclePosition;
      private SectionPos lastSectionPos = SectionPos.of(0, 0, 0);
-@@ -429,6 +_,8 @@
+@@ -429,6 +_,7 @@
      public boolean isRealPlayer; // Paper
      public @Nullable com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
      public @Nullable org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
 +    public boolean inStructure; // KioCG - player in structure api
-+    private long nearbyChunkHot = 0; public long getNearbyChunkHot() { return this.nearbyChunkHot; } // KioCG - chunk hot
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
@@ -52,66 +51,6 @@
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -788,7 +_,58 @@
-         this.trackEnteredOrExitedLavaOnVehicle();
-         this.updatePlayerAttributes();
-         this.advancements.flushDirty(this, true);
--    }
-+
-+        // KioCG start - chunk hot
-+        if (this.server.getTickCount() % 20 == 1) {
-+            this.wasTooHot = false;
-+            this.nearbyChunkHot = this.refreshNearbyChunkHot();
-+            if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseGood) {
-+                if (!com.kiocg.task.TPSBarTask.instance().hasPlayer(this.uuid)) {
-+                    com.kiocg.task.TPSBarTask.instance().addPlayer(this.getBukkitEntity());
-+                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.mediumMessage)), true);
-+                }
-+                if (this.nearbyChunkHot >= this.level().paperConfig().kiocgConfig.chunkHot.phaseMedium) {
-+                    this.wasTooHot = !this.getAbilities().invulnerable;
-+                    if (this.wasTooHot) {
-+                        if (!this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
-+                            this.hurtServer(serverLevel(), this.damageSources().generic(), 2.0F);
-+                        }
-+                        this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocgConfig.chunkHot.lowMessage)), true);
-+                    }
-+                }
-+            }
-+        }
-+        // KioCG end - chunk hot
-+    }
-+
-+    // KioCG start - chunk hot
-+    private boolean wasTooHot = false;
-+    @Override
-+    public void setSharedFlagOnFire(boolean isOnFire) {
-+        if (wasTooHot) {
-+            this.setSharedFlag(FLAG_ONFIRE, true);
-+            return;
-+        }
-+
-+        super.setSharedFlagOnFire(isOnFire);
-+    }
-+
-+    private long refreshNearbyChunkHot() {
-+        int x = SectionPos.blockToSectionCoord(this.getBlockX());
-+        int z = SectionPos.blockToSectionCoord(this.getBlockZ());
-+        net.minecraft.world.level.Level level = this.level();
-+        long total = 0L;
-+        for (int i = x - 4; i <= x + 4; ++i) {
-+            for (int j = z - 4; j <= z + 4; ++j) {
-+                net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkIfLoaded(i, j);
-+                if (chunk != null) {
-+                    total += chunk.getChunkHot().getAverage();
-+                }
-+            }
-+        }
-+        return total;
-+    }
-+    // KioCG end - chunk hot
- 
-     private void updatePlayerAttributes() {
-         AttributeInstance attribute = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
 @@ -884,6 +_,11 @@
  
              if (this.tickCount % 20 == 0) {

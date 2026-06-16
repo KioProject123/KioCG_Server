@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -88,6 +_,7 @@
-     private final LevelChunkTicks<Block> blockTicks;
-     private final LevelChunkTicks<Fluid> fluidTicks;
-     private LevelChunk.UnsavedListener unsavedListener = chunkPos -> {};
-+    private final com.kiocg.world.ChunkHot chunkHot = new com.kiocg.world.ChunkHot(); public com.kiocg.world.ChunkHot getChunkHot() { return this.chunkHot; } // KioCG - chunk hot
-     // CraftBukkit start
-     public boolean mustNotSave;
-     public boolean needsDecoration;
 @@ -876,7 +_,11 @@
  
      public <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
@@ -36,25 +28,13 @@
                              return rebindableTickingBlockEntityWrapper;
                          } else {
                              return null;
-@@ -924,9 +_,13 @@
-                     try {
-                         ProfilerFiller profilerFiller = Profiler.get();
+@@ -926,7 +_,9 @@
                          profilerFiller.push(this::getType);
-+                        LevelChunk.this.chunkHot.startTicking(); try { // KioCG - chunk hot
                          BlockState blockState = LevelChunk.this.getBlockState(blockPos);
                          if (this.blockEntity.getType().isValid(blockState)) {
 +                            if (!this.blockEntity.preFirstTick || !(this.blockEntity.preFirstTick = false) && this.blockEntity.updateBlockEntityTicker()) { // KioCG - optimize block entity
                              this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
-+                            com.kiocg.command.TickerViewCommand.onBlockEntityTicking(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState); // KioCG - ticker view
 +                            } // KioCG - optimize block entity
                              this.loggedInvalidBlockState = false;
                          // Paper start - Remove the Block Entity if it's invalid
                          } else {
-@@ -938,6 +_,7 @@
-                             // Paper end - Remove the Block Entity if it's invalid
-                         }
- 
-+                        } finally { LevelChunk.this.chunkHot.endTickingAndCount(); } // KioCG - chunk hot
-                         profilerFiller.pop();
-                     } catch (Throwable var5) {
-                         // Paper start - Prevent block entity and entity crashes
